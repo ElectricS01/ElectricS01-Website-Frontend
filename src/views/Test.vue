@@ -1,6 +1,6 @@
 <template>
   <div style="text-align: center;">
-    <p>test2</p>
+    <p>Better Test</p>
   </div>
 </template>
 
