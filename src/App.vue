@@ -14,10 +14,6 @@
   </main>
 </template>
 
-<style>
-  @import './assets/stile.css'
-</style>
-
 <script>
 export default {
   name: "App",

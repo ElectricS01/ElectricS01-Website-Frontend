@@ -8,7 +8,7 @@
 export default {
   mounted() {
     const favicon = document.getElementById("favicon");
-    favicon.href = "/icons/tetris.ico";
+    favicon.href = "/icons/mainicon.ico";
   }
 }
 </script>
