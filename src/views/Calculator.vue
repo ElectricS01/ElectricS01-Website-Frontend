@@ -1,13 +1,13 @@
 <template>
-  <div style="padding-left:16px; padding-right:16px">
+  <div style="padding-left: 16px; padding-right: 16px">
     <h2>ElectricS01's Calculator</h2>
-    <div class='wrapper'>
-      <div class='form-uname'>
-        <label id='nameLabel' for='nameField'>Calculate: </label>
-        <input id='nameField' v-model='input' type='text' size = '100'>
+    <div className="wrapper">
+      <div className="form-uname">
+        <label id="nameLabel" htmlFor="nameField">Calculate: </label>
+        <input id="nameField" v-model="expression" type="text" size="100" />
       </div>
       <div>
-        <p id='result'>{{calculate}}</p>
+        <p id="result">{{ result }}</p>
       </div>
     </div>
   </div>
@@ -15,86 +15,47 @@
 
 <script>
 export default {
-name: "Calculator",
-  data(){
-    return{
-      input: ''
+  data() {
+    return {
+      expression: "",
+      result: 0
     }
   },
-  computed:{
-
-
+  methods: {
     calculate() {
-  let nameField = this.input
-  let equation
-  if(Number(nameField)) {
-    equation = parseFloat(nameField)
-  } else {
-    equation = nameField
-  }
-  let solution = ''
-  let op = ''
-  let times = ['*', 'X', 'x']
+      // Split the expression into an array of numbers and operators
+      const tokens = this.expression.split(/\s*([+-/*^])\s*(?=\d)/)
 
-  if(equation === '9+10' || equation === '9 + 10') {
-    solution = 21
+      // Initialize the result to the first number
+      let result = Number(tokens[0])
 
-  } else if(Number(equation) || equation === '0') {
-    solution = equation
-
-  } else {
-    let num0 = ''
-    let num1 = ''
-    for (let digit in equation) {
-      if(equation[digit] === '-' && !Number(equation[digit-1])){
-        if(num0 === '') {
-          num0 += equation[digit].toString()
-          console.log('yeet1')
-        } else {
-          num1 += equation[digit].toString()
-          console.log('yeet2')
+      // Iterate through the array and perform the indicated operation on the result
+      // and the next number in the array
+      for (let i = 1; i < tokens.length; i += 2) {
+        const operator = tokens[i]
+        const operand = Number(tokens[i + 1])
+        if (operator === "+") {
+          result += operand
+        } else if (operator === "-") {
+          result -= operand
+        } else if (operator === "*") {
+          result *= operand
+        } else if (operator === "/") {
+          result /= operand
+        } else if (operator === "^") {
+          result = Math.pow(result, operand)
         }
-      } else if(Number(equation[digit]) || equation[digit] === '.' || equation[digit] === '0') {
-        num1 += equation[digit].toString()
-        console.log(num1 + 'num1')
-      } else {
-        num0 = num1.toString()
-        num1 = ''
-        op = equation[digit].toString()
-        console.log('num0=num1')
       }
-    }
-    if (equation[0] === '-') {
-      num0 = '-' + num0
-    }
 
-    try {
-      console.log(num0)
-      console.log(num1)
-      if (equation.includes('^')) {
-        solution = Math.pow(parseFloat(num0), parseFloat(num1))
-      } else if (times.includes(op)) {
-        solution = parseFloat(num0) * parseFloat(num1)
-      } else if (equation.includes('/')) {
-        solution = parseFloat(num0) / parseFloat(num1)
-      } else if (equation.includes('+')) {
-        solution = parseFloat(num0) + parseFloat(num1)
-      } else if (equation.includes('-')) {
-        solution = parseFloat(num0) - parseFloat(num1)
-      }
-    } catch {
-      solution = 'Number is to large'
+      // Update the result in the component's data
+      this.result = result
     }
-  }
-
-  return solution
-}
   },
-  mounted() {
-    const favicon = document.getElementById("favicon");
-    favicon.href = "/icons/mainicon.ico";
+  watch: {
+    expression: {
+      handler: "calculate",
+      deep: true
+    }
   }
 }
 </script>
-
-
