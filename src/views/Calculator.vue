@@ -23,14 +23,10 @@ export default {
   },
   methods: {
     calculate() {
-      // Split the expression into an array of numbers and operators
       const tokens = this.expression.split(/\s*([+-/*^])\s*(?=\d)/)
 
-      // Initialize the result to the first number
       let result = Number(tokens[0])
 
-      // Iterate through the array and perform the indicated operation on the result
-      // and the next number in the array
       for (let i = 1; i < tokens.length; i += 2) {
         const operator = tokens[i]
         const operand = Number(tokens[i + 1])
@@ -47,7 +43,6 @@ export default {
         }
       }
 
-      // Update the result in the component's data
       this.result = result
     }
   },
