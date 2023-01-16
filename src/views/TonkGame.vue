@@ -14,7 +14,7 @@
       height="560"
       width="980"
     ></iframe>
-    <h3>TonkGame version 4.2.4 (beta 5)</h3>
+    <h3>TonkGame version 4.2.5 (beta 6)</h3>
   </div>
 </template>
 
