@@ -16,9 +16,9 @@
   </div>
   <div class="messagesend" style="text-align: center">
     <div>
-      <input id="nameField" class="responder" v-model="imputUser" type="text"/>
+      <input @keydown.enter="submit" id="nameField" class="responder" v-model="imputUser" type="text"/>
       <br/>
-      <input id="nameField" class="responder" v-model="imputText" type="text"/>
+      <input @keydown.enter="submit" id="nameField" class="responder" v-model="imputText" type="text"/>
       <br />
       <button @click="submit">Submit</button>
       <br />
