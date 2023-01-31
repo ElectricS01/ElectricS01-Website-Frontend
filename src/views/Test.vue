@@ -10,7 +10,7 @@
       </b>
       <br/>
       <b class="message_text_small">
-        {{message.userName }} {{ message.createdAt }}
+        {{message.userName }} {{ dayjs(message.createdAt) }}
       </b>
     </div>
   </div>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
   data() {
     return {
@@ -58,6 +59,9 @@ export default {
         .catch((e) => {
           this.error = e.response.data.message
         })
+    },
+    dayjs(date) {
+      return dayjs(this.date).format('HH:mm:ss DD/MM/YYYY')
     }
   },
   mounted() {
