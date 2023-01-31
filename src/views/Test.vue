@@ -61,7 +61,7 @@ export default {
         })
     },
     dayjs(date) {
-      return dayjs(this.date).format('HH:mm:ss DD/MM/YYYY')
+      return dayjs(date).format('HH:mm:ss DD/MM/YYYY')
     }
   },
   mounted() {
