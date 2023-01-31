@@ -182,6 +182,11 @@ h3 {
     color: white;
 }
 
+.message_text_large {
+    color: white;
+    margin:0;
+}
+
 label {
     color: white;
 }
