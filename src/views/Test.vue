@@ -12,7 +12,7 @@
       </h2>
     </div>
   </div>
-  <div style="text-align: center">
+  <div class="messagesend" style="text-align: center">
     <div>
       <input id="nameField" class="responder" v-model="imputUser" type="text"/>
       <br/>
