@@ -7,7 +7,7 @@
     <div v-for="message in messages" :key="message.id">
       <b class="message_text_large">
         {{ message.userName }} {{ message.createdAt }}
-        <br />
+        <br/>
         {{ message.messageContents }}
       </b>
     </div>
