@@ -1,17 +1,22 @@
 <template>
-  <div style="text-align: center">
-    <p>Better Test</p>
+  <div class="topnav" id="mobile-topnav">
+    <router-link to="/test">Better Test</router-link>
+    <router-link class="right" to="/">Home</router-link>
+  </div>
+  <div style="text-align: left; padding-left: 16px; padding-top: 16px ">
     <div v-for="message in messages" :key="message.id">
-      <p>
+      <h2>
         {{ message.userName }} {{ message.createdAt }}
         <br />
         {{ message.messageContents }}
-      </p>
+      </h2>
     </div>
+  </div>
+  <div style="text-align: center">
     <div>
-      <input v-model="imputUser" />
-      <br />
-      <input v-model="imputText" />
+      <input id="nameField" class="responder" v-model="imputUser" type="text"/>
+      <br/>
+      <input id="nameField" class="responder" v-model="imputText" type="text"/>
       <br />
       <button @click="submit">Submit</button>
       <br />

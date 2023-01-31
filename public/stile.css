@@ -28,6 +28,21 @@ main {
     color: white;
 }
 
+button {
+    background-color: #282A2B;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    border: none;
+}
+
+button:hover {
+    background-color: #2D2F31;
+    color: white;
+}
+
 .topnav {
     overflow: hidden;
     background-color: #282A2B;
@@ -50,6 +65,11 @@ main {
 .topnav a.main {
     background-color: #1AC62B;
     color: white;
+}
+
+.topnav a.right {
+    float: right;
+    display: block;
 }
 
 .topnav a.active {
@@ -76,13 +96,29 @@ main {
     justify-content: center;
 }
 
+input[type=text]{
+    width: calc(100% - 150px);
+    padding: 6px 6px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #3D3D3D;
+    color: white;
+}
+
 @media screen and (max-width: 600px) {
-    .topnav a:not(:first-child) {display: none;}
+    .topnav a:not(:first-child) {
+        display: none;
+    }
     .topnav a.icon {
         float: right;
         display: block;
     }
-    .topnav.responsive {position: relative;}
+    .topnav.responsive {
+        position: relative;
+    }
     .topnav.responsive .icon {
         position: absolute;
         right: 0;
@@ -93,18 +129,18 @@ main {
         display: block;
         text-align: left;
     }
-}
 
-input[type=text], select {
-    width: calc(100% - 150px);
-    padding: 6px 6px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #3D3D3D;
-    color: white;
+    input[type=text]{
+        width: calc(100% - 50px);
+        padding: 6px 6px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #3D3D3D;
+        color: white;
+    }
 }
 
 a {
