@@ -5,11 +5,11 @@
   </div>
   <div style="text-align: left; padding-left: 16px; padding-top: 16px ">
     <div v-for="message in messages" :key="message.id">
-      <h2 class="message_text_large">
+      <b class="message_text_large">
         {{ message.userName }} {{ message.createdAt }}
         <br />
         {{ message.messageContents }}
-      </h2>
+      </b>
     </div>
   </div>
   <div class="messagesend" style="text-align: center">
