@@ -55,7 +55,7 @@ button:hover {
     z-index: 2;
 }
 
-.messagesend {
+.message-send {
     margin-top:200px;
     overflow: hidden;
     background-color: #282A2B;
@@ -183,15 +183,20 @@ h3 {
     color: white;
 }
 
-.message_text_large {
+.message-text-large {
     color: white;
     margin-top:10px;
     font-size:16px;
 }
 
-.message_text_small {
+.message-text-small {
     color: grey;
     margin-top:10px;
+    font-size:10px;
+}
+
+.error-message {
+    color: red;
     font-size:10px;
 }
 

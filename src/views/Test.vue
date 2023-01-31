@@ -5,24 +5,26 @@
   </div>
   <div style="text-align: left; padding-left: 16px; padding-top: 16px ">
     <div v-for="message in messages" :key="message.id">
-      <b class="message_text_large">
+      <b class="message-text-large">
         {{message.messageContents }}
       </b>
-      <br/>
-      <b class="message_text_small">
+      <br />
+      <b class="message-text-small">
         {{message.userName }} {{ dayjs(message.createdAt) }}
       </b>
     </div>
   </div>
-  <div class="messagesend" style="text-align: center">
+  <div class="message-send" style="text-align: center">
     <div>
       <input @keydown.enter="submit" id="nameField" class="responder" v-model="imputUser" type="text"/>
-      <br/>
+      <br />
       <input @keydown.enter="submit" id="nameField" class="responder" v-model="imputText" type="text"/>
       <br />
       <button @click="submit">Submit</button>
       <br />
-      {{ error }}
+      <div class="error-message">
+        {{ error }}
+      </div>
     </div>
   </div>
 </template>
@@ -42,6 +44,8 @@ export default {
     getMessages() {
       this.axios.get("/api/messages").then((res) => {
         this.messages = res.data
+      }).catch(() => {
+        this.error = 'Error 503 Cannot Connect to Server'
       })
     },
     submit() {
