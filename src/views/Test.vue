@@ -6,9 +6,9 @@
   <div style="text-align: left; padding-left: 16px; padding-top: 16px ">
     <div v-for="message in messages" :key="message.id">
       <b class="message_text_large">
-        {{ message.userName }} {{ message.createdAt }}
+        {{message.userName }} {{ message.createdAt }}
         <br/>
-        {{ message.messageContents }}
+        {{message.messageContents }}
       </b>
     </div>
   </div>
