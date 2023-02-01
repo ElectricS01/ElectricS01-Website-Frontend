@@ -1,24 +1,40 @@
 <template>
   <div class="topnav" id="mobile-topnav">
     <router-link to="/test">Better Test</router-link>
+    <router-link v-if="loggedIn" class="right" to="/account"
+      >Account</router-link
+    >
+    <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
-  <div style="text-align: left; padding-left: 16px; padding-top: 16px ">
+  <div style="text-align: left; padding-left: 16px; padding-top: 16px">
     <div v-for="message in messages" :key="message.id">
       <b class="message-text-large">
-        {{message.messageContents }}
+        {{ message.messageContents }}
       </b>
       <br />
       <b class="message-text-small">
-        {{message.userName }} {{ dayjs(message.createdAt) }}
+        {{ message.userName }} {{ dayjs(message.createdAt) }}
       </b>
     </div>
   </div>
   <div class="message-send" style="text-align: center">
     <div>
-      <input @keydown.enter="submit" id="nameField" class="responder" v-model="imputUser" type="text"/>
+      <input
+        @keydown.enter="submit"
+        id="nameField"
+        class="responder"
+        v-model="imputUser"
+        type="text"
+      />
       <br />
-      <input @keydown.enter="submit" id="nameField" class="responder" v-model="imputText" type="text"/>
+      <input
+        @keydown.enter="submit"
+        id="nameField"
+        class="responder"
+        v-model="imputText"
+        type="text"
+      />
       <br />
       <button @click="submit">Submit</button>
       <br />
@@ -30,23 +46,27 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
+import dayjs from "dayjs"
 export default {
   data() {
     return {
       messages: [],
       imputUser: "",
       imputText: "",
-      error: ""
+      error: "",
+      loggedIn: false
     }
   },
   methods: {
     getMessages() {
-      this.axios.get("/api/messages").then((res) => {
-        this.messages = res.data
-      }).catch(() => {
-        this.error = 'Error 503 Cannot Connect to Server'
-      })
+      this.axios
+        .get("/api/messages")
+        .then((res) => {
+          this.messages = res.data
+        })
+        .catch(() => {
+          this.error = "Error 503 Cannot Connect to Server"
+        })
     },
     submit() {
       this.error = ""
@@ -65,7 +85,7 @@ export default {
         })
     },
     dayjs(date) {
-      return dayjs(date).format('HH:mm:ss DD/MM/YYYY')
+      return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
     }
   },
   mounted() {

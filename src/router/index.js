@@ -1,35 +1,45 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: () => import('../views/Home.vue')
+    path: "/",
+    name: "home",
+    component: () => import("../views/Home.vue")
   },
   {
-    path: '/tonkgame',
-    name: 'tonkgame',
-    component: () => import('../views/TonkGame.vue')
+    path: "/tonkgame",
+    name: "tonkgame",
+    component: () => import("../views/TonkGame.vue")
   },
   {
-    path: '/calculator',
-    name: 'calculator',
-    component: () => import('../views/Calculator.vue')
+    path: "/calculator",
+    name: "calculator",
+    component: () => import("../views/Calculator.vue")
   },
   {
-    path: '/tetris',
-    name: 'tetris',
-    component: () => import('../views/Tetris.vue')
+    path: "/tetris",
+    name: "tetris",
+    component: () => import("../views/Tetris.vue")
   },
   {
-    path: '/test',
-    name: 'test',
-    component: () => import('../views/Test.vue')
+    path: "/test",
+    name: "test",
+    component: () => import("../views/BetterTest/Test.vue")
   },
   {
-    path: '/:a',
-    name: '404',
-    component: () => import('../views/404.vue')
+    path: "/account",
+    name: "test account",
+    component: () => import("../views/BetterTest/Account.vue")
+  },
+  {
+    path: "/login",
+    name: "test login",
+    component: () => import("../views/BetterTest/Login.vue")
+  },
+  {
+    path: "/:a",
+    name: "404",
+    component: () => import("../views/404.vue")
   }
 ]
 
