@@ -42,6 +42,11 @@ const routes = [
     component: () => import("../views/BetterTest/Register.vue")
   },
   {
+    path: "/deez",
+    name: "69",
+    component: () => import("../views/69.vue")
+  },
+  {
     path: "/:a",
     name: "404",
     component: () => import("../views/404.vue")
