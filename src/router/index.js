@@ -28,13 +28,18 @@ const routes = [
   },
   {
     path: "/account",
-    name: "test account",
+    name: "account",
     component: () => import("../views/BetterTest/Account.vue")
   },
   {
     path: "/login",
-    name: "test login",
+    name: "login",
     component: () => import("../views/BetterTest/Login.vue")
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("../views/BetterTest/Register.vue")
   },
   {
     path: "/:a",

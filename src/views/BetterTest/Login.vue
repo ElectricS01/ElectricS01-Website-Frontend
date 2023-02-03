@@ -9,7 +9,7 @@
   </div>
   <div class="grid-login">
     <div style="text-align: center" class="login-menu">
-      <form>
+      <div class="login-card">
         <p class="message-text-large">Login</p>
         <div style="text-align: left" class="text-small">
           <label for="username">Username</label>
@@ -19,11 +19,16 @@
           <label for="password">Password</label>
         </div>
         <input type="password" class="login-input" id="password" />
-        <div style="text-align: left" class="text-small">
-          <a href="#">Forgot Password?</a>
+        <div style="display: flex; justify-content: space-between">
+          <div class="text-small">
+            <a href="#">Forgot Password?</a>
+          </div>
+          <div class="text-small">
+            <router-link to="/register">Register?</router-link>
+          </div>
         </div>
         <button type="submit">Enter</button>
-      </form>
+      </div>
     </div>
   </div>
 </template>
