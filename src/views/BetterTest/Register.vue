@@ -73,11 +73,10 @@ export default {
           password: this.password
         })
         .then(() => {
-          this.getMessages()
           this.username = ""
           this.email = ""
           this.password = ""
-          this.$router.push("/login")
+          this.$router.push("/test")
         })
         .catch((e) => {
           this.error = e.response.data.message
