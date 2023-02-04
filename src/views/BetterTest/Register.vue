@@ -41,7 +41,7 @@
           type="password"
         />
         <div style="text-align: left" class="text-small">
-          <a href="#">Forgot Password?</a>
+          <router-link to="/login">Back to Login</router-link>
         </div>
         <button @click="submit">Enter</button>
         <div class="error-message">
@@ -73,9 +73,6 @@ export default {
           password: this.password
         })
         .then(() => {
-          this.username = ""
-          this.email = ""
-          this.password = ""
           this.$router.push("/test")
         })
         .catch((e) => {
