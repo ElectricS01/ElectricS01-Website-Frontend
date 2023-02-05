@@ -40,6 +40,11 @@ export default {
     navbarShown() {
       return this.$route.path !== "/test"
     }
+  },
+  mounted() {
+    Object.assign(this.axios.defaults, {
+      headers: { Authorization: localStorage.getItem("token") }
+    })
   }
 }
 </script>
