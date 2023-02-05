@@ -14,7 +14,7 @@
       </b>
       <br />
       <b class="message-text-small">
-        {{ message.userName }} {{ dayjs(message.createdAt) }}
+        {{ message.user?.username }} {{ dayjs(message.createdAt) }}
       </b>
     </div>
   </div>
