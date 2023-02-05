@@ -72,7 +72,11 @@ export default {
           email: this.email,
           password: this.password
         })
-        .then(() => {
+        .then((res) => {
+          localStorage.setItem("token", res.data.token)
+          Object.assign(this.axios.defaults, {
+            headers: { Authorization: res.data.token }
+          })
           this.$router.push("/test")
         })
         .catch((e) => {

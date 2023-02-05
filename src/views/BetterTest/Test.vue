@@ -24,14 +24,6 @@
         @keydown.enter="submit"
         id="nameField"
         class="responder"
-        v-model="imputUser"
-        type="text"
-      />
-      <br />
-      <input
-        @keydown.enter="submit"
-        id="nameField"
-        class="responder"
         v-model="imputText"
         type="text"
       />
@@ -51,7 +43,6 @@ export default {
   data() {
     return {
       messages: [],
-      imputUser: "",
       imputText: "",
       error: "",
       loggedIn: false
@@ -72,12 +63,10 @@ export default {
       this.error = ""
       this.axios
         .post("/api/message", {
-          userName: this.imputUser,
           messageContents: this.imputText
         })
         .then(() => {
           this.getMessages()
-          this.imputUser = ""
           this.imputText = ""
         })
         .catch((e) => {
