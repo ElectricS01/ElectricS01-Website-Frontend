@@ -75,6 +75,11 @@ export default {
     },
     dayjs(date) {
       return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
+    },
+    user() {
+      this.axios.get("/api/user").then((res) => {
+        this.loggedIn = res.data
+      })
     }
   },
   mounted() {
@@ -82,6 +87,7 @@ export default {
     favicon.href = "/icons/mainicon.ico"
 
     this.getMessages()
+    this.user()
   }
 }
 </script>
