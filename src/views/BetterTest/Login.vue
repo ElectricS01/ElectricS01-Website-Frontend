@@ -38,7 +38,7 @@
             <router-link to="/register">Register?</router-link>
           </div>
         </div>
-        <button type="submit">Enter</button>
+        <button @click="submit">Enter</button>
       </div>
     </div>
   </div>

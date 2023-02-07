@@ -43,7 +43,7 @@
         <div style="text-align: left" class="text-small">
           <router-link to="/login">Back to Login</router-link>
         </div>
-        <button>Enter</button>
+        <button @click="submit">Enter</button>
         <div class="error-message">
           {{ error }}
         </div>
