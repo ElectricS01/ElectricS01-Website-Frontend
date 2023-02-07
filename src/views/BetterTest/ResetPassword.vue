@@ -8,35 +8,20 @@
     <router-link class="right" to="/">Home</router-link>
   </div>
   <div class="grid-login">
-    <div style="text-align: center" class="login-menu">
+    <div style="text-align: center" class="reset-menu">
       <div class="login-card">
-        <p class="message-text-large">Login</p>
+        <p class="message-text-large">Reset Password</p>
         <div style="text-align: left" class="text-small">
-          <label for="username">Username</label>
+          <label for="email">Email</label>
         </div>
         <input
           @keydown.enter="submit"
           class="login-input"
-          v-model="username"
-          id="username"
+          id="email"
+          type="email"
         />
         <div style="text-align: left" class="text-small">
-          <label for="password">Password</label>
-        </div>
-        <input
-          @keydown.enter="submit"
-          type="password"
-          class="login-input"
-          v-model="password"
-          id="password"
-        />
-        <div style="display: flex; justify-content: space-between">
-          <div class="text-small">
-            <router-link to="/resetpassword">Forgot Password?</router-link>
-          </div>
-          <div class="text-small">
-            <router-link to="/register">Register?</router-link>
-          </div>
+          <router-link to="/login">Back to Login</router-link>
         </div>
         <button type="submit">Enter</button>
       </div>
@@ -58,16 +43,14 @@ export default {
     submit() {
       this.error = ""
       this.axios
-        .post("/api/login", {
-          username: this.username,
-          password: this.password
+        .post("/api/message", {
+          userName: this.imputUser,
+          messageContents: this.imputText
         })
-        .then((res) => {
-          localStorage.setItem("token", res.data.token)
-          Object.assign(this.axios.defaults, {
-            headers: { Authorization: res.data.token }
-          })
-          this.$router.push("/test")
+        .then(() => {
+          this.getMessages()
+          this.imputUser = ""
+          this.imputText = ""
         })
         .catch((e) => {
           this.error = e.response.data.message

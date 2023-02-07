@@ -43,7 +43,7 @@
         <div style="text-align: left" class="text-small">
           <router-link to="/login">Back to Login</router-link>
         </div>
-        <button @click="submit">Enter</button>
+        <button>Enter</button>
         <div class="error-message">
           {{ error }}
         </div>
@@ -82,13 +82,18 @@ export default {
         .catch((e) => {
           this.error = e.response.data.message
         })
+    },
+    user() {
+      this.axios.get("/api/user").then((res) => {
+        this.loggedIn = res.data
+      })
     }
   },
   mounted() {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/mainicon.ico"
 
-    this.getMessages()
+    this.user()
   }
 }
 </script>

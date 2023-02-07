@@ -28,7 +28,7 @@
         type="text"
       />
       <br />
-      <button @click="submit">Submit</button>
+      <button @click="submit">Send</button>
       <br />
       <div class="error-message">
         {{ error }}

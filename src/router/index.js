@@ -42,6 +42,11 @@ const routes = [
     component: () => import("../views/BetterTest/Register.vue")
   },
   {
+    path: "/resetpassword",
+    name: "resetpassword",
+    component: () => import("../views/BetterTest/ResetPassword.vue")
+  },
+  {
     path: "/deez",
     name: "69",
     component: () => import("../views/69.vue")
