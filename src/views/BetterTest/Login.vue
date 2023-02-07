@@ -39,6 +39,9 @@
           </div>
         </div>
         <button @click="submit">Enter</button>
+        <div class="error-message">
+          {{ error }}
+        </div>
       </div>
     </div>
   </div>
