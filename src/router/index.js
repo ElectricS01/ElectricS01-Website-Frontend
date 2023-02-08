@@ -1,11 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router"
 
-const isLoggedIn = () => {
-  this.axios.get("/api/user").then((res) => {
-    this.loggedIn = res.data
-  })
-}
-
 const routes = [
   {
     path: "/",
@@ -35,50 +29,22 @@ const routes = [
   {
     path: "/account",
     name: "account",
-    component: () => import("../views/BetterTest/Account.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!isLoggedIn) {
-        next("/test")
-      } else {
-        next()
-      }
-    }
+    component: () => import("../views/BetterTest/Account.vue")
   },
   {
     path: "/login",
     name: "login",
-    component: () => import("../views/BetterTest/Login.vue"),
-    beforeEnter: (to, from, next) => {
-      if (isLoggedIn) {
-        next("/test")
-      } else {
-        next()
-      }
-    }
+    component: () => import("../views/BetterTest/Login.vue")
   },
   {
     path: "/register",
     name: "register",
-    component: () => import("../views/BetterTest/Register.vue"),
-    beforeEnter: (to, from, next) => {
-      if (isLoggedIn) {
-        next("/test")
-      } else {
-        next()
-      }
-    }
+    component: () => import("../views/BetterTest/Register.vue")
   },
   {
     path: "/resetpassword",
     name: "resetpassword",
-    component: () => import("../views/BetterTest/ResetPassword.vue"),
-    beforeEnter: (to, from, next) => {
-      if (!isLoggedIn) {
-        next("/test")
-      } else {
-        next()
-      }
-    }
+    component: () => import("../views/BetterTest/ResetPassword.vue")
   },
   {
     path: "/deez",
