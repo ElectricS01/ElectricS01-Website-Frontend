@@ -59,6 +59,12 @@ export default {
           this.error = "Error 503 Cannot Connect to Server"
         })
     },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        this.$refs.messageContainer.scrollTop =
+          this.$refs.messageContainer.scrollHeight
+      })
+    },
     submit() {
       this.error = ""
       this.axios
@@ -87,6 +93,7 @@ export default {
     favicon.href = "/icons/mainicon.ico"
 
     this.getMessages()
+    this.scrollToBottom()
     this.user()
   }
 }
