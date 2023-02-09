@@ -7,7 +7,10 @@
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
-  <div style="text-align: left; padding-left: 16px; padding-top: 16px">
+  <div
+    ref="messageContainer"
+    style="text-align: left; padding-left: 16px; padding-top: 16px"
+  >
     <div v-for="message in messages" :key="message.id">
       <b class="message-text-large">
         {{ message.messageContents }}
