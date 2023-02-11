@@ -4,10 +4,11 @@ body {
     background-color: #181A1B;
 }
 
-.container {
+.center {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 main {
@@ -157,6 +158,20 @@ input {
         background-color: #3D3D3D;
         color: white;
     }
+}
+
+.loader {
+    border: 6px solid #282A2B;
+    border-top: 6px solid white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 a {

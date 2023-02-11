@@ -7,11 +7,19 @@
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
-  <div
-    ref="messageContainer"
-    style="text-align: left; padding-left: 16px; padding-top: 16px"
-  >
-    <div v-for="message in messages" :key="message.id">
+  <div style="text-align: left; padding-left: 16px; padding-top: 16px">
+    <div class="center">
+      <div
+        style="text-align: center"
+        v-if="loadingMessages"
+        class="loader"
+      ></div>
+    </div>
+    <div
+      v-for="(message, index) in messages"
+      :key="message.id"
+      :id="'message-' + index"
+    >
       <b class="message-text-large">
         {{ message.messageContents }}
       </b>
@@ -48,7 +56,8 @@ export default {
       messages: [],
       imputText: "",
       error: "",
-      loggedIn: false
+      loggedIn: false,
+      loadingMessages: true
     }
   },
   methods: {
@@ -57,16 +66,11 @@ export default {
         .get("/api/messages")
         .then((res) => {
           this.messages = res.data
+          this.loadingMessages = false
         })
         .catch(() => {
           this.error = "Error 503 Cannot Connect to Server"
         })
-    },
-    scrollToBottom() {
-      this.$nextTick(() => {
-        this.$refs.messageContainer.scrollTop =
-          this.$refs.messageContainer.scrollHeight
-      })
     },
     submit() {
       this.error = ""
@@ -76,6 +80,7 @@ export default {
         })
         .then(() => {
           this.getMessages()
+          this.scrollToBottom()
           this.imputText = ""
         })
         .catch((e) => {
@@ -89,14 +94,14 @@ export default {
       this.axios.get("/api/user").then((res) => {
         this.loggedIn = res.data
       })
-    }
+    },
+    async scroll() {}
   },
   mounted() {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/mainicon.ico"
 
     this.getMessages()
-    this.scrollToBottom()
     this.user()
   }
 }
