@@ -23,11 +23,6 @@
       <b class="message-text-large">
         {{ message.messageContents }}
       </b>
-      <Embed
-        v-for="(embed, index) in message.embeds"
-        :key="index"
-        :embed="embed"
-      ></Embed>
       <br />
       <b class="message-text-small">
         {{ message.user?.username }} {{ dayjs(message.createdAt) }}
@@ -37,7 +32,6 @@
   <div class="message-send" style="text-align: center">
     <div>
       <input
-        autofocus
         @keydown.enter="submit"
         id="nameField"
         class="responder"
@@ -56,9 +50,7 @@
 
 <script>
 import dayjs from "dayjs"
-import Embed from "@/components/Embed.vue"
 export default {
-  components: { Embed },
   data() {
     return {
       messages: [],
