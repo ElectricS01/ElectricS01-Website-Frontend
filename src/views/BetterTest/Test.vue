@@ -35,7 +35,7 @@
         @keydown.enter="submit"
         id="nameField"
         class="responder"
-        v-model="imputText"
+        v-model="inputText"
         type="text"
       />
       <br />
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       messages: [],
-      imputText: "",
+      inputText: "",
       error: "",
       loggedIn: false,
       loadingMessages: true
@@ -76,12 +76,11 @@ export default {
       this.error = ""
       this.axios
         .post("/api/message", {
-          messageContents: this.imputText
+          messageContents: this.inputText
         })
         .then(() => {
           this.getMessages()
-          this.scrollToBottom()
-          this.imputText = ""
+          this.inputText = ""
         })
         .catch((e) => {
           this.error = e.response.data.message
@@ -95,7 +94,25 @@ export default {
         this.loggedIn = res.data
       })
     },
-    async scroll() {}
+    async scroll() {
+      try {
+        const lastIndex = this.messages.length - 1
+        const lastMessage = document.querySelector(`#message-${lastIndex}`)
+        lastMessage.scrollIntoView()
+        console.log("test")
+        this.autoScrollRetry = 0
+      } catch (e) {
+        console.log(e)
+        if (this.autoScrollRetry < 20) {
+          setTimeout(() => {
+            this.autoScroll()
+          }, 50)
+          this.autoScrollRetry++
+        } else {
+          console.log("Could not auto scroll, retry limit reached")
+        }
+      }
+    }
   },
   mounted() {
     const favicon = document.getElementById("favicon")
@@ -103,6 +120,7 @@ export default {
 
     this.getMessages()
     this.user()
+    this.scroll()
   }
 }
 </script>

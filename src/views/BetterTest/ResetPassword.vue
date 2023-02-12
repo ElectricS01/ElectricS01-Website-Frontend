@@ -45,12 +45,12 @@ export default {
       this.axios
         .post("/api/message", {
           userName: this.imputUser,
-          messageContents: this.imputText
+          messageContents: this.inputText
         })
         .then(() => {
           this.getMessages()
           this.imputUser = ""
-          this.imputText = ""
+          this.inputText = ""
         })
         .catch((e) => {
           this.error = e.response.data.message
