@@ -61,8 +61,8 @@ export default {
     }
   },
   methods: {
-    getMessages() {
-      this.axios
+    async getMessages() {
+      await this.axios
         .get("/api/messages")
         .then((res) => {
           this.messages = res.data
@@ -99,28 +99,19 @@ export default {
         const lastIndex = this.messages.length - 1
         const lastMessage = document.querySelector(`#message-${lastIndex}`)
         lastMessage.scrollIntoView()
-        console.log("test")
         this.autoScrollRetry = 0
       } catch (e) {
         console.log(e)
-        if (this.autoScrollRetry < 20) {
-          setTimeout(() => {
-            this.autoScroll()
-          }, 50)
-          this.autoScrollRetry++
-        } else {
-          console.log("Could not auto scroll, retry limit reached")
-        }
       }
     }
   },
-  mounted() {
+  async mounted() {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/mainicon.ico"
 
-    this.getMessages()
+    await this.getMessages()
     this.user()
-    this.scroll()
+    await this.scroll()
   }
 }
 </script>
