@@ -39,7 +39,6 @@
       <input
         autofocus
         @keydown.enter="submit"
-        id="nameField"
         class="responder"
         v-model="inputText"
         type="text"
