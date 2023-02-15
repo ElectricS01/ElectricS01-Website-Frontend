@@ -106,9 +106,13 @@ export default {
         const lastIndex = this.messages.length - 1
         const lastMessage = document.querySelector(`#message-${lastIndex}`)
         lastMessage.scrollIntoView()
-        this.autoScrollRetry = 0
       } catch (e) {
         console.log(e)
+      }
+    },
+    escPressed(event) {
+      if (event.key === "Escape") {
+        this.scroll()
       }
     }
   },
@@ -116,9 +120,14 @@ export default {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/mainicon.ico"
 
+    document.addEventListener("keydown", this.escPressed)
+
     await this.getMessages()
     this.user()
     await this.scroll()
+  },
+  unmounted() {
+    document.removeEventListener("keydown", this.escPressed)
   }
 }
 </script>
