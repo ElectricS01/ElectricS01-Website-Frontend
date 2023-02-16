@@ -74,9 +74,20 @@ button:hover {
     left: 0;
     right: 0;
     z-index: 1;
-    border-top-left-radius: 28px;
-    border-top-right-radius: 28px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
     text-align: left;
+    padding: 4px 12px;
+}
+
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
 }
 
 .topnav a {

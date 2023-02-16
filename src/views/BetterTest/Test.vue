@@ -35,9 +35,11 @@
     </div>
   </div>
   <div>
-    <button v-if="scrolledUp" class="scroll-button" @click="scroll">
-      <Icons color="white" width="12" height="12" />Scroll to bottom
-    </button>
+    <transition>
+      <button v-if="scrolledUp" class="scroll-button" @click="scroll">
+        <Icons color="white" width="12" height="12" />Scroll to bottom
+      </button>
+    </transition>
     <div class="message-send" style="text-align: center">
       <div>
         <input
@@ -70,7 +72,7 @@ export default {
       error: "",
       loggedIn: false,
       loadingMessages: true,
-      scrolledUp: true
+      scrolledUp: false
     }
   },
   methods: {
@@ -109,10 +111,10 @@ export default {
     },
     async scroll() {
       try {
-        this.scrolledUp = false
         const lastIndex = this.messages.length - 1
         const lastMessage = document.querySelector(`#message-${lastIndex}`)
         lastMessage.scrollIntoView()
+        this.scrolledUp = false
       } catch (e) {
         console.log(e)
       }
@@ -121,6 +123,15 @@ export default {
       if (event.key === "Escape") {
         this.scroll()
       }
+    },
+    scrollEvent() {
+      const scrollHeight = document.documentElement.scrollHeight
+      const scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop
+      const clientHeight = document.documentElement.clientHeight
+
+      this.scrolledUp =
+        scrollTop + clientHeight <= scrollHeight - clientHeight / 10
     }
   },
   async mounted() {
@@ -128,13 +139,21 @@ export default {
     favicon.href = "/icons/mainicon.ico"
 
     document.addEventListener("keydown", this.escPressed)
+    document.addEventListener("scroll", this.scrollEvent)
 
     await this.getMessages()
     this.user()
     await this.scroll()
   },
+  beforeRouteLeave(to, from, next) {
+    //gets here and the route is changed, but this event is not removed
+    document.removeEventListener("keydown", this.escPressed)
+    document.removeEventListener("scroll", this.scrollEvent)
+    next()
+  },
   unmounted() {
     document.removeEventListener("keydown", this.escPressed)
+    document.removeEventListener("scroll", this.scrollEvent)
   }
 }
 </script>
