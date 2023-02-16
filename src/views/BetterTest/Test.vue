@@ -34,20 +34,24 @@
       </b>
     </div>
   </div>
-  <div class="message-send" style="text-align: center">
-    <div>
-      <input
-        autofocus
-        @keydown.enter="submit"
-        class="responder"
-        v-model="inputText"
-        type="text"
-      />
-      <br />
-      <button @click="submit">Send</button>
-      <br />
-      <div class="error-message">
-        {{ error }}
+  <div>
+    <button v-if="scrolledUp" class="scroll-button" @click="scroll">
+      <Icons color="white" width="12" height="12" />Scroll to bottom
+    </button>
+    <div class="message-send" style="text-align: center">
+      <div>
+        <input
+          autofocus
+          @keydown.enter="submit"
+          class="responder"
+          v-model="inputText"
+          type="text"
+        />
+        <button @click="submit">Send</button>
+        <br />
+        <div class="error-message">
+          {{ error }}
+        </div>
       </div>
     </div>
   </div>
@@ -56,15 +60,17 @@
 <script>
 import dayjs from "dayjs"
 import Embed from "@/components/Embed.vue"
+import Icons from "@/components/Icons.vue"
 export default {
-  components: { Embed },
+  components: { Icons, Embed },
   data() {
     return {
       messages: [],
       inputText: "",
       error: "",
       loggedIn: false,
-      loadingMessages: true
+      loadingMessages: true,
+      scrolledUp: true
     }
   },
   methods: {
@@ -103,6 +109,7 @@ export default {
     },
     async scroll() {
       try {
+        this.scrolledUp = false
         const lastIndex = this.messages.length - 1
         const lastMessage = document.querySelector(`#message-${lastIndex}`)
         lastMessage.scrollIntoView()

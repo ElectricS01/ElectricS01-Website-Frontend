@@ -4,7 +4,7 @@
     <div className="wrapper">
       <div className="form-uname">
         <label id="nameLabel" htmlFor="nameField">Calculate: </label>
-        <input id="nameField" v-model="expression" type="text"/>
+        <input id="nameField" v-model="expression" type="text" class="text" />
       </div>
       <div>
         <p id="result">{{ result }}</p>
