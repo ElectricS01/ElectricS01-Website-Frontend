@@ -126,7 +126,7 @@ export default {
     },
     escPressed(event) {
       if (event.key === "Escape") {
-        this.scroll()
+        this.scroll(true)
       }
     },
     scrollEvent() {
