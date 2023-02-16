@@ -82,6 +82,7 @@ export default {
         .then((res) => {
           this.messages = res.data
           this.loadingMessages = false
+          this.scroll()
         })
         .catch(() => {
           this.error = "Error 503 Cannot Connect to Server"
@@ -109,15 +110,19 @@ export default {
         this.loggedIn = res.data
       })
     },
-    async scroll() {
-      try {
-        const lastIndex = this.messages.length - 1
-        const lastMessage = document.querySelector(`#message-${lastIndex}`)
-        lastMessage.scrollIntoView()
-        this.scrolledUp = false
-      } catch (e) {
-        console.log(e)
-      }
+    scroll(override) {
+      this.$nextTick(() => {
+        try {
+          if (!this.scrolledUp || override) {
+            const lastIndex = this.messages.length - 1
+            const lastMessage = document.querySelector(`#message-${lastIndex}`)
+            lastMessage.scrollIntoView()
+            this.scrolledUp = false
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      })
     },
     escPressed(event) {
       if (event.key === "Escape") {
@@ -143,7 +148,7 @@ export default {
 
     await this.getMessages()
     this.user()
-    await this.scroll()
+    this.scroll(true)
   },
   beforeRouteLeave(to, from, next) {
     //gets here and the route is changed, but this event is not removed
