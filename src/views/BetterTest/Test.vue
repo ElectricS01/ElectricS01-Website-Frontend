@@ -19,25 +19,35 @@
       v-for="(message, index) in messages"
       :key="message.id"
       :id="'message-' + index"
+      class="message-grid"
     >
-      <b class="message-text-large">
-        {{ message.messageContents }}
-      </b>
-      <Embed
-        v-for="(embed, index) in message.embeds"
-        :key="index"
-        :embed="embed"
-      ></Embed>
-      <br />
-      <b class="message-text-small">
-        {{ message.user?.username }} {{ dayjs(message.createdAt) }}
-      </b>
+      <Icons
+        class="message-item"
+        color="white"
+        width="32"
+        height="32"
+        icon="account"
+      />
+      <div class="message-item">
+        <b class="message-text-large">
+          {{ message.messageContents }}
+        </b>
+        <Embed
+          v-for="(embed, index) in message.embeds"
+          :key="index"
+          :embed="embed"
+        ></Embed>
+        <b class="message-text-small">
+          {{ message.user?.username }} {{ dayjs(message.createdAt) }}
+        </b>
+      </div>
     </div>
   </div>
   <div>
     <transition>
       <button v-if="scrolledUp" class="scroll-button" @click="scroll">
-        <Icons color="white" width="12" height="12" />Scroll to bottom
+        <Icons color="white" width="12" height="12" icon="down-arrow" />Scroll
+        to bottom
       </button>
     </transition>
     <div class="message-send" style="text-align: center">
