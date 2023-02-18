@@ -1,4 +1,20 @@
 <template>
+  <modal :is-active="profileShown" @close="profileShown = false">
+    <div class="message-grid">
+      <Icons
+        @click="openUser"
+        class="message-item"
+        color="white"
+        width="64"
+        height="64"
+        icon="account"
+      />
+      <div class="message-item">
+        <h4>Username</h4>
+        <p>User description</p>
+      </div>
+    </div>
+  </modal>
   <div class="topnav" id="mobile-topnav">
     <router-link to="/test">Better Test</router-link>
     <router-link v-if="loggedIn" class="right" to="/account"
@@ -22,6 +38,7 @@
       class="message-grid"
     >
       <Icons
+        @click="openUser"
         class="message-item"
         color="white"
         width="32"
@@ -73,14 +90,17 @@
 import dayjs from "dayjs"
 import Embed from "@/components/Embed.vue"
 import Icons from "@/components/Icons.vue"
+import Modal from "@/components/Modal.vue"
+;``
 export default {
-  components: { Icons, Embed },
+  components: { Icons, Embed, Modal },
   data() {
     return {
       messages: [],
       inputText: "",
       error: "",
       loggedIn: false,
+      profileShown: false,
       loadingMessages: true,
       scrolledUp: false
     }
@@ -134,6 +154,9 @@ export default {
         }
       })
     },
+    openUser() {
+      this.profileShown = true
+    },
     escPressed(event) {
       if (event.key === "Escape") {
         this.scroll(true)
@@ -161,7 +184,6 @@ export default {
     this.scroll(true)
   },
   beforeRouteLeave(to, from, next) {
-    //gets here and the route is changed, but this event is not removed
     document.removeEventListener("keydown", this.escPressed)
     document.removeEventListener("scroll", this.scrollEvent)
     next()

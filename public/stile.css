@@ -141,12 +141,12 @@ button:hover {
 .message-grid {
     display: flex;
     justify-content: flex-start;
-    align-items: stretch;
+    align-items: center;
 }
 .message-item {
     display: flex;
     flex-direction: column;
-    align-self: flex-end;
+    align-self: flex-start;
 }
 
 input {
@@ -238,10 +238,17 @@ h1 {
 h2 {
     color: white;
     margin-top: 67.5px;
+    font-size: 24px;
 }
 
 h3 {
     color: white;
+}
+
+h4 {
+    color: white;
+    font-size: 24px;
+    margin: 0;
 }
 
 .message-text-large {
