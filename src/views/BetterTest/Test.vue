@@ -1,17 +1,30 @@
 <template>
-  <modal :is-active="profileShown" @close="profileShown = false">
+  <modal
+    v-if="showUser"
+    :is-active="profileShown"
+    @close="profileShown = false"
+  >
     <div class="message-grid">
       <Icons
-        @click="openUser"
+        v-if="!showUser.avatar"
         class="message-item"
         color="white"
         width="64"
         height="64"
         icon="account"
+        style="margin-right: 8px"
+      />
+      <img
+        style="border-radius: 32px; object-fit: cover; margin-right: 8px"
+        class="message-item"
+        width="64"
+        height="64"
+        v-else
+        :src="showUser.avatar"
       />
       <div class="message-item">
-        <h4>Username</h4>
-        <p>User description</p>
+        <h4>{{ showUser.username }}</h4>
+        <p>{{ showUser.description || `Hi, I'm ${showUser.username}!` }}</p>
       </div>
     </div>
   </modal>
@@ -39,17 +52,18 @@
     >
       <Icons
         v-if="!message.user.avatar"
-        @click="openUser"
+        @click="openUser(message.user?.id)"
         class="message-item"
         color="white"
         width="32"
         height="32"
         icon="account"
+        style="margin-right: 8px"
       />
       <img
-        style="border-radius: 16px; object-fit: cover"
+        style="border-radius: 16px; object-fit: cover; margin-right: 8px"
         class="message-item"
-        @click="openUser"
+        @click="openUser(message.user?.id)"
         width="32"
         height="32"
         v-else
@@ -112,7 +126,8 @@ export default {
       loggedIn: false,
       profileShown: false,
       loadingMessages: true,
-      scrolledUp: false
+      scrolledUp: false,
+      showUser: false
     }
   },
   methods: {
@@ -164,8 +179,11 @@ export default {
         }
       })
     },
-    openUser() {
-      this.profileShown = true
+    openUser(userId) {
+      this.axios.get("/api/user/" + userId).then((res) => {
+        this.showUser = res.data
+        this.profileShown = true
+      })
     },
     escPressed(event) {
       if (event.key === "Escape") {
