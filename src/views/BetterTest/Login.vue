@@ -1,12 +1,17 @@
 <template>
   <div class="topnav" id="mobile-topnav">
     <router-link to="/test">Better Test</router-link>
-    <router-link v-if="loggedIn" class="right" to="/account"
-      >Account</router-link
-    >
+    <router-link v-if="loggedIn" class="right" to="/account">
+      Account
+    </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
+  <transition>
+    <p v-if="error" class="error-button">
+      {{ error }}
+    </p>
+  </transition>
   <div class="grid-login">
     <div style="text-align: center" class="login-menu">
       <div class="login-card">
@@ -39,9 +44,6 @@
           </div>
         </div>
         <button @click="submit">Enter</button>
-        <div class="error-message">
-          {{ error }}
-        </div>
       </div>
     </div>
   </div>

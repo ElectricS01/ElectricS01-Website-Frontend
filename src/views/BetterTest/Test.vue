@@ -36,6 +36,11 @@
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
+  <transition>
+    <p v-if="error" class="error-button">
+      {{ error }}
+    </p>
+  </transition>
   <div style="text-align: left; padding-left: 16px; padding-top: 16px">
     <div class="center">
       <div
@@ -92,21 +97,16 @@
       </button>
     </transition>
     <div class="message-send" style="text-align: center">
-      <div>
-        <input
-          placeholder="Send a message"
-          autofocus
-          @keydown.enter="submit"
-          class="responder"
-          v-model="inputText"
-          type="text"
-        />
-        <button @click="submit">Send</button>
-        <br />
-        <div class="error-message">
-          {{ error }}
-        </div>
-      </div>
+      <input
+        placeholder="Send a message"
+        autofocus
+        @keydown.enter="submit"
+        class="responder"
+        v-model="inputText"
+        type="text"
+      />
+      <button @click="submit">Send</button>
+      <br />
     </div>
   </div>
 </template>
@@ -156,7 +156,11 @@ export default {
         })
         .catch((e) => {
           this.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
         })
+    },
+    errorFalse() {
+      this.error = false
     },
     dayjs(date) {
       return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
