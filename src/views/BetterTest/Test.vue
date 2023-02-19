@@ -17,9 +17,9 @@
   </modal>
   <div class="topnav" id="mobile-topnav">
     <router-link to="/test">Better Test</router-link>
-    <router-link v-if="loggedIn" class="right" to="/account"
-      >Account</router-link
-    >
+    <router-link v-if="loggedIn" class="right" to="/account">
+      Account
+    </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
@@ -38,12 +38,22 @@
       class="message-grid"
     >
       <Icons
+        v-if="!message.user.avatar"
         @click="openUser"
         class="message-item"
         color="white"
         width="32"
         height="32"
         icon="account"
+      />
+      <img
+        style="border-radius: 16px; object-fit: cover"
+        class="message-item"
+        @click="openUser"
+        width="32"
+        height="32"
+        v-else
+        :src="message.user.avatar"
       />
       <div class="message-item">
         <b class="message-text-large">
@@ -63,8 +73,8 @@
   <div>
     <transition>
       <button v-if="scrolledUp" class="scroll-button" @click="scroll">
-        <Icons color="white" width="12" height="12" icon="down-arrow" />Scroll
-        to bottom
+        <Icons color="white" width="12" height="12" icon="down-arrow" />
+        Scroll to bottom
       </button>
     </transition>
     <div class="message-send" style="text-align: center">
