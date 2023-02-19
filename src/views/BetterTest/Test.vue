@@ -94,6 +94,7 @@
     <div class="message-send" style="text-align: center">
       <div>
         <input
+          placeholder="Send a message"
           autofocus
           @keydown.enter="submit"
           class="responder"

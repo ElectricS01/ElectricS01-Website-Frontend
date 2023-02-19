@@ -222,6 +222,10 @@ input {
     color: white;
 }
 
+.responder:focus {
+    outline: 1px solid white;
+}
+
 a {
     text-decoration: none;
     color: white;
