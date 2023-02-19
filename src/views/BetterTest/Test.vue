@@ -176,8 +176,10 @@ export default {
           if (!this.scrolledUp || override) {
             const lastIndex = this.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
-            lastMessage.scrollIntoView()
-            this.scrolledUp = false
+            if (lastMessage) {
+              lastMessage.scrollIntoView()
+              this.scrolledUp = false
+            }
           }
         } catch (e) {
           console.log(e)
@@ -212,8 +214,8 @@ export default {
     document.addEventListener("keydown", this.escPressed)
     document.addEventListener("scroll", this.scrollEvent)
 
-    await this.getMessages()
     this.user()
+    await this.getMessages()
     this.scroll(true)
   },
   beforeRouteLeave(to, from, next) {
