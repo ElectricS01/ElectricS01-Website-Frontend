@@ -12,7 +12,7 @@
         <router-link to="/tonkgame">
           <div class="border">
             <img
-              src="../assets/tonkgame.png"
+              src="../assets/tonkgame.webp"
               alt="TonkGame By ElectricS01"
               style="width: 300px; height: 300px"
             />
@@ -24,7 +24,7 @@
         <router-link to="/tetris">
           <div class="border">
             <img
-              src="../assets/tetris.png"
+              src="../assets/tetris.webp"
               alt="Tetris By ElectricS01"
               style="width: 300px; height: 300px"
             />
@@ -36,7 +36,7 @@
         <a href="https://bettercompassclub.netlify.app">
           <div class="border">
             <img
-              src="../assets/bettercompassclub.png"
+              src="../assets/bettercompassclub.webp"
               alt="BetterCompass Club By ElectricS01"
               style="width: 300px; height: 300px"
             />
@@ -48,7 +48,7 @@
     <br />
     <a href="https://www.youtube.com/electrics01" title="Go to My Youtube">
       <img
-        src="../assets/youtube.png"
+        src="../assets/youtube.webp"
         alt="My Youtube"
         style="width: 18px; height: 12px"
       />
@@ -58,7 +58,7 @@
     <br />
     <a href="https://electrics01.itch.io" title="Go to My Itch.io">
       <img
-        src="../assets/itch-io.png"
+        src="../assets/itch-io.webp"
         alt="My Itch.io"
         style="width: 18px; height: 12px"
       />
@@ -68,7 +68,7 @@
     <br />
     <a href="https://github.com/ElectricS01" title="Go to My GitHub">
       <img
-        src="../assets/github.png"
+        src="../assets/github.webp"
         alt="My GitHub"
         style="width: 18px; height: 12px"
       />
@@ -81,7 +81,7 @@
       title="Go to My Discord"
     >
       <img
-        src="../assets/discord.png"
+        src="../assets/discord.webp"
         alt="My Discord"
         style="width: 18px; height: 12px"
       />
