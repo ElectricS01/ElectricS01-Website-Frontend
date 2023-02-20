@@ -15,6 +15,7 @@ main {
     flex: 1;
 }
 
+.edit,
 .button a,
 button {
     background-color: #282A2B;
@@ -25,10 +26,11 @@ button {
     font-size: 17px;
     border: none;
 }
+
+.edit,
 .button a:hover,
 button:hover {
-    background-color: #2D2F31;
-    color: white;
+    background-color: #313435;
 }
 
 .topnav {
@@ -86,7 +88,7 @@ button:hover {
 
 .v-enter-active,
 .v-leave-active {
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
 }
 
 .v-enter-from,
@@ -105,7 +107,7 @@ button:hover {
 }
 
 .topnav a:hover {
-    background-color: #2D2F31;
+    background-color: #313435;
     color: white;
 }
 

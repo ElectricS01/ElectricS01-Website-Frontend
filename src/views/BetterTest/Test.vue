@@ -1,33 +1,36 @@
 <template>
-  <modal
-    v-if="showUser"
-    :is-active="profileShown"
-    @close="profileShown = false"
-  >
-    <div class="message-grid">
-      <Icons
-        v-if="!showUser.avatar"
-        class="message-item"
-        color="white"
-        width="64"
-        height="64"
-        icon="account"
-        style="margin-right: 8px"
-      />
-      <img
-        style="border-radius: 32px; object-fit: cover; margin-right: 8px"
-        class="message-item"
-        width="64"
-        height="64"
-        v-else
-        :src="showUser.avatar"
-      />
-      <div class="message-item">
-        <h4>{{ showUser.username }}</h4>
-        <p>{{ showUser.description || `Hi, I'm ${showUser.username}!` }}</p>
+  <transition>
+    <modal
+      v-if="profileShown"
+      :is-active="profileShown"
+      @close="profileShown = false"
+    >
+      <div class="message-grid">
+        <Icons
+          v-if="!showUser.avatar"
+          class="message-item"
+          color="white"
+          width="64"
+          height="64"
+          icon="account"
+          style="margin-right: 8px"
+        />
+        <img
+          style="border-radius: 32px; object-fit: cover; margin-right: 8px"
+          class="message-item"
+          width="64"
+          height="64"
+          v-else
+          :src="showUser.avatar"
+          alt="Profile icon"
+        />
+        <div class="message-item">
+          <h4>{{ showUser.username }}</h4>
+          <p>{{ showUser.description || `Hi, I'm ${showUser.username}!` }}</p>
+        </div>
       </div>
-    </div>
-  </modal>
+    </modal>
+  </transition>
   <div class="topnav" id="mobile-topnav">
     <router-link to="/test">Better Test</router-link>
     <router-link v-if="loggedIn" class="right" to="/account">
@@ -73,6 +76,7 @@
         height="32"
         v-else
         :src="message.user.avatar"
+        alt="Profile icon"
       />
       <div class="message-item">
         <b class="message-text-large">

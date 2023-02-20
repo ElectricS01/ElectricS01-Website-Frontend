@@ -1,15 +1,26 @@
 <template>
   <div class="modal" :class="{ 'is-active': isActive }" @click="closeModal">
     <div class="modal-content" @click.stop>
+      <button class="modal-close" @click="closeModal">
+        <icons
+          color="white"
+          width="40"
+          height="40"
+          icon="close"
+          style="padding: 4px"
+        ></icons>
+      </button>
       <slot></slot>
     </div>
-    <button class="modal-close" aria-label="close" @click="closeModal"></button>
   </div>
 </template>
 
 <script>
+import Icons from "@/components/Icons.vue"
+
 export default {
   name: "Modal",
+  components: { Icons },
   props: {
     isActive: {
       type: Boolean,
@@ -37,7 +48,12 @@ export default {
 }
 
 .modal-close {
+  font-size: 0;
   position: absolute;
+  top: 24px;
+  right: 24px;
+  padding: 0;
+  border-radius: 24px;
 }
 
 .is-active {
@@ -47,6 +63,7 @@ export default {
 }
 
 .modal-content {
+  position: relative;
   background-color: #282a2b;
   padding: 24px;
   width: 500px;
