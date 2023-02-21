@@ -65,7 +65,6 @@ export default {
 .modal-content {
   position: relative;
   background-color: #282a2b;
-  padding: 24px;
   width: 500px;
   height: 600px;
   overflow-y: auto;

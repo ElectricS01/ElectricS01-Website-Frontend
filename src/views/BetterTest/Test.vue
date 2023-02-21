@@ -5,7 +5,13 @@
       :is-active="profileShown"
       @close="profileShown = false"
     >
-      <div class="message-grid">
+      <img
+        :src="showUser.banner || 'https://i.troplo.com/i/d81dabf74c88.png'"
+        width="500"
+        height="100"
+        style="object-fit: cover"
+      />
+      <div class="message-grid" style="padding: 24px">
         <Icons
           v-if="!showUser.avatar"
           class="message-item"
