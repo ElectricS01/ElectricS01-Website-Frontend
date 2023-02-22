@@ -10,30 +10,81 @@
         width="500"
         height="100"
         style="object-fit: cover"
+        alt="Profile banner"
       />
       <div class="message-grid" style="padding: 24px">
-        <Icons
-          v-if="!showUser.avatar"
-          class="message-item"
-          color="white"
-          width="64"
-          height="64"
-          icon="account"
-          style="margin-right: 8px"
-        />
-        <img
-          style="border-radius: 32px; object-fit: cover; margin-right: 8px"
-          class="message-item"
-          width="64"
-          height="64"
-          v-else
-          :src="showUser.avatar"
-          alt="Profile icon"
-        />
-        <div class="message-item">
-          <h4>{{ showUser.username }}</h4>
-          <p>{{ showUser.description || `Hi, I'm ${showUser.username}!` }}</p>
+        <div class="profile-picture">
+          <Icons
+            v-if="!showUser.avatar"
+            class="message-item"
+            color="white"
+            width="80"
+            height="80"
+            icon="account"
+            style="margin: 0"
+          />
+          <img
+            style="border-radius: 40px; object-fit: cover; margin: 0"
+            class="message-item"
+            width="80"
+            height="80"
+            v-else
+            :src="showUser.avatar"
+            alt="Profile icon"
+          />
+          <svg class="online-indicator" width="24" height="24">
+            <circle cx="8" cy="8" r="6" fill="#47bf4c" />
+          </svg>
         </div>
+        <div style="flex-grow: 1; margin: 0" class="message-item">
+          <h4>{{ showUser.username }}</h4>
+          <p class="message-text-large" style="margin: 0">
+            {{ showUser.statusMessage }}
+          </p>
+        </div>
+        <button
+          v-if="showUser.directMessages"
+          style="
+            display: flex;
+            justify-content: flex-start;
+            align-items: stretch;
+            color: #1e90ff;
+          "
+          class="profile-button"
+        >
+          <Icons
+            style="top: 0; padding-right: 4px"
+            color="#1e90ff"
+            width="16"
+            height="16"
+            icon="message"
+          />
+          Send Message
+        </button>
+        <button
+          v-if="showUser.friendRequests"
+          style="
+            display: flex;
+            justify-content: flex-start;
+            align-items: stretch;
+          "
+          class="profile-button"
+        >
+          <Icons
+            style="top: 0; padding-right: 4px"
+            color="#47bf4c"
+            width="16"
+            height="16"
+            icon="add-user"
+          />
+          Add Friend
+        </button>
+      </div>
+      <div style="padding: 24px">
+        <p>Description</p>
+        <p class="message-text-large" style="margin: 0">
+          {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
+        </p>
       </div>
     </modal>
   </transition>

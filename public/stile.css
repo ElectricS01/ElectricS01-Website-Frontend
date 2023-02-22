@@ -15,7 +15,6 @@ main {
     flex: 1;
 }
 
-.edit,
 .button a,
 button {
     background-color: #282A2B;
@@ -27,10 +26,34 @@ button {
     border: none;
 }
 
-.edit,
 .button a:hover,
 button:hover {
     background-color: #313435;
+}
+
+.profile-button {
+    background-color: #282A2B;
+    color: #47bf4c;
+    text-align: center;
+    padding: 8px 8px;
+    text-decoration: none;
+    font-size: 14px;
+    border: none;
+
+}
+
+.add-friend:hover {
+    background-color: rgb(71, 191, 76,0.1);
+}
+
+.profile-picture {
+    position: relative;
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 .topnav {
@@ -260,7 +283,8 @@ h3 {
 h4 {
     color: white;
     font-size: 24px;
-    margin: 0;
+    margin-top: 16px;
+    margin-bottom: 4px;
 }
 
 .message-text-large {
