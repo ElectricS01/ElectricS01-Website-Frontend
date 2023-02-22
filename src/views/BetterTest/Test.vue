@@ -44,13 +44,8 @@
         </div>
         <button
           v-if="showUser.directMessages"
-          style="
-            display: flex;
-            justify-content: flex-start;
-            align-items: stretch;
-            color: #1e90ff;
-          "
-          class="profile-button"
+          style="color: #1e90ff"
+          class="profile-button-message"
         >
           <Icons
             style="top: 0; padding-right: 4px"
@@ -61,15 +56,7 @@
           />
           Send Message
         </button>
-        <button
-          v-if="showUser.friendRequests"
-          style="
-            display: flex;
-            justify-content: flex-start;
-            align-items: stretch;
-          "
-          class="profile-button"
-        >
+        <button v-if="showUser.friendRequests" class="profile-button-add">
           <Icons
             style="top: 0; padding-right: 4px"
             color="#47bf4c"

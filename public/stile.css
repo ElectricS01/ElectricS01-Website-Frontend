@@ -30,8 +30,8 @@ button {
 button:hover {
     background-color: #313435;
 }
-
-.profile-button {
+.profile-button-message,
+.profile-button-add {
     background-color: #282A2B;
     color: #47bf4c;
     text-align: center;
@@ -39,10 +39,17 @@ button:hover {
     text-decoration: none;
     font-size: 14px;
     border: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
 
 }
 
-.add-friend:hover {
+.profile-button-message:hover {
+    background-color: rgb(30, 144, 255,0.1);
+}
+
+.profile-button-add:hover {
     background-color: rgb(71, 191, 76,0.1);
 }
 
