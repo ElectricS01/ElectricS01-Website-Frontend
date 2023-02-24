@@ -13,7 +13,7 @@
         alt="Profile banner"
       />
       <div class="message-grid" style="padding: 24px">
-        <div class="profile-picture">
+        <div class="profile-picture" style="margin-right: 16px">
           <Icons
             v-if="!showUser.avatar"
             class="message-item"
@@ -32,7 +32,7 @@
             :src="showUser.avatar"
             alt="Profile icon"
           />
-          <svg class="online-indicator" width="24" height="24">
+          <svg class="online-indicator" width="20" height="20">
             <circle cx="8" cy="8" r="6" fill="#47bf4c" />
           </svg>
         </div>
@@ -42,30 +42,36 @@
             {{ showUser.statusMessage }}
           </p>
         </div>
-        <button
-          v-if="showUser.directMessages"
-          style="color: #1e90ff"
-          class="profile-button-message"
-        >
-          <Icons
-            style="top: 0; padding-right: 4px"
-            color="#1e90ff"
-            width="16"
-            height="16"
-            icon="message"
-          />
-          Send Message
-        </button>
-        <button v-if="showUser.friendRequests" class="profile-button-add">
-          <Icons
-            style="top: 0; padding-right: 4px"
-            color="#47bf4c"
-            width="16"
-            height="16"
-            icon="add-user"
-          />
-          Add Friend
-        </button>
+        <div>
+          <button
+            v-if="showUser.directMessages"
+            style="color: #1e90ff; width: 100%"
+            class="profile-button-message"
+          >
+            <Icons
+              style="top: 0; padding-right: 4px"
+              color="#1e90ff"
+              width="16"
+              height="16"
+              icon="message"
+            />
+            Send Message
+          </button>
+          <button
+            v-if="showUser.friendRequests"
+            class="profile-button-add"
+            style="width: 100%"
+          >
+            <Icons
+              style="top: 0; padding-right: 4px"
+              color="#47bf4c"
+              width="16"
+              height="16"
+              icon="add-user"
+            />
+            Add Friend
+          </button>
+        </div>
       </div>
       <div style="padding: 24px">
         <p>Description</p>
@@ -126,11 +132,11 @@
         <b class="message-text-large">
           {{ message.messageContents }}
         </b>
-        <Embed
+        <Embeds
           v-for="(embed, index) in message.embeds"
           :key="index"
           :embed="embed"
-        ></Embed>
+        ></Embeds>
         <b class="message-text-small">
           {{ message.user?.username }} {{ dayjs(message.createdAt) }}
         </b>
@@ -161,12 +167,12 @@
 
 <script>
 import dayjs from "dayjs"
-import Embed from "@/components/Embed.vue"
+import Embeds from "@/components/Embeds.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 ;``
 export default {
-  components: { Icons, Embed, Modal },
+  components: { Icons, Embeds, Modal },
   data() {
     return {
       messages: [],

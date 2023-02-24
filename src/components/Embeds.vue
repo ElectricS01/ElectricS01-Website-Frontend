@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "Embed",
+  name: "Embeds",
   props: ["embed"]
 }
 </script>

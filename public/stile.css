@@ -199,6 +199,10 @@ input {
     color: white;
 }
 
+input:focus {
+    outline: 1px solid white;
+}
+
 @media screen and (max-width: 600px) {
     .topnav a:not(:first-child) {
         display: none;
@@ -258,10 +262,6 @@ input {
     box-sizing: border-box;
     background-color: #3D3D3D;
     color: white;
-}
-
-input:focus {
-    outline: 1px solid white;
 }
 
 a {
