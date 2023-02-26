@@ -44,7 +44,7 @@
         </div>
         <div>
           <button
-            v-if="showUser.directMessages"
+            v-if="showUser.directMessages && showUser.id !== loggedIn"
             style="color: #1e90ff; width: 100%"
             class="profile-button-message"
           >
@@ -58,7 +58,7 @@
             Send Message
           </button>
           <button
-            v-if="showUser.friendRequests"
+            v-if="showUser.friendRequests && showUser.id !== loggedIn"
             class="profile-button-add"
             style="width: 100%"
           >
@@ -222,6 +222,7 @@ export default {
     user() {
       this.axios.get("/api/user").then((res) => {
         this.loggedIn = res.data
+        console.log(this.loggedIn)
       })
     },
     scroll(override) {
