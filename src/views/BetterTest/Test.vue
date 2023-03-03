@@ -168,7 +168,10 @@
         :src="message.user.avatar"
         alt="Profile icon"
       />
-      <div class="message-item">
+      <div
+        class="message-item"
+        style="max-width: calc(100% - 40px); overflow-wrap: break-word"
+      >
         <div style="line-height: 11.5px">
           <b
             class="message-text-medium"
