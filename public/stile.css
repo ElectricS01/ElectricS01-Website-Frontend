@@ -74,7 +74,6 @@ button:hover {
 }
 
 .message-send {
-    margin-top:200px;
     overflow: hidden;
     background-color: #282A2B;
     position: fixed;
@@ -302,6 +301,16 @@ h4 {
 .message-text-large {
     color: white;
     font-size:16px;
+}
+
+.message-text-medium {
+    color: white;
+    font-size:12px;
+}
+
+.message-text-medium:hover {
+    text-decoration: underline;
+    cursor: grab;
 }
 
 .message-text-small {

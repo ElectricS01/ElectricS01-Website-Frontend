@@ -98,7 +98,7 @@
     style="
       text-align: left;
       padding-left: 8px;
-      padding-top: 16px;
+      padding-top: 8px;
       padding-right: 8px;
     "
   >
@@ -114,9 +114,36 @@
       :key="message.id"
       :id="'message-' + index"
       class="message-grid"
-      style="padding: 4px"
+      style="padding: 4px; position: relative"
+      @mouseover="message.showDelete = true"
+      @mouseleave="message.showDelete = false"
     >
+      <div
+        style="
+          position: absolute;
+          right: 0;
+          top: 0;
+          display: flex;
+          align-items: center;
+          height: 100%;
+        "
+        v-show="
+          message.showDelete &&
+          (loggedIn.admin || message.user.id === loggedIn.id)
+        "
+      >
+        <Icons
+          style="cursor: pointer"
+          class="message-item"
+          color="white"
+          width="20"
+          height="20"
+          icon="delete"
+          @click="deleteMessage(message.id)"
+        />
+      </div>
       <Icons
+        style="margin-right: 8px; cursor: grab"
         v-if="!message.user.avatar"
         @click="openUser(message.user?.id)"
         class="message-item"
@@ -124,10 +151,14 @@
         width="32"
         height="32"
         icon="account"
-        style="margin-right: 8px"
       />
       <img
-        style="border-radius: 16px; object-fit: cover; margin-right: 8px"
+        style="
+          border-radius: 16px;
+          object-fit: cover;
+          margin-right: 8px;
+          cursor: grab;
+        "
         class="message-item"
         @click="openUser(message.user?.id)"
         width="32"
@@ -137,6 +168,18 @@
         alt="Profile icon"
       />
       <div class="message-item">
+        <div style="line-height: 11.5px">
+          <b
+            class="message-text-medium"
+            style="font-size: 12px"
+            @click="openUser(message.user?.id)"
+          >
+            {{ message.user?.username }}
+          </b>
+          <b class="message-text-small">
+            {{ " " + dayjs(message.createdAt) }}
+          </b>
+        </div>
         <b class="message-text-large">
           {{ message.messageContents }}
         </b>
@@ -145,9 +188,6 @@
           :key="index"
           :embed="embed"
         ></Embeds>
-        <b class="message-text-small">
-          {{ message.user?.username }} {{ dayjs(message.createdAt) }}
-        </b>
       </div>
     </div>
   </div>
@@ -167,7 +207,7 @@
         v-model="inputText"
         type="text"
       />
-      <button @click="submit">Send</button>
+      <button @click="submit" style="cursor: grab">Send</button>
       <br />
     </div>
   </div>
@@ -199,6 +239,7 @@ export default {
         .get("/api/messages")
         .then((res) => {
           this.messages = res.data
+          this.messages.showDelete = false
           this.loadingMessages = false
           this.scroll()
         })
@@ -225,7 +266,7 @@ export default {
       this.error = false
     },
     dayjs(date) {
-      return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
+      return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     },
     user() {
       this.axios.get("/api/user").then((res) => {
@@ -252,6 +293,11 @@ export default {
       this.axios.get("/api/user/" + userId).then((res) => {
         this.showUser = res.data
         this.profileShown = true
+      })
+    },
+    deleteMessage(messageId) {
+      this.axios.delete(`/api/delete/${messageId}`).then((res) => {
+        this.getMessages()
       })
     },
     escPressed(event) {
