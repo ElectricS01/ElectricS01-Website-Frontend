@@ -2,15 +2,15 @@
   <header>
     <div class="topnav" id="mobile-topnav" v-if="navbarShown">
       <router-link class="main" to="/">Home</router-link>
-      <router-link to="/tonkgame" :class="{ active: active('/tonkgame') }"
-        >TonkGame</router-link
-      >
-      <router-link to="/calculator" :class="{ active: active('/calculator') }"
-        >Calculator</router-link
-      >
-      <router-link to="/tetris" :class="{ active: active('/tetris') }"
-        >Tetris</router-link
-      >
+      <router-link to="/tonkgame" :class="{ active: active('/tonkgame') }">
+        TonkGame
+      </router-link>
+      <router-link to="/calculator" :class="{ active: active('/calculator') }">
+        Calculator
+      </router-link>
+      <router-link to="/tetris" :class="{ active: active('/tetris') }">
+        Tetris
+      </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
       <a class="icon" @click="responsive_topnav()">☰</a>
     </div>
@@ -38,7 +38,13 @@ export default {
   },
   computed: {
     navbarShown() {
-      return this.$route.path !== "/test"
+      return (
+        this.$route.path !== "/test" &&
+        this.$route.path !== "/login" &&
+        this.$route.path !== "/register" &&
+        this.$route.path !== "/account" &&
+        this.$route.path !== "/resetpassword"
+      )
     }
   },
   mounted() {

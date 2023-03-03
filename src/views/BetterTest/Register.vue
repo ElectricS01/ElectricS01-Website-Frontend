@@ -6,6 +6,7 @@
     </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
+    <a class="icon" @click="responsive_topnav()">☰</a>
   </div>
   <transition>
     <p v-if="error" class="error-button">
@@ -89,6 +90,14 @@ export default {
       this.axios.get("/api/user").then((res) => {
         this.loggedIn = res.data
       })
+    },
+    responsive_topnav() {
+      const responsive_topnav = document.getElementById("mobile-topnav")
+      if (responsive_topnav.className === "topnav") {
+        responsive_topnav.className += " responsive"
+      } else {
+        responsive_topnav.className = "topnav"
+      }
     }
   },
   mounted() {

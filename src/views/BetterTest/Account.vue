@@ -3,6 +3,7 @@
     <router-link to="/test">Better Test</router-link>
     <router-link class="right" to="/account">Account</router-link>
     <router-link class="right" to="/">Home</router-link>
+    <a class="icon" @click="responsive_topnav()">☰</a>
   </div>
   <div style="text-align: left; padding-left: 16px; padding-top: 16px">
     <div v-for="message in messages" :key="message.id">
@@ -82,6 +83,14 @@ export default {
     },
     dayjs(date) {
       return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
+    },
+    responsive_topnav() {
+      const responsive_topnav = document.getElementById("mobile-topnav")
+      if (responsive_topnav.className === "topnav") {
+        responsive_topnav.className += " responsive"
+      } else {
+        responsive_topnav.className = "topnav"
+      }
     }
   },
   mounted() {

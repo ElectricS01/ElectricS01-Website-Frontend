@@ -1,9 +1,6 @@
 <template>
   <div v-if="embed.type === 'image'">
-    <img
-      :src="embed.mediaProxyLink"
-      style="max-width: 400px; max-height: 300px"
-    />
+    <img :src="embed.mediaProxyLink" class="embed" />
   </div>
 </template>
 

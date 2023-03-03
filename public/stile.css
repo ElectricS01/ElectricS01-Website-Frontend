@@ -207,6 +207,17 @@ input:focus {
     outline: 1px solid white;
 }
 
+.embed {
+    max-width: 400px;
+    max-height: 300px;
+}
+
+@media only screen and (max-width: 463px) {
+    .embed {
+        max-width: 100%;
+    }
+}
+
 @media screen and (max-width: 600px) {
     .topnav a:not(:first-child) {
         display: none;
@@ -214,9 +225,6 @@ input:focus {
     .topnav a.icon {
         float: right;
         display: block;
-    }
-    .topnav.responsive {
-        position: relative;
     }
     .topnav.responsive .icon {
         position: absolute;
