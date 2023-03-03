@@ -12,7 +12,7 @@
         style="object-fit: cover"
         alt="Profile banner"
       />
-      <div class="message-grid" style="padding: 24px">
+      <div class="profile-grid" style="padding: 24px">
         <div class="profile-picture" style="margin-right: 16px">
           <Icons
             v-if="!showUser.avatar"
@@ -94,7 +94,14 @@
       {{ error }}
     </p>
   </transition>
-  <div style="text-align: left; padding-left: 16px; padding-top: 16px">
+  <div
+    style="
+      text-align: left;
+      padding-left: 8px;
+      padding-top: 16px;
+      padding-right: 8px;
+    "
+  >
     <div class="center">
       <div
         style="text-align: center"
@@ -107,6 +114,7 @@
       :key="message.id"
       :id="'message-' + index"
       class="message-grid"
+      style="padding: 4px"
     >
       <Icons
         v-if="!message.user.avatar"
@@ -222,7 +230,6 @@ export default {
     user() {
       this.axios.get("/api/user").then((res) => {
         this.loggedIn = res.data
-        console.log(this.loggedIn)
       })
     },
     scroll(override) {
@@ -248,8 +255,10 @@ export default {
       })
     },
     escPressed(event) {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !this.profileShown) {
         this.scroll(true)
+      } else if (event.key === "Escape" && this.profileShown) {
+        this.profileShown = false
       }
     },
     scrollEvent() {
