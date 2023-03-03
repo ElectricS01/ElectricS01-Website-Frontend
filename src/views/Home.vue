@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center">
+  <div style="text-align: center; padding-right: 8px; padding-left: 8px">
     <h2>Welcome to ElectricS01's website</h2>
     <p>
       Hi, I'm ElectricS01, I make random things in Vue, Javascript, Python and
