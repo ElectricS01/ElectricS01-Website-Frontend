@@ -32,7 +32,8 @@ button:hover {
 }
 .profile-button-message,
 .profile-button-add,
-.profile-button-remove {
+.profile-button-remove,
+.profile-button-pending {
     background-color: #282A2B;
     color: #1e90ff;
     text-align: center;
@@ -53,8 +54,13 @@ button:hover {
 .profile-button-add:hover {
     background-color: rgb(71, 191, 76,0.1);
 }
+
 .profile-button-remove:hover {
     background-color: rgb(255, 47, 47,0.1);
+}
+
+.profile-button-pending:hover {
+    background-color: rgb(128, 128, 128,0.1);
 }
 
 .profile-picture {
@@ -112,7 +118,7 @@ button:hover {
     top: 48px;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 2;
     border-bottom-left-radius: 24px;
     border-bottom-right-radius: 24px;
     text-align: left;

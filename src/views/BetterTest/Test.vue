@@ -33,7 +33,7 @@
             alt="Profile icon"
           />
           <svg class="online-indicator" width="20" height="20">
-            <circle cx="8" cy="8" r="6" fill="#47bf4c" />
+            <circle cx="8" cy="8" r="8" fill="#47bf4c" />
           </svg>
         </div>
         <div style="flex-grow: 1; margin: 0" class="message-item">
@@ -61,11 +61,11 @@
             v-if="
               showUser.friendRequests &&
               showUser.id !== loggedIn.id &&
-              showUser.friended === false
+              !showUser.friendStatus
             "
             class="profile-button-add"
             style="color: #47bf4c; width: 100%"
-            @click="addFriend(loggedIn.id)"
+            @click="addFriend(showUser.id)"
           >
             <Icons
               style="top: 0; padding-right: 4px"
@@ -78,13 +78,12 @@
           </button>
           <button
             v-if="
-              showUser.friendRequests &&
               showUser.id !== loggedIn.id &&
-              showUser.friended === true
+              showUser.friendStatus === 'accepted'
             "
             class="profile-button-remove"
             style="color: #ff2f2f; width: 100%"
-            @click="removeFriend(loggedIn.id)"
+            @click="addFriend(showUser.id)"
           >
             <Icons
               style="top: 0; padding-right: 4px"
@@ -94,6 +93,41 @@
               icon="add-user"
             />
             Remove Friend
+          </button>
+          <button
+            v-if="
+              showUser.friendRequests && showUser.friendStatus === 'pending'
+            "
+            class="profile-button-pending"
+            style="color: #808080; width: 100%"
+            @click="addFriend(showUser.id)"
+          >
+            <Icons
+              style="top: 0; padding-right: 4px"
+              color="#808080"
+              width="16"
+              height="16"
+              icon="add-user"
+            />
+            Pending
+          </button>
+          <button
+            v-if="
+              showUser.id !== loggedIn.id &&
+              showUser.friendStatus === 'incoming'
+            "
+            class="profile-button-pending"
+            style="color: #808080; width: 100%"
+            @click="addFriend(showUser.id)"
+          >
+            <Icons
+              style="top: 0; padding-right: 4px"
+              color="#808080"
+              width="16"
+              height="16"
+              icon="add-user"
+            />
+            Accept Friend
           </button>
         </div>
       </div>
@@ -276,7 +310,6 @@ export default {
         })
     },
     submit() {
-      this.error = ""
       this.axios
         .post("/api/message", {
           messageContents: this.inputText
@@ -321,7 +354,6 @@ export default {
       this.axios.get("/api/user/" + userId).then((res) => {
         this.showUser = res.data
         this.profileShown = true
-        this.showUser.friended = false
       })
     },
     deleteMessage(messageId) {
@@ -330,14 +362,15 @@ export default {
       })
     },
     addFriend(userId) {
-      this.axios.post(`/api/friend/${userId}`).then(() => {
-        this.openUser(userId)
-      })
-    },
-    removeFriend(userId) {
-      this.axios.post(`/api/friend/${userId}`).then(() => {
-        this.openUser(userId)
-      })
+      this.axios
+        .post(`/api/friend/${userId}`)
+        .then(() => {
+          this.openUser(userId)
+        })
+        .catch((e) => {
+          this.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
+        })
     },
     escPressed(event) {
       if (event.key === "Escape" && !this.profileShown) {
