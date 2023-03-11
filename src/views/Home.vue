@@ -56,6 +56,16 @@
     </a>
     <br />
     <br />
+    <a href="https://twitter.com/S01Electric" title="Go to My Discord">
+      <img
+        src="../assets/twitter.webp"
+        alt="My Discord"
+        style="width: 18px; height: 12px"
+      />
+      Electric S01
+    </a>
+    <br />
+    <br />
     <a href="https://electrics01.itch.io" title="Go to My Itch.io">
       <img
         src="../assets/itch-io.webp"
