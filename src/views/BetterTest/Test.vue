@@ -44,9 +44,9 @@
         </div>
         <div>
           <button
-            v-if="showUser.directMessages && showUser.id !== loggedIn"
-            style="color: #1e90ff; width: 100%"
+            v-if="showUser.directMessages && showUser.id !== loggedIn.id"
             class="profile-button-message"
+            style="width: 100%"
           >
             <Icons
               style="top: 0; padding-right: 4px"
@@ -58,9 +58,14 @@
             Send Message
           </button>
           <button
-            v-if="showUser.friendRequests && showUser.id !== loggedIn"
+            v-if="
+              showUser.friendRequests &&
+              showUser.id !== loggedIn.id &&
+              showUser.friended === false
+            "
             class="profile-button-add"
-            style="width: 100%"
+            style="color: #47bf4c; width: 100%"
+            @click="addFriend(loggedIn.id)"
           >
             <Icons
               style="top: 0; padding-right: 4px"
@@ -70,6 +75,25 @@
               icon="add-user"
             />
             Add Friend
+          </button>
+          <button
+            v-if="
+              showUser.friendRequests &&
+              showUser.id !== loggedIn.id &&
+              showUser.friended === true
+            "
+            class="profile-button-remove"
+            style="color: #ff2f2f; width: 100%"
+            @click="removeFriend(loggedIn.id)"
+          >
+            <Icons
+              style="top: 0; padding-right: 4px"
+              color="#FF2F2F"
+              width="16"
+              height="16"
+              icon="add-user"
+            />
+            Remove Friend
           </button>
         </div>
       </div>
@@ -297,11 +321,22 @@ export default {
       this.axios.get("/api/user/" + userId).then((res) => {
         this.showUser = res.data
         this.profileShown = true
+        this.showUser.friended = false
       })
     },
     deleteMessage(messageId) {
-      this.axios.delete(`/api/delete/${messageId}`).then((res) => {
+      this.axios.delete(`/api/delete/${messageId}`).then(() => {
         this.getMessages()
+      })
+    },
+    addFriend(userId) {
+      this.axios.post(`/api/friend/${userId}`).then(() => {
+        this.openUser(userId)
+      })
+    },
+    removeFriend(userId) {
+      this.axios.post(`/api/friend/${userId}`).then(() => {
+        this.openUser(userId)
       })
     },
     escPressed(event) {
