@@ -90,7 +90,7 @@
               color="#FF2F2F"
               width="16"
               height="16"
-              icon="add-user"
+              icon="remove-user"
             />
             Remove Friend
           </button>
@@ -107,7 +107,7 @@
               color="#808080"
               width="16"
               height="16"
-              icon="add-user"
+              icon="remove-user"
             />
             Pending
           </button>
@@ -117,12 +117,12 @@
               showUser.friendStatus === 'incoming'
             "
             class="profile-button-pending"
-            style="color: #808080; width: 100%"
+            style="color: #47bf4c; width: 100%"
             @click="addFriend(showUser.id)"
           >
             <Icons
               style="top: 0; padding-right: 4px"
-              color="#808080"
+              color="#47bf4c"
               width="16"
               height="16"
               icon="add-user"
@@ -169,38 +169,15 @@
       ></div>
     </div>
     <div
+      :style="{ backgroundColor: editing === message.id ? '#282A2B' : '' }"
       v-for="(message, index) in messages"
       :key="message.id"
       :id="'message-' + index"
       class="message-grid"
       style="padding: 4px; position: relative"
-      @mouseover="message.showDelete = true"
-      @mouseleave="message.showDelete = false"
+      @mouseover="message.focus = true"
+      @mouseleave="message.focus = false"
     >
-      <div
-        style="
-          position: absolute;
-          right: 0;
-          top: 0;
-          display: flex;
-          align-items: center;
-          height: 100%;
-        "
-        v-show="
-          message.showDelete &&
-          (loggedIn.admin || message.user.id === loggedIn.id)
-        "
-      >
-        <Icons
-          style="cursor: pointer"
-          class="message-item"
-          color="white"
-          width="20"
-          height="20"
-          icon="delete"
-          @click="deleteMessage(message.id)"
-        />
-      </div>
       <Icons
         style="margin-right: 8px; cursor: grab"
         v-if="!message.user.avatar"
@@ -228,7 +205,12 @@
       />
       <div
         class="message-item"
-        style="max-width: calc(100% - 40px); overflow-wrap: break-word"
+        style="
+          max-width: calc(100% - 25px);
+          overflow-wrap: break-word;
+          padding-right: 16px;
+        "
+        :style="{ width: editing === message.id ? '100%' : '' }"
       >
         <div style="line-height: 11.5px">
           <b
@@ -242,14 +224,60 @@
             {{ " " + dayjs(message.createdAt) }}
           </b>
         </div>
-        <b class="message-text-large">
-          {{ message.messageContents }}
-        </b>
-        <Embeds
-          v-for="(embed, index) in message.embeds"
-          :key="index"
-          :embed="embed"
-        ></Embeds>
+        <div v-if="editing !== message.id">
+          <b class="message-text-large">
+            {{ message.messageContents }}
+          </b>
+          <Embeds
+            v-for="(embed, index) in message.embeds"
+            :key="index"
+            :embed="embed"
+          ></Embeds>
+        </div>
+        <div v-if="editing === message.id">
+          <input
+            placeholder="Edit your message"
+            autofocus
+            @keydown.enter="editMessage(message.id)"
+            class="responder"
+            v-model="editText"
+            type="text"
+            style="width: 100%"
+          />
+        </div>
+      </div>
+      <div
+        v-if="editing !== message.id"
+        style="
+          position: absolute;
+          right: 0;
+          top: 0;
+          display: flex;
+          align-items: center;
+          height: 100%;
+        "
+        v-show="
+          message.focus && (loggedIn.admin || message.user.id === loggedIn.id)
+        "
+      >
+        <Icons
+          style="cursor: pointer"
+          class="message-item"
+          color="white"
+          width="20"
+          height="20"
+          icon="edit"
+          @click=";(editing = message.id), (editText = message.messageContents)"
+        />
+        <Icons
+          style="cursor: pointer"
+          class="message-item"
+          color="white"
+          width="20"
+          height="20"
+          icon="delete"
+          @click="deleteMessage(message.id)"
+        />
       </div>
     </div>
   </div>
@@ -287,6 +315,8 @@ export default {
     return {
       messages: [],
       inputText: "",
+      editText: "",
+      editing: false,
       error: "",
       loggedIn: false,
       profileShown: false,
@@ -301,7 +331,7 @@ export default {
         .get("/api/messages")
         .then((res) => {
           this.messages = res.data
-          this.messages.showDelete = false
+          this.messages.focus = false
           this.loadingMessages = false
           this.scroll()
         })
@@ -330,9 +360,14 @@ export default {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     },
     user() {
-      this.axios.get("/api/user").then((res) => {
-        this.loggedIn = res.data
-      })
+      this.axios
+        .get("/api/user")
+        .then((res) => {
+          this.loggedIn = res.data
+        })
+        .catch((e) => {
+          this.error = "Error 503 Cannot Connect to Server"
+        })
     },
     scroll(override) {
       this.$nextTick(() => {
@@ -361,6 +396,12 @@ export default {
         this.getMessages()
       })
     },
+    editMessage(messageId) {
+      this.axios.patch(`/api/edit/${messageId}`).then(() => {
+        this.getMessages()
+        this.editing = false
+      })
+    },
     addFriend(userId) {
       this.axios
         .post(`/api/friend/${userId}`)
@@ -373,10 +414,12 @@ export default {
         })
     },
     escPressed(event) {
-      if (event.key === "Escape" && !this.profileShown) {
-        this.scroll(true)
-      } else if (event.key === "Escape" && this.profileShown) {
+      if (event.key === "Escape" && this.profileShown) {
         this.profileShown = false
+      } else if (event.key === "Escape" && this.editing) {
+        this.editing = false
+      } else if (event.key === "Escape" && !this.profileShown) {
+        this.scroll(true)
       }
     },
     scrollEvent() {
