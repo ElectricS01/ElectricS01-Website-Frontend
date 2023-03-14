@@ -246,11 +246,11 @@
           <input
             placeholder="Edit your message"
             autofocus
-            @keydown.enter="editMessage(message.id)"
+            @keydown.enter="editMessage(message.id, editText)"
             class="responder"
             v-model="editText"
             type="text"
-            style="width: 100%"
+            style="width: 100%; margin-left: 0"
           />
         </div>
       </div>
@@ -334,17 +334,6 @@ export default {
     }
   },
   methods: {
-    merge(message, index) {
-      if (this.messages[index - 1]) {
-        const previousMessage = this.messages[index - 1]
-        return (
-          previousMessage.userName === message.userName &&
-          !dayjs(previousMessage.createdAt).isBefore(
-            dayjs(message.createdAt).subtract(15, "minutes")
-          )
-        )
-      }
-    },
     async getMessages() {
       await this.axios
         .get("/api/messages")
@@ -407,6 +396,17 @@ export default {
         }
       })
     },
+    merge(message, index) {
+      if (this.messages[index - 1]) {
+        const previousMessage = this.messages[index - 1]
+        return (
+          previousMessage.userName === message.userName &&
+          !dayjs(previousMessage.createdAt).isBefore(
+            dayjs(message.createdAt).subtract(15, "minutes")
+          )
+        )
+      }
+    },
     openUser(userId) {
       this.axios.get("/api/user/" + userId).then((res) => {
         this.showUser = res.data
@@ -418,11 +418,15 @@ export default {
         this.getMessages()
       })
     },
-    editMessage(messageId) {
-      this.axios.patch(`/api/edit/${messageId}`).then(() => {
-        this.getMessages()
-        this.editing = false
-      })
+    editMessage(messageId, messageText) {
+      this.axios
+        .patch(`/api/edit/${messageId}`, {
+          messageContents: this.editText
+        })
+        .then(() => {
+          this.getMessages()
+          this.editing = false
+        })
     },
     addFriend(userId) {
       this.axios
