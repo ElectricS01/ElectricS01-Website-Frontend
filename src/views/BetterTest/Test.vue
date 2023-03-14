@@ -156,9 +156,9 @@
   <div
     style="
       text-align: left;
-      padding-left: 8px;
+      padding-left: 4px;
       padding-top: 8px;
-      padding-right: 8px;
+      padding-right: 4px;
     "
   >
     <div class="center">
@@ -178,41 +178,49 @@
       @mouseover="message.focus = true"
       @mouseleave="message.focus = false"
     >
-      <Icons
-        style="margin-right: 8px; cursor: grab"
-        v-if="!message.user.avatar"
-        @click="openUser(message.user?.id)"
-        class="message-item"
-        color="white"
-        width="32"
-        height="32"
-        icon="account"
-      />
-      <img
-        style="
-          border-radius: 16px;
-          object-fit: cover;
-          margin-right: 8px;
-          cursor: grab;
-        "
-        class="message-item"
-        @click="openUser(message.user?.id)"
-        width="32"
-        height="32"
-        v-else
-        :src="message.user.avatar"
-        alt="Profile icon"
-      />
+      <div v-if="!merge(message, index)">
+        <Icons
+          style="margin-right: 12px; cursor: grab; margin-left: 4px"
+          v-if="!message.user.avatar"
+          @click="openUser(message.user?.id)"
+          class="message-item"
+          color="white"
+          width="32"
+          height="32"
+          icon="account"
+        />
+        <img
+          style="
+            border-radius: 16px;
+            object-fit: cover;
+            margin-right: 12px;
+            margin-left: 4px;
+            cursor: grab;
+          "
+          class="message-item"
+          @click="openUser(message.user?.id)"
+          width="32"
+          height="32"
+          v-else
+          :src="message.user.avatar"
+          alt="Profile icon"
+        />
+      </div>
+      <div v-else style="width: 48px">
+        <b
+          class="message-text-small"
+          v-show="message.focus"
+          style="display: flex; align-items: center; justify-content: center"
+        >
+          {{ dayjsShort(message.createdAt) }}
+        </b>
+      </div>
       <div
         class="message-item"
-        style="
-          max-width: calc(100% - 25px);
-          overflow-wrap: break-word;
-          padding-right: 16px;
-        "
+        style="max-width: calc(100% - 56px); overflow-wrap: break-word"
         :style="{ width: editing === message.id ? '100%' : '' }"
       >
-        <div style="line-height: 11.5px">
+        <div style="line-height: 11.5px" v-if="!merge(message, index)">
           <b
             class="message-text-medium"
             style="font-size: 12px"
@@ -308,7 +316,7 @@ import dayjs from "dayjs"
 import Embeds from "@/components/Embeds.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
-;``
+
 export default {
   components: { Icons, Embeds, Modal },
   data() {
@@ -326,6 +334,17 @@ export default {
     }
   },
   methods: {
+    merge(message, index) {
+      if (this.messages[index - 1]) {
+        const previousMessage = this.messages[index - 1]
+        return (
+          previousMessage.userName === message.userName &&
+          !dayjs(previousMessage.createdAt).isBefore(
+            dayjs(message.createdAt).subtract(15, "minutes")
+          )
+        )
+      }
+    },
     async getMessages() {
       await this.axios
         .get("/api/messages")
@@ -358,6 +377,9 @@ export default {
     },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
+    },
+    dayjsShort(date) {
+      return dayjs(date).format("HH:mm:ss")
     },
     user() {
       this.axios
