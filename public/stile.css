@@ -186,9 +186,6 @@ button:hover {
 .profile-grid,
 .message-grid {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    border-radius: 6px;
 }
 
 .message-grid:hover {

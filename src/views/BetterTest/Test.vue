@@ -242,17 +242,16 @@
             :embed="embed"
           ></Embeds>
         </div>
-        <div v-if="editing === message.id">
-          <input
-            placeholder="Edit your message"
-            autofocus
-            @keydown.enter="editMessage(message.id, editText)"
-            class="responder"
-            v-model="editText"
-            type="text"
-            style="width: 100%; margin-left: 0"
-          />
-        </div>
+        <input
+          v-if="editing === message.id"
+          placeholder="Edit your message"
+          autofocus
+          @keydown.enter="editMessage(message.id, editText)"
+          class="responder"
+          v-model="editText"
+          type="text"
+          style="width: 100%; margin-left: 0"
+        />
       </div>
       <div
         v-if="editing !== message.id"
@@ -301,6 +300,7 @@
         placeholder="Send a message"
         autofocus
         @keydown.enter="submit"
+        @keydown.up="editing = editLast()"
         class="responder"
         v-model="inputText"
         type="text"
@@ -412,6 +412,15 @@ export default {
         this.showUser = res.data
         this.profileShown = true
       })
+    },
+    editLast() {
+      this.messageEdit = this.messages.filter(
+        (message) => Number(message.userName) === this.loggedIn.id
+      )
+      if (this.messageEdit.length > 0) {
+        this.editText = this.messageEdit.slice(-1)[0].messageContents
+        return this.messageEdit.slice(-1)[0].id
+      }
     },
     deleteMessage(messageId) {
       this.axios.delete(`/api/delete/${messageId}`).then(() => {
