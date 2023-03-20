@@ -274,7 +274,11 @@
           width="20"
           height="20"
           icon="edit"
-          @click=";(editing = message.id), (editText = message.messageContents)"
+          @click="
+            ;(editing = message.id),
+              (editText = message.messageContents),
+              scroll(true)
+          "
         />
         <Icons
           style="cursor: pointer"
@@ -300,7 +304,7 @@
         placeholder="Send a message"
         autofocus
         @keydown.enter="submit"
-        @keydown.up="editing = editLast()"
+        @keydown.up=";(editing = editLast()), scroll(true)"
         class="responder"
         v-model="inputText"
         type="text"
