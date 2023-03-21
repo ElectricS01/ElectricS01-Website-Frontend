@@ -246,7 +246,7 @@
           v-if="editing === message.id"
           placeholder="Edit your message"
           autofocus
-          @keydown.enter="editMessage(message.id, editText)"
+          @keydown.enter="editMessage(message.id)"
           class="responder"
           v-model="editText"
           type="text"
@@ -264,10 +264,13 @@
           height: 100%;
         "
         v-show="
-          message.focus && (loggedIn.admin || message.user.id === loggedIn.id)
+          editing !== message.id &&
+          message.focus &&
+          (loggedIn.admin || message.user.id === loggedIn.id)
         "
       >
         <Icons
+          v-show="message.user.id === loggedIn.id"
           style="cursor: pointer"
           class="message-item"
           color="white"
@@ -277,7 +280,7 @@
           @click="
             ;(editing = message.id),
               (editText = message.messageContents),
-              scroll(true)
+              scroll(false)
           "
         />
         <Icons
@@ -431,7 +434,7 @@ export default {
         this.getMessages()
       })
     },
-    editMessage(messageId, messageText) {
+    editMessage(messageId) {
       this.axios
         .patch(`/api/edit/${messageId}`, {
           messageContents: this.editText
