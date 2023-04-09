@@ -173,126 +173,162 @@
       v-for="(message, index) in messages"
       :key="message.id"
       :id="'message-' + index"
-      class="message-grid"
       style="padding: 4px; position: relative"
       @mouseover="message.focus = true"
       @mouseleave="message.focus = false"
     >
-      <div v-if="!merge(message, index)">
-        <Icons
-          style="margin-right: 12px; cursor: grab; margin-left: 4px"
-          v-if="!message.user.avatar"
-          @click="openUser(message.user?.id)"
-          class="message-item"
-          color="white"
-          width="32"
-          height="32"
-          icon="account"
-        />
-        <img
-          style="
-            border-radius: 16px;
-            object-fit: cover;
-            margin-right: 12px;
-            margin-left: 4px;
-            cursor: grab;
-          "
-          class="message-item"
-          @click="openUser(message.user?.id)"
-          width="32"
-          height="32"
-          v-else
-          :src="message.user.avatar"
-          alt="Profile icon"
-        />
-      </div>
-      <div v-else style="width: 48px">
-        <b
-          class="message-text-small"
-          v-show="message.focus"
-          style="display: flex; align-items: center; justify-content: center"
-        >
-          {{ dayjsShort(message.createdAt) }}
-        </b>
-      </div>
       <div
-        class="message-item"
-        style="max-width: calc(100% - 56px); overflow-wrap: break-word"
-        :style="{ width: editing === message.id ? '100%' : '' }"
-      >
-        <div style="line-height: 11.5px" v-if="!merge(message, index)">
-          <b
-            class="message-text-medium"
-            style="font-size: 12px"
-            @click="openUser(message.user?.id)"
-          >
-            {{ message.user?.username }}
-          </b>
-          <b class="message-text-small">
-            {{ " " + dayjs(message.createdAt) }}
-          </b>
-        </div>
-        <div v-if="editing !== message.id">
-          <b class="message-text-large">
-            {{ message.messageContents }}
-          </b>
-          <Embeds
-            v-for="(embed, index) in message.embeds"
-            :key="index"
-            :embed="embed"
-          ></Embeds>
-        </div>
-        <input
-          v-if="editing === message.id"
-          placeholder="Edit your message"
-          @keydown.enter="editMessage(message.id)"
-          class="responder"
-          v-model="editText"
-          type="text"
-          style="width: 100%; margin-left: 0"
-          id="edit"
-        />
-      </div>
-      <div
-        v-if="editing !== message.id"
         style="
-          position: absolute;
-          right: 0;
-          top: 0;
+          text-align: center;
+          position: relative;
+          height: 31.5px;
           display: flex;
-          align-items: center;
-          height: 100%;
+          justify-content: center;
         "
-        v-show="
-          editing !== message.id &&
-          message.focus &&
-          (loggedIn.admin || message.user.id === loggedIn.id)
+        v-if="
+          dayjsDate(message.createdAt) !==
+          dayjsDate(messages[index - 1]?.createdAt)
         "
       >
-        <Icons
-          v-show="message.user.id === loggedIn.id"
-          style="cursor: pointer"
-          class="message-item"
-          color="white"
-          width="20"
-          height="20"
-          icon="edit"
-          @click="
-            ;(editing = message.id),
-              (editText = message.messageContents),
-              scroll(false),
-              editFocus()
+        <div
+          style="
+            border-bottom: 1px solid #212425;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: calc(50% - 1px);
           "
-        />
-        <Icons
-          style="cursor: pointer"
+        ></div>
+        <p
+          style="
+            background-color: #181a1b;
+            position: absolute;
+            height: 20px;
+            border-right: 4px solid #181a1b;
+            border-left: 4px solid #181a1b;
+          "
+          class="message-text-small"
+        >
+          {{ dayjsDate(message.createdAt) }}
+        </p>
+      </div>
+      <div class="message-grid">
+        <div v-if="!merge(message, index)">
+          <Icons
+            style="margin-right: 12px; cursor: grab; margin-left: 4px"
+            v-if="!message.user.avatar"
+            @click="openUser(message.user?.id)"
+            class="message-item"
+            color="white"
+            width="32"
+            height="32"
+            icon="account"
+          />
+          <img
+            style="
+              border-radius: 16px;
+              object-fit: cover;
+              margin-right: 12px;
+              margin-left: 4px;
+              cursor: grab;
+            "
+            class="message-item"
+            @click="openUser(message.user?.id)"
+            width="32"
+            height="32"
+            v-else
+            :src="message.user.avatar"
+            alt="Profile icon"
+          />
+        </div>
+        <div v-else style="width: 48px">
+          <b
+            class="message-text-small"
+            v-show="message.focus"
+            style="display: flex; align-items: center; justify-content: center"
+          >
+            {{ dayjsShort(message.createdAt) }}
+          </b>
+        </div>
+        <div
           class="message-item"
-          color="white"
-          width="20"
-          height="20"
-          icon="delete"
-          @click="deleteMessage(message.id)"
-        />
+          style="max-width: calc(100% - 56px); overflow-wrap: break-word"
+          :style="{ width: editing === message.id ? '100%' : '' }"
+        >
+          <div style="line-height: 11.5px" v-if="!merge(message, index)">
+            <b
+              class="message-text-medium"
+              style="font-size: 12px"
+              @click="openUser(message.user?.id)"
+            >
+              {{ message.user?.username }}
+            </b>
+            <b class="message-text-small">
+              {{ " " + dayjs(message.createdAt) }}
+            </b>
+          </div>
+          <div v-if="editing !== message.id">
+            <b class="message-text-large">
+              {{ message.messageContents }}
+            </b>
+            <Embeds
+              v-for="(embed, index) in message.embeds"
+              :key="index"
+              :embed="embed"
+            ></Embeds>
+          </div>
+          <input
+            v-if="editing === message.id"
+            placeholder="Edit your message"
+            @keydown.enter="editMessage(message.id)"
+            class="responder"
+            v-model="editText"
+            type="text"
+            style="width: 100%; margin-left: 0"
+            id="edit"
+          />
+        </div>
+        <div
+          v-if="editing !== message.id"
+          style="
+            position: absolute;
+            right: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            height: 100%;
+          "
+          v-show="
+            editing !== message.id &&
+            message.focus &&
+            (loggedIn.admin || message.user.id === loggedIn.id)
+          "
+        >
+          <Icons
+            v-show="message.user.id === loggedIn.id"
+            style="cursor: pointer"
+            class="message-item"
+            color="white"
+            width="20"
+            height="20"
+            icon="edit"
+            @click="
+              ;(editing = message.id),
+                (editText = message.messageContents),
+                scroll(false),
+                editFocus()
+            "
+          />
+          <Icons
+            style="cursor: pointer"
+            class="message-item"
+            color="white"
+            width="20"
+            height="20"
+            icon="delete"
+            @click="deleteMessage(message.id)"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -378,6 +414,9 @@ export default {
     },
     dayjsShort(date) {
       return dayjs(date).format("HH:mm:ss")
+    },
+    dayjsDate(date) {
+      return dayjs(date).format("D MMMM YYYY")
     },
     user() {
       this.axios
