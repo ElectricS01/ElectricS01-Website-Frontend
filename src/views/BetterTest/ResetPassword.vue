@@ -1,12 +1,12 @@
 <template>
-  <div class="topnav" id="mobile-topnav">
+  <div class="navbar" id="mobile-navbar">
     <router-link to="/test">Better Test</router-link>
-    <router-link v-if="loggedIn" class="right" to="/account"
-      >Account</router-link
-    >
+    <router-link v-if="loggedIn" class="right" to="/account">
+      Account
+    </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
-    <a class="icon" @click="responsive_topnav()">☰</a>
+    <a class="icon" @click="responsive_navbar()">☰</a>
   </div>
   <div class="grid-login">
     <div style="text-align: center" class="reset-menu">
@@ -62,18 +62,18 @@ export default {
         this.loggedIn = res.data
       })
     },
-    responsive_topnav() {
-      const responsive_topnav = document.getElementById("mobile-topnav")
-      if (responsive_topnav.className === "topnav") {
-        responsive_topnav.className += " responsive"
+    responsive_navbar() {
+      const responsive_navbar = document.getElementById("mobile-navbar")
+      if (responsive_navbar.className === "navbar") {
+        responsive_navbar.className += " responsive"
       } else {
-        responsive_topnav.className = "topnav"
+        responsive_navbar.className = "navbar"
       }
     }
   },
   mounted() {
     const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/mainicon.ico"
+    favicon.href = "/icons/favicon.ico"
 
     this.user()
   }

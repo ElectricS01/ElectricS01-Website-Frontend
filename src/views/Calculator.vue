@@ -1,9 +1,9 @@
 <template>
   <div style="padding-left: 16px; padding-right: 16px">
     <h2>ElectricS01's Calculator</h2>
-    <div className="wrapper">
-      <div className="form-uname">
-        <label id="nameLabel" htmlFor="nameField">Calculate: </label>
+    <div>
+      <div>
+        <label id="nameLabel">Calculate:</label>
         <input id="nameField" v-model="expression" type="text" class="text" />
       </div>
       <div>
@@ -51,6 +51,10 @@ export default {
       handler: "calculate",
       deep: true
     }
+  },
+  mounted() {
+    const favicon = document.getElementById("favicon")
+    favicon.href = "/icons/favicon.ico"
   }
 }
 </script>

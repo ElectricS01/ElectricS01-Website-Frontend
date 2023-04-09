@@ -11,7 +11,7 @@
 export default {
   mounted() {
     const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/mainicon.ico"
+    favicon.href = "/icons/favicon.ico"
   }
 }
 </script>

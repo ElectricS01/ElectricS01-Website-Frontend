@@ -1,9 +1,9 @@
 <template>
-  <div class="topnav" id="mobile-topnav">
+  <div class="navbar" id="mobile-navbar">
     <router-link to="/test">Better Test</router-link>
     <router-link class="right" to="/account">Account</router-link>
     <router-link class="right" to="/">Home</router-link>
-    <a class="icon" @click="responsive_topnav()">☰</a>
+    <a class="icon" @click="responsive_navbar()">☰</a>
   </div>
   <div style="text-align: left; padding-left: 16px; padding-top: 16px">
     <div v-for="message in messages" :key="message.id">
@@ -84,18 +84,18 @@ export default {
     dayjs(date) {
       return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
     },
-    responsive_topnav() {
-      const responsive_topnav = document.getElementById("mobile-topnav")
-      if (responsive_topnav.className === "topnav") {
-        responsive_topnav.className += " responsive"
+    responsive_navbar() {
+      const responsive_navbar = document.getElementById("mobile-navbar")
+      if (responsive_navbar.className === "navbar") {
+        responsive_navbar.className += " responsive"
       } else {
-        responsive_topnav.className = "topnav"
+        responsive_navbar.className = "navbar"
       }
     }
   },
   mounted() {
     const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/mainicon.ico"
+    favicon.href = "/icons/favicon.ico"
 
     this.getMessages()
   }

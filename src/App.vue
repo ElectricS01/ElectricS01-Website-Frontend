@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="topnav" id="mobile-topnav" v-if="navbarShown">
+    <div class="navbar" id="mobile-navbar" v-if="navbarShown">
       <router-link class="main" to="/">Home</router-link>
       <router-link to="/tonkgame" :class="{ active: active('/tonkgame') }">
         TonkGame
@@ -12,7 +12,7 @@
         Tetris
       </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
-      <a class="icon" @click="responsive_topnav()">☰</a>
+      <a class="icon" @click="responsive_navbar()">☰</a>
     </div>
   </header>
   <main>
@@ -27,12 +27,12 @@ export default {
     active(route) {
       return route === this.$route.path
     },
-    responsive_topnav() {
-      const responsive_topnav = document.getElementById("mobile-topnav")
-      if (responsive_topnav.className === "topnav") {
-        responsive_topnav.className += " responsive"
+    responsive_navbar() {
+      const responsive_navbar = document.getElementById("mobile-navbar")
+      if (responsive_navbar.className === "navbar") {
+        responsive_navbar.className += " responsive"
       } else {
-        responsive_topnav.className = "topnav"
+        responsive_navbar.className = "navbar"
       }
     }
   },

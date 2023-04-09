@@ -139,14 +139,14 @@
       </div>
     </modal>
   </transition>
-  <div class="topnav" id="mobile-topnav">
+  <div class="navbar" id="mobile-navbar">
     <router-link to="/test">Better Test</router-link>
     <router-link v-if="loggedIn" class="right" to="/account">
       Account
     </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
-    <a class="icon" @click="responsive_topnav()">☰</a>
+    <a class="icon" @click="responsive_navbar()">☰</a>
   </div>
   <transition>
     <p v-if="error" class="error-button">
@@ -245,12 +245,12 @@
         <input
           v-if="editing === message.id"
           placeholder="Edit your message"
-          autofocus
           @keydown.enter="editMessage(message.id)"
           class="responder"
           v-model="editText"
           type="text"
           style="width: 100%; margin-left: 0"
+          id="edit"
         />
       </div>
       <div
@@ -280,7 +280,8 @@
           @click="
             ;(editing = message.id),
               (editText = message.messageContents),
-              scroll(false)
+              scroll(false),
+              editFocus()
           "
         />
         <Icons
@@ -307,10 +308,11 @@
         placeholder="Send a message"
         autofocus
         @keydown.enter="submit"
-        @keydown.up=";(editing = editLast()), scroll(true)"
+        @keydown.up.prevent=";(editing = editLast()), scroll(true)"
         class="responder"
         v-model="inputText"
         type="text"
+        id="input"
       />
       <button @click="submit" style="cursor: grab">Send</button>
       <br />
@@ -384,7 +386,7 @@ export default {
           this.loggedIn = res.data
         })
         .catch((e) => {
-          this.error = "Error 503 Cannot Connect to Server"
+          this.error = "Error 503 Cannot Connect to Server " + e
         })
     },
     scroll(override) {
@@ -418,6 +420,17 @@ export default {
       this.axios.get("/api/user/" + userId).then((res) => {
         this.showUser = res.data
         this.profileShown = true
+      })
+    },
+    editFocus() {
+      this.$nextTick(() => {
+        const input = document.getElementById("edit")
+        if (input) {
+          input?.focus()
+        } else {
+          const input = document.getElementById("input")
+          input?.focus()
+        }
       })
     },
     editLast() {
@@ -473,18 +486,18 @@ export default {
       this.scrolledUp =
         scrollTop + clientHeight <= scrollHeight - clientHeight / 10
     },
-    responsive_topnav() {
-      const responsive_topnav = document.getElementById("mobile-topnav")
-      if (responsive_topnav.className === "topnav") {
-        responsive_topnav.className += " responsive"
+    responsive_navbar() {
+      const responsive_navbar = document.getElementById("mobile-navbar")
+      if (responsive_navbar.className === "navbar") {
+        responsive_navbar.className += " responsive"
       } else {
-        responsive_topnav.className = "topnav"
+        responsive_navbar.className = "navbar"
       }
     }
   },
   async mounted() {
     const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/mainicon.ico"
+    favicon.href = "/icons/favicon.ico"
 
     document.addEventListener("keydown", this.escPressed)
     document.addEventListener("scroll", this.scrollEvent)
@@ -501,6 +514,11 @@ export default {
   unmounted() {
     document.removeEventListener("keydown", this.escPressed)
     document.removeEventListener("scroll", this.scrollEvent)
+  },
+  watch: {
+    editing() {
+      this.editFocus()
+    }
   }
 }
 </script>

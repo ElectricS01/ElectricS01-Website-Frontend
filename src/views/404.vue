@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center;">
+  <div style="text-align: center">
     <h1>Error 404: Page not found</h1>
     <div class="button">
       <router-link to="/">Return to Home</router-link>
@@ -10,8 +10,8 @@
 <script>
 export default {
   mounted() {
-    const favicon = document.getElementById("favicon");
-    favicon.href = "/icons/mainicon.ico";
+    const favicon = document.getElementById("favicon")
+    favicon.href = "/icons/favicon.ico"
   }
 }
 </script>
