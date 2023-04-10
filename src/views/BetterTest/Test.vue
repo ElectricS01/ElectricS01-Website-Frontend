@@ -181,7 +181,7 @@
         style="
           text-align: center;
           position: relative;
-          height: 31.5px;
+          height: 27.5px;
           display: flex;
           justify-content: center;
         "
@@ -196,7 +196,7 @@
             position: absolute;
             top: 0;
             width: 100%;
-            height: calc(50% - 1px);
+            height: calc(50% - 3px);
           "
         ></div>
         <p
@@ -206,6 +206,7 @@
             height: 20px;
             border-right: 4px solid #181a1b;
             border-left: 4px solid #181a1b;
+            margin-top: 6px;
           "
           class="message-text-small"
         >
