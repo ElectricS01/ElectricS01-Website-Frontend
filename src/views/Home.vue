@@ -28,7 +28,7 @@
               alt="Tetris By ElectricS01"
               style="width: 300px; height: 300px"
             />
-            <p>Tetris By ElectricS01(WIP)</p>
+            <p>Tetris By ElectricS01</p>
           </div>
         </router-link>
       </div>

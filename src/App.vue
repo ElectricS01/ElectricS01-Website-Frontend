@@ -12,6 +12,9 @@
         Tetris
       </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
+      <router-link v-if="loggedIn" class="right" to="/account">
+        Account
+      </router-link>
       <a class="icon" @click="responsive_navbar()">☰</a>
     </div>
   </header>
@@ -23,7 +26,23 @@
 <script>
 export default {
   name: "App",
+  data() {
+    return {
+      error: "",
+      loggedIn: false
+    }
+  },
   methods: {
+    user() {
+      this.axios
+        .get("/api/user")
+        .then((res) => {
+          this.loggedIn = res.data
+        })
+        .catch((e) => {
+          console.log("Error 503 Cannot Connect to Server " + e)
+        })
+    },
     active(route) {
       return route === this.$route.path
     },
@@ -51,6 +70,7 @@ export default {
     Object.assign(this.axios.defaults, {
       headers: { Authorization: localStorage.getItem("token") }
     })
+    this.user()
   }
 }
 </script>

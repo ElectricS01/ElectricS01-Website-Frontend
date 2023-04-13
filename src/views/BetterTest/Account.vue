@@ -1,9 +1,8 @@
 <template>
-  <div class="navbar" id="mobile-navbar">
+  <div class="chat-navbar">
     <router-link to="/test">Better Test</router-link>
     <router-link class="right" to="/account">Account</router-link>
     <router-link class="right" to="/">Home</router-link>
-    <a class="icon" @click="responsive_navbar()">☰</a>
   </div>
   <div style="text-align: left; padding-left: 16px; padding-top: 16px">
     <div v-for="message in messages" :key="message.id">
@@ -83,14 +82,6 @@ export default {
     },
     dayjs(date) {
       return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
-    },
-    responsive_navbar() {
-      const responsive_navbar = document.getElementById("mobile-navbar")
-      if (responsive_navbar.className === "navbar") {
-        responsive_navbar.className += " responsive"
-      } else {
-        responsive_navbar.className = "navbar"
-      }
     }
   },
   mounted() {

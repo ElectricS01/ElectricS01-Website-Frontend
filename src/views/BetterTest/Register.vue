@@ -1,12 +1,11 @@
 <template>
-  <div class="navbar" id="mobile-navbar">
+  <div class="chat-navbar">
     <router-link to="/test">Better Test</router-link>
     <router-link v-if="loggedIn" class="right" to="/account">
       Account
     </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
-    <a class="icon" @click="responsive_navbar()">☰</a>
   </div>
   <transition>
     <p v-if="error" class="error-button">
@@ -90,14 +89,6 @@ export default {
       this.axios.get("/api/user").then((res) => {
         this.loggedIn = res.data
       })
-    },
-    responsive_navbar() {
-      const responsive_navbar = document.getElementById("mobile-navbar")
-      if (responsive_navbar.className === "navbar") {
-        responsive_navbar.className += " responsive"
-      } else {
-        responsive_navbar.className = "navbar"
-      }
     }
   },
   mounted() {
