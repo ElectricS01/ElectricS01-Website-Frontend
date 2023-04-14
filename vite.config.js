@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     port: 8080,
     proxy: {
-      "/api": "https://electrics01.com"
+      "/api": "http://localhost:24555"
     }
   }
 })

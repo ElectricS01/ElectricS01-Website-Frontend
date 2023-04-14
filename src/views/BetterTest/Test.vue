@@ -417,6 +417,7 @@
               v-model="editText"
               type="text"
               style="width: 100%; margin-left: 0"
+              id="edit"
             />
           </div>
           <div
@@ -490,6 +491,7 @@
           class="responder"
           v-model="inputText"
           type="text"
+          id="input"
         />
         <button @click="submit" style="cursor: grab">Send</button>
         <br />
@@ -540,7 +542,6 @@ export default {
         })
     },
     async getUsers() {
-      return 0
       await this.axios
         .get("/api/users")
         .then((res) => {
