@@ -72,6 +72,7 @@
             type="text"
             style="width: 100%; margin: 0"
             id="status"
+            autocomplete="off"
           />
         </div>
         <div>
@@ -450,6 +451,7 @@
               type="text"
               style="width: 100%; margin-left: 0"
               id="edit"
+              autocomplete="off"
             />
           </div>
           <div
@@ -524,6 +526,7 @@
           v-model="inputText"
           type="text"
           id="input"
+          autocomplete="off"
         />
         <button @click="submit" style="cursor: grab">Send</button>
         <br />
