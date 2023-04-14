@@ -504,13 +504,79 @@
       </div>
     </div>
     <div>
-      <transition
-        :style="{ marginRight: users.length > 2 && sidebarOpen ? '250px' : '' }"
-      >
-        <button v-if="scrolledUp" class="scroll-button" @click="scroll">
-          <Icons color="white" width="12" height="12" icon="down-arrow" />
-          Scroll to bottom
-        </button>
+      <transition>
+        <div v-if="replyTo || scrolledUp" style="background-color: #282a2b">
+          <transition>
+            <div
+              :style="{
+                marginRight: users.length > 2 && sidebarOpen ? '250px' : '',
+                height: replyTo ? '36px' : ''
+              }"
+              v-if="scrolledUp"
+              class="scroll-button"
+              @click="scroll"
+            >
+              <Icons color="white" width="12" height="12" icon="down-arrow" />
+              <p class="message-text-medium" style="margin: 0">
+                Scroll to bottom
+              </p>
+            </div>
+          </transition>
+          <div
+            :style="{
+              marginRight: users.length > 2 && sidebarOpen ? '250px' : ''
+            }"
+            v-if="replyTo"
+            class="scroll-button"
+            @click="scroll"
+            style="display: flex; overflow-wrap: break-word"
+          >
+            <Icons
+              color="white"
+              width="12"
+              height="12"
+              icon="reply"
+              style="margin-right: 4px"
+            />
+            <Icons
+              style="cursor: grab"
+              v-if="!findMessage(replyTo).user.avatar"
+              @click="openUser(findMessage(replyTo).user.id)"
+              color="white"
+              width="12"
+              height="12"
+              icon="account"
+            />
+            <img
+              style="
+                border-radius: 12px;
+                object-fit: cover;
+                cursor: grab;
+                margin-top: 2px;
+              "
+              @click="openUser(findMessage(replyTo).user.id)"
+              width="12"
+              height="12"
+              v-else
+              :src="findMessage(replyTo).user.avatar"
+              alt="Profile icon"
+            />
+            <b
+              class="message-text-medium"
+              @click="openUser(findMessage(replyTo).user.id)"
+              style="margin: 0 4px 0 4px"
+            >
+              {{ "@" + findMessage(replyTo).user.username }}
+            </b>
+            <p
+              class="message-text-medium-gray"
+              @click="goToMessage(findMessage(replyTo))"
+              style="margin: 0"
+            >
+              {{ findMessage(replyTo).messageContents }}
+            </p>
+          </div>
+        </div>
       </transition>
       <div
         class="message-send"
@@ -710,7 +776,9 @@ export default {
       return this.messages.find((message) => message.id === messageId)
     },
     goToMessage(messageId) {
-      const element = document.getElementById("message-" + (messageId.id - 1))
+      const element = document.getElementById(
+        "message-" + this.messages.indexOf(messageId)
+      )
       const elementRect = element.getBoundingClientRect()
       const absoluteElementTop = elementRect.top + window.pageYOffset
       const middleOfScreen = window.innerHeight / 2
@@ -766,6 +834,8 @@ export default {
         this.profileShown = false
       } else if (event.key === "Escape" && this.editing) {
         this.editing = false
+      } else if (event.key === "Escape" && this.replyTo) {
+        this.replyTo = null
       } else if (event.key === "Escape" && !this.profileShown) {
         this.scroll(true)
       }
