@@ -3,7 +3,7 @@
     <modal
       v-if="profileShown"
       :is-active="profileShown"
-      @close="profileShown = false"
+      @close=";(profileShown = false), (editing = false)"
     >
       <img
         :src="showUser.banner || 'https://i.troplo.com/i/d81dabf74c88.png'"
@@ -38,9 +38,35 @@
         </div>
         <div style="flex-grow: 1; margin: 0" class="message-item">
           <h4>{{ showUser.username }}</h4>
-          <p class="message-text-large" style="margin: 0">
-            {{ showUser.statusMessage }}
-          </p>
+          <div v-if="editing !== 'status'" style="display: flex">
+            <p class="message-text-large" style="margin: 0">
+              {{ showUser.statusMessage }}
+            </p>
+            <Icons
+              v-if="showUser.id === loggedIn.id"
+              style="cursor: pointer"
+              class="message-item"
+              color="white"
+              width="16"
+              height="16"
+              icon="edit"
+              @click="
+                ;(editing = 'status'),
+                  (editStatus = showUser.statusMessage),
+                  editFocus()
+              "
+            />
+          </div>
+          <input
+            v-else
+            placeholder="Edit your status"
+            @keydown.enter="editStatusMessage()"
+            class="responder"
+            v-model="editStatus"
+            type="text"
+            style="width: 100%; margin: 0"
+            id="status"
+          />
         </div>
         <div>
           <button
@@ -410,7 +436,7 @@
               ></Embeds>
             </div>
             <input
-              v-if="editing === message.id"
+              v-else
               placeholder="Edit your message"
               @keydown.enter="editMessage(message.id)"
               class="responder"
@@ -516,6 +542,7 @@ export default {
       inputText: "",
       replyTo: null,
       editText: "",
+      editStatus: "",
       sidebarOpen: false,
       editing: false,
       error: "",
@@ -570,6 +597,47 @@ export default {
           })
       }
     },
+    deleteMessage(messageId) {
+      this.axios.delete(`/api/delete/${messageId}`).then(() => {
+        this.getMessages()
+      })
+    },
+    editMessage(messageId) {
+      if (
+        this.editText.trim() === this.findMessage(messageId).messageContents
+      ) {
+        return (this.editing = false)
+      }
+      this.axios
+        .patch(`/api/edit/${messageId}`, {
+          messageContents: this.editText.trim()
+        })
+        .then(() => {
+          this.getMessages()
+          this.editing = false
+        })
+        .catch((e) => {
+          this.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
+        })
+    },
+    editStatusMessage() {
+      if (this.editStatus.trim() === this.showUser.statusMessage) {
+        return (this.editing = false)
+      }
+      this.axios
+        .patch("/api/editStatusMessage/", {
+          statusMessage: this.editStatus.trim()
+        })
+        .then((res) => {
+          this.showUser.statusMessage = res.data
+          this.editing = false
+        })
+        .catch((e) => {
+          this.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
+        })
+    },
     errorFalse() {
       this.error = false
     },
@@ -591,6 +659,12 @@ export default {
         .catch((e) => {
           this.error = "Error 503 Cannot Connect to Server " + e
         })
+    },
+    openUser(userId) {
+      this.axios.get("/api/user/" + userId).then((res) => {
+        this.showUser = res.data
+        this.profileShown = true
+      })
     },
     scroll(override) {
       this.$nextTick(() => {
@@ -639,16 +713,13 @@ export default {
         element.classList.remove("highlight")
       }, 1000)
     },
-    openUser(userId) {
-      this.axios.get("/api/user/" + userId).then((res) => {
-        this.showUser = res.data
-        this.profileShown = true
-      })
-    },
     editFocus() {
       this.$nextTick(() => {
+        const status = document.getElementById("status")
         const input = document.getElementById("edit")
-        if (input) {
+        if (status) {
+          status?.focus()
+        } else if (input) {
           input?.focus()
         } else {
           const input = document.getElementById("input")
@@ -665,25 +736,6 @@ export default {
         return this.messageEdit.slice(-1)[0].id
       }
     },
-    deleteMessage(messageId) {
-      this.axios.delete(`/api/delete/${messageId}`).then(() => {
-        this.getMessages()
-      })
-    },
-    editMessage(messageId) {
-      this.axios
-        .patch(`/api/edit/${messageId}`, {
-          messageContents: this.editText
-        })
-        .then(() => {
-          this.getMessages()
-          this.editing = false
-        })
-        .catch((e) => {
-          this.error = e.response.data.message
-          setTimeout(this.errorFalse, 5000)
-        })
-    },
     addFriend(userId) {
       this.axios
         .post(`/api/friend/${userId}`)
@@ -696,7 +748,9 @@ export default {
         })
     },
     escPressed(event) {
-      if (event.key === "Escape" && this.profileShown) {
+      if (event.key === "Escape" && this.editing === "status") {
+        this.editing = false
+      } else if (event.key === "Escape" && this.profileShown) {
         this.profileShown = false
       } else if (event.key === "Escape" && this.editing) {
         this.editing = false
