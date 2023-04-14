@@ -12,8 +12,8 @@
         style="object-fit: cover"
         alt="Profile banner"
       />
-      <div class="profile-grid" style="padding: 24px">
-        <div class="profile-picture" style="margin-right: 16px">
+      <div class="profile-grid" style="padding: 24px; width: 452px">
+        <div class="profile-picture" style="margin-right: 16px; height: 80px">
           <Icons
             v-if="!showUser.avatar"
             class="message-item"
@@ -36,10 +36,16 @@
             <circle cx="8" cy="8" r="8" fill="#47bf4c" />
           </svg>
         </div>
-        <div style="flex-grow: 1; margin: 0" class="message-item">
+        <div
+          style="flex-grow: 1; flex-basis: 0; margin: 0"
+          class="message-item"
+        >
           <h4>{{ showUser.username }}</h4>
           <div v-if="editing !== 'status'" style="display: flex">
-            <p class="message-text-large" style="margin: 0">
+            <p
+              class="message-text-large"
+              style="margin: 0; word-wrap: break-word"
+            >
               {{ showUser.statusMessage }}
             </p>
             <Icons
@@ -622,11 +628,14 @@ export default {
         })
     },
     editStatusMessage() {
-      if (this.editStatus.trim() === this.showUser.statusMessage) {
+      if (
+        this.editStatus.trim() === this.showUser.statusMessage ||
+        this.editStatus.trim().length > 50
+      ) {
         return (this.editing = false)
       }
       this.axios
-        .patch("/api/editStatusMessage/", {
+        .patch("/api/editStatusMessage", {
           statusMessage: this.editStatus.trim()
         })
         .then((res) => {
