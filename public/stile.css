@@ -1,7 +1,21 @@
 body {
-  margin: 48px 0 56px;
+  margin: 48px 0 0;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #181a1b;
+  overflow: hidden;
+}
+
+.scroll-bar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb {
+  background: #282a2b;
+  border-radius: 3px;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb:hover {
+  background: #313435;
 }
 
 .center {
@@ -73,14 +87,9 @@ button:hover {
 }
 
 .message-send {
+  height: 48px;
   overflow: hidden;
   background-color: #282a2b;
-  position: fixed;
-  height: 48px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
 }
 
 .scroll-button {
@@ -88,8 +97,6 @@ button:hover {
   font-size: 12px;
   overflow: hidden;
   background-color: #282a2b;
-  position: fixed;
-  bottom: 48px;
   left: 0;
   right: 0;
   z-index: 1;

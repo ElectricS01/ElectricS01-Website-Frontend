@@ -28,13 +28,10 @@ export default {
 
 <style>
 .sidebar {
-  position: fixed;
-  right: 0;
-  top: 48px;
   overflow-y: auto;
-  height: calc(100% - 48px);
+  height: calc(100% - 8px);
   width: 242px;
-  padding: 4px 8px 8px 0;
+  padding: 4px 8px 4px 0;
 }
 
 .sidebar-border {
