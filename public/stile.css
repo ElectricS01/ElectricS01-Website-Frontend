@@ -18,6 +18,15 @@ body {
   background: #313435;
 }
 
+.container {
+  position: fixed;
+  top: 48px;
+  width: 100%;
+  height: calc(100% - 48px);
+  overflow-y: auto;
+  text-align: center;
+}
+
 .center {
   display: flex;
   flex-wrap: wrap;
@@ -27,6 +36,11 @@ body {
 
 main {
   flex: 1;
+}
+
+.icon-image {
+  width: 18px;
+  height: 12px
 }
 
 .button a,
@@ -304,8 +318,7 @@ input:focus {
 }
 
 .highlight {
-  background-color: #2627A4
-;
+  background-color: #2627A4;
 }
 
 a {
@@ -374,6 +387,7 @@ h4 {
 .text-small {
   color: white;
   font-size: 10px;
+  text-align: left
 }
 
 .error-message {
@@ -385,32 +399,6 @@ label {
   color: white;
 }
 
-.grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.grid-item {
-  flex: 0 0 25%;
-  padding: 10px;
-  transition: all 0.2s ease-in-out;
-}
-
-.grid-item:hover {
-  transform: scale(1.1);
-}
-
-.grid-login {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 187.5px);
-  width: 100%;
-}
-
 .login-menu {
   margin: 0;
   width: 500px;
@@ -420,6 +408,7 @@ label {
   align-items: center;
   justify-content: center;
   border-radius: 25px;
+  text-align: center
 }
 
 .register-menu {
@@ -431,6 +420,7 @@ label {
   align-items: center;
   justify-content: center;
   border-radius: 25px;
+  text-align: center
 }
 
 .reset-menu {
@@ -442,6 +432,7 @@ label {
   align-items: center;
   justify-content: center;
   border-radius: 25px;
+  text-align: center
 }
 
 .login-input {
@@ -459,6 +450,37 @@ label {
 .login-card {
   margin: 0;
   width: 90%;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid-login {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 187.5px);
+  width: 100%;
+}
+
+.grid-item {
+  flex: 0 0 25%;
+  padding: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.grid-item:hover {
+  transform: scale(1.1);
+}
+
+.grid-image {
+  width: 300px;
+  height: 300px
 }
 
 @media (min-width: 600px) {

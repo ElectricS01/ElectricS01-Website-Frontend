@@ -13,10 +13,10 @@
     </p>
   </transition>
   <div class="grid-login">
-    <div style="text-align: center" class="login-menu">
+    <div class="login-menu">
       <div class="login-card">
         <p class="message-text-large">Login</p>
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <label for="username">Username</label>
         </div>
         <input
@@ -25,7 +25,7 @@
           v-model="username"
           id="username"
         />
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <label for="password">Password</label>
         </div>
         <input

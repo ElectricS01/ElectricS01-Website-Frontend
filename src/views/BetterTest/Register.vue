@@ -13,10 +13,10 @@
     </p>
   </transition>
   <div class="grid-login">
-    <div style="text-align: center" class="register-menu">
+    <div class="register-menu">
       <div class="login-card">
         <p class="message-text-large">Register</p>
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <label for="username">Username</label>
         </div>
         <input
@@ -25,7 +25,7 @@
           id="username"
           v-model="username"
         />
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <label for="email">Email</label>
         </div>
         <input
@@ -35,7 +35,7 @@
           v-model="email"
           type="email"
         />
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <label for="password">Password</label>
         </div>
         <input
@@ -45,7 +45,7 @@
           v-model="password"
           type="password"
         />
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <router-link to="/login">Back to Login</router-link>
         </div>
         <button @click="submit">Enter</button>

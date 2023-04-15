@@ -7,11 +7,16 @@
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
   </div>
+  <transition>
+    <p v-if="error" class="error-button">
+      {{ error }}
+    </p>
+  </transition>
   <div class="grid-login">
-    <div style="text-align: center" class="reset-menu">
+    <div class="reset-menu">
       <div class="login-card">
         <p class="message-text-large">Reset Password</p>
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <label for="email">Email</label>
         </div>
         <input
@@ -20,7 +25,7 @@
           id="email"
           type="email"
         />
-        <div style="text-align: left" class="text-small">
+        <div class="text-small">
           <router-link to="/login">Back to Login</router-link>
         </div>
         <button type="submit">Enter</button>
