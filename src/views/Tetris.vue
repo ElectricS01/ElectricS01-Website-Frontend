@@ -1,5 +1,14 @@
 <template>
-  <div style="text-align: center">
+  <div
+    style="
+      position: fixed;
+      top: 48px;
+      width: 100%;
+      height: calc(100% - 48px);
+      overflow-y: auto;
+      text-align: center;
+    "
+  >
     <iframe
       allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated"
       webkitallowfullscreen="true"

@@ -1,13 +1,23 @@
 <template>
-  <div style="padding-left: 16px; padding-right: 16px">
-    <h2>ElectricS01's Calculator</h2>
-    <div>
+  <div
+    style="
+      position: fixed;
+      top: 48px;
+      width: 100%;
+      height: calc(100% - 48px);
+      overflow-y: auto;
+    "
+  >
+    <div style="padding-left: 16px; padding-right: 16px">
+      <h2>ElectricS01's Calculator</h2>
       <div>
-        <label id="nameLabel">Calculate:</label>
-        <input id="nameField" v-model="expression" type="text" class="text" />
-      </div>
-      <div>
-        <p id="result">{{ result }}</p>
+        <div>
+          <label id="nameLabel">Calculate:</label>
+          <input id="nameField" v-model="expression" type="text" class="text" />
+        </div>
+        <div>
+          <p id="result">{{ result }}</p>
+        </div>
       </div>
     </div>
   </div>
