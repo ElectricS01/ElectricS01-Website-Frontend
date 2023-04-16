@@ -14,7 +14,7 @@
       height="620"
       width="620"
     ></iframe>
-    <h3>Tetris By ElectricS01 0.21</h3>
+    <h3>Tetris By ElectricS01 0.22</h3>
   </div>
 </template>
 
