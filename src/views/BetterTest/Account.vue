@@ -94,7 +94,7 @@ export default {
     dayjs(date) {
       return dayjs(date).format("HH:mm:ss DD/MM/YYYY")
     },
-    user() {
+    getUser() {
       this.axios
         .get("/api/user")
         .then((res) => {
@@ -109,7 +109,7 @@ export default {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/favicon.ico"
 
-    this.user()
+    this.getUser()
     this.getMessages()
   }
 }

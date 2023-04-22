@@ -1,18 +1,37 @@
 <template>
   <header>
     <div class="navbar" id="mobile-navbar" v-if="navbarShown">
-      <router-link class="main" to="/">Home</router-link>
-      <router-link to="/tonkgame" :class="{ active: active('/tonkgame') }">
+      <router-link class="main" to="/" @click="responsive_navbar(true)">
+        Home
+      </router-link>
+      <router-link
+        to="/tonkgame"
+        :class="{ active: active('/tonkgame') }"
+        @click="responsive_navbar()"
+      >
         TonkGame
       </router-link>
-      <router-link to="/calculator" :class="{ active: active('/calculator') }">
+      <router-link
+        to="/calculator"
+        :class="{ active: active('/calculator') }"
+        @click="responsive_navbar()"
+      >
         Calculator
       </router-link>
-      <router-link to="/tetris" :class="{ active: active('/tetris') }">
+      <router-link
+        to="/tetris"
+        :class="{ active: active('/tetris') }"
+        @click="responsive_navbar()"
+      >
         Tetris
       </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
-      <router-link v-if="loggedIn" class="right" to="/account">
+      <router-link
+        v-if="$data"
+        class="right"
+        to="/account"
+        @click="responsive_navbar()"
+      >
         Account
       </router-link>
       <a class="icon" @click="responsive_navbar()">☰</a>
@@ -33,7 +52,7 @@ export default {
     }
   },
   methods: {
-    user() {
+    getUser() {
       this.axios
         .get("/api/user")
         .then((res) => {
@@ -46,12 +65,14 @@ export default {
     active(route) {
       return route === this.$route.path
     },
-    responsive_navbar() {
+    responsive_navbar(override) {
       const responsive_navbar = document.getElementById("mobile-navbar")
-      if (responsive_navbar.className === "navbar") {
-        responsive_navbar.className += " responsive"
-      } else {
-        responsive_navbar.className = "navbar"
+      if (!override) {
+        if (responsive_navbar.className === "navbar") {
+          responsive_navbar.className += " responsive"
+        } else {
+          responsive_navbar.className = "navbar"
+        }
       }
     }
   },
@@ -70,7 +91,7 @@ export default {
     Object.assign(this.axios.defaults, {
       headers: { Authorization: localStorage.getItem("token") }
     })
-    this.user()
+    this.getUser()
   }
 }
 </script>

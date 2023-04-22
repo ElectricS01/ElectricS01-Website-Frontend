@@ -435,8 +435,7 @@
                     @click="
                       ;(editing = message.id),
                         (editText = message.messageContents),
-                        scroll(false),
-                        editFocus()
+                        scroll()
                     "
                   />
                   <Icons
@@ -753,7 +752,7 @@ export default {
     dayjsDate(date) {
       return dayjs(date).format("D MMMM YYYY")
     },
-    user() {
+    getUser() {
       this.axios
         .get("/api/user")
         .then((res) => {
@@ -778,6 +777,7 @@ export default {
             if (lastMessage) {
               lastMessage.scrollIntoView()
               this.scrolledUp = false
+              this.editFocus()
             }
           }
         } catch (e) {
@@ -886,7 +886,7 @@ export default {
     const div = document.getElementById("div")
     div.addEventListener("scroll", this.scrollEvent)
 
-    this.user()
+    this.getUser()
     await this.getMessages()
     await this.getUsers()
     this.scroll(true)

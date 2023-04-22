@@ -63,7 +63,7 @@ export default {
           this.error = e.response.data.message
         })
     },
-    user() {
+    getUser() {
       this.axios
         .get("/api/user")
         .then((res) => {
@@ -78,7 +78,7 @@ export default {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/favicon.ico"
 
-    this.user()
+    this.getUser()
   }
 }
 </script>
