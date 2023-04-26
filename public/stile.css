@@ -185,6 +185,7 @@ button:hover {
 .navbar a.right {
   float: right;
   display: block;
+  cursor: pointer;
 }
 
 .chat-navbar a.active,
@@ -323,11 +324,12 @@ input:focus {
 
 a {
   text-decoration: none;
-  color: white;
+  color: #00A8FC;
 }
 
 p {
   color: white;
+  margin: 0;
 }
 
 h1 {
@@ -364,7 +366,7 @@ h4 {
 
 .message-text-medium:hover {
   text-decoration: underline;
-  cursor: grab;
+  cursor: pointer;
 }
 
 .message-text-medium-gray-hover,
@@ -375,7 +377,7 @@ h4 {
 }
 
 .message-text-medium-gray-hover:hover {
-  cursor: grab;
+  cursor: pointer;
   color: white
 }
 
@@ -388,6 +390,10 @@ h4 {
   color: white;
   font-size: 10px;
   text-align: left
+}
+
+.text-main {
+  margin:  16px 0 16px 0;
 }
 
 .error-message {

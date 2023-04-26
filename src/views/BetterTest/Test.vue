@@ -183,7 +183,7 @@
       v-if="users.length > 2"
       @click="toggleSidebar"
       class="right"
-      style="cursor: grab; width: 28px; height: 28px; padding: 10px"
+      style="cursor: pointer; width: 28px; height: 28px; padding: 10px"
     >
       <Icons color="white" width="28" height="28" icon="account" />
     </a>
@@ -281,7 +281,7 @@
                   style="margin-right: 4px"
                 />
                 <Icons
-                  style="cursor: grab"
+                  style="cursor: pointer"
                   v-if="!findMessage(message.reply).user.avatar"
                   @click="openUser(findMessage(message.reply).user.id)"
                   color="white"
@@ -293,7 +293,7 @@
                   style="
                     border-radius: 16px;
                     object-fit: cover;
-                    cursor: grab;
+                    cursor: pointer;
                     margin-top: 2px;
                   "
                   @click="openUser(findMessage(message.reply).user.id)"
@@ -327,7 +327,11 @@
               >
                 <div v-if="!merge(message, index)">
                   <Icons
-                    style="margin-right: 12px; cursor: grab; margin-left: 4px"
+                    style="
+                      margin-right: 12px;
+                      cursor: pointer;
+                      margin-left: 4px;
+                    "
                     v-if="!message.user.avatar"
                     @click="openUser(message.user?.id)"
                     class="message-item"
@@ -342,7 +346,7 @@
                       object-fit: cover;
                       margin-right: 12px;
                       margin-left: 4px;
-                      cursor: grab;
+                      cursor: pointer;
                     "
                     class="message-item"
                     @click="openUser(message.user?.id)"
@@ -388,21 +392,8 @@
                       {{ " " + dayjs(message.createdAt) }}
                     </b>
                   </div>
-                  <div v-if="editing !== message.id">
-                    <p class="message-text-large">
-                      {{ message.messageContents }}
-                      <b class="message-text-small" v-if="message.edited">
-                        (edited)
-                      </b>
-                    </p>
-                    <Embeds
-                      v-for="(embed, index) in message.embeds"
-                      :key="index"
-                      :embed="embed"
-                    ></Embeds>
-                  </div>
                   <input
-                    v-else
+                    v-if="editing === message.id"
                     placeholder="Edit your message"
                     @keydown.enter="editMessage(message.id)"
                     class="responder"
@@ -412,6 +403,19 @@
                     id="edit"
                     autocomplete="off"
                   />
+                  <div>
+                    <p class="message-text-large" v-markdown>
+                      {{ message.messageContents }}
+                    </p>
+                    <b class="message-text-small" v-if="message.edited">
+                      (edited)
+                    </b>
+                    <Embeds
+                      v-for="(embed, index) in message.embeds"
+                      :key="index"
+                      :embed="embed"
+                    ></Embeds>
+                  </div>
                 </div>
                 <div
                   style="
@@ -435,7 +439,7 @@
                     @click="
                       ;(editing = message.id),
                         (editText = message.messageContents),
-                        scroll()
+                        scroll(message)
                     "
                   />
                   <Icons
@@ -473,7 +477,12 @@
                   marginRight: users.length > 2 && sidebarOpen ? '250px' : ''
                 }"
                 v-if="scrolledUp"
-                style="position: fixed; z-index: 1; bottom: 48px"
+                style="
+                  position: fixed;
+                  z-index: 1;
+                  bottom: 48px;
+                  cursor: pointer;
+                "
                 class="scroll-button"
                 @click="scroll"
               >
@@ -502,7 +511,7 @@
                 style="margin-right: 4px"
               />
               <Icons
-                style="cursor: grab"
+                style="cursor: pointer"
                 v-if="!findMessage(replyTo).user.avatar"
                 @click="openUser(findMessage(replyTo).user.id)"
                 color="white"
@@ -514,7 +523,7 @@
                 style="
                   border-radius: 12px;
                   object-fit: cover;
-                  cursor: grab;
+                  cursor: pointer;
                   margin-top: 2px;
                 "
                 @click="openUser(findMessage(replyTo).user.id)"
@@ -553,7 +562,7 @@
             id="input"
             autocomplete="off"
           />
-          <button @click="submit" style="cursor: grab">Send</button>
+          <button @click="submit" style="cursor: pointer">Send</button>
           <br />
         </div>
       </div>
@@ -566,7 +575,7 @@
         @mouseleave="user.focus = false"
       >
         <div
-          style="cursor: grab"
+          style="cursor: pointer"
           class="message-grid"
           @click="openUser(user.id)"
         >
@@ -774,7 +783,15 @@ export default {
           if (!this.scrolledUp || override) {
             const lastIndex = this.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
-            if (lastMessage) {
+            if (this.editing) {
+              console.log(this.editing)
+              const lastMessage = document.querySelector(
+                `#message-${this.messages.indexOf(override)}`
+              )
+              console.log(lastMessage)
+              console.log(this.messages.indexOf(this.editing))
+              lastMessage.scrollIntoView({ block: "nearest" })
+            } else if (lastMessage) {
               lastMessage.scrollIntoView()
               this.scrolledUp = false
               this.editFocus()
@@ -872,7 +889,11 @@ export default {
       const scrollTop = div.scrollTop
       const clientHeight = div.clientHeight
 
-      this.scrolledUp = scrollTop + clientHeight <= scrollHeight - 200
+      this.scrolledUp =
+        scrollTop + clientHeight <=
+        scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
+      console.log("e" + (scrollHeight - (scrollTop + clientHeight)))
+      console.log("e" + clientHeight / 2 > 400 ? 400 : clientHeight / 2)
     },
     toggleSidebar() {
       this.sidebarOpen = !this.sidebarOpen

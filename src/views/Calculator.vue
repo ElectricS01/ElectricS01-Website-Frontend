@@ -7,7 +7,7 @@
         <input id="nameField" v-model="expression" type="text" class="text" />
       </div>
       <div>
-        <p id="result">{{ result }}</p>
+        <p class="text-main" id="result">{{ result }}</p>
       </div>
     </div>
   </div>

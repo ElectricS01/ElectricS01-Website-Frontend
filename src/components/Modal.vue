@@ -7,7 +7,7 @@
           width="40"
           height="40"
           icon="close"
-          style="padding: 4px; cursor: grab"
+          style="padding: 4px; cursor: pointer"
         ></icons>
       </button>
       <slot></slot>
