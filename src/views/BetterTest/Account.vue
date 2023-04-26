@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" style="height: calc(100% - 96px)">
     <div class="chat-navbar">
       <router-link to="/test">Better Test</router-link>
       <router-link v-if="loggedIn" class="right" to="/account">
@@ -13,18 +13,21 @@
         {{ error }}
       </p>
     </transition>
-    <div style="text-align: left; padding-left: 16px; padding-top: 16px">
+    <div style="text-align: left; padding: 16px">
       <div v-for="message in messages" :key="message.id">
         <b class="message-text-large">
           {{ message.messageContents }}
         </b>
-        <br />
+
         <b class="message-text-small">
           {{ message.userName }} {{ dayjs(message.createdAt) }}
         </b>
       </div>
     </div>
-    <div class="message-send" style="text-align: center">
+    <div
+      class="message-send"
+      style="text-align: center; position: fixed; bottom: 0; right: 0; left: 0"
+    >
       <div>
         <input
           @keydown.enter="submit"
@@ -33,7 +36,7 @@
           v-model="inputUser"
           type="text"
         />
-        <br />
+
         <input
           @keydown.enter="submit"
           id="nameField"
@@ -41,9 +44,9 @@
           v-model="inputText"
           type="text"
         />
-        <br />
+
         <button @click="submit">Submit</button>
-        <br />
+
         <div class="error-message">
           {{ error }}
         </div>

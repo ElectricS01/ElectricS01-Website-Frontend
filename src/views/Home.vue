@@ -6,8 +6,6 @@
         Hi, I'm ElectricS01, I make random things in Vue, Javascript, Python and
         GameMaker
       </p>
-      <br />
-
       <div class="grid">
         <div class="box grid-item">
           <router-link class="border" to="/tonkgame">
@@ -40,55 +38,64 @@
           </a>
         </div>
       </div>
-      <br />
-      <a
-        class="message-text-large"
-        href="https://www.youtube.com/electrics01"
-        title="Go to My Youtube"
-      >
-        <img src="../assets/youtube.webp" alt="My Youtube" class="icon-image" />
-        Electric S01
-      </a>
-      <br />
-      <br />
-      <a
-        class="message-text-large"
-        href="https://twitter.com/S01Electric"
-        title="Go to My Discord"
-      >
-        <img src="../assets/twitter.webp" alt="My Discord" class="icon-image" />
-        Electric S01
-      </a>
-      <br />
-      <br />
-      <a
-        class="message-text-large"
-        href="https://electrics01.itch.io"
-        title="Go to My Itch.io"
-      >
-        <img src="../assets/itch-io.webp" alt="My Itch.io" class="icon-image" />
-        ElectricS01
-      </a>
-      <br />
-      <br />
-      <a
-        class="message-text-large"
-        href="https://github.com/ElectricS01"
-        title="Go to My GitHub"
-      >
-        <img src="../assets/github.webp" alt="My GitHub" class="icon-image" />
-        ElectricS01
-      </a>
-      <br />
-      <br />
-      <a
-        class="message-text-large"
-        href="https://discord.com/users/691540630907781171"
-        title="Go to My Discord"
-      >
-        <img src="../assets/discord.webp" alt="My Discord" class="icon-image" />
-        ElectricS01
-      </a>
+      <div class="icon-text">
+        <a
+          class="message-text-large"
+          href="https://www.youtube.com/electrics01"
+          title="Go to My Youtube"
+        >
+          <img
+            src="../assets/youtube.webp"
+            alt="My Youtube"
+            class="icon-image"
+          />
+          Electric S01
+        </a>
+        <a
+          class="message-text-large"
+          href="https://twitter.com/S01Electric"
+          title="Go to My Discord"
+        >
+          <img
+            src="../assets/twitter.webp"
+            alt="My Discord"
+            class="icon-image"
+          />
+          Electric S01
+        </a>
+        <a
+          class="message-text-large"
+          href="https://electrics01.itch.io"
+          title="Go to My Itch.io"
+        >
+          <img
+            src="../assets/itch-io.webp"
+            alt="My Itch.io"
+            class="icon-image"
+          />
+          ElectricS01
+        </a>
+        <a
+          class="message-text-large"
+          href="https://github.com/ElectricS01"
+          title="Go to My GitHub"
+        >
+          <img src="../assets/github.webp" alt="My GitHub" class="icon-image" />
+          ElectricS01
+        </a>
+        <a
+          class="message-text-large"
+          href="https://discord.com/users/691540630907781171"
+          title="Go to My Discord"
+        >
+          <img
+            src="../assets/discord.webp"
+            alt="My Discord"
+            class="icon-image"
+          />
+          ElectricS01
+        </a>
+      </div>
     </div>
   </div>
 </template>

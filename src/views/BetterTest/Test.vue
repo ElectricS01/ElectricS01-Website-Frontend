@@ -563,7 +563,6 @@
             autocomplete="off"
           />
           <button @click="submit" style="cursor: pointer">Send</button>
-          <br />
         </div>
       </div>
     </div>

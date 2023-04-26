@@ -359,6 +359,11 @@ h4 {
   margin: 0;
 }
 
+.icon-text a {
+  display: block;
+  margin-bottom: 18px;
+}
+
 .message-text-medium {
   color: white;
   font-size: 12px;
@@ -459,6 +464,7 @@ label {
 }
 
 .grid {
+  padding: 18px 0 18px 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
