@@ -225,8 +225,6 @@
               :key="message.id"
               :id="'message-' + index"
               style="padding: 4px"
-              @mouseover="message.focus = true"
-              @mouseleave="message.focus = false"
             >
               <div
                 style="
@@ -357,16 +355,8 @@
                     alt="Profile icon"
                   />
                 </div>
-                <div v-else style="width: 48px">
-                  <b
-                    class="message-text-small"
-                    v-show="message.focus"
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                  >
+                <div v-else class="message-time">
+                  <b class="message-text-small">
                     {{ dayjsShort(message.createdAt) }}
                   </b>
                 </div>
@@ -404,12 +394,14 @@
                     autocomplete="off"
                   />
                   <div>
-                    <p class="message-text-large" v-markdown>
-                      {{ message.messageContents }}
-                    </p>
-                    <b class="message-text-small" v-if="message.edited">
-                      (edited)
-                    </b>
+                    <div v-show="editing !== message.id">
+                      <p class="message-text-large" v-markdown>
+                        {{ message.messageContents }}
+                      </p>
+                      <b class="message-text-small" v-if="message.edited">
+                        (edited)
+                      </b>
+                    </div>
                     <Embeds
                       v-for="(embed, index) in message.embeds"
                       :key="index"
@@ -417,17 +409,7 @@
                     ></Embeds>
                   </div>
                 </div>
-                <div
-                  style="
-                    position: absolute;
-                    right: 8px;
-                    top: 0;
-                    display: flex;
-                    align-items: center;
-                    height: 100%;
-                  "
-                  v-show="editing !== message.id && message.focus"
-                >
+                <div class="message-icons" v-show="editing !== message.id">
                   <Icons
                     v-show="message.user.id === loggedIn.id"
                     style="cursor: pointer"
@@ -567,12 +549,7 @@
       </div>
     </div>
     <Sidebar v-if="users.length > 2 && sidebarOpen" class="scroll-bar">
-      <div
-        v-for="user in users"
-        style="padding: 4px 0 4px 8px"
-        @mouseover="user.focus = true"
-        @mouseleave="user.focus = false"
-      >
+      <div v-for="user in users" style="padding: 4px 0 4px 8px">
         <div
           style="cursor: pointer"
           class="message-grid"

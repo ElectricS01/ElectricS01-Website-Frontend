@@ -260,8 +260,31 @@ button:hover {
   display: flex;
 }
 
+.message-icons {
+  position: absolute;
+  right: 8px;
+  top: 0;
+  align-items: center;
+  height: 100%;
+  display: none;
+}
+
+.message-time {
+  width: 48px;
+}
+
+.message-time b {
+  display: none;
+  justify-content: center;
+  line-height: 17px;
+}
+
 .message-grid:hover {
   background-color: #212425;
+}
+
+.message-grid:hover .message-icons, .message-grid:hover .message-time b {
+  display: flex;
 }
 
 .message-item {
