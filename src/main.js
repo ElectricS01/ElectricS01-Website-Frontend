@@ -7,15 +7,52 @@ import VueAxios from "vue-axios"
 import { useDataStore } from "@/stores/loggedIn"
 import MarkdownIt from "markdown-it"
 
-const md = new MarkdownIt({ linkify: true })
+const md = new MarkdownIt({
+  linkify: true
+})
+
+// disable the 'p' rule
+md.renderer.rules.paragraph_open = function (tokens, idx, options, env, self) {
+  return ""
+}
 
 const pinia = createPinia()
 const app = createApp(App).use(router)
 app.directive("markdown", {
   mounted(el) {
-    el.innerHTML = md.render(el.innerHTML)
+    // Extract the message contents and (edited) status
+    // Copy the b element out of the container element
+    const bElement = el.querySelector("b.message-text-small")
+    let editedText = ""
+    if (bElement) {
+      editedText = bElement.outerHTML
+      bElement.parentNode.removeChild(bElement)
+    }
+
+    // Add the "(edited)" text back to the container element
+    if (el.contains(bElement)) {
+      editedText += "(edited)"
+    }
+
+    // Create a new element to contain the processed content
+    const container = document.createElement("div")
+
+    // Process the text content with the Markdown library
+    const processedHtml = md.render(el.textContent)
+
+    // Set the processed content as the innerHTML of the container element
+    container.innerHTML = processedHtml
+
+    // Append the "(edited)" text after the processed content
+    if (editedText) {
+      container.insertAdjacentHTML("beforeend", editedText)
+    }
+
+    // Replace the content of the original div element with the processed content
+    el.innerHTML = container.innerHTML
   }
 })
+
 app.use(VueAxios, axios)
 app.use(pinia)
 app.config.globalProperties.$loggedIn = useDataStore()

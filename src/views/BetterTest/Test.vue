@@ -394,10 +394,8 @@
                     autocomplete="off"
                   />
                   <div>
-                    <div v-show="editing !== message.id">
-                      <p class="message-text-large" v-markdown>
-                        {{ message.messageContents }}
-                      </p>
+                    <div v-show="editing !== message.id" v-markdown>
+                      {{ message.messageContents }}
                       <b class="message-text-small" v-if="message.edited">
                         (edited)
                       </b>
@@ -760,12 +758,9 @@ export default {
             const lastIndex = this.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
             if (this.editing) {
-              console.log(this.editing)
               const lastMessage = document.querySelector(
                 `#message-${this.messages.indexOf(override)}`
               )
-              console.log(lastMessage)
-              console.log(this.messages.indexOf(this.editing))
               lastMessage.scrollIntoView({ block: "nearest" })
             } else if (lastMessage) {
               lastMessage.scrollIntoView()
@@ -868,8 +863,6 @@ export default {
       this.scrolledUp =
         scrollTop + clientHeight <=
         scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
-      console.log("e" + (scrollHeight - (scrollTop + clientHeight)))
-      console.log("e" + clientHeight / 2 > 400 ? 400 : clientHeight / 2)
     },
     toggleSidebar() {
       this.sidebarOpen = !this.sidebarOpen
