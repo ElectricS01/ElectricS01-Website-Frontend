@@ -14,7 +14,14 @@
               alt="TonkGame By ElectricS01"
               class="grid-image"
             />
-            <p style="margin-top: 12px">TonkGame(WIP)</p>
+            <div class="small-container">
+              <p class="text-medium">TonkGame(WIP)</p>
+              <div class="spacer"></div>
+              <p class="message-text-medium-gray">
+                My first ever coding project, a simple 2D Top Down Shooter made
+                with GameMaker Studio
+              </p>
+            </div>
           </router-link>
         </div>
         <div class="box grid-item">
@@ -24,7 +31,14 @@
               alt="Tetris By ElectricS01"
               class="grid-image"
             />
-            <p style="margin-top: 12px">Tetris By ElectricS01</p>
+            <div class="small-container">
+              <p class="text-medium">Tetris By ElectricS01</p>
+              <div class="spacer"></div>
+              <p class="message-text-medium-gray">
+                My own rendition of the popular game Tetris made with GameMaker
+                Studio
+              </p>
+            </div>
           </router-link>
         </div>
         <div class="box grid-item">
@@ -34,7 +48,29 @@
               alt="BetterCompass Club By ElectricS01"
               class="grid-image"
             />
-            <p style="margin-top: 12px">BetterCompass Club</p>
+            <div class="small-container">
+              <p class="text-medium">BetterCompass Club</p>
+              <div class="spacer"></div>
+              <p class="message-text-medium-gray">
+                A Club/Tutorial page for BetterCompass made with HTML
+              </p>
+            </div>
+          </a>
+        </div>
+        <div class="box grid-item">
+          <a class="border" href="https://compass.electrics01.com">
+            <img
+              src="../assets/bettercompass.webp"
+              alt="BetterCompass Maintained By ElectricS01"
+              class="grid-image"
+            />
+            <div class="small-container">
+              <p class="text-medium">BetterCompass By ElectricS01</p>
+              <div class="spacer"></div>
+              <p class="message-text-medium-gray">
+                My own BetterCompass instance maintained by me
+              </p>
+            </div>
           </a>
         </div>
       </div>

@@ -36,6 +36,14 @@
       </router-link>
       <a class="icon" @click="responsive_navbar()">☰</a>
     </div>
+    <div class="chat-navbar" v-else>
+      <router-link to="/test">Better Test</router-link>
+      <router-link v-if="loggedIn" class="right" to="/account">
+        Account
+      </router-link>
+      <router-link v-else class="right" to="/login">Login</router-link>
+      <router-link class="right" to="/">Home</router-link>
+    </div>
   </header>
   <main>
     <router-view />

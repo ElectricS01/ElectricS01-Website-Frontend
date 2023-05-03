@@ -1,28 +1,20 @@
 <template>
   <div class="container">
-    <div class="chat-navbar">
-      <router-link to="/test">Better Test</router-link>
-      <router-link v-if="loggedIn" class="right" to="/account">
-        Account
-      </router-link>
-      <router-link v-else class="right" to="/login">Login</router-link>
-      <router-link class="right" to="/">Home</router-link>
-    </div>
     <transition>
       <p v-if="error" class="error-banner">
         {{ error }}
       </p>
     </transition>
-    <div class="grid-login">
-      <div class="register-menu">
-        <div class="login-card">
+    <div class="grid-menu">
+      <div class="menu">
+        <div class="grid-card">
           <p class="message-text-large">Register</p>
           <div class="text-small">
             <label for="username">Username</label>
           </div>
           <input
             @keydown.enter="submit"
-            class="login-input"
+            class="modal-input"
             id="username"
             v-model="username"
           />
@@ -31,7 +23,7 @@
           </div>
           <input
             @keydown.enter="submit"
-            class="login-input"
+            class="modal-input"
             id="email"
             v-model="email"
             type="email"
@@ -41,7 +33,7 @@
           </div>
           <input
             @keydown.enter="submit"
-            class="login-input"
+            class="modal-input"
             id="password"
             v-model="password"
             type="password"
