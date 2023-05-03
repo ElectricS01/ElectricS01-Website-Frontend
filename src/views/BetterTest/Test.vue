@@ -94,7 +94,7 @@
             v-if="
               showUser.friendRequests &&
               showUser.id !== loggedIn.id &&
-              !showUser?.friend[0]?.status
+              !showUser.friendStatus
             "
             class="profile-button-add"
             style="color: #47bf4c; width: 100%"
@@ -112,7 +112,7 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser?.friend[0]?.status === 'accepted'
+              showUser.friendStatus === 'accepted'
             "
             class="profile-button-remove"
             style="color: #ff2f2f; width: 100%"
@@ -129,8 +129,7 @@
           </button>
           <button
             v-if="
-              showUser.friendRequests &&
-              showUser?.friend[0]?.status === 'pending'
+              showUser.friendRequests && showUser.friendStatus === 'pending'
             "
             class="profile-button-pending"
             style="color: #808080; width: 100%"
@@ -148,7 +147,7 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser?.friend[0]?.status === 'incoming'
+              showUser.friendStatus === 'incoming'
             "
             class="profile-button-pending"
             style="color: #47bf4c; width: 100%"
