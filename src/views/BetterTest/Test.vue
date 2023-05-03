@@ -94,7 +94,7 @@
             v-if="
               showUser.friendRequests &&
               showUser.id !== loggedIn.id &&
-              !showUser.friendStatus
+              !showUser?.friend[0]?.status
             "
             class="profile-button-add"
             style="color: #47bf4c; width: 100%"
@@ -112,7 +112,7 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser.friendStatus === 'accepted'
+              showUser?.friend[0]?.status === 'accepted'
             "
             class="profile-button-remove"
             style="color: #ff2f2f; width: 100%"
@@ -129,7 +129,8 @@
           </button>
           <button
             v-if="
-              showUser.friendRequests && showUser.friendStatus === 'pending'
+              showUser.friendRequests &&
+              showUser?.friend[0]?.status === 'pending'
             "
             class="profile-button-pending"
             style="color: #808080; width: 100%"
@@ -147,7 +148,7 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser.friendStatus === 'incoming'
+              showUser?.friend[0]?.status === 'incoming'
             "
             class="profile-button-pending"
             style="color: #47bf4c; width: 100%"
@@ -189,7 +190,7 @@
     </a>
   </div>
   <transition>
-    <p v-if="error" class="error-button">
+    <p v-if="error" class="error-banner">
       {{ error }}
     </p>
   </transition>
@@ -202,7 +203,14 @@
       height: calc(100% - 48px);
     "
   >
-    <div style="flex-grow: 1; display: flex; flex-direction: column">
+    <div
+      style="
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        width: calc(100% - 250px);
+      "
+    >
       <div style="overflow-y: auto; flex-grow: 1" id="div" class="scroll-bar">
         <div
           style="
@@ -318,7 +326,7 @@
               </div>
               <div
                 class="message-grid"
-                style="position: relative"
+                style="position: relative; width: 100%"
                 :style="{
                   backgroundColor: editing === message.id ? '#212425' : ''
                 }"
@@ -362,11 +370,7 @@
                 </div>
                 <div
                   class="message-item"
-                  style="
-                    max-width: calc(100% - 96px);
-                    overflow-wrap: break-word;
-                  "
-                  :style="{ width: editing === message.id ? '100%' : '' }"
+                  style="width: calc(100% - 96px); overflow-wrap: break-word"
                 >
                   <div
                     style="line-height: 11.5px"

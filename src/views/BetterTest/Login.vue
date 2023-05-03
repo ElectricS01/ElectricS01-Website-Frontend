@@ -9,7 +9,7 @@
       <router-link class="right" to="/">Home</router-link>
     </div>
     <transition>
-      <p v-if="error" class="error-button">
+      <p v-if="error" class="error-banner">
         {{ error }}
       </p>
     </transition>
@@ -38,10 +38,14 @@
           />
           <div style="display: flex; justify-content: space-between">
             <div class="text-small">
-              <router-link to="/resetpassword">Forgot Password?</router-link>
+              <router-link class="text-small" to="/resetpassword">
+                Forgot Password?
+              </router-link>
             </div>
             <div class="text-small">
-              <router-link to="/register">Register?</router-link>
+              <router-link class="text-small" to="/register">
+                Register?
+              </router-link>
             </div>
           </div>
           <button @click="submit">Enter</button>

@@ -9,7 +9,7 @@
       <router-link class="right" to="/">Home</router-link>
     </div>
     <transition>
-      <p v-if="error" class="error-button">
+      <p v-if="error" class="error-banner">
         {{ error }}
       </p>
     </transition>

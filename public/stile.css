@@ -1,12 +1,8 @@
 body {
   margin: 48px 0 0;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #181a1b;
-  overflow: hidden;
-}
-
-div {
   color: white;
+  background-color: #181a1b;
 }
 
 .scroll-bar::-webkit-scrollbar {
@@ -106,7 +102,6 @@ button:hover {
 
 .message-send {
   height: 48px;
-  overflow: hidden;
   background-color: #282a2b;
 }
 
@@ -124,12 +119,11 @@ button:hover {
   padding: 4px 12px;
 }
 
-.error-button {
+.error-banner {
   margin: 0;
   font-size: 16px;
   overflow: hidden;
   background-color: red;
-  color: white;
   position: fixed;
   top: 48px;
   left: 0;
@@ -166,7 +160,7 @@ button:hover {
 .navbar a {
   height: 20px;
   float: left;
-  color: #f2f2f2;
+  color: white;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -176,13 +170,11 @@ button:hover {
 .chat-navbar a:hover,
 .navbar a:hover {
   background-color: #313435;
-  color: white;
 }
 
 .chat-navbar a.main,
 .navbar a.main {
   background-color: #1ac62b;
-  color: white;
 }
 
 .chat-navbar a.right,
@@ -195,7 +187,6 @@ button:hover {
 .chat-navbar a.active,
 .navbar a.active {
   background-color: #2d5431;
-  color: white;
 }
 
 .chat-navbar .icon,
@@ -231,19 +222,12 @@ button:hover {
     border-radius: 4px;
     box-sizing: border-box;
     background-color: #3d3d3d;
-    color: white;
   }
 }
 
 .embed {
-  max-width: 400px;
+  width: min(400px, 100%);
   max-height: 300px;
-}
-
-@media only screen and (max-width: 463px) {
-  .embed {
-    max-width: 100%;
-  }
 }
 
 .border {
@@ -298,6 +282,7 @@ button:hover {
 }
 
 input {
+  color: white;
   font-size: 16px;
   width: calc(100% - 150px);
   padding: 4px;
@@ -307,7 +292,6 @@ input {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: #3d3d3d;
-  color: white;
 }
 
 input:focus {
@@ -342,7 +326,6 @@ input:focus {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: #3d3d3d;
-  color: white;
 }
 
 .highlight {
@@ -359,22 +342,12 @@ p {
   margin: 0;
 }
 
-h1 {
-  color: white;
-}
-
 h2 {
-  color: white;
   margin-top: 20px;
   font-size: 24px;
 }
 
-h3 {
-  color: white;
-}
-
 h4 {
-  color: white;
   font-size: 24px;
   margin-top: 16px;
   margin-bottom: 4px;
@@ -392,7 +365,6 @@ h4 {
 }
 
 .message-text-medium {
-  color: white;
   font-size: 12px;
 }
 
@@ -431,10 +403,6 @@ h4 {
 .error-message {
   color: red;
   font-size: 10px;
-}
-
-label {
-  color: white;
 }
 
 .login-menu {
@@ -482,7 +450,6 @@ label {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: #3d3d3d;
-  color: white;
 }
 
 .login-card {
@@ -500,10 +467,9 @@ label {
 
 .grid-login {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 187.5px);
+  height: 80%;
   width: 100%;
 }
 

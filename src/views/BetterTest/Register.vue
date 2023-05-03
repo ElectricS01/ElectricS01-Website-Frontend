@@ -9,7 +9,7 @@
       <router-link class="right" to="/">Home</router-link>
     </div>
     <transition>
-      <p v-if="error" class="error-button">
+      <p v-if="error" class="error-banner">
         {{ error }}
       </p>
     </transition>
@@ -47,7 +47,9 @@
             type="password"
           />
           <div class="text-small">
-            <router-link to="/login">Back to Login</router-link>
+            <router-link class="text-small" to="/login">
+              Back to Login
+            </router-link>
           </div>
           <button @click="submit">Enter</button>
         </div>

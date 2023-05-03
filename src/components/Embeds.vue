@@ -10,3 +10,9 @@ export default {
   props: ["embed"]
 }
 </script>
+
+<style>
+img {
+  border-radius: 8px;
+}
+</style>
