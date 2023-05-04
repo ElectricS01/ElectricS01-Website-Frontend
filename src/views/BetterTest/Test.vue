@@ -457,7 +457,7 @@
               <div
                 :style="{
                   height: replyTo ? '36px' : '',
-                  marginRight: users.length > 2 && sidebarOpen ? '250px' : ''
+                  marginRight: sidebarOpen === 'true' ? '250px' : ''
                 }"
                 v-if="scrolledUp"
                 style="
@@ -549,8 +549,11 @@
         </div>
       </div>
     </div>
-    <Sidebar v-if="users.length > 2 && sidebarOpen" class="scroll-bar">
-      <div v-for="user in users" style="padding: 4px 0 4px 8px">
+    <Sidebar v-if="sidebarOpen === 'true'" class="scroll-bar">
+      <div class="center" v-if="loadingUsers">
+        <div style="text-align: center" class="loader"></div>
+      </div>
+      <div v-else v-for="user in users" style="padding: 0 0 8px 8px">
         <div
           style="cursor: pointer"
           class="message-grid"
@@ -628,7 +631,7 @@ export default {
       replyTo: null,
       editText: "",
       editStatus: "",
-      sidebarOpen: false,
+      sidebarOpen: "false",
       editing: false,
       error: "",
       loggedIn: false,
@@ -868,7 +871,15 @@ export default {
         scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
     },
     toggleSidebar() {
-      this.sidebarOpen = !this.sidebarOpen
+      if (
+        !localStorage.getItem("sidebarOpen") ||
+        localStorage.getItem("sidebarOpen") === "false"
+      ) {
+        localStorage.setItem("sidebarOpen", "true")
+      } else {
+        localStorage.setItem("sidebarOpen", "false")
+      }
+      this.sidebarOpen = localStorage.getItem("sidebarOpen")
     }
   },
   async mounted() {
@@ -883,6 +894,9 @@ export default {
     await this.getMessages()
     await this.getUsers()
     this.scroll(true)
+  },
+  created() {
+    this.sidebarOpen = localStorage.getItem("sidebarOpen")
   },
   beforeRouteLeave(to, from, next) {
     document.removeEventListener("keydown", this.escPressed)

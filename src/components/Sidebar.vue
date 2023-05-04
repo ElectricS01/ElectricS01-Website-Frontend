@@ -35,7 +35,9 @@ export default {
 }
 
 .sidebar-border {
+  padding-top: 4px;
   border-left: 1px solid #212425;
   width: calc(100% - 8px);
+  height: 100%;
 }
 </style>
