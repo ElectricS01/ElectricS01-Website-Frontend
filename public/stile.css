@@ -129,6 +129,20 @@ button:hover {
   padding: 4px 12px;
 }
 
+.filter-button {
+  display: flex;
+  align-items: center;
+  margin: 0 0 8px 8px;
+  padding: 4px;
+  background-color: #212425;
+  cursor: pointer;
+  height: 24px;
+}
+
+.filter-button:hover {
+  background-color: #282a2b;
+}
+
 .error-banner {
   margin: 0;
   font-size: 16px;

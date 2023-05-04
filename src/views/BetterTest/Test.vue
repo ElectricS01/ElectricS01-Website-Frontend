@@ -33,7 +33,34 @@
             alt="Profile icon"
           />
           <svg class="online-indicator" width="20" height="20">
-            <circle cx="8" cy="8" r="8" fill="#47bf4c" />
+            <circle
+              v-if="showUser.status === 'online'"
+              cx="8"
+              cy="8"
+              r="8"
+              fill="#47bf4c"
+            />
+            <circle
+              v-else-if="showUser.status === 'idle'"
+              cx="8"
+              cy="8"
+              r="8"
+              fill="gold"
+            />
+            <circle
+              v-else-if="showUser.status === 'dnd'"
+              cx="8"
+              cy="8"
+              r="8"
+              fill="#ff2f2f"
+            />
+            <circle
+              v-else-if="showUser.status === 'offline'"
+              cx="8"
+              cy="8"
+              r="8"
+              fill="grey"
+            />
           </svg>
         </div>
         <div
@@ -180,7 +207,6 @@
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
     <a
-      v-if="users.length > 2"
       @click="toggleSidebar"
       class="right"
       style="cursor: pointer; width: 28px; height: 28px; padding: 10px"
@@ -553,60 +579,95 @@
       <div class="center" v-if="loadingUsers">
         <div style="text-align: center" class="loader"></div>
       </div>
-      <div v-else v-for="user in users" style="padding: 0 0 8px 8px">
-        <div
-          style="cursor: pointer"
-          class="message-grid"
-          @click="openUser(user.id)"
-        >
-          <div class="profile-picture" style="margin-right: 8px">
-            <Icons
-              style="margin: 4px"
-              v-if="!user.avatar"
-              class="message-item"
-              color="white"
-              width="32"
-              height="32"
-              icon="account"
-            />
-            <img
-              style="border-radius: 16px; object-fit: cover; margin: 4px"
-              class="message-item"
-              width="32"
-              height="32"
-              v-else
-              :src="user.avatar"
-              alt="Profile icon"
-            />
-            <svg class="online-indicator" width="15" height="15">
-              <circle cx="5" cy="5" r="5" fill="#47bf4c" />
-            </svg>
-          </div>
-          <div style="flex-grow: 1; margin: 0" class="message-item">
-            <b
-              class="message-text-large"
-              style="
-                margin-top: 4px;
-                margin-bottom: 2px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                width: 178px;
-              "
-            >
-              {{ user.username }}
-            </b>
-            <p
-              class="message-text-medium-gray"
-              style="
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                width: 178px;
-              "
-            >
-              {{ user.statusMessage }}
-            </p>
+      <div v-else>
+        <div class="filter-button" @click="userSortPress()">
+          <p v-if="sortUsers === 'id'">Sort: Id</p>
+          <p v-else-if="sortUsers === 'username'">Sort: Username</p>
+          <p v-else-if="sortUsers === 'status'">Sort: Status</p>
+          <p v-else-if="sortUsers === 'statusMessage'">Sort: Status Message</p>
+        </div>
+        <div v-for="user in users" style="padding: 0 0 8px 8px">
+          <div
+            style="cursor: pointer"
+            class="message-grid"
+            @click="openUser(user.id)"
+          >
+            <div class="profile-picture" style="margin-right: 8px">
+              <Icons
+                style="margin: 4px"
+                v-if="!user.avatar"
+                class="message-item"
+                color="white"
+                width="32"
+                height="32"
+                icon="account"
+              />
+              <img
+                style="border-radius: 16px; object-fit: cover; margin: 4px"
+                class="message-item"
+                width="32"
+                height="32"
+                v-else
+                :src="user.avatar"
+                alt="Profile icon"
+              />
+              <svg class="online-indicator" width="15" height="15">
+                <circle
+                  v-if="user.status === 'online'"
+                  cx="5"
+                  cy="5"
+                  r="5"
+                  fill="#47bf4c"
+                />
+                <circle
+                  v-else-if="user.status === 'idle'"
+                  cx="5"
+                  cy="5"
+                  r="5"
+                  fill="gold"
+                />
+                <circle
+                  v-else-if="user.status === 'dnd'"
+                  cx="5"
+                  cy="5"
+                  r="5"
+                  fill="#ff2f2f"
+                />
+                <circle
+                  v-else-if="user.status === 'offline'"
+                  cx="5"
+                  cy="5"
+                  r="5"
+                  fill="grey"
+                />
+              </svg>
+            </div>
+            <div style="flex-grow: 1; margin: 0" class="message-item">
+              <b
+                class="message-text-large"
+                style="
+                  margin-top: 4px;
+                  margin-bottom: 2px;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  width: 178px;
+                "
+              >
+                {{ user.username }}
+              </b>
+              <p
+                class="message-text-medium-gray"
+                style="
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  width: 178px;
+                "
+              >
+                {{ user.statusMessage }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -620,8 +681,14 @@ import Embeds from "@/components/Embeds.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 import Sidebar from "@/components/Sidebar.vue"
+import sidebar from "@/components/Sidebar.vue"
 
 export default {
+  computed: {
+    sidebar() {
+      return sidebar
+    }
+  },
   components: { Sidebar, Icons, Embeds, Modal },
   data() {
     return {
@@ -639,7 +706,8 @@ export default {
       loadingMessages: true,
       loadingUsers: true,
       scrolledUp: false,
-      showUser: false
+      showUser: false,
+      sortUsers: "id"
     }
   },
   methods: {
@@ -666,6 +734,38 @@ export default {
         .catch(() => {
           this.error = "Error 503 Cannot Connect to Server"
         })
+    },
+    userSortPress() {
+      if (localStorage.getItem("sortUsers") === "id") {
+        localStorage.setItem("sortUsers", "username")
+      } else if (localStorage.getItem("sortUsers") === "username") {
+        localStorage.setItem("sortUsers", "status")
+      } else if (localStorage.getItem("sidebarOpen") === "status") {
+        localStorage.setItem("sortUsers", "sortUsers")
+      } else {
+        localStorage.setItem("sortUsers", "id")
+      }
+      this.sortUsers = localStorage.getItem("sortUsers")
+      this.userSort(this.sortUsers)
+    },
+    userSort(property) {
+      if (property !== "id") {
+        this.users.sort(function (a, b) {
+          if (a[property] === null && b[property] === null) {
+            return 0
+          } else if (a[property] === null) {
+            return 1
+          } else if (b[property] === null) {
+            return -1
+          } else {
+            return a[property].localeCompare(b[property])
+          }
+        })
+      } else {
+        this.users.sort(function (a, b) {
+          return a.id - b.id
+        })
+      }
     },
     submit() {
       if (this.inputText.trim()) {
@@ -871,13 +971,10 @@ export default {
         scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
     },
     toggleSidebar() {
-      if (
-        !localStorage.getItem("sidebarOpen") ||
-        localStorage.getItem("sidebarOpen") === "false"
-      ) {
-        localStorage.setItem("sidebarOpen", "true")
-      } else {
+      if (localStorage.getItem("sidebarOpen") === "true") {
         localStorage.setItem("sidebarOpen", "false")
+      } else {
+        localStorage.setItem("sidebarOpen", "true")
       }
       this.sidebarOpen = localStorage.getItem("sidebarOpen")
     }
@@ -897,6 +994,7 @@ export default {
   },
   created() {
     this.sidebarOpen = localStorage.getItem("sidebarOpen")
+    this.sortUsers = localStorage.getItem("sortUsers")
   },
   beforeRouteLeave(to, from, next) {
     document.removeEventListener("keydown", this.escPressed)
