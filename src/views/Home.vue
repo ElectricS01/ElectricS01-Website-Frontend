@@ -3,8 +3,8 @@
     <div style="padding: 0 8px 8px 8px">
       <h2>Welcome to ElectricS01's website</h2>
       <p class="text-main">
-        Hi, I'm ElectricS01, I make random things in Vue, Javascript, Python and
-        GameMaker
+        Hi, I'm ElectricS01, I make things in Vue, Javascript, Python and
+        GameMaker Studio
       </p>
       <div class="grid">
         <div class="box grid-item">

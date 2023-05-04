@@ -2,7 +2,7 @@
   <header>
     <div class="navbar" id="mobile-navbar" v-if="navbarShown">
       <router-link class="main" to="/" @click="responsive_navbar(true)">
-        Home
+        ElectricS01.com
       </router-link>
       <router-link
         to="/tonkgame"
