@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div style="padding-left: 16px; padding-right: 16px; text-align: left">
+    <div style="padding: 0 16px; text-align: left">
       <h2>ElectricS01's Calculator</h2>
       <div>
         <label id="nameLabel">Calculate:</label>

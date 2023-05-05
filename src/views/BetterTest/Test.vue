@@ -9,86 +9,52 @@
         :src="showUser.banner || 'https://i.troplo.com/i/d81dabf74c88.png'"
         width="500"
         height="100"
-        style="object-fit: cover"
+        style="object-fit: cover; width: min(500px, 100%)"
         alt="Profile banner"
       />
-      <div class="profile-grid" style="padding: 24px; width: 452px">
+      <div class="profile-grid" style="padding: 24px">
         <div class="profile-picture" style="margin-right: 16px; height: 80px">
-          <Icons
-            v-if="!showUser.avatar"
-            class="message-item"
-            color="white"
-            width="80"
-            height="80"
-            icon="account"
-            style="margin: 0"
-          />
           <img
-            style="border-radius: 40px; object-fit: cover; margin: 0"
-            class="message-item"
+            style="border-radius: 40px; object-fit: cover"
             width="80"
             height="80"
-            v-else
+            v-if="showUser.avatar"
             :src="showUser.avatar"
             alt="Profile icon"
           />
+          <Icons v-else color="white" width="80" height="80" icon="account" />
           <svg class="online-indicator" width="20" height="20">
-            <circle
-              v-if="showUser.status === 'online'"
-              cx="8"
-              cy="8"
-              r="8"
-              fill="#47bf4c"
-            />
-            <circle
-              v-else-if="showUser.status === 'idle'"
-              cx="8"
-              cy="8"
-              r="8"
-              fill="gold"
-            />
-            <circle
-              v-else-if="showUser.status === 'dnd'"
-              cx="8"
-              cy="8"
-              r="8"
-              fill="#ff2f2f"
-            />
-            <circle
-              v-else-if="showUser.status === 'offline'"
-              cx="8"
-              cy="8"
-              r="8"
-              fill="grey"
-            />
+            <status-indicator
+              size="8"
+              :status="showUser.status"
+            ></status-indicator>
           </svg>
         </div>
         <div
           style="flex-grow: 1; flex-basis: 0; margin: 0"
           class="message-item"
         >
-          <h4>{{ showUser.username }}</h4>
+          <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
           <div v-if="editing !== 'status'" style="display: flex">
             <p
               class="message-text-large"
               style="margin: 0; word-wrap: break-word"
             >
               {{ showUser.statusMessage }}
+              <Icons
+                v-if="showUser.id === loggedIn.id"
+                style="cursor: pointer"
+                color="white"
+                width="16"
+                height="16"
+                icon="edit"
+                @click="
+                  ;(editing = 'status'),
+                    (editStatus = showUser.statusMessage),
+                    editFocus()
+                "
+              />
             </p>
-            <Icons
-              v-if="showUser.id === loggedIn.id"
-              style="cursor: pointer"
-              class="message-item"
-              color="white"
-              width="16"
-              height="16"
-              icon="edit"
-              @click="
-                ;(editing = 'status'),
-                  (editStatus = showUser.statusMessage),
-                  editFocus()
-              "
-            />
           </div>
           <input
             v-else
@@ -106,7 +72,6 @@
           <button
             v-if="showUser.directMessages && showUser.id !== loggedIn.id"
             class="profile-button-message"
-            style="width: 100%"
           >
             <Icons
               style="top: 0; padding-right: 4px"
@@ -121,10 +86,10 @@
             v-if="
               showUser.friendRequests &&
               showUser.id !== loggedIn.id &&
-              !showUser.friendStatus
+              !showUser?.friend[0]?.status
             "
             class="profile-button-add"
-            style="color: #47bf4c; width: 100%"
+            style="color: #47bf4c"
             @click="addFriend(showUser.id)"
           >
             <Icons
@@ -139,10 +104,10 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser.friendStatus === 'accepted'
+              showUser?.friend[0]?.status === 'accepted'
             "
             class="profile-button-remove"
-            style="color: #ff2f2f; width: 100%"
+            style="color: #ff2f2f"
             @click="addFriend(showUser.id)"
           >
             <Icons
@@ -156,10 +121,11 @@
           </button>
           <button
             v-if="
-              showUser.friendRequests && showUser.friendStatus === 'pending'
+              showUser.friendRequests &&
+              showUser?.friend[0]?.status === 'pending'
             "
             class="profile-button-pending"
-            style="color: #808080; width: 100%"
+            style="color: #808080"
             @click="addFriend(showUser.id)"
           >
             <Icons
@@ -174,10 +140,10 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser.friendStatus === 'incoming'
+              showUser?.friend[0]?.status === 'incoming'
             "
             class="profile-button-pending"
-            style="color: #47bf4c; width: 100%"
+            style="color: #47bf4c"
             @click="addFriend(showUser.id)"
           >
             <Icons
@@ -260,13 +226,7 @@
               style="padding: 4px"
             >
               <div
-                style="
-                  text-align: center;
-                  position: relative;
-                  height: 27.5px;
-                  display: flex;
-                  justify-content: center;
-                "
+                style="height: 27.5px; display: flex; justify-content: center"
                 v-if="
                   dayjsDate(message.createdAt) !==
                   dayjsDate(messages[index - 1]?.createdAt)
@@ -275,25 +235,23 @@
                 <div
                   style="
                     border-bottom: 1px solid #212425;
-                    position: absolute;
-                    top: 0;
-                    width: 100%;
+                    width: 50%;
                     height: calc(50% - 3px);
                   "
                 ></div>
                 <p
-                  style="
-                    background-color: #181a1b;
-                    position: absolute;
-                    height: 20px;
-                    border-right: 4px solid #181a1b;
-                    border-left: 4px solid #181a1b;
-                    margin-top: 6px;
-                  "
+                  style="padding: 6px 4px 0 4px; white-space: nowrap"
                   class="message-text-small"
                 >
                   {{ dayjsDate(message.createdAt) }}
                 </p>
+                <div
+                  style="
+                    border-bottom: 1px solid #212425;
+                    width: 50%;
+                    height: calc(50% - 3px);
+                  "
+                ></div>
               </div>
               <div
                 v-if="message.reply"
@@ -311,15 +269,6 @@
                   icon="reply"
                   style="margin-right: 4px"
                 />
-                <Icons
-                  style="cursor: pointer"
-                  v-if="!findMessage(message.reply).user.avatar"
-                  @click="openUser(findMessage(message.reply).user.id)"
-                  color="white"
-                  width="16"
-                  height="16"
-                  icon="account"
-                />
                 <img
                   style="
                     border-radius: 16px;
@@ -330,9 +279,18 @@
                   @click="openUser(findMessage(message.reply).user.id)"
                   width="16"
                   height="16"
-                  v-else
+                  v-if="findMessage(message.reply).user.avatar"
                   :src="findMessage(message.reply).user.avatar"
                   alt="Profile icon"
+                />
+                <Icons
+                  style="cursor: pointer"
+                  v-else
+                  @click="openUser(findMessage(message.reply).user.id)"
+                  color="white"
+                  width="16"
+                  height="16"
+                  icon="account"
                 />
                 <b
                   class="message-text-medium"
@@ -513,15 +471,6 @@
                 icon="reply"
                 style="margin-right: 4px"
               />
-              <Icons
-                style="cursor: pointer"
-                v-if="!findMessage(replyTo).user.avatar"
-                @click="openUser(findMessage(replyTo).user.id)"
-                color="white"
-                width="12"
-                height="12"
-                icon="account"
-              />
               <img
                 style="
                   border-radius: 12px;
@@ -532,9 +481,18 @@
                 @click="openUser(findMessage(replyTo).user.id)"
                 width="12"
                 height="12"
-                v-else
+                v-if="findMessage(replyTo).user.avatar"
                 :src="findMessage(replyTo).user.avatar"
                 alt="Profile icon"
+              />
+              <Icons
+                style="cursor: pointer"
+                v-else
+                @click="openUser(findMessage(replyTo).user.id)"
+                color="white"
+                width="12"
+                height="12"
+                icon="account"
               />
               <b
                 class="message-text-medium"
@@ -587,53 +545,29 @@
             @click="openUser(user.id)"
           >
             <div class="profile-picture" style="margin-right: 8px">
+              <img
+                style="border-radius: 16px; object-fit: cover; margin: 4px"
+                class="message-item"
+                width="32"
+                height="32"
+                v-if="user.avatar"
+                :src="user.avatar"
+                alt="Profile icon"
+              />
               <Icons
                 style="margin: 4px"
-                v-if="!user.avatar"
+                v-else
                 class="message-item"
                 color="white"
                 width="32"
                 height="32"
                 icon="account"
               />
-              <img
-                style="border-radius: 16px; object-fit: cover; margin: 4px"
-                class="message-item"
-                width="32"
-                height="32"
-                v-else
-                :src="user.avatar"
-                alt="Profile icon"
-              />
               <svg class="online-indicator" width="15" height="15">
-                <circle
-                  v-if="user.status === 'online'"
-                  cx="5"
-                  cy="5"
-                  r="5"
-                  fill="#47bf4c"
-                />
-                <circle
-                  v-else-if="user.status === 'idle'"
-                  cx="5"
-                  cy="5"
-                  r="5"
-                  fill="gold"
-                />
-                <circle
-                  v-else-if="user.status === 'dnd'"
-                  cx="5"
-                  cy="5"
-                  r="5"
-                  fill="#ff2f2f"
-                />
-                <circle
-                  v-else-if="user.status === 'offline'"
-                  cx="5"
-                  cy="5"
-                  r="5"
-                  fill="grey"
-                />
+                <status-indicator
+                  size="5"
+                  :status="user.status"
+                ></status-indicator>
               </svg>
             </div>
             <div style="flex-grow: 1; margin: 0" class="message-item">
@@ -672,6 +606,7 @@
 <script>
 import dayjs from "dayjs"
 import Embeds from "@/components/Embeds.vue"
+import StatusIndicator from "@/components/StatusIndicator.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 import Sidebar from "@/components/Sidebar.vue"
@@ -683,7 +618,7 @@ export default {
       return sidebar
     }
   },
-  components: { Sidebar, Icons, Embeds, Modal },
+  components: { Sidebar, Icons, Embeds, Modal, StatusIndicator },
   data() {
     return {
       messages: [],

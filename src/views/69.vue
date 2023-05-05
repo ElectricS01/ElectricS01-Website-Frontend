@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1>Error 69: Nice</h1>
+    <h2>Error 69: Nice</h2>
     <div class="button">
       <router-link to="/">Return to Home</router-link>
     </div>
