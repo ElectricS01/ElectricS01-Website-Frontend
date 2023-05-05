@@ -121,7 +121,7 @@
             v-if="
               showUser.friendRequests &&
               showUser.id !== loggedIn.id &&
-              !showUser.friendStatus
+              !showUser?.friend[0]?.status
             "
             class="profile-button-add"
             style="color: #47bf4c; width: 100%"
@@ -139,7 +139,7 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser.friendStatus === 'accepted'
+              showUser?.friend[0]?.status === 'accepted'
             "
             class="profile-button-remove"
             style="color: #ff2f2f; width: 100%"
@@ -156,7 +156,8 @@
           </button>
           <button
             v-if="
-              showUser.friendRequests && showUser.friendStatus === 'pending'
+              showUser.friendRequests &&
+              showUser?.friend[0]?.status === 'pending'
             "
             class="profile-button-pending"
             style="color: #808080; width: 100%"
@@ -174,7 +175,7 @@
           <button
             v-if="
               showUser.id !== loggedIn.id &&
-              showUser.friendStatus === 'incoming'
+              showUser?.friend[0]?.status === 'incoming'
             "
             class="profile-button-pending"
             style="color: #47bf4c; width: 100%"
@@ -356,36 +357,30 @@
                   backgroundColor: editing === message.id ? '#212425' : ''
                 }"
               >
-                <div v-if="!merge(message, index)">
+                <div
+                  v-if="!merge(message, index)"
+                  @click="openUser(message.user?.id)"
+                  style="
+                    margin: 0 12px 0 4px;
+                    cursor: pointer;
+                    border-radius: 16px;
+                  "
+                  class="message-item"
+                >
+                  <img
+                    style="border-radius: 16px; object-fit: cover"
+                    width="32"
+                    height="32"
+                    v-if="message.user.avatar"
+                    :src="message.user.avatar"
+                    alt="Profile icon"
+                  />
                   <Icons
-                    style="
-                      margin-right: 12px;
-                      cursor: pointer;
-                      margin-left: 4px;
-                    "
-                    v-if="!message.user.avatar"
-                    @click="openUser(message.user?.id)"
-                    class="message-item"
+                    v-else
                     color="white"
                     width="32"
                     height="32"
                     icon="account"
-                  />
-                  <img
-                    style="
-                      border-radius: 16px;
-                      object-fit: cover;
-                      margin-right: 12px;
-                      margin-left: 4px;
-                      cursor: pointer;
-                    "
-                    class="message-item"
-                    @click="openUser(message.user?.id)"
-                    width="32"
-                    height="32"
-                    v-else
-                    :src="message.user.avatar"
-                    alt="Profile icon"
                   />
                 </div>
                 <div v-else class="message-time">
@@ -458,7 +453,7 @@
                     width="20"
                     height="20"
                     icon="reply"
-                    @click="replyTo = message.id"
+                    @click="replyToMessage(message.id)"
                   />
                   <Icons
                     v-show="loggedIn.admin || message.user.id === loggedIn.id"
@@ -730,22 +725,25 @@ export default {
         .then((res) => {
           this.users = res.data
           this.loadingUsers = false
+          this.userSort(this.sortUsers)
         })
         .catch(() => {
           this.error = "Error 503 Cannot Connect to Server"
         })
     },
     userSortPress() {
-      if (localStorage.getItem("sortUsers") === "id") {
+      if (this.sortUsers === "id") {
         localStorage.setItem("sortUsers", "username")
-      } else if (localStorage.getItem("sortUsers") === "username") {
+      } else if (this.sortUsers === "username") {
         localStorage.setItem("sortUsers", "status")
-      } else if (localStorage.getItem("sidebarOpen") === "status") {
-        localStorage.setItem("sortUsers", "sortUsers")
+      } else if (this.sortUsers === "status") {
+        localStorage.setItem("sortUsers", "statusMessage")
       } else {
         localStorage.setItem("sortUsers", "id")
       }
-      this.sortUsers = localStorage.getItem("sortUsers")
+      if (localStorage.getItem("sortUsers")) {
+        this.sortUsers = localStorage.getItem("sortUsers")
+      }
       this.userSort(this.sortUsers)
     },
     userSort(property) {
@@ -823,11 +821,17 @@ export default {
         .then((res) => {
           this.showUser.statusMessage = res.data
           this.editing = false
+          this.getUsers()
         })
         .catch((e) => {
           this.error = e.response.data.message
           setTimeout(this.errorFalse, 5000)
         })
+    },
+    replyToMessage(messsageId) {
+      this.replyTo = messsageId
+      const input = document.getElementById("input")
+      input?.focus()
     },
     errorFalse() {
       this.error = false
@@ -994,7 +998,9 @@ export default {
   },
   created() {
     this.sidebarOpen = localStorage.getItem("sidebarOpen")
-    this.sortUsers = localStorage.getItem("sortUsers")
+    if (localStorage.getItem("sortUsers")) {
+      this.sortUsers = localStorage.getItem("sortUsers")
+    }
   },
   beforeRouteLeave(to, from, next) {
     document.removeEventListener("keydown", this.escPressed)

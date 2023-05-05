@@ -65,7 +65,7 @@ export default {
 .modal-content {
   position: relative;
   background-color: #282a2b;
-  width: 500px;
+  width: min(500px, 100%);
   height: 600px;
   overflow-y: auto;
   border-radius: 24px;

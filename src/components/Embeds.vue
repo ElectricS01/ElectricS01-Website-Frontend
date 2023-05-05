@@ -1,6 +1,6 @@
 <template>
   <div v-if="embed.type === 'image'">
-    <img :src="embed.mediaProxyLink" class="embed" />
+    <img :src="embed.mediaProxyLink" class="embed" alt="embedded image" />
   </div>
 </template>
 
@@ -12,7 +12,7 @@ export default {
 </script>
 
 <style>
-img {
+embed {
   border-radius: 8px;
 }
 </style>

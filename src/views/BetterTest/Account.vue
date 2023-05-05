@@ -9,7 +9,7 @@
       <div class="menu">
         <div class="grid-card">
           <p class="message-text-large">Your Account</p>
-          Get Better
+          Coming soon™
         </div>
       </div>
     </div>
