@@ -171,13 +171,13 @@
     </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
     <router-link class="right" to="/">Home</router-link>
-    <a
+    <div
       @click="toggleSidebar"
       class="right"
-      style="cursor: pointer; width: 28px; height: 28px; padding: 10px"
+      style="width: 28px; height: 28px; padding: 10px"
     >
       <Icons color="white" width="28" height="28" icon="account" />
-    </a>
+    </div>
   </div>
   <transition>
     <p v-if="error" class="error-banner">
@@ -225,32 +225,26 @@
               style="padding: 4px"
             >
               <div
-                style="height: 27.5px; display: flex; justify-content: center"
+                style="
+                  padding-bottom: 8px;
+                  height: 16px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
                 v-if="
                   dayjsDate(message.createdAt) !==
                   dayjsDate(messages[index - 1]?.createdAt)
                 "
               >
-                <div
-                  style="
-                    border-bottom: 1px solid #212425;
-                    width: 50%;
-                    height: calc(50% - 3px);
-                  "
-                ></div>
+                <div style="border-bottom: 1px solid #212425; width: 50%"></div>
                 <p
-                  style="padding: 6px 4px 0 4px; white-space: nowrap"
+                  style="padding: 0 4px; white-space: nowrap"
                   class="message-text-small"
                 >
                   {{ dayjsDate(message.createdAt) }}
                 </p>
-                <div
-                  style="
-                    border-bottom: 1px solid #212425;
-                    width: 50%;
-                    height: calc(50% - 3px);
-                  "
-                ></div>
+                <div style="border-bottom: 1px solid #212425; width: 50%"></div>
               </div>
               <div
                 v-if="message.reply"
@@ -527,19 +521,28 @@
       </div>
     </div>
     <Sidebar v-if="sidebarOpen === 'true'" class="scroll-bar">
-      <div class="center" v-if="loadingUsers">
-        <div style="text-align: center" class="loader"></div>
-      </div>
-      <div v-else>
+      <div v-if="!loadingUsers" style="padding-left: 8px">
         <div class="filter-button" @click="userSortPress()">
           <p v-if="sortUsers === 'id'">Sort: Id</p>
           <p v-else-if="sortUsers === 'username'">Sort: Username</p>
           <p v-else-if="sortUsers === 'status'">Sort: Status</p>
           <p v-else-if="sortUsers === 'statusMessage'">Sort: Status Message</p>
         </div>
-        <div v-for="user in users" style="padding: 0 0 8px 8px">
+        <div
+          style="
+            padding: 0 4px;
+            display: flex;
+            height: 20px;
+            align-items: center;
+          "
+        >
+          <p style="padding-right: 4px" class="message-text-small">Online</p>
+          <div style="border-bottom: 1px solid #212425; width: 100%"></div>
+        </div>
+        <div v-for="user in users">
           <div
-            style="cursor: pointer"
+            v-if="user.status !== 'offline'"
+            style="cursor: pointer; margin: 0 0 8px 0"
             class="message-grid"
             @click="openUser(user.id)"
           >
@@ -597,6 +600,81 @@
             </div>
           </div>
         </div>
+        <div
+          style="
+            padding: 0 4px;
+            display: flex;
+            height: 20px;
+            align-items: center;
+          "
+        >
+          <p style="padding-right: 4px" class="message-text-small">Offline</p>
+          <div style="border-bottom: 1px solid #212425; width: 100%"></div>
+        </div>
+        <div v-for="user in users">
+          <div
+            v-if="user.status === 'offline'"
+            style="cursor: pointer; margin: 0 0 8px 0"
+            class="message-grid"
+            @click="openUser(user.id)"
+          >
+            <div class="profile-picture" style="margin-right: 8px">
+              <img
+                style="border-radius: 16px; object-fit: cover; margin: 4px"
+                class="message-item"
+                width="32"
+                height="32"
+                v-if="user.avatar"
+                :src="user.avatar"
+                alt="Profile icon"
+              />
+              <Icons
+                style="margin: 4px"
+                v-else
+                class="message-item"
+                color="white"
+                width="32"
+                height="32"
+                icon="account"
+              />
+              <svg class="online-indicator" width="15" height="15">
+                <status-indicator
+                  size="5"
+                  :status="user.status"
+                ></status-indicator>
+              </svg>
+            </div>
+            <div style="flex-grow: 1; margin: 0" class="message-item">
+              <b
+                class="message-text-large"
+                style="
+                  margin-top: 4px;
+                  margin-bottom: 2px;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  width: 178px;
+                "
+              >
+                {{ user.username }}
+              </b>
+              <p
+                class="message-text-medium-gray"
+                style="
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  width: 178px;
+                "
+              >
+                {{ user.statusMessage }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="center" v-else>
+        <div style="text-align: center" class="loader"></div>
       </div>
     </Sidebar>
   </div>

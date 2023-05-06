@@ -11,8 +11,8 @@ const md = new MarkdownIt({
   linkify: true
 })
 
-// disable the 'p' rule
-md.renderer.rules.paragraph_open = function (tokens, idx, options, env, self) {
+// Modify the 'p' rule to return an empty string
+md.renderer.rules.paragraph_open = function () {
   return ""
 }
 
@@ -47,6 +47,10 @@ app.directive("markdown", {
     if (editedText) {
       container.insertAdjacentHTML("beforeend", editedText)
     }
+
+    // Remove all 'p' elements from the container
+    const paragraphs = container.querySelectorAll("p")
+    paragraphs.forEach((paragraph) => paragraph.remove())
 
     // Replace the content of the original div element with the processed content
     el.innerHTML = container.innerHTML

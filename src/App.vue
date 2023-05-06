@@ -34,7 +34,7 @@
       >
         Account
       </router-link>
-      <a class="icon" @click="responsive_navbar()">☰</a>
+      <div class="icon-mobile" @click="responsive_navbar()">☰</div>
     </div>
     <div class="chat-navbar" v-else>
       <router-link to="/test">Better Test</router-link>
