@@ -77,8 +77,8 @@
           <button
             v-if="
               showUser.friendRequests &&
-              !showUser.friendStatus
               showUser.id !== $user.loggedIn.id &&
+              !showUser.friendStatus
             "
             class="profile-button-add"
             style="color: #47bf4c"
@@ -94,8 +94,8 @@
           </button>
           <button
             v-if="
-              showUser.friendStatus === 'accepted'
               showUser.id !== $user.loggedIn.id &&
+              showUser.friendStatus === 'accepted'
             "
             class="profile-button-remove"
             style="color: #ff2f2f"
@@ -127,8 +127,8 @@
           </button>
           <button
             v-if="
-              showUser.friendStatus === 'incoming'
               showUser.id !== $user.loggedIn.id &&
+              showUser.friendStatus === 'incoming'
             "
             class="profile-button-pending"
             style="color: #47bf4c"
