@@ -1,14 +1,12 @@
 <template>
-  <div class="container">
-    <div style="padding: 0 16px; text-align: left">
-      <h2>ElectricS01's Calculator</h2>
-      <div>
-        <label id="nameLabel">Calculate:</label>
-        <input id="nameField" v-model="expression" type="text" class="text" />
-      </div>
-      <div>
-        <p class="text-main" id="result">{{ result }}</p>
-      </div>
+  <div class="container" style="padding: 0 16px; text-align: left">
+    <h2>ElectricS01's Calculator</h2>
+    <div>
+      <label id="nameLabel">Calculate:</label>
+      <input id="nameField" v-model="expression" type="text" class="text" />
+    </div>
+    <div>
+      <p class="text-main" id="result">{{ result }}</p>
     </div>
   </div>
 </template>

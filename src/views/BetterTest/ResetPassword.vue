@@ -36,8 +36,7 @@ export default {
     return {
       username: "",
       password: "",
-      error: "",
-      loggedIn: false
+      error: ""
     }
   },
   methods: {
@@ -56,23 +55,11 @@ export default {
         .catch((e) => {
           this.error = e.response.data.message
         })
-    },
-    getUser() {
-      this.axios
-        .get("/api/user")
-        .then((res) => {
-          this.loggedIn = res.data
-        })
-        .catch((e) => {
-          this.error = "Error 503 Cannot Connect to Server " + e
-        })
     }
   },
   mounted() {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/favicon.ico"
-
-    this.getUser()
   }
 }
 </script>

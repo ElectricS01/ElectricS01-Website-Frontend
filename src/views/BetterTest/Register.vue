@@ -57,8 +57,7 @@ export default {
       username: "",
       email: "",
       password: "",
-      error: "",
-      loggedIn: false
+      error: ""
     }
   },
   methods: {
@@ -75,6 +74,7 @@ export default {
           Object.assign(this.axios.defaults, {
             headers: { Authorization: res.data.token }
           })
+          this.getUser()
           this.$router.push("/test")
         })
         .catch((e) => {
@@ -85,7 +85,7 @@ export default {
       this.axios
         .get("/api/user")
         .then((res) => {
-          this.loggedIn = res.data
+          this.$user.loggedIn = res.data
         })
         .catch((e) => {
           this.error = "Error 503 Cannot Connect to Server " + e
@@ -95,8 +95,6 @@ export default {
   mounted() {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/favicon.ico"
-
-    this.getUser()
   }
 }
 </script>

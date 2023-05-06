@@ -50,30 +50,22 @@ body {
 .button a,
 button {
   background-color: #282a2b;
-  color: #f2f2f2;
-  text-align: center;
+  color: #ffffff;
   padding: 14px 16px;
-  text-decoration: none;
   font-size: 17px;
   border: none;
+  cursor: pointer;
 }
 
 .profile-button-message,
 .profile-button-add,
 .profile-button-remove,
 .profile-button-pending {
-  background-color: #282a2b;
   color: #1e90ff;
-  text-align: center;
   padding: 8px 8px;
-  text-decoration: none;
   font-size: 14px;
-  border: none;
   display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
   width: 100%;
-  cursor: pointer
 }
 
 .profile-button-message:hover {
@@ -105,6 +97,7 @@ button {
 .message-send {
   height: 48px;
   background-color: #282a2b;
+  text-align: center;
 }
 
 .scroll-button {
@@ -199,6 +192,7 @@ button {
   background-color: #2d5431;
 }
 
+.settings-item:hover,
 .scroll-bar::-webkit-scrollbar-thumb:hover,
 .right:hover,
 .button a:hover,
@@ -424,6 +418,10 @@ h4 {
   margin:  16px 0 16px 0;
 }
 
+.settings-text {
+  font-size: 20px
+}
+
 .error-message {
   color: red;
   font-size: 10px;
@@ -440,11 +438,18 @@ h4 {
 }
 
 .menu {
-  margin: 0;
   width: 500px;
   background-color: #282a2b;
   display: flex;
-  border-radius: 25px
+  border-radius: 25px;
+}
+
+.settings-menu {
+  width: calc(100% - 164px);
+  background-color: #282a2b;
+  display: flex;
+  border-radius: 25px;
+  min-height: 500px;
 }
 
 .grid {
@@ -488,4 +493,16 @@ h4 {
   .grid-item {
     flex: 0 0 8.33%;
   }
+}
+
+.settings-item {
+  cursor: pointer;
+  font-size: 20px;
+  text-align: left;
+  padding: 16px;
+}
+
+.settings-page {
+  padding: 16px;
+  text-align: left;
 }

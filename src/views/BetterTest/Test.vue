@@ -22,7 +22,7 @@
             :src="showUser.avatar"
             alt="Profile icon"
           />
-          <Icons v-else color="white" width="80" height="80" icon="account" />
+          <Icons v-else color="white" size="80" icon="account" />
           <svg class="online-indicator" width="20" height="20">
             <status-indicator
               size="8"
@@ -30,23 +30,16 @@
             ></status-indicator>
           </svg>
         </div>
-        <div
-          style="flex-grow: 1; flex-basis: 0; margin: 0"
-          class="message-item"
-        >
+        <div style="flex-grow: 1; flex-basis: 0" class="message-item">
           <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
           <div v-if="editing !== 'status'" style="display: flex">
-            <p
-              class="message-text-large"
-              style="margin: 0; word-wrap: break-word"
-            >
+            <p class="message-text-large" style="word-wrap: break-word">
               {{ showUser.statusMessage }}
               <Icons
-                v-if="showUser.id === loggedIn.id"
+                v-if="showUser.id === $user.loggedIn.id"
                 style="cursor: pointer"
                 color="white"
-                width="16"
-                height="16"
+                size="16"
                 icon="edit"
                 @click="
                   ;(editing = 'status'),
@@ -70,14 +63,13 @@
         </div>
         <div>
           <button
-            v-if="showUser.directMessages && showUser.id !== loggedIn.id"
+            v-if="showUser.directMessages && showUser.id !== $user.loggedIn.id"
             class="profile-button-message"
           >
             <Icons
               style="top: 0; padding-right: 4px"
               color="#1e90ff"
-              width="16"
-              height="16"
+              size="16"
               icon="message"
             />
             Send Message
@@ -85,8 +77,8 @@
           <button
             v-if="
               showUser.friendRequests &&
-              showUser.id !== loggedIn.id &&
               !showUser.friendStatus
+              showUser.id !== $user.loggedIn.id &&
             "
             class="profile-button-add"
             style="color: #47bf4c"
@@ -95,16 +87,15 @@
             <Icons
               style="top: 0; padding-right: 4px"
               color="#47bf4c"
-              width="16"
-              height="16"
+              size="16"
               icon="add-user"
             />
             Add Friend
           </button>
           <button
             v-if="
-              showUser.id !== loggedIn.id &&
               showUser.friendStatus === 'accepted'
+              showUser.id !== $user.loggedIn.id &&
             "
             class="profile-button-remove"
             style="color: #ff2f2f"
@@ -113,8 +104,7 @@
             <Icons
               style="top: 0; padding-right: 4px"
               color="#FF2F2F"
-              width="16"
-              height="16"
+              size="16"
               icon="remove-user"
             />
             Remove Friend
@@ -130,16 +120,15 @@
             <Icons
               style="top: 0; padding-right: 4px"
               color="#808080"
-              width="16"
-              height="16"
+              size="16"
               icon="remove-user"
             />
             Pending
           </button>
           <button
             v-if="
-              showUser.id !== loggedIn.id &&
               showUser.friendStatus === 'incoming'
+              showUser.id !== $user.loggedIn.id &&
             "
             class="profile-button-pending"
             style="color: #47bf4c"
@@ -148,8 +137,7 @@
             <Icons
               style="top: 0; padding-right: 4px"
               color="#47bf4c"
-              width="16"
-              height="16"
+              size="16"
               icon="add-user"
             />
             Accept Friend
@@ -158,7 +146,7 @@
       </div>
       <div style="padding: 24px">
         <p>Description</p>
-        <p class="message-text-large" style="margin: 0">
+        <p class="message-text-large">
           {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
         </p>
       </div>
@@ -166,7 +154,7 @@
   </transition>
   <div class="chat-navbar">
     <router-link to="/test">Better Test</router-link>
-    <router-link v-if="loggedIn" class="right" to="/account">
+    <router-link v-if="$user.loggedIn" class="right" to="/account">
       Account
     </router-link>
     <router-link v-else class="right" to="/login">Login</router-link>
@@ -176,7 +164,7 @@
       class="right"
       style="width: 28px; height: 28px; padding: 10px"
     >
-      <Icons color="white" width="28" height="28" icon="account" />
+      <Icons color="white" size="28" icon="account" />
     </div>
   </div>
   <transition>
@@ -257,8 +245,7 @@
               >
                 <Icons
                   color="white"
-                  width="16"
-                  height="16"
+                  size="16"
                   icon="reply"
                   style="margin-right: 4px"
                 />
@@ -281,8 +268,7 @@
                   v-else
                   @click="openUser(findMessage(message.reply).user.id)"
                   color="white"
-                  width="16"
-                  height="16"
+                  size="16"
                   icon="account"
                 />
                 <b
@@ -325,13 +311,7 @@
                     :src="message.user.avatar"
                     alt="Profile icon"
                   />
-                  <Icons
-                    v-else
-                    color="white"
-                    width="32"
-                    height="32"
-                    icon="account"
-                  />
+                  <Icons v-else color="white" size="32" icon="account" />
                 </div>
                 <div v-else class="message-time">
                   <b class="message-text-small">
@@ -383,12 +363,10 @@
                 </div>
                 <div class="message-icons" v-show="editing !== message.id">
                   <Icons
-                    v-show="message.user.id === loggedIn.id"
+                    v-show="message.user.id === $user.loggedIn?.id"
                     style="cursor: pointer"
-                    class="message-item"
                     color="white"
-                    width="20"
-                    height="20"
+                    size="20"
                     icon="edit"
                     @click="
                       ;(editing = message.id),
@@ -398,20 +376,19 @@
                   />
                   <Icons
                     style="cursor: pointer"
-                    class="message-item"
                     color="white"
-                    width="20"
-                    height="20"
+                    size="20"
                     icon="reply"
                     @click="replyToMessage(message.id)"
                   />
                   <Icons
-                    v-show="loggedIn.admin || message.user.id === loggedIn.id"
+                    v-show="
+                      $user.loggedIn?.admin ||
+                      message.user.id === $user.loggedIn?.id
+                    "
                     style="cursor: pointer"
-                    class="message-item"
                     color="white"
-                    width="20"
-                    height="20"
+                    size="20"
                     icon="delete"
                     @click="deleteMessage(message.id)"
                   />
@@ -440,10 +417,8 @@
                 class="scroll-button"
                 @click="scroll"
               >
-                <Icons color="white" width="12" height="12" icon="down-arrow" />
-                <p class="message-text-medium" style="margin: 0">
-                  Scroll to bottom
-                </p>
+                <Icons color="white" size="12" icon="down-arrow" />
+                <p class="message-text-medium">Scroll to bottom</p>
               </div>
             </transition>
             <div
@@ -459,8 +434,7 @@
             >
               <Icons
                 color="white"
-                width="12"
-                height="12"
+                size="12"
                 icon="reply"
                 style="margin-right: 4px"
               />
@@ -483,8 +457,7 @@
                 v-else
                 @click="openUser(findMessage(replyTo).user.id)"
                 color="white"
-                width="12"
-                height="12"
+                size="12"
                 icon="account"
               />
               <b
@@ -504,12 +477,12 @@
             </div>
           </div>
         </transition>
-        <div class="message-send" style="text-align: center">
+        <div class="message-send">
           <input
             placeholder="Send a message"
             autofocus
             @keydown.enter="submit"
-            @keydown.up.prevent=";(editing = editLast()), scroll(true)"
+            @keydown.up.prevent="editLast(), scroll(true)"
             class="responder"
             v-model="inputText"
             type="text"
@@ -542,14 +515,16 @@
         <div v-for="user in users">
           <div
             v-if="user.status !== 'offline'"
-            style="cursor: pointer; margin: 0 0 8px 0"
+            style="cursor: pointer; margin: 0 0 8px"
             class="message-grid"
             @click="openUser(user.id)"
           >
-            <div class="profile-picture" style="margin-right: 8px">
+            <div
+              class="profile-picture"
+              style="margin-right: 8px; height: 40px"
+            >
               <img
                 style="border-radius: 16px; object-fit: cover; margin: 4px"
-                class="message-item"
                 width="32"
                 height="32"
                 v-if="user.avatar"
@@ -559,10 +534,8 @@
               <Icons
                 style="margin: 4px"
                 v-else
-                class="message-item"
                 color="white"
-                width="32"
-                height="32"
+                size="32"
                 icon="account"
               />
               <svg class="online-indicator" width="15" height="15">
@@ -572,16 +545,14 @@
                 ></status-indicator>
               </svg>
             </div>
-            <div style="flex-grow: 1; margin: 0" class="message-item">
+            <div style="flex-grow: 1; width: 178px" class="message-item">
               <b
                 class="message-text-large"
                 style="
-                  margin-top: 4px;
-                  margin-bottom: 2px;
+                  margin: 4px 0 2px 0;
                   overflow: hidden;
                   white-space: nowrap;
                   text-overflow: ellipsis;
-                  width: 178px;
                 "
               >
                 {{ user.username }}
@@ -592,7 +563,6 @@
                   overflow: hidden;
                   white-space: nowrap;
                   text-overflow: ellipsis;
-                  width: 178px;
                 "
               >
                 {{ user.statusMessage }}
@@ -618,10 +588,12 @@
             class="message-grid"
             @click="openUser(user.id)"
           >
-            <div class="profile-picture" style="margin-right: 8px">
+            <div
+              class="profile-picture"
+              style="margin-right: 8px; height: 40px"
+            >
               <img
                 style="border-radius: 16px; object-fit: cover; margin: 4px"
-                class="message-item"
                 width="32"
                 height="32"
                 v-if="user.avatar"
@@ -631,10 +603,8 @@
               <Icons
                 style="margin: 4px"
                 v-else
-                class="message-item"
                 color="white"
-                width="32"
-                height="32"
+                size="32"
                 icon="account"
               />
               <svg class="online-indicator" width="15" height="15">
@@ -644,12 +614,11 @@
                 ></status-indicator>
               </svg>
             </div>
-            <div style="flex-grow: 1; margin: 0" class="message-item">
+            <div class="message-item">
               <b
                 class="message-text-large"
                 style="
-                  margin-top: 4px;
-                  margin-bottom: 2px;
+                  margin: 4px 0 2px 0;
                   overflow: hidden;
                   white-space: nowrap;
                   text-overflow: ellipsis;
@@ -707,7 +676,6 @@ export default {
       sidebarOpen: "false",
       editing: false,
       error: "",
-      loggedIn: false,
       profileShown: false,
       loadingMessages: true,
       loadingUsers: true,
@@ -726,8 +694,12 @@ export default {
           this.loadingMessages = false
           this.scroll()
         })
-        .catch(() => {
-          this.error = "Error 503 Cannot Connect to Server"
+        .catch((e) => {
+          if (e.message === "Request failed with status code 401") {
+            this.error = "Error 401, You are not logged in"
+          } else {
+            this.error = "Error 503, Cannot Connect to Server" + e
+          }
         })
     },
     async getUsers() {
@@ -738,8 +710,13 @@ export default {
           this.loadingUsers = false
           this.userSort(this.sortUsers)
         })
-        .catch(() => {
-          this.error = "Error 503 Cannot Connect to Server"
+        .catch((e) => {
+          if (e.message === "Request failed with status code 401") {
+            this.error = "Error 401, You are not logged in"
+            this.$router.push("/login")
+          } else {
+            this.error = "Error 503, Cannot Connect to Server" + e
+          }
         })
     },
     userSortPress() {
@@ -856,16 +833,6 @@ export default {
     dayjsDate(date) {
       return dayjs(date).format("D MMMM YYYY")
     },
-    getUser() {
-      this.axios
-        .get("/api/user")
-        .then((res) => {
-          this.loggedIn = res.data
-        })
-        .catch((e) => {
-          this.error = "Error 503 Cannot Connect to Server " + e
-        })
-    },
     openUser(userId) {
       this.axios.get("/api/user/" + userId).then((res) => {
         this.showUser = res.data
@@ -944,11 +911,11 @@ export default {
     },
     editLast() {
       this.messageEdit = this.messages.filter(
-        (message) => Number(message.userName) === this.loggedIn.id
+        (message) => Number(message.userName) === this.$user.loggedIn.id
       )
       if (this.messageEdit.length > 0) {
         this.editText = this.messageEdit.slice(-1)[0].messageContents
-        return this.messageEdit.slice(-1)[0].id
+        this.editing = this.messageEdit.slice(-1)[0].id
       }
     },
     addFriend(userId) {
@@ -1002,7 +969,6 @@ export default {
     const div = document.getElementById("div")
     div.addEventListener("scroll", this.scrollEvent)
 
-    this.getUser()
     await this.getMessages()
     await this.getUsers()
     this.scroll(true)

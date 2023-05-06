@@ -1,8 +1,8 @@
 <template>
   <svg
     :fill="color"
-    :width="width"
-    :height="height"
+    :width="size"
+    :height="size"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     style="position: relative; top: 0.15em"
@@ -49,7 +49,7 @@
 <script>
 export default {
   name: "Icons",
-  props: ["color", "width", "height", "icon"]
+  props: ["color", "size", "icon"]
 }
 </script>
 

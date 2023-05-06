@@ -27,7 +27,7 @@
       </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
       <router-link
-        v-if="$data"
+        v-if="$user.loggedIn"
         class="right"
         to="/account"
         @click="responsive_navbar()"
@@ -38,12 +38,17 @@
     </div>
     <div class="chat-navbar" v-else>
       <router-link to="/test">Better Test</router-link>
-      <router-link v-if="loggedIn" class="right" to="/account">
+      <router-link v-if="$user.loggedIn" class="right" to="/account">
         Account
       </router-link>
       <router-link v-else class="right" to="/login">Login</router-link>
       <router-link class="right" to="/">Home</router-link>
     </div>
+    <transition>
+      <p v-if="error" class="error-banner">
+        {{ error }}
+      </p>
+    </transition>
   </header>
   <main>
     <router-view />
@@ -55,21 +60,10 @@ export default {
   name: "App",
   data() {
     return {
-      error: "",
-      loggedIn: false
+      error: ""
     }
   },
   methods: {
-    getUser() {
-      this.axios
-        .get("/api/user")
-        .then((res) => {
-          this.loggedIn = res.data
-        })
-        .catch((e) => {
-          console.log("Error 503 Cannot Connect to Server " + e)
-        })
-    },
     active(route) {
       return route === this.$route.path
     },
@@ -95,11 +89,20 @@ export default {
       )
     }
   },
-  mounted() {
+  created() {
     Object.assign(this.axios.defaults, {
       headers: { Authorization: localStorage.getItem("token") }
     })
-    this.getUser()
+    if (localStorage.getItem("token")) {
+      this.axios
+        .get("/api/user")
+        .then((res) => {
+          this.$user.loggedIn = res.data
+        })
+        .catch((e) => {
+          console.log("Error 503 Cannot Connect to Server " + e)
+        })
+    }
   }
 }
 </script>

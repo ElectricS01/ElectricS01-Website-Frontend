@@ -6,10 +6,33 @@
       </p>
     </transition>
     <div class="grid-menu">
-      <div class="menu">
-        <div class="grid-card">
-          <p class="message-text-large">Your Account</p>
-          Coming soon™
+      <div class="settings-menu">
+        <div style="display: flex">
+          <div style="width: 200px; border-right: 1px solid #212425">
+            <div
+              @click="page = 'account'"
+              class="settings-item"
+              style="border-top-left-radius: 25px"
+            >
+              Account
+            </div>
+            <div @click="page = 'privacy'" class="settings-item">Privacy</div>
+            <div @click="page = 'appearance'" class="settings-item">
+              Appearance
+            </div>
+          </div>
+          <div v-if="page === 'account'" class="settings-page">
+            <p class="settings-text">Account</p>
+            Coming soon™
+          </div>
+          <div v-else-if="page === 'privacy'" class="settings-page">
+            <p class="settings-text">Privacy</p>
+            Coming soon™
+          </div>
+          <div v-else-if="page === 'appearance'" class="settings-page">
+            <p class="settings-text">Appearance</p>
+            Coming soon™
+          </div>
         </div>
       </div>
     </div>
@@ -20,27 +43,13 @@
 export default {
   data() {
     return {
-      error: "",
-      loggedIn: false
-    }
-  },
-  methods: {
-    getUser() {
-      this.axios
-        .get("/api/user")
-        .then((res) => {
-          this.loggedIn = res.data
-        })
-        .catch((e) => {
-          this.error = "Error 503 Cannot Connect to Server " + e
-        })
+      page: "account",
+      error: ""
     }
   },
   mounted() {
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/favicon.ico"
-
-    this.getUser()
   }
 }
 </script>

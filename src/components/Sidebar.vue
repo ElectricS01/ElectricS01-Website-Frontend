@@ -28,14 +28,14 @@ export default {
 
 <style>
 .sidebar {
-  overflow-y: auto;
   height: calc(100% - 8px);
   width: 242px;
   padding: 4px 4px 4px 0;
 }
 
 .sidebar-border {
-  padding-top: 4px;
+  overflow-y: auto;
+  padding: 4px 0;
   border-left: 1px solid #212425;
   width: calc(100% - 4px);
   height: 100%;
