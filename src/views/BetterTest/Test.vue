@@ -493,8 +493,8 @@
         </div>
       </div>
     </div>
-    <Sidebar v-if="sidebarOpen === 'true'" class="scroll-bar">
-      <div v-if="!loadingUsers" style="padding-left: 8px">
+    <Sidebar v-if="sidebarOpen === 'true'">
+      <div v-if="!loadingUsers" style="padding: 0 4px 4px 8px">
         <div class="filter-button" @click="userSortPress()">
           <p v-if="sortUsers === 'id'">Sort: Id</p>
           <p v-else-if="sortUsers === 'username'">Sort: Username</p>
@@ -515,7 +515,7 @@
         <div v-for="user in users">
           <div
             v-if="user.status !== 'offline'"
-            style="cursor: pointer; margin: 0 0 8px"
+            style="cursor: pointer; margin: 0 0 4px"
             class="message-grid"
             @click="openUser(user.id)"
           >
@@ -584,7 +584,7 @@
         <div v-for="user in users">
           <div
             v-if="user.status === 'offline'"
-            style="cursor: pointer; margin: 0 0 8px 0"
+            style="cursor: pointer; margin: 0 0 4px"
             class="message-grid"
             @click="openUser(user.id)"
           >

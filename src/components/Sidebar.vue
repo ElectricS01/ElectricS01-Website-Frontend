@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <div class="sidebar-border">
+    <div class="sidebar-border scroll-bar">
       <slot></slot>
     </div>
   </div>
@@ -29,13 +29,12 @@ export default {
 <style>
 .sidebar {
   height: calc(100% - 8px);
-  width: 242px;
-  padding: 4px 4px 4px 0;
+  width: 246px;
 }
 
 .sidebar-border {
   overflow-y: auto;
-  padding: 4px 0;
+  padding: 8px 4px 0 0;
   border-left: 1px solid #212425;
   width: calc(100% - 4px);
   height: 100%;
