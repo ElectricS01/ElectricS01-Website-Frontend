@@ -192,7 +192,11 @@ button {
   background-color: #2d5431;
 }
 
-.settings-item:hover,
+.settings-item:hover {
+  background-color: #282a2b;
+}
+
+.settings-button:hover,
 .scroll-bar::-webkit-scrollbar-thumb:hover,
 .right:hover,
 .button a:hover,
@@ -445,7 +449,7 @@ h4 {
 }
 
 .settings-menu {
-  width: calc(100% - 164px);
+  width: calc(100% - calc(40% - 64px));
   background-color: #282a2b;
   display: flex;
   border-radius: 25px;
@@ -503,6 +507,26 @@ h4 {
 }
 
 .settings-page {
-  padding: 16px;
   text-align: left;
+  float: left;
+  flex-grow: 1;
+  padding: 16px;
+  width: calc(100% - 233px);
+}
+
+.settings-sidebar {
+  width: 200px;
+  height: 100%;
+  border-right: 1px solid #212425;
+  background-color: #212425;
+  border-radius: 25px 0 0 25px;
+  float: left;
+}
+
+.settings-button {
+  background-color: #212425;
+  color: #ffffff;
+  padding: 8px;
+  margin: 8px;
+  cursor: pointer;
 }

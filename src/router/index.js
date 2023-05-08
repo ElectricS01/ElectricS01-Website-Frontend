@@ -27,9 +27,13 @@ const routes = [
     component: () => import("../views/BetterTest/Test.vue")
   },
   {
-    path: "/account",
+    path: "/account/:id",
     name: "account",
     component: () => import("../views/BetterTest/Account.vue")
+  },
+  {
+    path: "/account",
+    redirect: "/account/account"
   },
   {
     path: "/login",
