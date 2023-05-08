@@ -41,14 +41,17 @@
           </div>
           <div v-else-if="page === 'about'" class="settings-page">
             <h2 class="settings-text">About Better Test</h2>
-            <div style="margin-bottom: 10px; word-wrap: break-word">
+            <div style="word-wrap: break-word">
               Better Test is currently a chatting platform without a Better™
               name
             </div>
-            <p>
+            <div class="settings-spacer"></div>
+            <div style="word-wrap: break-word">
               Made by
               <router-link to="/">ElectricS01</router-link>
-            </p>
+            </div>
+            <div class="settings-spacer"></div>
+            <div>Version: 1.120</div>
           </div>
         </div>
       </div>
