@@ -51,7 +51,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.120</div>
+            <div>Version: 1.121</div>
           </div>
         </div>
       </div>
