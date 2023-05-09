@@ -81,11 +81,11 @@ export default {
   computed: {
     navbarShown() {
       return (
-        this.$route.path !== "/test" &&
-        this.$route.path !== "/login" &&
-        this.$route.path !== "/register" &&
-        this.$route.path !== "/account" &&
-        this.$route.path !== "/resetpassword"
+        !this.$route.path.startsWith("/test") &&
+        !this.$route.path.startsWith("/login") &&
+        !this.$route.path.startsWith("/register") &&
+        !this.$route.path.startsWith("/account") &&
+        !this.$route.path.startsWith("/resetpassword")
       )
     }
   },

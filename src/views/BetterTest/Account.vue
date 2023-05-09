@@ -26,9 +26,19 @@
           </div>
           <div v-if="page === 'account'" class="settings-page">
             <h2 class="settings-text">Account</h2>
-            Coming soon™
+            Username: {{ $user.loggedIn?.username }}
             <div @click="changeUsername()" class="settings-button">
               Change Username
+            </div>
+            <div class="settings-spacer"></div>
+            Email: {{ $user.loggedIn?.email }}
+            <div @click="changeUsername()" class="settings-button">
+              Change Email
+            </div>
+            <div class="settings-spacer"></div>
+            Password: {{ $user.loggedIn?.password }}
+            <div @click="changeUsername()" class="settings-button">
+              Change Password
             </div>
           </div>
           <div v-else-if="page === 'privacy'" class="settings-page">
@@ -51,7 +61,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.121</div>
+            <div>Version: 1.122</div>
           </div>
         </div>
       </div>
@@ -65,7 +75,8 @@ export default {
     return {
       page: "account",
       error: "",
-      pages: ["account", "privacy", "appearance", "about"]
+      pages: ["account", "privacy", "appearance", "about"],
+      user: []
     }
   },
   methods: {
@@ -76,6 +87,18 @@ export default {
       } else {
         this.page = "account"
         this.$router.push("/account/account")
+      }
+    },
+    getUser() {
+      if (localStorage.getItem("token")) {
+        this.axios
+          .get("/api/user")
+          .then((res) => {
+            this.$user.loggedIn = res.data
+          })
+          .catch((e) => {
+            console.log("Error 503 Cannot Connect to Server " + e)
+          })
       }
     },
     changeUsername() {

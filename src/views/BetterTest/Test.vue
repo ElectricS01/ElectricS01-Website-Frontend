@@ -697,6 +697,7 @@ export default {
         .catch((e) => {
           if (e.message === "Request failed with status code 401") {
             this.error = "Error 401, You are not logged in"
+            this.$router.push("/login")
           } else {
             this.error = "Error 503, Cannot Connect to Server" + e
           }

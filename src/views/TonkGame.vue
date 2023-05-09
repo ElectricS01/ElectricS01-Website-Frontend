@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <iframe
+      title="TonkGame"
       allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated"
       webkitallowfullscreen="true"
       mozallowfullscreen="true"

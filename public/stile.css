@@ -424,7 +424,7 @@ h4 {
 }
 
 .settings-text {
-  font-size: 20px
+  font-size: 20px;
 }
 
 .error-message {
@@ -542,6 +542,8 @@ h4 {
   padding: 8px;
   margin: 8px;
   cursor: pointer;
+  font-size: 16px;
+  display: table;
 }
 
 .settings-spacer {
