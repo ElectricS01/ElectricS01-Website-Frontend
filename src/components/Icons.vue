@@ -1,6 +1,6 @@
 <template>
   <svg
-    :fill="color"
+    :fill="color || 'white'"
     :width="size"
     :height="size"
     xmlns="http://www.w3.org/2000/svg"

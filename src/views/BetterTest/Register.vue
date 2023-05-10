@@ -13,6 +13,7 @@
             <label for="username">Username</label>
           </div>
           <input
+            placeholder="Username"
             @keydown.enter="submit"
             class="modal-input"
             id="username"
@@ -22,6 +23,7 @@
             <label for="email">Email</label>
           </div>
           <input
+            placeholder="Email"
             @keydown.enter="submit"
             class="modal-input"
             id="email"
@@ -32,6 +34,7 @@
             <label for="password">Password</label>
           </div>
           <input
+            placeholder="Password"
             @keydown.enter="submit"
             class="modal-input"
             id="password"

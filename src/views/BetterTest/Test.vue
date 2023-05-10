@@ -22,7 +22,7 @@
             :src="showUser.avatar"
             alt="Profile icon"
           />
-          <Icons v-else color="white" size="80" icon="account" />
+          <Icons v-else size="80" icon="account" />
           <svg class="online-indicator" width="20" height="20">
             <status-indicator
               size="8"
@@ -38,7 +38,6 @@
               <Icons
                 v-if="showUser.id === $user.loggedIn.id"
                 style="cursor: pointer"
-                color="white"
                 size="16"
                 icon="edit"
                 @click="
@@ -164,7 +163,7 @@
       class="right"
       style="width: 28px; height: 28px; padding: 10px"
     >
-      <Icons color="white" size="28" icon="account" />
+      <Icons size="28" icon="account" />
     </div>
   </div>
   <transition>
@@ -235,20 +234,14 @@
                 <div style="border-bottom: 1px solid #212425; width: 50%"></div>
               </div>
               <div
-                v-if="message.reply"
+                v-if="message.reply && findMessage(message.reply)?.user"
                 style="
                   display: flex;
                   overflow-wrap: break-word;
-                  margin-bottom: 8px;
-                  margin-left: 28px;
+                  margin: 0 0 8px 28px;
                 "
               >
-                <Icons
-                  color="white"
-                  size="16"
-                  icon="reply"
-                  style="margin-right: 4px"
-                />
+                <Icons size="16" icon="reply" style="margin-right: 4px" />
                 <img
                   style="
                     border-radius: 16px;
@@ -267,7 +260,6 @@
                   style="cursor: pointer"
                   v-else
                   @click="openUser(findMessage(message.reply).user.id)"
-                  color="white"
                   size="16"
                   icon="account"
                 />
@@ -285,6 +277,28 @@
                 >
                   {{ findMessage(message.reply).messageContents }}
                 </p>
+              </div>
+              <div
+                v-else-if="message.reply"
+                style="
+                  overflow-wrap: break-word;
+                  margin: 0 0 8px 28px;
+                  display: flex;
+                "
+              >
+                <Icons
+                  color="darkgrey"
+                  size="16"
+                  icon="reply"
+                  style="margin-right: 4px"
+                />
+                <Icons color="darkgrey" size="16" icon="account" />
+                <b
+                  class="message-text-medium-gray"
+                  style="margin: 4px 4px 0 4px"
+                >
+                  Message has been deleted
+                </b>
               </div>
               <div
                 class="message-grid"
@@ -311,7 +325,7 @@
                     :src="message.user.avatar"
                     alt="Profile icon"
                   />
-                  <Icons v-else color="white" size="32" icon="account" />
+                  <Icons v-else size="32" icon="account" />
                 </div>
                 <div v-else class="message-time">
                   <b class="message-text-small">
@@ -365,7 +379,6 @@
                   <Icons
                     v-show="message.user.id === $user.loggedIn?.id"
                     style="cursor: pointer"
-                    color="white"
                     size="20"
                     icon="edit"
                     @click="
@@ -376,7 +389,6 @@
                   />
                   <Icons
                     style="cursor: pointer"
-                    color="white"
                     size="20"
                     icon="reply"
                     @click="replyToMessage(message.id)"
@@ -387,7 +399,6 @@
                       message.user.id === $user.loggedIn?.id
                     "
                     style="cursor: pointer"
-                    color="white"
                     size="20"
                     icon="delete"
                     @click="deleteMessage(message.id)"
@@ -417,7 +428,7 @@
                 class="scroll-button"
                 @click="scroll"
               >
-                <Icons color="white" size="12" icon="down-arrow" />
+                <Icons size="12" icon="down-arrow" />
                 <p class="message-text-medium">Scroll to bottom</p>
               </div>
             </transition>
@@ -432,12 +443,7 @@
                 position: relative;
               "
             >
-              <Icons
-                color="white"
-                size="12"
-                icon="reply"
-                style="margin-right: 4px"
-              />
+              <Icons size="12" icon="reply" style="margin-right: 4px" />
               <img
                 style="
                   border-radius: 12px;
@@ -456,7 +462,6 @@
                 style="cursor: pointer"
                 v-else
                 @click="openUser(findMessage(replyTo).user.id)"
-                color="white"
                 size="12"
                 icon="account"
               />
@@ -531,13 +536,7 @@
                 :src="user.avatar"
                 alt="Profile icon"
               />
-              <Icons
-                style="margin: 4px"
-                v-else
-                color="white"
-                size="32"
-                icon="account"
-              />
+              <Icons style="margin: 4px" v-else size="32" icon="account" />
               <svg class="online-indicator" width="15" height="15">
                 <status-indicator
                   size="5"
@@ -600,13 +599,7 @@
                 :src="user.avatar"
                 alt="Profile icon"
               />
-              <Icons
-                style="margin: 4px"
-                v-else
-                color="white"
-                size="32"
-                icon="account"
-              />
+              <Icons style="margin: 4px" v-else size="32" icon="account" />
               <svg class="online-indicator" width="15" height="15">
                 <status-indicator
                   size="5"
@@ -835,10 +828,16 @@ export default {
       return dayjs(date).format("D MMMM YYYY")
     },
     openUser(userId) {
-      this.axios.get("/api/user/" + userId).then((res) => {
-        this.showUser = res.data
-        this.profileShown = true
-      })
+      this.axios
+        .get("/api/user/" + userId)
+        .then((res) => {
+          this.showUser = res.data
+          this.profileShown = true
+        })
+        .catch((e) => {
+          this.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
+        })
     },
     scroll(override) {
       this.$nextTick(() => {

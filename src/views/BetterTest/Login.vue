@@ -13,6 +13,7 @@
             <label class="text-small" for="username">Username</label>
           </div>
           <input
+            placeholder="Email"
             @keydown.enter="submit"
             class="modal-input"
             v-model="username"
@@ -22,6 +23,7 @@
             <label for="password">Password</label>
           </div>
           <input
+            placeholder="Password"
             @keydown.enter="submit"
             type="password"
             class="modal-input"

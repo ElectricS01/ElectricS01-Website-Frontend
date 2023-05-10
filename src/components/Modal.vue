@@ -4,7 +4,6 @@
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">
           <icons
-            color="white"
             width="32"
             height="32"
             icon="close"

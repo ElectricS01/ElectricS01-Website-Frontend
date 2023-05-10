@@ -13,6 +13,7 @@
             <label for="email">Email</label>
           </div>
           <input
+            placeholder="Email"
             @keydown.enter="submit"
             class="modal-input"
             id="email"
