@@ -7,7 +7,7 @@
     </transition>
     <div class="grid-menu">
       <div class="settings-menu">
-        <div>
+        <div style="display: flex">
           <div class="settings-sidebar">
             <div
               @click="changePage('account')"
@@ -40,6 +40,11 @@
             <div @click="changeUsername()" class="settings-button">
               Change Password
             </div>
+            <div class="settings-spacer"></div>
+            Creation date: {{ dayjs($user.loggedIn?.createdAt) }}
+            <div @click="changeUsername()" class="settings-button-red">
+              Close account
+            </div>
           </div>
           <div v-else-if="page === 'privacy'" class="settings-page">
             <h2 class="settings-text">Privacy</h2>
@@ -61,7 +66,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.123</div>
+            <div>Version: 1.124</div>
           </div>
         </div>
       </div>
@@ -70,6 +75,8 @@
 </template>
 
 <script>
+import dayjs from "dayjs"
+
 export default {
   data() {
     return {
@@ -105,6 +112,9 @@ export default {
       while (true) {
         console.log("Get Better™")
       }
+    },
+    dayjs(date) {
+      return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     }
   },
   mounted() {

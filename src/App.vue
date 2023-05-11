@@ -85,7 +85,7 @@ export default {
         !this.$route.path.startsWith("/login") &&
         !this.$route.path.startsWith("/register") &&
         !this.$route.path.startsWith("/account") &&
-        !this.$route.path.startsWith("/resetpassword")
+        !this.$route.path.startsWith("/reset")
       )
     }
   },

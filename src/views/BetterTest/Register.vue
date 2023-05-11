@@ -68,9 +68,9 @@ export default {
       this.error = ""
       this.axios
         .post("/api/register", {
-          username: this.username,
-          email: this.email,
-          password: this.password
+          username: this.username.trim(),
+          email: this.email.toLowerCase().trim(),
+          password: this.password.trim()
         })
         .then((res) => {
           localStorage.setItem("token", res.data.token)

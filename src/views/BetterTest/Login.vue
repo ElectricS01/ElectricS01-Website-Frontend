@@ -32,7 +32,7 @@
           />
           <div style="display: flex; justify-content: space-between">
             <div class="text-small">
-              <router-link class="text-small" to="/resetpassword">
+              <router-link class="text-small" to="/reset">
                 Forgot Password?
               </router-link>
             </div>
@@ -63,8 +63,8 @@ export default {
       this.error = ""
       this.axios
         .post("/api/login", {
-          username: this.username,
-          password: this.password
+          username: this.username.toLowerCase().trim(),
+          password: this.password.trim()
         })
         .then((res) => {
           localStorage.setItem("token", res.data.token)

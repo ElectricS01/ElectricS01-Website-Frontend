@@ -546,6 +546,20 @@ h4 {
   display: table;
 }
 
+.settings-button-red {
+  padding: 8px;
+  margin: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  display: table;
+  color: #ff2f2f;
+  background-color: #212425
+}
+
+.settings-button-red:hover {
+  background-color: rgb(255, 47, 47, 0.1);
+}
+
 .settings-spacer {
   border-bottom: 1px solid #3d4244;
   width: 100%;
