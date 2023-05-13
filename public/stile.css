@@ -18,10 +18,11 @@ body {
 .container {
   position: fixed;
   top: 48px;
-  width: 100%;
+  width: calc(100% - 16px);
   height: calc(100% - 48px);
   overflow-y: auto;
   text-align: center;
+  padding: 0 8px 8px 8px;
 }
 
 .small-container {
@@ -200,7 +201,6 @@ button {
 .right:hover,
 .button a:hover,
 button:hover,
-.icon:hover,
 .icon-mobile:hover,
 .chat-navbar a:hover,
 .navbar a:hover {
@@ -217,8 +217,7 @@ button:hover,
     display: none;
   }
 
-  .icon-mobile,
-  .icon {
+  .icon-mobile {
     line-height: 24px;
     width: 28px;
     height: 28px;

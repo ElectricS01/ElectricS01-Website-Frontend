@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container scroll-bar">
     <iframe
       style="border: 0"
       title="Tetris"

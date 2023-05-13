@@ -1,21 +1,16 @@
 <template>
-  <div class="container">
+  <div class="container scroll-bar">
     <iframe
+      style="border: 0"
       title="TonkGame"
-      allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated"
-      webkitallowfullscreen="true"
-      mozallowfullscreen="true"
-      frameborder="0"
-      allowfullscreen="true"
-      scrolling="no"
+      allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
       src="/game.html"
       allowtransparency="true"
-      msallowfullscreen="true"
       id="game_drop"
-      height="560"
-      width="980"
+      height="540"
+      width="960"
     ></iframe>
-    <h3>TonkGame version 4.2.5 (beta 6)</h3>
+    <h3>Tetris By ElectricS01 0.23</h3>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="padding: 0 8px 8px 8px">
+  <div class="container scroll-bar">
     <h2>Welcome to ElectricS01's website</h2>
     <p class="text-main">
       Hi, I'm ElectricS01, I make things in Vue, Javascript, Python and

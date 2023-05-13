@@ -1,8 +1,8 @@
 <template>
-  <div class="container" style="padding: 0 16px; text-align: left">
+  <div class="container scroll-bar" style="padding: 0 16px; text-align: left">
     <h2>ElectricS01's Calculator</h2>
-    <label for="expression">Enter your equation:</label>
-    <input id="expression" v-model="equation" type="text" />
+    <label for="equation">Enter your equation:</label>
+    <input id="equation" v-model="equation" type="text" />
     <p class="text-main" id="result">{{ result }}</p>
   </div>
 </template>
