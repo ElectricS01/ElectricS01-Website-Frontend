@@ -10,7 +10,7 @@
       height="540"
       width="960"
     ></iframe>
-    <h3>Tetris By ElectricS01 0.23</h3>
+    <h3>TonkGame version 4.2.5 (beta 6)</h3>
   </div>
 </template>
 

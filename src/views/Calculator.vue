@@ -1,5 +1,8 @@
 <template>
-  <div class="container scroll-bar" style="padding: 0 16px; text-align: left">
+  <div
+    class="container scroll-bar"
+    style="padding: 0 16px; text-align: left; width: calc(100% - 32px)"
+  >
     <h2>ElectricS01's Calculator</h2>
     <label for="equation">Enter your equation:</label>
     <input id="equation" v-model="equation" type="text" />
