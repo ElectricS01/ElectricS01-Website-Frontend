@@ -26,6 +26,8 @@
           </div>
           <div v-if="page === 'account'" class="settings-page">
             <h2 class="settings-text">Account</h2>
+            Change your account settings
+            <div class="settings-spacer"></div>
             Username: {{ $user.loggedIn?.username }}
             <div @click="changeUsername()" class="settings-button">
               Change Username
@@ -48,10 +50,42 @@
           </div>
           <div v-else-if="page === 'privacy'" class="settings-page">
             <h2 class="settings-text">Privacy</h2>
-            Coming soon™
+            Change your privacy settings
+            <div class="settings-spacer"></div>
+            Allow direct messages from new people
+            <label class="switch">
+              <input
+                type="checkbox"
+                :checked="$user.loggedIn?.directMessages"
+                @click="toggle('directMessages')"
+              />
+              <span class="slider"></span>
+            </label>
+            <div class="settings-spacer"></div>
+            Allow friend requests from new people
+            <label class="switch">
+              <input
+                type="checkbox"
+                :checked="$user.loggedIn?.friendRequests"
+                @click="toggle('friendRequests')"
+              />
+              <span class="slider"></span>
+            </label>
+            <div class="settings-spacer"></div>
+            Show the date of your accounts creation on your profile
+            <label class="switch">
+              <input
+                type="checkbox"
+                :checked="$user.loggedIn?.showCreated"
+                @click="toggle('showCreated')"
+              />
+              <span class="slider"></span>
+            </label>
           </div>
           <div v-else-if="page === 'appearance'" class="settings-page">
             <h2 class="settings-text">Appearance</h2>
+            Change your appearance settings
+            <div class="settings-spacer"></div>
             Coming soon™
           </div>
           <div v-else-if="page === 'about'" class="settings-page">
@@ -66,7 +100,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.127</div>
+            <div>Version: 1.128</div>
           </div>
         </div>
       </div>
@@ -83,6 +117,7 @@ export default {
       page: "account",
       error: "",
       pages: ["account", "privacy", "appearance", "about"],
+      properties: ["directMessages", "friendRequests", "showCreated"],
       user: []
     }
   },
@@ -111,6 +146,25 @@ export default {
     changeUsername() {
       while (true) {
         console.log("Get Better™")
+      }
+    },
+    toggle(property) {
+      if (this.properties.includes(property)) {
+        console.log(property)
+        console.log(this.$user.loggedIn[property])
+        this.axios
+          .post("/api/user-prop", {
+            prop: property,
+            val: this.$user.loggedIn[property]
+          })
+          .then(() => {
+            console.log(property)
+            console.log(this.$user.loggedIn[property])
+            this.getUser()
+          })
+          .catch((e) => {
+            console.log("Error 503 Cannot Connect to Server " + e)
+          })
       }
     },
     dayjs(date) {

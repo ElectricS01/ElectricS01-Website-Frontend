@@ -12,142 +12,162 @@
         style="object-fit: cover; width: min(500px, 100%)"
         alt="Profile banner"
       />
-      <div class="profile-grid" style="padding: 24px">
-        <div class="profile-picture" style="margin-right: 16px; height: 80px">
-          <img
-            style="border-radius: 40px; object-fit: cover"
-            width="80"
-            height="80"
-            v-if="showUser.avatar"
-            :src="showUser.avatar"
-            alt="Profile icon"
-          />
-          <Icons v-else size="80" icon="account" />
-          <svg class="online-indicator" width="20" height="20">
-            <status-indicator
-              size="8"
-              :status="showUser.status"
-            ></status-indicator>
-          </svg>
-        </div>
-        <div style="flex-grow: 1; flex-basis: 0" class="message-item">
-          <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
-          <div v-if="editing !== 'status'" style="display: flex">
-            <p class="message-text-large" style="word-wrap: break-word">
-              {{ showUser.statusMessage }}
-              <Icons
-                v-if="showUser.id === $user.loggedIn.id"
-                style="cursor: pointer"
-                size="16"
-                icon="edit"
-                @click="
-                  ;(editing = 'status'),
-                    (editStatus = showUser.statusMessage),
-                    editFocus()
-                "
-              />
-            </p>
-          </div>
-          <input
-            v-else
-            placeholder="Edit your status"
-            @keydown.enter="editStatusMessage()"
-            class="responder"
-            v-model="editStatus"
-            type="text"
-            style="width: 100%; margin: 0"
-            id="status"
-            autocomplete="off"
-          />
-        </div>
-        <div>
-          <button
-            v-if="showUser.directMessages && showUser.id !== $user.loggedIn.id"
-            class="profile-button-message"
-          >
-            <Icons
-              style="top: 0; padding-right: 4px"
-              color="#1e90ff"
-              size="16"
-              icon="message"
-            />
-            Send Message
-          </button>
-          <button
-            v-if="
-              showUser.friendRequests &&
-              showUser.id !== $user.loggedIn.id &&
-              !showUser.friendStatus
-            "
-            class="profile-button-add"
-            style="color: #47bf4c"
-            @click="addFriend(showUser.id)"
-          >
-            <Icons
-              style="top: 0; padding-right: 4px"
-              color="#47bf4c"
-              size="16"
-              icon="add-user"
-            />
-            Add Friend
-          </button>
-          <button
-            v-if="
-              showUser.id !== $user.loggedIn.id &&
-              showUser.friendStatus === 'accepted'
-            "
-            class="profile-button-remove"
-            style="color: #ff2f2f"
-            @click="addFriend(showUser.id)"
-          >
-            <Icons
-              style="top: 0; padding-right: 4px"
-              color="#FF2F2F"
-              size="16"
-              icon="remove-user"
-            />
-            Remove Friend
-          </button>
-          <button
-            v-if="
-              showUser.friendRequests && showUser.friendStatus === 'pending'
-            "
-            class="profile-button-pending"
-            style="color: #808080"
-            @click="addFriend(showUser.id)"
-          >
-            <Icons
-              style="top: 0; padding-right: 4px"
-              color="#808080"
-              size="16"
-              icon="remove-user"
-            />
-            Pending
-          </button>
-          <button
-            v-if="
-              showUser.id !== $user.loggedIn.id &&
-              showUser.friendStatus === 'incoming'
-            "
-            class="profile-button-pending"
-            style="color: #47bf4c"
-            @click="addFriend(showUser.id)"
-          >
-            <Icons
-              style="top: 0; padding-right: 4px"
-              color="#47bf4c"
-              size="16"
-              icon="add-user"
-            />
-            Accept Friend
-          </button>
-        </div>
-      </div>
       <div style="padding: 24px">
-        <p>Description</p>
-        <p class="message-text-large">
-          {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
-        </p>
+        <div class="profile-grid">
+          <div class="profile-picture" style="margin-right: 16px; height: 80px">
+            <img
+              style="border-radius: 40px; object-fit: cover"
+              width="80"
+              height="80"
+              v-if="showUser.avatar"
+              :src="showUser.avatar"
+              alt="Profile icon"
+            />
+            <Icons v-else size="80" icon="account" />
+            <svg class="online-indicator" width="20" height="20">
+              <status-indicator
+                size="8"
+                :status="showUser.status"
+              ></status-indicator>
+            </svg>
+          </div>
+          <div
+            style="
+              flex: 1 1 auto;
+              word-wrap: break-word;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+            class="message-item"
+          >
+            <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
+            <div v-if="editing !== 'status'">
+              <p class="message-text-large" style="word-wrap: break-word">
+                {{ showUser.statusMessage }}
+                <Icons
+                  v-if="showUser.id === $user.loggedIn.id"
+                  style="cursor: pointer"
+                  size="16"
+                  icon="edit"
+                  @click="
+                    ;(editing = 'status'),
+                      (editStatus = showUser.statusMessage),
+                      editFocus()
+                  "
+                />
+              </p>
+            </div>
+            <input
+              v-else
+              placeholder="Edit your status"
+              @keydown.enter="editStatusMessage()"
+              class="responder"
+              v-model="editStatus"
+              type="text"
+              style="width: 100%; margin: 0"
+              id="status"
+              autocomplete="off"
+            />
+          </div>
+          <div style="flex: 0 1 auto; white-space: nowrap">
+            <button
+              v-if="
+                showUser.directMessages && showUser.id !== $user.loggedIn.id
+              "
+              class="profile-button-message"
+            >
+              <Icons
+                style="top: 0; padding-right: 4px"
+                color="#1e90ff"
+                size="16"
+                icon="message"
+              />
+              Send Message
+            </button>
+            <button
+              v-if="
+                showUser.friendRequests &&
+                showUser.id !== $user.loggedIn.id &&
+                !showUser.friendStatus
+              "
+              class="profile-button-add"
+              style="color: #47bf4c"
+              @click="addFriend(showUser.id)"
+            >
+              <Icons
+                style="top: 0; padding-right: 4px"
+                color="#47bf4c"
+                size="16"
+                icon="add-user"
+              />
+              Add Friend
+            </button>
+            <button
+              v-if="
+                showUser.id !== $user.loggedIn.id &&
+                showUser.friendStatus === 'accepted'
+              "
+              class="profile-button-remove"
+              style="color: #ff2f2f"
+              @click="addFriend(showUser.id)"
+            >
+              <Icons
+                style="top: 0; padding-right: 4px"
+                color="#FF2F2F"
+                size="16"
+                icon="remove-user"
+              />
+              Remove Friend
+            </button>
+            <button
+              v-if="
+                showUser.friendRequests && showUser.friendStatus === 'pending'
+              "
+              class="profile-button-pending"
+              style="color: #808080"
+              @click="addFriend(showUser.id)"
+            >
+              <Icons
+                style="top: 0; padding-right: 4px"
+                color="#808080"
+                size="16"
+                icon="remove-user"
+              />
+              Pending
+            </button>
+            <button
+              v-if="
+                showUser.id !== $user.loggedIn.id &&
+                showUser.friendStatus === 'incoming'
+              "
+              class="profile-button-pending"
+              style="color: #47bf4c"
+              @click="addFriend(showUser.id)"
+            >
+              <Icons
+                style="top: 0; padding-right: 4px"
+                color="#47bf4c"
+                size="16"
+                icon="add-user"
+              />
+              Accept Friend
+            </button>
+          </div>
+        </div>
+        <div v-if="showUser.createdAt">
+          <div class="profile-spacer"></div>
+          <p>Date Created</p>
+          <p class="message-text-large">
+            {{ dayjsDate(showUser.createdAt) }}
+          </p>
+        </div>
+        <div class="profile-spacer"></div>
+        <div>
+          <p>Description</p>
+          <p class="message-text-large" style="word-wrap: break-word">
+            {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
+          </p>
+        </div>
       </div>
     </modal>
   </transition>
@@ -507,6 +527,7 @@
           <p v-else-if="sortUsers === 'statusMessage'">Sort: Status Message</p>
         </div>
         <div
+          v-if="users.some((user) => user.status !== 'offline')"
           style="
             padding: 0 4px;
             display: flex;
@@ -570,6 +591,7 @@
           </div>
         </div>
         <div
+          v-if="users.some((user) => user.status === 'offline')"
           style="
             padding: 0 4px;
             display: flex;
