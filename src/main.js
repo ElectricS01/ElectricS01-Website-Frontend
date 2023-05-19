@@ -59,6 +59,5 @@ app.directive("markdown", {
 
 app.use(VueAxios, axios)
 app.use(pinia)
-app.config.globalProperties.$user = useDataStore()
-app.config.globalProperties.$loggedIn = useDataStore()
+app.config.globalProperties.$store = useDataStore()
 app.mount("#app")

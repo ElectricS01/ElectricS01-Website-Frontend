@@ -16,9 +16,48 @@
 
 <script>
 export default {
+  created() {
+    window.addEventListener("beforeunload", this.leaving)
+  },
   mounted() {
+    console.log(this.searchLocalStorageItems("userdata.ini")[0].value)
     const favicon = document.getElementById("favicon")
     favicon.href = "/icons/tetris.ico"
+  },
+  methods: {
+    leaving() {
+      this.axios
+        .patch("/api/tetris", {
+          data: this.searchLocalStorageItems("userdata.ini")[0].value
+        })
+        .catch((e) => {
+          console.log("Error 503 Cannot Connect to Server " + e)
+        })
+    },
+    searchLocalStorageItems(searchString) {
+      const matchingItems = []
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+
+        if (key.includes(searchString)) {
+          const value = localStorage.getItem(key)
+          matchingItems.push({ key, value })
+        }
+      }
+
+      return matchingItems
+    }
+  },
+  unmounted() {
+    this.axios
+      .patch("/api/tetris", {
+        data: this.searchLocalStorageItems("userdata.ini")[0].value
+      })
+      .catch((e) => {
+        console.log("Error 503 Cannot Connect to Server " + e)
+      })
+    document.removeEventListener("beforeunload", this.leaving)
   }
 }
 </script>

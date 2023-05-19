@@ -27,7 +27,7 @@
       </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
       <router-link
-        v-if="$user.loggedIn"
+        v-if="$store.loggedIn"
         class="right"
         to="/account"
         @click="responsive_navbar()"
@@ -38,15 +38,22 @@
     </div>
     <div class="chat-navbar" v-else>
       <router-link to="/test">Better Test</router-link>
-      <router-link v-if="$user.loggedIn" class="right" to="/account">
+      <router-link v-if="$store.loggedIn" class="right" to="/account">
         Account
       </router-link>
       <router-link v-else class="right" to="/login">Login</router-link>
       <router-link class="right" to="/">Home</router-link>
+      <div
+        @click="toggleSidebar"
+        class="right"
+        style="width: 28px; height: 28px; padding: 10px"
+      >
+        <Icons size="28" icon="account" />
+      </div>
     </div>
     <transition>
-      <p v-if="error" class="error-banner">
-        {{ error }}
+      <p v-if="$store.error" class="error-banner">
+        {{ $store.error }}
       </p>
     </transition>
   </header>
@@ -56,13 +63,11 @@
 </template>
 
 <script>
+import Icons from "@/components/Icons.vue"
+
 export default {
   name: "App",
-  data() {
-    return {
-      error: ""
-    }
-  },
+  components: { Icons },
   methods: {
     active(route) {
       return route === this.$route.path
@@ -76,6 +81,17 @@ export default {
           responsive_navbar.className = "navbar"
         }
       }
+    },
+    toggleSidebar() {
+      if (localStorage.getItem("sidebarOpen") === "true") {
+        localStorage.setItem("sidebarOpen", "false")
+      } else {
+        localStorage.setItem("sidebarOpen", "true")
+      }
+      this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
+    },
+    errorFalse() {
+      this.$store.error = false
     }
   },
   computed: {
@@ -97,12 +113,24 @@ export default {
       this.axios
         .get("/api/user")
         .then((res) => {
-          this.$user.loggedIn = res.data
+          this.$store.loggedIn = res.data
         })
         .catch((e) => {
-          console.log("Error 503 Cannot Connect to Server " + e)
+          this.$store.error = "Error 503 Cannot Connect to Server " + e
+          setTimeout(this.errorFalse, 5000)
         })
     }
+    if (localStorage.getItem("sidebarOpen")) {
+      this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
+    } else {
+      this.$store.sidebarOpen = false
+    }
+    if (localStorage.getItem("sortUsers")) {
+      this.$store.sortUsers = localStorage.getItem("sortUsers")
+    } else {
+      this.$store.sortUsers = "id"
+    }
+    this.$store.error = ""
   }
 }
 </script>

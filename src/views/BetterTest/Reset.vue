@@ -1,10 +1,5 @@
 <template>
   <div class="container">
-    <transition>
-      <p v-if="error" class="error-banner">
-        {{ error }}
-      </p>
-    </transition>
     <div class="grid-menu">
       <div class="menu">
         <div class="grid-card">
@@ -40,13 +35,12 @@ export default {
   data() {
     return {
       email: "",
-      success: false,
-      error: ""
+      success: false
     }
   },
   methods: {
     submit() {
-      this.error = ""
+      this.$store.error = ""
       this.axios
         .post("/api/reset-email", {
           email: this.email.toLowerCase().trim()
@@ -55,8 +49,12 @@ export default {
           this.success = true
         })
         .catch((e) => {
-          this.error = e.response.data.message
+          this.$store.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
         })
+    },
+    errorFalse() {
+      this.$store.error = false
     }
   },
   mounted() {

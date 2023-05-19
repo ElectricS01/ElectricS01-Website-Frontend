@@ -1,10 +1,5 @@
 <template>
   <div class="container">
-    <transition>
-      <p v-if="error" class="error-banner">
-        {{ error }}
-      </p>
-    </transition>
     <div class="grid-menu">
       <div class="menu">
         <div class="grid-card">
@@ -54,13 +49,12 @@ export default {
   data() {
     return {
       username: "",
-      password: "",
-      error: ""
+      password: ""
     }
   },
   methods: {
     submit() {
-      this.error = ""
+      this.$store.error = ""
       this.axios
         .post("/api/login", {
           username: this.username.toLowerCase().trim(),
@@ -75,18 +69,22 @@ export default {
           this.$router.push("/test")
         })
         .catch((e) => {
-          this.error = e.response.data.message
+          this.$store.error = e.response.data.message
+          setTimeout(this.errorFalse, 5000)
         })
     },
     getUser() {
       this.axios
         .get("/api/user")
         .then((res) => {
-          this.$user.loggedIn = res.data
+          this.$store.loggedIn = res.data
         })
         .catch((e) => {
-          this.error = "Error 503 Cannot Connect to Server " + e
+          this.$store.error = "Error 503 Cannot Connect to Server " + e
         })
+    },
+    errorFalse() {
+      this.$store.error = false
     }
   },
   mounted() {

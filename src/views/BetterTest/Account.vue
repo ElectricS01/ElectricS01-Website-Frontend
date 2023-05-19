@@ -1,10 +1,5 @@
 <template>
   <div class="container">
-    <transition>
-      <p v-if="error" class="error-banner">
-        {{ error }}
-      </p>
-    </transition>
     <div class="grid-menu">
       <div class="settings-menu">
         <div style="display: flex">
@@ -28,22 +23,22 @@
             <h2 class="settings-text">Account</h2>
             Change your account settings
             <div class="settings-spacer"></div>
-            Username: {{ $user.loggedIn?.username }}
+            Username: {{ $store.loggedIn?.username }}
             <div @click="changeUsername()" class="settings-button">
               Change Username
             </div>
             <div class="settings-spacer"></div>
-            Email: {{ $user.loggedIn?.email }}
+            Email: {{ $store.loggedIn?.email }}
             <div @click="changeUsername()" class="settings-button">
               Change Email
             </div>
             <div class="settings-spacer"></div>
-            Password: {{ $user.loggedIn?.password }}
+            Password: {{ $store.loggedIn?.password }}
             <div @click="changeUsername()" class="settings-button">
               Change Password
             </div>
             <div class="settings-spacer"></div>
-            Creation date: {{ dayjs($user.loggedIn?.createdAt) }}
+            Creation date: {{ dayjs($store.loggedIn?.createdAt) }}
             <div @click="changeUsername()" class="settings-button-red">
               Close account
             </div>
@@ -56,7 +51,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$user.loggedIn?.directMessages"
+                :checked="$store.loggedIn?.directMessages"
                 @click="toggle('directMessages')"
               />
               <span class="slider"></span>
@@ -66,7 +61,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$user.loggedIn?.friendRequests"
+                :checked="$store.loggedIn?.friendRequests"
                 @click="toggle('friendRequests')"
               />
               <span class="slider"></span>
@@ -76,7 +71,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$user.loggedIn?.showCreated"
+                :checked="$store.loggedIn?.showCreated"
                 @click="toggle('showCreated')"
               />
               <span class="slider"></span>
@@ -100,7 +95,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.128</div>
+            <div>Version: 1.129</div>
           </div>
         </div>
       </div>
@@ -115,7 +110,6 @@ export default {
   data() {
     return {
       page: "account",
-      error: "",
       pages: ["account", "privacy", "appearance", "about"],
       properties: ["directMessages", "friendRequests", "showCreated"],
       user: []
@@ -136,10 +130,11 @@ export default {
         this.axios
           .get("/api/user")
           .then((res) => {
-            this.$user.loggedIn = res.data
+            this.$store.loggedIn = res.data
           })
           .catch((e) => {
-            console.log("Error 503 Cannot Connect to Server " + e)
+            this.$store.error = "Error 503 Cannot Connect to Server " + e
+            setTimeout(this.errorFalse, 5000)
           })
       }
     },
@@ -151,24 +146,28 @@ export default {
     toggle(property) {
       if (this.properties.includes(property)) {
         console.log(property)
-        console.log(this.$user.loggedIn[property])
+        console.log(this.$store.loggedIn[property])
         this.axios
           .post("/api/user-prop", {
             prop: property,
-            val: this.$user.loggedIn[property]
+            val: this.$store.loggedIn[property]
           })
           .then(() => {
             console.log(property)
-            console.log(this.$user.loggedIn[property])
+            console.log(this.$store.loggedIn[property])
             this.getUser()
           })
           .catch((e) => {
-            console.log("Error 503 Cannot Connect to Server " + e)
+            this.$store.error = "Error 503 Cannot Connect to Server " + e
+            setTimeout(this.errorFalse, 5000)
           })
       }
     },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
+    },
+    errorFalse() {
+      this.$store.error = false
     }
   },
   mounted() {

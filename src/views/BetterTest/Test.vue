@@ -12,7 +12,7 @@
         style="object-fit: cover; width: min(500px, 100%)"
         alt="Profile banner"
       />
-      <div style="padding: 24px">
+      <div style="padding: 24px; height: 452px">
         <div class="profile-grid">
           <div class="profile-picture" style="margin-right: 16px; height: 80px">
             <img
@@ -45,7 +45,7 @@
               <p class="message-text-large" style="word-wrap: break-word">
                 {{ showUser.statusMessage }}
                 <Icons
-                  v-if="showUser.id === $user.loggedIn.id"
+                  v-if="showUser.id === $store.loggedIn.id"
                   style="cursor: pointer"
                   size="16"
                   icon="edit"
@@ -72,7 +72,7 @@
           <div style="flex: 0 1 auto; white-space: nowrap">
             <button
               v-if="
-                showUser.directMessages && showUser.id !== $user.loggedIn.id
+                showUser.directMessages && showUser.id !== $store.loggedIn.id
               "
               class="profile-button-message"
             >
@@ -87,7 +87,7 @@
             <button
               v-if="
                 showUser.friendRequests &&
-                showUser.id !== $user.loggedIn.id &&
+                showUser.id !== $store.loggedIn.id &&
                 !showUser.friendStatus
               "
               class="profile-button-add"
@@ -104,7 +104,7 @@
             </button>
             <button
               v-if="
-                showUser.id !== $user.loggedIn.id &&
+                showUser.id !== $store.loggedIn.id &&
                 showUser.friendStatus === 'accepted'
               "
               class="profile-button-remove"
@@ -137,7 +137,7 @@
             </button>
             <button
               v-if="
-                showUser.id !== $user.loggedIn.id &&
+                showUser.id !== $store.loggedIn.id &&
                 showUser.friendStatus === 'incoming'
               "
               class="profile-button-pending"
@@ -154,38 +154,33 @@
             </button>
           </div>
         </div>
-        <div v-if="showUser.createdAt">
-          <div class="profile-spacer"></div>
-          <p>Date Created</p>
-          <p class="message-text-large">
-            {{ dayjsDate(showUser.createdAt) }}
-          </p>
-        </div>
         <div class="profile-spacer"></div>
-        <div>
-          <p>Description</p>
-          <p class="message-text-large" style="word-wrap: break-word">
-            {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
-          </p>
+        <div style="height: 332px; overflow-y: auto">
+          <div v-if="showUser.createdAt">
+            <p>Date Created</p>
+            <p class="message-text-large">
+              {{ dayjsDate(showUser.createdAt) }}
+            </p>
+            <div class="profile-spacer"></div>
+          </div>
+          <div>
+            <p>Description</p>
+            <p class="message-text-large" style="word-wrap: break-word">
+              {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
+            </p>
+          </div>
+          <div v-if="showUser.tetris">
+            <div class="profile-spacer"></div>
+            <p>Tetris Scores</p>
+            <p>Easy mode: {{ showUser.tetris[0].highscore_easy }} lines</p>
+            <p>Medium mode: {{ showUser.tetris[1].highscore_medium }} lines</p>
+            <p>Hard mode: {{ showUser.tetris[2].highscore_hard }} lines</p>
+            <p>God mode: {{ showUser.tetris[3].highscore_god }} lines</p>
+          </div>
         </div>
       </div>
     </modal>
   </transition>
-  <div class="chat-navbar">
-    <router-link to="/test">Better Test</router-link>
-    <router-link v-if="$user.loggedIn" class="right" to="/account">
-      Account
-    </router-link>
-    <router-link v-else class="right" to="/login">Login</router-link>
-    <router-link class="right" to="/">Home</router-link>
-    <div
-      @click="toggleSidebar"
-      class="right"
-      style="width: 28px; height: 28px; padding: 10px"
-    >
-      <Icons size="28" icon="account" />
-    </div>
-  </div>
   <transition>
     <p v-if="error" class="error-banner">
       {{ error }}
@@ -397,7 +392,7 @@
                 </div>
                 <div class="message-icons" v-show="editing !== message.id">
                   <Icons
-                    v-show="message.user.id === $user.loggedIn?.id"
+                    v-show="message.user.id === $store.loggedIn?.id"
                     style="cursor: pointer"
                     size="20"
                     icon="edit"
@@ -415,8 +410,8 @@
                   />
                   <Icons
                     v-show="
-                      $user.loggedIn?.admin ||
-                      message.user.id === $user.loggedIn?.id
+                      $store.loggedIn?.admin ||
+                      message.user.id === $store.loggedIn?.id
                     "
                     style="cursor: pointer"
                     size="20"
@@ -436,7 +431,7 @@
               <div
                 :style="{
                   height: replyTo ? '36px' : '',
-                  marginRight: sidebarOpen === 'true' ? '250px' : ''
+                  marginRight: $store.sidebarOpen === 'true' ? '250px' : ''
                 }"
                 v-if="scrolledUp"
                 style="
@@ -518,7 +513,7 @@
         </div>
       </div>
     </div>
-    <Sidebar v-if="sidebarOpen === 'true'">
+    <Sidebar v-if="$store.sidebarOpen === 'true'">
       <div v-if="!loadingUsers" style="padding: 0 4px 4px 8px">
         <div class="filter-button" @click="userSortPress()">
           <p v-if="sortUsers === 'id'">Sort: Id</p>
@@ -688,7 +683,6 @@ export default {
       replyTo: null,
       editText: "",
       editStatus: "",
-      sidebarOpen: "false",
       editing: false,
       error: "",
       profileShown: false,
@@ -855,11 +849,38 @@ export default {
         .then((res) => {
           this.showUser = res.data
           this.profileShown = true
+          if (this.showUser.tetris) {
+            this.showUser.tetris = this.formatINI(this.showUser.tetris)
+          }
         })
         .catch((e) => {
-          this.error = e.response.data.message
+          this.error = e.response
+          console.log(e)
           setTimeout(this.errorFalse, 5000)
         })
+    },
+    formatINI(ini) {
+      const lines = ini.split("\r\n")
+
+      const nonEmptyLines = lines.filter(
+        (line) => line.trim() !== "" && line.includes("=")
+      )
+
+      const keyValuePairs = nonEmptyLines.map((line) => {
+        const separatorIndex = line.indexOf("=")
+        const key = line.slice(0, separatorIndex).trim()
+        let value = line.slice(separatorIndex + 1).trim()
+
+        if (value.startsWith('"') && value.endsWith('"')) {
+          value = value.slice(1, -1)
+        }
+
+        return { key, value }
+      })
+
+      return keyValuePairs.map((pair) => ({
+        [pair.key]: pair.value
+      }))
     },
     scroll(override) {
       this.$nextTick(() => {
@@ -933,7 +954,7 @@ export default {
     },
     editLast() {
       this.messageEdit = this.messages.filter(
-        (message) => Number(message.userName) === this.$user.loggedIn.id
+        (message) => Number(message.userName) === this.$store.loggedIn.id
       )
       if (this.messageEdit.length > 0) {
         this.editText = this.messageEdit.slice(-1)[0].messageContents
@@ -973,14 +994,6 @@ export default {
       this.scrolledUp =
         scrollTop + clientHeight <=
         scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
-    },
-    toggleSidebar() {
-      if (localStorage.getItem("sidebarOpen") === "true") {
-        localStorage.setItem("sidebarOpen", "false")
-      } else {
-        localStorage.setItem("sidebarOpen", "true")
-      }
-      this.sidebarOpen = localStorage.getItem("sidebarOpen")
     }
   },
   async mounted() {
@@ -996,10 +1009,7 @@ export default {
     this.scroll(true)
   },
   created() {
-    this.sidebarOpen = localStorage.getItem("sidebarOpen")
-    if (localStorage.getItem("sortUsers")) {
-      this.sortUsers = localStorage.getItem("sortUsers")
-    }
+    this.sortUsers = this.$store.sortUsers
   },
   beforeRouteLeave(to, from, next) {
     document.removeEventListener("keydown", this.escPressed)
