@@ -38,8 +38,13 @@
     </div>
     <div class="chat-navbar" v-else>
       <router-link to="/test">Better Test</router-link>
-      <router-link v-if="$store.loggedIn" class="right" to="/account">
-        Account
+      <router-link
+        v-if="$store.loggedIn"
+        class="right"
+        to="/account"
+        style="width: 28px; height: 28px; padding: 10px"
+      >
+        <Icons size="28" icon="settings" />
       </router-link>
       <router-link v-else class="right" to="/login">Login</router-link>
       <router-link class="right" to="/">Home</router-link>
@@ -49,6 +54,13 @@
         style="width: 28px; height: 28px; padding: 10px"
       >
         <Icons size="28" icon="account" />
+      </div>
+      <div
+        @click="toggleSearch"
+        class="right"
+        style="width: 28px; height: 28px; padding: 10px"
+      >
+        <Icons size="28" icon="search" />
       </div>
     </div>
     <transition>
@@ -83,12 +95,20 @@ export default {
       }
     },
     toggleSidebar() {
-      if (localStorage.getItem("sidebarOpen") === "true") {
-        localStorage.setItem("sidebarOpen", "false")
-      } else {
+      if (
+        localStorage.getItem("sidebarOpen") !== "true" ||
+        this.$store.search === true
+      ) {
         localStorage.setItem("sidebarOpen", "true")
+        this.$store.search = false
+      } else {
+        localStorage.setItem("sidebarOpen", "false")
+        this.$store.search = false
       }
       this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
+    },
+    toggleSearch() {
+      this.$store.search = !this.$store.search
     },
     errorFalse() {
       this.$store.error = false
@@ -116,8 +136,7 @@ export default {
           this.$store.loggedIn = res.data
         })
         .catch((e) => {
-          this.$store.error = "Error 503 Cannot Connect to Server " + e
-          setTimeout(this.errorFalse, 5000)
+          this.$store.error = "Error 503, Cannot Connect to Server " + e
         })
     }
     if (localStorage.getItem("sidebarOpen")) {
@@ -131,6 +150,7 @@ export default {
       this.$store.sortUsers = "id"
     }
     this.$store.error = ""
+    this.$store.search = ""
   }
 }
 </script>

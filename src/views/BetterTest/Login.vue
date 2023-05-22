@@ -80,7 +80,7 @@ export default {
           this.$store.loggedIn = res.data
         })
         .catch((e) => {
-          this.$store.error = "Error 503 Cannot Connect to Server " + e
+          this.$store.error = "Error 503, Cannot Connect to Server " + e
         })
     },
     errorFalse() {

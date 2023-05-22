@@ -12,7 +12,7 @@
         style="object-fit: cover; width: min(500px, 100%)"
         alt="Profile banner"
       />
-      <div style="padding: 24px; height: 452px">
+      <div style="padding: 24px; height: 448px">
         <div class="profile-grid">
           <div class="profile-picture" style="margin-right: 16px; height: 80px">
             <img
@@ -61,10 +61,9 @@
               v-else
               placeholder="Edit your status"
               @keydown.enter="editStatusMessage()"
-              class="responder"
               v-model="editStatus"
               type="text"
-              style="width: 100%; margin: 0"
+              style="margin: 1px; width: calc(100% - 2px)"
               id="status"
               autocomplete="off"
             />
@@ -155,7 +154,7 @@
           </div>
         </div>
         <div class="profile-spacer"></div>
-        <div style="height: 332px; overflow-y: auto">
+        <div style="height: 332px; overflow-y: auto" class="scroll-bar">
           <div v-if="showUser.createdAt">
             <p>Date Created</p>
             <p class="message-text-large">
@@ -200,226 +199,204 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        width: calc(100% - 250px);
+        width: calc(100% - 350px);
       "
     >
-      <div style="overflow-y: auto; flex-grow: 1" id="div" class="scroll-bar">
+      <div
+        style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
+        id="div"
+        class="scroll-bar"
+      >
+        <div v-if="loadingMessages" class="center">
+          <div class="loader"></div>
+        </div>
         <div
-          style="
-            text-align: left;
-            padding-left: 4px;
-            padding-top: 8px;
-            padding-right: 4px;
-          "
+          v-for="(message, index) in messages"
+          :key="message.id"
+          :id="'message-' + index"
+          style="padding: 4px"
         >
-          <div class="center">
-            <div
-              style="text-align: center"
-              v-if="loadingMessages"
-              class="loader"
-            ></div>
-          </div>
-          <div style="margin-bottom: 8px">
-            <div
-              v-for="(message, index) in messages"
-              :key="message.id"
-              :id="'message-' + index"
-              style="padding: 4px"
+          <div
+            style="
+              padding-bottom: 8px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+            "
+            v-if="
+              dayjsDate(message.createdAt) !==
+              dayjsDate(messages[index - 1]?.createdAt)
+            "
+          >
+            <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+            <p
+              style="padding: 0 4px; white-space: nowrap"
+              class="message-text-small"
             >
-              <div
-                style="
-                  padding-bottom: 8px;
-                  height: 16px;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                "
-                v-if="
-                  dayjsDate(message.createdAt) !==
-                  dayjsDate(messages[index - 1]?.createdAt)
-                "
-              >
-                <div style="border-bottom: 1px solid #212425; width: 50%"></div>
-                <p
-                  style="padding: 0 4px; white-space: nowrap"
-                  class="message-text-small"
-                >
-                  {{ dayjsDate(message.createdAt) }}
-                </p>
-                <div style="border-bottom: 1px solid #212425; width: 50%"></div>
-              </div>
-              <div
-                v-if="message.reply && findMessage(message.reply)?.user"
-                style="
-                  display: flex;
-                  overflow-wrap: break-word;
-                  margin: 0 0 8px 28px;
-                "
-              >
-                <Icons size="16" icon="reply" style="margin-right: 4px" />
-                <img
-                  style="
-                    border-radius: 16px;
-                    object-fit: cover;
-                    cursor: pointer;
-                    margin-top: 2px;
-                  "
-                  @click="openUser(findMessage(message.reply).user.id)"
-                  width="16"
-                  height="16"
-                  v-if="findMessage(message.reply).user.avatar"
-                  :src="findMessage(message.reply).user.avatar"
-                  alt="Profile icon"
-                />
-                <Icons
-                  style="cursor: pointer"
-                  v-else
-                  @click="openUser(findMessage(message.reply).user.id)"
-                  size="16"
-                  icon="account"
-                />
+              {{ dayjsDate(message.createdAt) }}
+            </p>
+            <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+          </div>
+          <div
+            v-if="message.reply && findMessage(message.reply)?.user"
+            style="
+              display: flex;
+              overflow-wrap: break-word;
+              margin: 0 0 8px 28px;
+            "
+          >
+            <Icons size="16" icon="reply" style="margin-right: 4px" />
+            <img
+              style="
+                border-radius: 16px;
+                object-fit: cover;
+                cursor: pointer;
+                margin-top: 2px;
+              "
+              @click="openUser(findMessage(message.reply).user.id)"
+              width="16"
+              height="16"
+              v-if="findMessage(message.reply).user.avatar"
+              :src="findMessage(message.reply).user.avatar"
+              alt="Profile icon"
+            />
+            <Icons
+              style="cursor: pointer"
+              v-else
+              @click="openUser(findMessage(message.reply).user.id)"
+              size="16"
+              icon="account"
+            />
+            <b
+              class="message-text-medium"
+              @click="openUser(findMessage(message.reply).user.id)"
+              style="margin: 4px 4px 0 4px"
+            >
+              {{ "@" + findMessage(message.reply).user.username }}
+            </b>
+            <p
+              class="message-text-medium-gray-hover"
+              @click="goToMessage(findMessage(message.reply))"
+              style="margin-top: 4px; margin-bottom: 0"
+            >
+              {{ findMessage(message.reply).messageContents }}
+            </p>
+          </div>
+          <div
+            v-else-if="message.reply"
+            style="
+              overflow-wrap: break-word;
+              margin: 0 0 8px 28px;
+              display: flex;
+            "
+          >
+            <Icons
+              color="darkgrey"
+              size="16"
+              icon="reply"
+              style="margin-right: 4px"
+            />
+            <Icons color="darkgrey" size="16" icon="account" />
+            <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
+              Message has been deleted
+            </b>
+          </div>
+          <div
+            class="message-grid"
+            style="position: relative; width: 100%"
+            :style="{
+              backgroundColor: editing === message.id ? '#212425' : ''
+            }"
+          >
+            <div
+              v-if="!merge(message, index)"
+              @click="openUser(message.user?.id)"
+              style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
+              class="message-item"
+            >
+              <img
+                style="border-radius: 16px; object-fit: cover"
+                width="32"
+                height="32"
+                v-if="message.user.avatar"
+                :src="message.user.avatar"
+                alt="Profile icon"
+              />
+              <Icons v-else size="32" icon="account" />
+            </div>
+            <div v-else class="message-time">
+              <b class="message-text-small">
+                {{ dayjsShort(message.createdAt) }}
+              </b>
+            </div>
+            <div
+              class="message-item"
+              style="width: calc(100% - 96px); overflow-wrap: break-word"
+            >
+              <div style="line-height: 11.5px" v-if="!merge(message, index)">
                 <b
                   class="message-text-medium"
-                  @click="openUser(findMessage(message.reply).user.id)"
-                  style="margin: 4px 4px 0 4px"
-                >
-                  {{ "@" + findMessage(message.reply).user.username }}
-                </b>
-                <p
-                  class="message-text-medium-gray-hover"
-                  @click="goToMessage(findMessage(message.reply))"
-                  style="margin-top: 4px; margin-bottom: 0"
-                >
-                  {{ findMessage(message.reply).messageContents }}
-                </p>
-              </div>
-              <div
-                v-else-if="message.reply"
-                style="
-                  overflow-wrap: break-word;
-                  margin: 0 0 8px 28px;
-                  display: flex;
-                "
-              >
-                <Icons
-                  color="darkgrey"
-                  size="16"
-                  icon="reply"
-                  style="margin-right: 4px"
-                />
-                <Icons color="darkgrey" size="16" icon="account" />
-                <b
-                  class="message-text-medium-gray"
-                  style="margin: 4px 4px 0 4px"
-                >
-                  Message has been deleted
-                </b>
-              </div>
-              <div
-                class="message-grid"
-                style="position: relative; width: 100%"
-                :style="{
-                  backgroundColor: editing === message.id ? '#212425' : ''
-                }"
-              >
-                <div
-                  v-if="!merge(message, index)"
                   @click="openUser(message.user?.id)"
-                  style="
-                    margin: 0 12px 0 4px;
-                    cursor: pointer;
-                    border-radius: 16px;
-                  "
-                  class="message-item"
                 >
-                  <img
-                    style="border-radius: 16px; object-fit: cover"
-                    width="32"
-                    height="32"
-                    v-if="message.user.avatar"
-                    :src="message.user.avatar"
-                    alt="Profile icon"
-                  />
-                  <Icons v-else size="32" icon="account" />
-                </div>
-                <div v-else class="message-time">
-                  <b class="message-text-small">
-                    {{ dayjsShort(message.createdAt) }}
+                  {{ message.user?.username }}
+                </b>
+                <b class="message-text-small">
+                  {{ " " + dayjs(message.createdAt) }}
+                </b>
+              </div>
+              <input
+                v-if="editing === message.id"
+                placeholder="Edit your message"
+                @keydown.enter="editMessage(message.id)"
+                class="responder"
+                v-model="editText"
+                type="text"
+                style="width: 100%; margin-left: 0"
+                id="edit"
+                autocomplete="off"
+              />
+              <div>
+                <div v-show="editing !== message.id" v-markdown>
+                  {{ message.messageContents }}
+                  <b class="message-text-small" v-if="message.edited">
+                    (edited)
                   </b>
                 </div>
-                <div
-                  class="message-item"
-                  style="width: calc(100% - 96px); overflow-wrap: break-word"
-                >
-                  <div
-                    style="line-height: 11.5px"
-                    v-if="!merge(message, index)"
-                  >
-                    <b
-                      class="message-text-medium"
-                      @click="openUser(message.user?.id)"
-                    >
-                      {{ message.user?.username }}
-                    </b>
-                    <b class="message-text-small">
-                      {{ " " + dayjs(message.createdAt) }}
-                    </b>
-                  </div>
-                  <input
-                    v-if="editing === message.id"
-                    placeholder="Edit your message"
-                    @keydown.enter="editMessage(message.id)"
-                    class="responder"
-                    v-model="editText"
-                    type="text"
-                    style="width: 100%; margin-left: 0"
-                    id="edit"
-                    autocomplete="off"
-                  />
-                  <div>
-                    <div v-show="editing !== message.id" v-markdown>
-                      {{ message.messageContents }}
-                      <b class="message-text-small" v-if="message.edited">
-                        (edited)
-                      </b>
-                    </div>
-                    <Embeds
-                      v-for="(embed, index) in message.embeds"
-                      :key="index"
-                      :embed="embed"
-                    ></Embeds>
-                  </div>
-                </div>
-                <div class="message-icons" v-show="editing !== message.id">
-                  <Icons
-                    v-show="message.user.id === $store.loggedIn?.id"
-                    style="cursor: pointer"
-                    size="20"
-                    icon="edit"
-                    @click="
-                      ;(editing = message.id),
-                        (editText = message.messageContents),
-                        scroll(message)
-                    "
-                  />
-                  <Icons
-                    style="cursor: pointer"
-                    size="20"
-                    icon="reply"
-                    @click="replyToMessage(message.id)"
-                  />
-                  <Icons
-                    v-show="
-                      $store.loggedIn?.admin ||
-                      message.user.id === $store.loggedIn?.id
-                    "
-                    style="cursor: pointer"
-                    size="20"
-                    icon="delete"
-                    @click="deleteMessage(message.id)"
-                  />
-                </div>
+                <Embeds
+                  v-for="(embed, index) in message.embeds"
+                  :key="index"
+                  :embed="embed"
+                ></Embeds>
               </div>
+            </div>
+            <div class="message-icons" v-show="editing !== message.id">
+              <Icons
+                v-show="message.user.id === $store.loggedIn?.id"
+                style="cursor: pointer"
+                size="20"
+                icon="edit"
+                @click="
+                  ;(editing = message.id),
+                    (editText = message.messageContents),
+                    scroll(message)
+                "
+              />
+              <Icons
+                style="cursor: pointer"
+                size="20"
+                icon="reply"
+                @click="replyToMessage(message.id)"
+              />
+              <Icons
+                v-show="
+                  $store.loggedIn?.admin ||
+                  message.user.id === $store.loggedIn?.id
+                "
+                style="cursor: pointer"
+                size="20"
+                icon="delete"
+                @click="deleteMessage(message.id)"
+              />
             </div>
           </div>
         </div>
@@ -431,7 +408,12 @@
               <div
                 :style="{
                   height: replyTo ? '36px' : '',
-                  marginRight: $store.sidebarOpen === 'true' ? '250px' : ''
+                  marginRight:
+                    $store.sidebarOpen === 'true' && !$store.search
+                      ? '250px'
+                      : $store.search
+                      ? '350px'
+                      : ''
                 }"
                 v-if="scrolledUp"
                 style="
@@ -513,8 +495,11 @@
         </div>
       </div>
     </div>
-    <Sidebar v-if="$store.sidebarOpen === 'true'">
-      <div v-if="!loadingUsers" style="padding: 0 4px 4px 8px">
+    <Sidebar
+      v-if="$store.sidebarOpen === 'true' || $store.search"
+      :style="{ width: $store.search ? '342px' : '' }"
+    >
+      <div v-if="!loadingUsers && !$store.search">
         <div class="filter-button" @click="userSortPress()">
           <p v-if="sortUsers === 'id'">Sort: Id</p>
           <p v-else-if="sortUsers === 'username'">Sort: Username</p>
@@ -652,6 +637,178 @@
           </div>
         </div>
       </div>
+      <div v-else-if="$store.search">
+        <input
+          style="margin: 0"
+          placeholder="Search this chat"
+          @keydown.enter="searchChat"
+          v-model="searchText"
+          type="text"
+          id="status"
+          autocomplete="off"
+        />
+        <div
+          v-for="(message, index) in searchMessages"
+          :key="message.id"
+          :id="'message-' + index"
+          style="padding: 4px"
+        >
+          <div
+            style="
+              padding-bottom: 8px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+            "
+            v-if="
+              dayjsDate(message.createdAt) !==
+              dayjsDate(messages[index - 1]?.createdAt)
+            "
+          >
+            <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+            <p
+              style="padding: 0 4px; white-space: nowrap"
+              class="message-text-small"
+            >
+              {{ dayjsDate(message.createdAt) }}
+            </p>
+            <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+          </div>
+          <div
+            v-if="message.reply && findMessage(message.reply)?.user"
+            style="
+              display: flex;
+              overflow-wrap: break-word;
+              margin: 0 0 8px 28px;
+            "
+          >
+            <Icons size="16" icon="reply" style="margin-right: 4px" />
+            <img
+              style="
+                border-radius: 16px;
+                object-fit: cover;
+                cursor: pointer;
+                margin-top: 2px;
+              "
+              @click="openUser(findMessage(message.reply).user.id)"
+              width="16"
+              height="16"
+              v-if="findMessage(message.reply).user.avatar"
+              :src="findMessage(message.reply).user.avatar"
+              alt="Profile icon"
+            />
+            <Icons
+              style="cursor: pointer"
+              v-else
+              @click="openUser(findMessage(message.reply).user.id)"
+              size="16"
+              icon="account"
+            />
+            <b
+              class="message-text-medium"
+              @click="openUser(findMessage(message.reply).user.id)"
+              style="margin: 4px 4px 0 4px"
+            >
+              {{ "@" + findMessage(message.reply).user.username }}
+            </b>
+            <p
+              class="message-text-medium-gray-hover"
+              @click="goToMessage(findMessage(message.reply))"
+              style="margin-top: 4px; margin-bottom: 0"
+            >
+              {{ findMessage(message.reply).messageContents }}
+            </p>
+          </div>
+          <div
+            v-else-if="message.reply"
+            style="
+              overflow-wrap: break-word;
+              margin: 0 0 8px 28px;
+              display: flex;
+            "
+          >
+            <Icons
+              color="darkgrey"
+              size="16"
+              icon="reply"
+              style="margin-right: 4px"
+            />
+            <Icons color="darkgrey" size="16" icon="account" />
+            <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
+              Message has been deleted
+            </b>
+          </div>
+          <div
+            class="message-grid"
+            style="position: relative; width: 100%"
+            :style="{
+              backgroundColor: editing === message.id ? '#212425' : ''
+            }"
+          >
+            <div
+              v-if="!merge(message, index)"
+              @click="openUser(message.user?.id)"
+              style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
+              class="message-item"
+            >
+              <img
+                style="border-radius: 16px; object-fit: cover"
+                width="32"
+                height="32"
+                v-if="message.user.avatar"
+                :src="message.user.avatar"
+                alt="Profile icon"
+              />
+              <Icons v-else size="32" icon="account" />
+            </div>
+            <div v-else class="message-time">
+              <b class="message-text-small">
+                {{ dayjsShort(message.createdAt) }}
+              </b>
+            </div>
+            <div
+              class="message-item"
+              style="width: calc(100% - 48px); overflow-wrap: break-word"
+            >
+              <div style="line-height: 11.5px" v-if="!merge(message, index)">
+                <b
+                  class="message-text-medium"
+                  @click="openUser(message.user?.id)"
+                >
+                  {{ message.user?.username }}
+                </b>
+                <b class="message-text-small">
+                  {{ " " + dayjs(message.createdAt) }}
+                </b>
+              </div>
+              <input
+                v-if="editing === message.id"
+                placeholder="Edit your message"
+                @keydown.enter="editMessage(message.id)"
+                class="responder"
+                v-model="editText"
+                type="text"
+                style="width: 100%; margin-left: 0"
+                id="edit"
+                autocomplete="off"
+              />
+              <div>
+                <div v-show="editing !== message.id" v-markdown>
+                  {{ message.messageContents }}
+                  <b class="message-text-small" v-if="message.edited">
+                    (edited)
+                  </b>
+                </div>
+                <Embeds
+                  v-for="(embed, index) in message.embeds"
+                  :key="index"
+                  :embed="embed"
+                ></Embeds>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="center" v-else>
         <div style="text-align: center" class="loader"></div>
       </div>
@@ -678,12 +835,14 @@ export default {
   data() {
     return {
       messages: [],
+      searchMessages: [],
       users: [],
       inputText: "",
       replyTo: null,
       editText: "",
       editStatus: "",
       editing: false,
+      searchText: "",
       error: "",
       profileShown: false,
       loadingMessages: true,
@@ -708,7 +867,7 @@ export default {
             this.error = "Error 401, You are not logged in"
             this.$router.push("/login")
           } else {
-            this.error = "Error 503, Cannot Connect to Server" + e
+            this.$store.error = "Error 503, Cannot Connect to Server " + e
           }
         })
     },
@@ -725,7 +884,7 @@ export default {
             this.error = "Error 401, You are not logged in"
             this.$router.push("/login")
           } else {
-            this.error = "Error 503, Cannot Connect to Server" + e
+            this.$store.error = "Error 503, Cannot Connect to Server " + e
           }
         })
     },
@@ -825,6 +984,18 @@ export default {
           this.error = e.response.data.message
           setTimeout(this.errorFalse, 5000)
         })
+    },
+    searchChat() {
+      if (this.searchText) {
+        console.log(this.searchText)
+        const keywords = this.searchText.toLowerCase().split(" ")
+
+        this.searchMessages = this.messages.filter((message) => {
+          return keywords.some((keyword) => {
+            return message.messageContents.toLowerCase().includes(keyword)
+          })
+        })
+      }
     },
     replyToMessage(messsageId) {
       this.replyTo = messsageId

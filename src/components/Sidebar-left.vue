@@ -34,9 +34,9 @@ export default {
 
 .sidebar-border {
   overflow-y: auto;
-  padding: 8px;
-  border-left: 1px solid #212425;
-  width: calc(100% - 16px);
+  padding: 8px 4px 0 0;
+  border-right: 1px solid #212425;
+  width: calc(100% - 4px);
   height: 100%;
 }
 </style>

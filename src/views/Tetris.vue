@@ -31,7 +31,7 @@ export default {
           data: this.searchLocalStorageItems("userdata.ini")[0].value
         })
         .catch((e) => {
-          console.log("Error 503 Cannot Connect to Server " + e)
+          console.log("Error 503, Cannot Connect to Server " + e)
         })
     },
     searchLocalStorageItems(searchString) {
@@ -55,7 +55,7 @@ export default {
         data: this.searchLocalStorageItems("userdata.ini")[0].value
       })
       .catch((e) => {
-        console.log("Error 503 Cannot Connect to Server " + e)
+        console.log("Error 503, Cannot Connect to Server " + e)
       })
     document.removeEventListener("beforeunload", this.leaving)
   }
