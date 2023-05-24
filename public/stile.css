@@ -202,6 +202,8 @@ button {
   background-color: #282a2b;
 }
 
+.dropdown-toggle:hover,
+.dropdown-menu li:hover,
 .settings-button:hover,
 .scroll-bar::-webkit-scrollbar-thumb:hover,
 .right:hover,
@@ -621,4 +623,38 @@ input:checked + .slider:before {
   border-bottom: 1px solid #3d4244;
   width: 100%;
   margin: 10px 0;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 210px;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+  padding: 8px;
+  border: 1px solid #282a2b;
+  border-radius: 4px;
+  text-transform: capitalize;
+  background-color: #212425;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  padding: 4px;
+  border: 1px solid #282a2b;
+  border-radius: 4px;
+  background-color: #212425;
+  list-style: none;
+  z-index: 1;
+}
+
+.dropdown-menu li {
+  cursor: pointer;
+  padding: 4px;
+  text-transform: capitalize;
 }

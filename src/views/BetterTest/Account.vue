@@ -47,15 +47,23 @@
             <h2 class="settings-text">Privacy</h2>
             Change your privacy settings
             <div class="settings-spacer"></div>
-            Allow direct messages from new people
-            <label class="switch">
-              <input
-                type="checkbox"
-                :checked="$store.loggedIn?.directMessages"
-                @click="toggle('directMessages')"
-              />
-              <span class="slider"></span>
-            </label>
+            Allow direct messages from
+            <div>
+              <div class="dropdown">
+                <div class="dropdown-toggle" @click="toggleDropdown">
+                  {{ $store.loggedIn?.directMessages }}
+                </div>
+                <ul class="dropdown-menu" v-if="isOpen">
+                  <li
+                    v-for="option in options"
+                    :key="option"
+                    @click="selectOption(option)"
+                  >
+                    {{ option }}
+                  </li>
+                </ul>
+              </div>
+            </div>
             <div class="settings-spacer"></div>
             Allow friend requests from new people
             <label class="switch">
@@ -95,7 +103,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.129</div>
+            <div>Version: 1.131</div>
           </div>
         </div>
       </div>
@@ -112,7 +120,9 @@ export default {
       page: "account",
       pages: ["account", "privacy", "appearance", "about"],
       properties: ["directMessages", "friendRequests", "showCreated"],
-      user: []
+      user: [],
+      isOpen: false,
+      options: ["no one", "friends", "everyone"]
     }
   },
   methods: {
@@ -143,19 +153,24 @@ export default {
         console.log("Get Better™")
       }
     },
-    toggle(property) {
+    toggle(property, value) {
       if (this.properties.includes(property)) {
+        if (!value) {
+          value = !this.$store.loggedIn[property]
+          console.log("e")
+        }
         console.log(property)
         console.log(this.$store.loggedIn[property])
+        console.log(value)
         this.axios
           .post("/api/user-prop", {
             prop: property,
-            val: this.$store.loggedIn[property]
+            val: value
           })
           .then(() => {
+            this.getUser()
             console.log(property)
             console.log(this.$store.loggedIn[property])
-            this.getUser()
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
@@ -168,6 +183,13 @@ export default {
     },
     errorFalse() {
       this.$store.error = false
+    },
+    toggleDropdown() {
+      this.isOpen = !this.isOpen
+    },
+    selectOption(option) {
+      this.toggle("directMessages", option)
+      this.isOpen = false
     }
   },
   mounted() {

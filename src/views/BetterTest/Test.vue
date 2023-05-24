@@ -71,7 +71,9 @@
           <div style="flex: 0 1 auto; white-space: nowrap">
             <button
               v-if="
-                showUser.directMessages && showUser.id !== $store.loggedIn.id
+                (showUser.id !== $store.loggedIn.id &&
+                  showUser.directMessages !== 'no one') ||
+                (showUser.directMessages !== 'no one' && showUser.friendStatus)
               "
               class="profile-button-message"
             >
@@ -956,8 +958,8 @@ export default {
           messageContents: this.editText.trim()
         })
         .then(() => {
-          this.getMessages()
           this.editing = false
+          this.getMessages()
         })
         .catch((e) => {
           this.error = e.response.data.message
@@ -1060,10 +1062,8 @@ export default {
             const lastIndex = this.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
             if (this.editing) {
-              const lastMessage = document.querySelector(
-                `#message-${this.messages.indexOf(override)}`
-              )
-              lastMessage.scrollIntoView({ block: "nearest" })
+              this.scrolledUp = false
+              lastMessage.scrollIntoView()
             } else if (lastMessage) {
               lastMessage.scrollIntoView()
               this.scrolledUp = false

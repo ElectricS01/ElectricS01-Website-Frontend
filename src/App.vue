@@ -41,7 +41,7 @@
       <router-link
         v-if="$store.loggedIn"
         class="right"
-        to="/account"
+        to="/account/account"
         style="width: 28px; height: 28px; padding: 10px"
       >
         <Icons size="28" icon="settings" />
