@@ -8,7 +8,7 @@
             <label class="text-small" for="username">Username</label>
           </div>
           <input
-            placeholder="Email"
+            placeholder="Username"
             @keydown.enter="submit"
             class="modal-input"
             v-model="username"

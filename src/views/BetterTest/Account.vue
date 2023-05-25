@@ -18,6 +18,16 @@
               Appearance
             </div>
             <div @click="changePage('about')" class="settings-item">About</div>
+            <div
+              v-if="$store.loggedIn.admin"
+              @click="changePage('admin')"
+              class="settings-item"
+            >
+              Admin
+            </div>
+            <div @click="changePage('recommendations')" class="settings-item">
+              Any feedback?
+            </div>
           </div>
           <div v-if="page === 'account'" class="settings-page">
             <h2 class="settings-text">Account</h2>
@@ -103,7 +113,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.131</div>
+            <div>Version: 1.132</div>
           </div>
         </div>
       </div>
@@ -118,7 +128,7 @@ export default {
   data() {
     return {
       page: "account",
-      pages: ["account", "privacy", "appearance", "about"],
+      pages: ["account", "privacy", "appearance", "about", "admin"],
       properties: ["directMessages", "friendRequests", "showCreated"],
       user: [],
       isOpen: false,
