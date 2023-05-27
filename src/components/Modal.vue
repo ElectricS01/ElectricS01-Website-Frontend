@@ -50,7 +50,7 @@ export default {
 .modal {
   width: 100%;
   height: calc(100% - 48px);
-  margin-top: 48px;
+  padding-top: 48px;
   display: none;
   overflow-y: auto;
 }
@@ -70,17 +70,12 @@ export default {
   align-items: center;
 }
 
-@media (max-height: 648px) {
-  .is-active {
-    align-items: normal;
-  }
-}
-
 .modal-content {
   position: relative;
   background-color: #282a2b;
   width: min(500px, calc(100% - 20px));
   overflow-y: auto;
   border-radius: 24px;
+  max-height: 100%;
 }
 </style>

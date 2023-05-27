@@ -8,7 +8,8 @@
           @keydown.enter="submitFeedback"
           class="settings-input"
           v-model="feedbackText"
-          id="password"
+          id="feedback"
+          autocomplete="off"
         />
         <button @click="submitFeedback">Enter</button>
         <p class="message-text-medium-gray">
@@ -20,32 +21,32 @@
   <div class="container">
     <div class="grid-menu">
       <div class="settings-menu">
-        <div style="display: flex">
-          <div class="settings-sidebar">
-            <div
-              @click="changePage('account')"
-              class="settings-item"
-              style="border-top-left-radius: 25px"
-            >
-              Account
-            </div>
-            <div @click="changePage('privacy')" class="settings-item">
-              Privacy
-            </div>
-            <div @click="changePage('appearance')" class="settings-item">
-              Appearance
-            </div>
-            <div
-              v-if="$store.loggedIn.admin"
-              @click="changePage('admin')"
-              class="settings-item"
-            >
-              Admin
-            </div>
-            <div @click="changePage('about')" class="settings-item">About</div>
-            <div @click="openFeedback" class="settings-item">Any feedback?</div>
+        <div class="settings-sidebar scroll-bar">
+          <div
+            @click="changePage('account')"
+            class="settings-item"
+            style="border-top-left-radius: 25px"
+          >
+            Account
           </div>
-          <div v-if="page === 'account'" class="settings-page">
+          <div @click="changePage('privacy')" class="settings-item">
+            Privacy
+          </div>
+          <div @click="changePage('appearance')" class="settings-item">
+            Appearance
+          </div>
+          <div
+            v-if="$store.loggedIn.admin"
+            @click="changePage('admin')"
+            class="settings-item"
+          >
+            Admin
+          </div>
+          <div @click="changePage('about')" class="settings-item">About</div>
+          <div @click="openFeedback" class="settings-item">Any feedback?</div>
+        </div>
+        <div class="settings-page scroll-bar-dark">
+          <div v-if="page === 'account'" style="width: fit-content">
             <h2 class="settings-text">Account</h2>
             Change your account settings
             <div class="settings-spacer"></div>
@@ -65,11 +66,14 @@
             </div>
             <div class="settings-spacer"></div>
             Creation date: {{ dayjs($store.loggedIn?.createdAt) }}
+            <div class="settings-spacer"></div>
+            Account ID: {{ $store.loggedIn?.id }}
+            <div class="settings-spacer"></div>
             <div @click="changeUsername()" class="settings-button-red">
               Close account
             </div>
           </div>
-          <div v-else-if="page === 'privacy'" class="settings-page">
+          <div v-else-if="page === 'privacy'" style="width: fit-content">
             <h2 class="settings-text">Privacy</h2>
             Change your privacy settings
             <div class="settings-spacer"></div>
@@ -111,31 +115,49 @@
               <span class="slider"></span>
             </label>
           </div>
-          <div v-else-if="page === 'appearance'" class="settings-page">
+          <div v-else-if="page === 'appearance'" style="width: fit-content">
             <h2 class="settings-text">Appearance</h2>
             Change your appearance settings
             <div class="settings-spacer"></div>
             Coming soon™
           </div>
-          <div v-else-if="page === 'about'" class="settings-page">
+          <div v-else-if="page === 'about'" style="width: fit-content">
             <h2 class="settings-text">About Better Test</h2>
-            <div style="word-wrap: break-word">
+            <div>
               Better Test is currently a chatting platform without a Better™
               name
             </div>
             <div class="settings-spacer"></div>
-            <div style="word-wrap: break-word">
+            <div>
               Made by
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.133</div>
+            <div>Version: 1.134</div>
           </div>
-          <div v-else-if="page === 'admin'" class="settings-page">
+          <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
             Admin info
             <div class="settings-spacer"></div>
-            Coming soon™
+            Feedback
+            <div class="settings-spacer"></div>
+            <table>
+              <tr v-for="(feedback, index) in adminData">
+                <th>{{ feedback.id }}</th>
+                <th>{{ index }}</th>
+                <th>{{ feedback.userID }}</th>
+                <th>{{ feedback.feedback }}</th>
+                <th>{{ dayjs(feedback.createdAt) }}</th>
+                <th>
+                  <Icons
+                    size="16"
+                    icon="delete"
+                    style="cursor: pointer"
+                    @click="deleteFeedback(feedback.id)"
+                  />
+                </th>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
@@ -146,9 +168,10 @@
 <script>
 import dayjs from "dayjs"
 import Modal from "@/components/Modal.vue"
+import Icons from "@/components/Icons.vue"
 
 export default {
-  components: { Modal },
+  components: { Icons, Modal },
   data() {
     return {
       page: "account",
@@ -158,7 +181,8 @@ export default {
       isOpen: false,
       options: ["no one", "friends", "everyone"],
       modalOpen: false,
-      feedbackText: ""
+      feedbackText: "",
+      adminData: []
     }
   },
   methods: {
@@ -170,6 +194,9 @@ export default {
         this.page = "account"
         this.$router.push("/account/account")
       }
+      if (this.page === "admin") {
+        this.getAdmin()
+      }
     },
     getUser() {
       if (localStorage.getItem("token")) {
@@ -177,6 +204,19 @@ export default {
           .get("/api/user")
           .then((res) => {
             this.$store.loggedIn = res.data
+          })
+          .catch((e) => {
+            this.$store.error = "Error 503, Cannot Connect to Server " + e
+            setTimeout(this.errorFalse, 5000)
+          })
+      }
+    },
+    getAdmin() {
+      if (localStorage.getItem("token")) {
+        this.axios
+          .get("/api/admin")
+          .then((res) => {
+            this.adminData = res.data
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
@@ -241,6 +281,23 @@ export default {
         })
       this.modalOpen = false
       this.feedbackText = ""
+    },
+    deleteFeedback(id) {
+      this.axios
+        .delete(`/api/delete-feedback/${id}`)
+        .then(this.getAdmin)
+        .catch((e) => {
+          this.$store.error = "Error 503, Cannot Connect to Server " + e
+          setTimeout(this.errorFalse, 5000)
+        })
+    },
+    editFocus() {
+      this.$nextTick(() => {
+        const feedback = document.getElementById("feedback")
+        if (feedback) {
+          feedback?.focus()
+        }
+      })
     }
   },
   mounted() {
@@ -250,6 +307,16 @@ export default {
       this.page = this.$route.params.id
     } else {
       this.$router.push("/account/account")
+    }
+    if (this.page === "admin") {
+      this.getAdmin()
+    }
+  },
+  watch: {
+    modalOpen(newValue, oldValue) {
+      if (newValue === true && oldValue === false) {
+        this.editFocus()
+      }
     }
   }
 }
