@@ -1,4 +1,22 @@
 <template>
+  <transition>
+    <modal v-if="modalOpen" :is-active="modalOpen" @close="modalOpen = false">
+      <div class="settings-modal">
+        <p class="settings-text">Submit feedback</p>
+        <input
+          placeholder="Feedback"
+          @keydown.enter="submitFeedback"
+          class="settings-input"
+          v-model="feedbackText"
+          id="password"
+        />
+        <button @click="submitFeedback">Enter</button>
+        <p class="message-text-medium-gray">
+          Your user identification number is recorded for reference
+        </p>
+      </div>
+    </modal>
+  </transition>
   <div class="container">
     <div class="grid-menu">
       <div class="settings-menu">
@@ -17,7 +35,6 @@
             <div @click="changePage('appearance')" class="settings-item">
               Appearance
             </div>
-            <div @click="changePage('about')" class="settings-item">About</div>
             <div
               v-if="$store.loggedIn.admin"
               @click="changePage('admin')"
@@ -25,9 +42,8 @@
             >
               Admin
             </div>
-            <div @click="changePage('recommendations')" class="settings-item">
-              Any feedback?
-            </div>
+            <div @click="changePage('about')" class="settings-item">About</div>
+            <div @click="openFeedback" class="settings-item">Any feedback?</div>
           </div>
           <div v-if="page === 'account'" class="settings-page">
             <h2 class="settings-text">Account</h2>
@@ -113,7 +129,13 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.132</div>
+            <div>Version: 1.133</div>
+          </div>
+          <div v-else-if="page === 'admin'" class="settings-page">
+            <h2 class="settings-text">Admin panel</h2>
+            Admin info
+            <div class="settings-spacer"></div>
+            Coming soon™
           </div>
         </div>
       </div>
@@ -123,8 +145,10 @@
 
 <script>
 import dayjs from "dayjs"
+import Modal from "@/components/Modal.vue"
 
 export default {
+  components: { Modal },
   data() {
     return {
       page: "account",
@@ -132,7 +156,9 @@ export default {
       properties: ["directMessages", "friendRequests", "showCreated"],
       user: [],
       isOpen: false,
-      options: ["no one", "friends", "everyone"]
+      options: ["no one", "friends", "everyone"],
+      modalOpen: false,
+      feedbackText: ""
     }
   },
   methods: {
@@ -200,6 +226,21 @@ export default {
     selectOption(option) {
       this.toggle("directMessages", option)
       this.isOpen = false
+    },
+    openFeedback() {
+      this.modalOpen = true
+    },
+    submitFeedback() {
+      this.axios
+        .post("/api/feedback", {
+          feedback: this.feedbackText
+        })
+        .catch((e) => {
+          this.$store.error = "Error 503, Cannot Connect to Server " + e
+          setTimeout(this.errorFalse, 5000)
+        })
+      this.modalOpen = false
+      this.feedbackText = ""
     }
   },
   mounted() {

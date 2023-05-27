@@ -80,7 +80,6 @@ export default {
   position: relative;
   background-color: #282a2b;
   width: min(500px, calc(100% - 20px));
-  height: 600px;
   overflow-y: auto;
   border-radius: 24px;
 }

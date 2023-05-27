@@ -625,6 +625,17 @@ input:checked + .slider:before {
   margin: 10px 0;
 }
 
+.settings-modal {
+  text-align: center;
+  padding: 32px;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 6px;
+  margin: 12px 0;
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
