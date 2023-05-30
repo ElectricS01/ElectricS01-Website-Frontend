@@ -15,15 +15,10 @@
       <div style="padding: 24px; height: 448px">
         <div class="profile-grid">
           <div class="profile-picture" style="margin-right: 16px; height: 80px">
-            <img
-              style="border-radius: 40px; object-fit: cover"
-              width="80"
-              height="80"
-              v-if="showUser.avatar"
-              :src="showUser.avatar"
-              alt="Profile icon"
-            />
-            <Icons v-else size="80" icon="account" />
+            <Profile-Picture
+              size="80"
+              :avatar="showUser.avatar"
+            ></Profile-Picture>
             <svg class="online-indicator" width="20" height="20">
               <status-indicator
                 size="8"
@@ -196,12 +191,15 @@
       height: calc(100% - 48px);
     "
   >
+    <Sidebar v-if="$store.chatBarOpen === 'true'">
+      <div style="width: 230px"></div>
+    </Sidebar>
     <div
       style="
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        width: calc(100% - 350px);
+        width: calc(100% - 700px);
       "
     >
       <div
@@ -248,27 +246,12 @@
             "
           >
             <Icons size="16" icon="reply" style="margin-right: 4px" />
-            <img
-              style="
-                border-radius: 16px;
-                object-fit: cover;
-                cursor: pointer;
-                margin-top: 2px;
-              "
-              @click="openUser(findMessage(message.reply).user.id)"
-              width="16"
-              height="16"
-              v-if="findMessage(message.reply).user.avatar"
-              :src="findMessage(message.reply).user.avatar"
-              alt="Profile icon"
-            />
-            <Icons
-              style="cursor: pointer"
-              v-else
-              @click="openUser(findMessage(message.reply).user.id)"
+            <Profile-Picture
               size="16"
-              icon="account"
-            />
+              :avatar="findMessage(message.reply).user.avatar"
+              :small="true"
+              @click="openUser(findMessage(message.reply).user.id)"
+            ></Profile-Picture>
             <b
               class="message-text-medium"
               @click="openUser(findMessage(message.reply).user.id)"
@@ -316,15 +299,11 @@
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
             >
-              <img
-                style="border-radius: 16px; object-fit: cover"
-                width="32"
-                height="32"
-                v-if="message.user.avatar"
-                :src="message.user.avatar"
-                alt="Profile icon"
-              />
-              <Icons v-else size="32" icon="account" />
+              <Profile-Picture
+                style="margin: 4px"
+                size="32"
+                :avatar="message.user?.avatar"
+              ></Profile-Picture>
             </div>
             <div v-else class="message-time">
               <b class="message-text-small">
@@ -373,7 +352,7 @@
             </div>
             <div class="message-icons" v-show="editing !== message.id">
               <Icons
-                v-show="message.user.id === $store.loggedIn?.id"
+                v-show="message.user?.id === $store.loggedIn?.id"
                 style="cursor: pointer"
                 size="20"
                 icon="edit"
@@ -415,7 +394,8 @@
                       ? '250px'
                       : $store.search
                       ? '350px'
-                      : ''
+                      : '',
+                  marginLeft: $store.chatBarOpen === 'true' ? '250px' : ''
                 }"
                 v-if="scrolledUp"
                 style="
@@ -443,27 +423,12 @@
               "
             >
               <Icons size="12" icon="reply" style="margin-right: 4px" />
-              <img
-                style="
-                  border-radius: 12px;
-                  object-fit: cover;
-                  cursor: pointer;
-                  margin-top: 2px;
-                "
-                @click="openUser(findMessage(replyTo).user.id)"
-                width="12"
-                height="12"
-                v-if="findMessage(replyTo).user.avatar"
-                :src="findMessage(replyTo).user.avatar"
-                alt="Profile icon"
-              />
-              <Icons
-                style="cursor: pointer"
-                v-else
-                @click="openUser(findMessage(replyTo).user.id)"
+              <Profile-Picture
                 size="12"
-                icon="account"
-              />
+                :avatar="findMessage(replyTo).user.avatar"
+                :small="true"
+                @click="openUser(findMessage(replyTo).user.id)"
+              ></Profile-Picture>
               <b
                 class="message-text-medium"
                 @click="openUser(findMessage(replyTo).user.id)"
@@ -531,15 +496,12 @@
               class="profile-picture"
               style="margin-right: 8px; height: 40px"
             >
-              <img
-                style="border-radius: 16px; object-fit: cover; margin: 4px"
-                width="32"
-                height="32"
-                v-if="user.avatar"
-                :src="user.avatar"
-                alt="Profile icon"
-              />
-              <Icons style="margin: 4px" v-else size="32" icon="account" />
+              <Profile-Picture
+                style="margin: 4px"
+                size="32"
+                :avatar="user.avatar"
+                :small="true"
+              ></Profile-Picture>
               <svg class="online-indicator" width="15" height="15">
                 <status-indicator
                   size="5"
@@ -595,15 +557,11 @@
               class="profile-picture"
               style="margin-right: 8px; height: 40px"
             >
-              <img
-                style="border-radius: 16px; object-fit: cover; margin: 4px"
-                width="32"
-                height="32"
-                v-if="user.avatar"
-                :src="user.avatar"
-                alt="Profile icon"
-              />
-              <Icons style="margin: 4px" v-else size="32" icon="account" />
+              <Profile-Picture
+                style="margin: 4px"
+                size="32"
+                :avatar="user.avatar"
+              ></Profile-Picture>
               <svg class="online-indicator" width="15" height="15">
                 <status-indicator
                   size="5"
@@ -685,27 +643,12 @@
             "
           >
             <Icons size="16" icon="reply" style="margin-right: 4px" />
-            <img
-              style="
-                border-radius: 16px;
-                object-fit: cover;
-                cursor: pointer;
-                margin-top: 2px;
-              "
-              @click="openUser(findMessage(message.reply).user.id)"
-              width="16"
-              height="16"
-              v-if="findMessage(message.reply).user.avatar"
-              :src="findMessage(message.reply).user.avatar"
-              alt="Profile icon"
-            />
-            <Icons
-              style="cursor: pointer"
-              v-else
-              @click="openUser(findMessage(message.reply).user.id)"
+            <Profile-Picture
               size="16"
-              icon="account"
-            />
+              :avatar="findMessage(message.reply).user.avatar"
+              :small="true"
+              @click="openUser(findMessage(message.reply).user.id)"
+            ></Profile-Picture>
             <b
               class="message-text-medium"
               @click="openUser(findMessage(message.reply).user.id)"
@@ -753,15 +696,10 @@
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
             >
-              <img
-                style="border-radius: 16px; object-fit: cover"
-                width="32"
-                height="32"
-                v-if="message.user.avatar"
-                :src="message.user.avatar"
-                alt="Profile icon"
-              />
-              <Icons v-else size="32" icon="account" />
+              <Profile-Picture
+                size="32"
+                :avatar="message.user?.avatar"
+              ></Profile-Picture>
             </div>
             <div v-else class="message-time">
               <b class="message-text-small">
@@ -825,15 +763,17 @@ import StatusIndicator from "@/components/StatusIndicator.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 import Sidebar from "@/components/Sidebar.vue"
-import sidebar from "@/components/Sidebar.vue"
+import ProfilePicture from "@/components/ProfilePicture.vue"
 
 export default {
-  computed: {
-    sidebar() {
-      return sidebar
-    }
+  components: {
+    ProfilePicture,
+    Sidebar,
+    Icons,
+    Embeds,
+    Modal,
+    StatusIndicator
   },
-  components: { Sidebar, Icons, Embeds, Modal, StatusIndicator },
   data() {
     return {
       messages: [],
@@ -989,7 +929,6 @@ export default {
     },
     searchChat() {
       if (this.searchText) {
-        console.log(this.searchText)
         const keywords = this.searchText.toLowerCase().split(" ")
 
         this.searchMessages = this.messages.filter((message) => {

@@ -36,7 +36,7 @@
             Appearance
           </div>
           <div
-            v-if="$store.loggedIn.admin"
+            v-if="$store.loggedIn?.admin"
             @click="changePage('admin')"
             class="settings-item"
           >
@@ -133,7 +133,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.134</div>
+            <div>Version: 1.135</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -232,12 +232,10 @@ export default {
     toggle(property, value) {
       if (this.properties.includes(property)) {
         if (!value) {
-          value = !this.$store.loggedIn[property]
-          console.log("e")
+          if (this.$store.loggedIn) {
+            value = !this.$store.loggedIn[property]
+          }
         }
-        console.log(property)
-        console.log(this.$store.loggedIn[property])
-        console.log(value)
         this.axios
           .post("/api/user-prop", {
             prop: property,
@@ -245,8 +243,6 @@ export default {
           })
           .then(() => {
             this.getUser()
-            console.log(property)
-            console.log(this.$store.loggedIn[property])
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e

@@ -10,7 +10,7 @@
 import Icons from "@/components/Icons.vue"
 
 export default {
-  name: "Sidebar",
+  name: "SidebarLeft",
   components: { Icons },
   props: {
     isActive: {

@@ -38,6 +38,13 @@
     </div>
     <div class="chat-navbar" v-else>
       <router-link to="/test">Better Test</router-link>
+      <div
+        @click="toggleChatBar"
+        class="left"
+        style="width: 28px; height: 28px; padding: 10px"
+      >
+        <Icons size="28" icon="chats" />
+      </div>
       <router-link
         v-if="$store.loggedIn"
         class="right"
@@ -107,6 +114,14 @@ export default {
       }
       this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
     },
+    toggleChatBar() {
+      if (localStorage.getItem("chatBarOpen") !== "true") {
+        localStorage.setItem("chatBarOpen", "true")
+      } else {
+        localStorage.setItem("chatBarOpen", "false")
+      }
+      this.$store.chatBarOpen = localStorage.getItem("chatBarOpen")
+    },
     toggleSearch() {
       this.$store.search = !this.$store.search
     },
@@ -143,6 +158,11 @@ export default {
       this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
     } else {
       this.$store.sidebarOpen = false
+    }
+    if (localStorage.getItem("chatBarOpen")) {
+      this.$store.chatBarOpen = localStorage.getItem("chatBarOpen")
+    } else {
+      this.$store.chatBarOpen = false
     }
     if (localStorage.getItem("sortUsers")) {
       this.$store.sortUsers = localStorage.getItem("sortUsers")
