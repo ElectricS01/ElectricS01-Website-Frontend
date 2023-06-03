@@ -359,7 +359,7 @@ input:focus {
 }
 
 .highlight {
-  background-color: #2627A4;
+  background-color: rgb(38, 39, 220, 0.5);
 }
 
 ul {

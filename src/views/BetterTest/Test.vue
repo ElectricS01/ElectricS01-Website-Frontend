@@ -210,6 +210,18 @@
         <div v-if="loadingMessages" class="center">
           <div class="loader"></div>
         </div>
+        <div style="padding: 16px">
+          <h1>Welcome to {{ chat }}</h1>
+          <b style="display: block">
+            {{ description }}
+          </b>
+          <b class="message-text-medium-gray" v-if="!verification">
+            This chat does not require verification
+          </b>
+          <b class="message-text-medium-gray" v-else>
+            This chat requires verification
+          </b>
+        </div>
         <div
           v-for="(message, index) in messages"
           :key="message.id"
@@ -686,9 +698,7 @@
           <div
             class="message-grid"
             style="position: relative; width: 100%"
-            :style="{
-              backgroundColor: editing === message.id ? '#212425' : ''
-            }"
+            @click="goToMessage(findMessage(message.id))"
           >
             <div
               v-if="!merge(message, index)"
@@ -721,19 +731,8 @@
                   {{ " " + dayjs(message.createdAt) }}
                 </b>
               </div>
-              <input
-                v-if="editing === message.id"
-                placeholder="Edit your message"
-                @keydown.enter="editMessage(message.id)"
-                class="responder"
-                v-model="editText"
-                type="text"
-                style="width: 100%; margin-left: 0"
-                id="edit"
-                autocomplete="off"
-              />
               <div>
-                <div v-show="editing !== message.id" v-markdown>
+                <div v-markdown>
                   {{ message.messageContents }}
                   <b class="message-text-small" v-if="message.edited">
                     (edited)
@@ -779,6 +778,9 @@ export default {
       messages: [],
       searchMessages: [],
       users: [],
+      chat: "",
+      description: "",
+      verification: true,
       inputText: "",
       replyTo: null,
       editText: "",
@@ -802,6 +804,9 @@ export default {
           this.messages = res.data
           this.messages.focus = false
           this.loadingMessages = false
+          this.verification = false
+          this.chat = "Global"
+          this.description = "This is the global chat available to everyone"
           this.scroll()
         })
         .catch((e) => {
