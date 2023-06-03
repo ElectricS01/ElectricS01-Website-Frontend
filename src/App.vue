@@ -39,6 +39,7 @@
     <div class="chat-navbar" v-else>
       <router-link to="/test">Better Test</router-link>
       <div
+        v-if="active('/test')"
         @click="toggleChatBar"
         class="left"
         style="width: 28px; height: 28px; padding: 10px"
@@ -56,6 +57,7 @@
       <router-link v-else class="right" to="/login">Login</router-link>
       <router-link class="right" to="/">Home</router-link>
       <div
+        v-if="active('/test')"
         @click="toggleSidebar"
         class="right"
         style="width: 28px; height: 28px; padding: 10px"
@@ -63,6 +65,7 @@
         <Icons size="28" icon="account" />
       </div>
       <div
+        v-if="active('/test')"
         @click="toggleSearch"
         class="right"
         style="width: 28px; height: 28px; padding: 10px"
