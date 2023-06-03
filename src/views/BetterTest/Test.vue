@@ -397,7 +397,7 @@
                 <icons
                   v-show="
                     $store.loggedIn?.admin ||
-                    message.user.id === $store.loggedIn?.id
+                    message.user?.id === $store.loggedIn?.id
                   "
                   style="cursor: pointer"
                   size="20"

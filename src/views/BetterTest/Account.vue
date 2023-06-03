@@ -35,6 +35,9 @@
           <div @click="changePage('appearance')" class="settings-item">
             Appearance
           </div>
+          <div @click="changePage('profile')" class="settings-item">
+            Profile
+          </div>
           <div
             v-if="$store.loggedIn?.admin"
             @click="changePage('admin')"
@@ -121,6 +124,12 @@
             <div class="settings-spacer"></div>
             Coming soon™
           </div>
+          <div v-else-if="page === 'profile'" style="width: fit-content">
+            <h2 class="settings-text">Profile</h2>
+            Change your profile settings
+            <div class="settings-spacer"></div>
+            Coming soon™
+          </div>
           <div v-else-if="page === 'about'" style="width: fit-content">
             <h2 class="settings-text">About Better Test</h2>
             <div>
@@ -133,7 +142,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.138</div>
+            <div>Version: 1.139</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -174,7 +183,7 @@ export default {
   data() {
     return {
       page: "account",
-      pages: ["account", "privacy", "appearance", "about", "admin"],
+      pages: ["account", "privacy", "appearance", "profile", "about", "admin"],
       properties: ["directMessages", "friendRequests", "showCreated"],
       user: [],
       isOpen: false,
