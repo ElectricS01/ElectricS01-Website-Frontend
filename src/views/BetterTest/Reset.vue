@@ -50,11 +50,8 @@ export default {
         })
         .catch((e) => {
           this.$store.error = e.response.data.message
-          setTimeout(this.errorFalse, 5000)
+          setTimeout(this.$store.errorFalse, 5000)
         })
-    },
-    errorFalse() {
-      this.$store.error = false
     }
   },
   mounted() {

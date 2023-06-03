@@ -10,7 +10,7 @@
 import Icons from "@/components/Icons.vue"
 
 export default {
-  name: "SidebarLeft",
+  name: "sidebarLeft",
   components: { Icons },
   props: {
     isActive: {
@@ -26,17 +26,12 @@ export default {
 }
 </script>
 
-<style>
-.sidebar {
-  height: calc(100% - 8px);
-  width: 246px;
-}
-
+<style scoped>
 .sidebar-border {
   overflow-y: auto;
-  padding: 8px 4px 0 0;
+  padding: 8px;
   border-right: 1px solid #212425;
-  width: calc(100% - 4px);
+  width: calc(100% - 16px);
   height: 100%;
 }
 </style>

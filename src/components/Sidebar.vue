@@ -26,12 +26,7 @@ export default {
 }
 </script>
 
-<style>
-.sidebar {
-  height: calc(100% - 8px);
-  width: 246px;
-}
-
+<style scoped>
 .sidebar-border {
   overflow-y: auto;
   padding: 8px;

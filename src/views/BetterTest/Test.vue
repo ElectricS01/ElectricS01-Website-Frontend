@@ -15,10 +15,10 @@
       <div style="padding: 24px; height: 448px">
         <div class="profile-grid">
           <div class="profile-picture" style="margin-right: 16px; height: 80px">
-            <Profile-Picture
+            <profile-picture
               size="80"
               :avatar="showUser.avatar"
-            ></Profile-Picture>
+            ></profile-picture>
             <svg class="online-indicator" width="20" height="20">
               <status-indicator
                 size="8"
@@ -39,7 +39,7 @@
             <div v-if="editing !== 'status'">
               <p class="message-text-large" style="word-wrap: break-word">
                 {{ showUser.statusMessage }}
-                <Icons
+                <icons
                   v-if="showUser.id === $store.loggedIn.id"
                   style="cursor: pointer"
                   size="16"
@@ -72,7 +72,7 @@
               "
               class="profile-button-message"
             >
-              <Icons
+              <icons
                 style="top: 0; padding-right: 4px"
                 color="#1e90ff"
                 size="16"
@@ -90,7 +90,7 @@
               style="color: #47bf4c"
               @click="addFriend(showUser.id)"
             >
-              <Icons
+              <icons
                 style="top: 0; padding-right: 4px"
                 color="#47bf4c"
                 size="16"
@@ -107,7 +107,7 @@
               style="color: #ff2f2f"
               @click="addFriend(showUser.id)"
             >
-              <Icons
+              <icons
                 style="top: 0; padding-right: 4px"
                 color="#FF2F2F"
                 size="16"
@@ -123,7 +123,7 @@
               style="color: #808080"
               @click="addFriend(showUser.id)"
             >
-              <Icons
+              <icons
                 style="top: 0; padding-right: 4px"
                 color="#808080"
                 size="16"
@@ -140,7 +140,7 @@
               style="color: #47bf4c"
               @click="addFriend(showUser.id)"
             >
-              <Icons
+              <icons
                 style="top: 0; padding-right: 4px"
                 color="#47bf4c"
                 size="16"
@@ -177,11 +177,6 @@
       </div>
     </modal>
   </transition>
-  <transition>
-    <p v-if="error" class="error-banner">
-      {{ error }}
-    </p>
-  </transition>
   <div
     style="
       position: fixed;
@@ -191,9 +186,9 @@
       height: calc(100% - 48px);
     "
   >
-    <Sidebar v-if="$store.chatBarOpen === 'true'">
-      <div style="width: 230px"></div>
-    </Sidebar>
+    <sidebar-left v-if="$store.chatBarOpen === 'true'">
+      <div class="filter-button">Home</div>
+    </sidebar-left>
     <div
       style="
         flex-grow: 1;
@@ -225,7 +220,7 @@
           </div>
           <div
             v-for="(message, index) in messages"
-            :key="message.id"
+            :key="message"
             :id="'message-' + index"
             style="padding: 4px"
           >
@@ -251,33 +246,47 @@
               <div style="border-bottom: 1px solid #212425; width: 50%"></div>
             </div>
             <div
-              v-if="message.reply && findMessage(message.reply)?.user"
+              v-if="message.reply && findMessage(message.reply)"
               style="
                 display: flex;
                 overflow-wrap: break-word;
                 margin: 0 0 8px 28px;
               "
             >
-              <Icons size="16" icon="reply" style="margin-right: 4px" />
-              <Profile-Picture
+              <icons size="16" icon="reply" style="margin-right: 4px" />
+              <profile-picture
                 size="16"
-                :avatar="findMessage(message.reply).user.avatar"
+                :avatar="findMessage(message.reply)?.user?.avatar"
                 :small="true"
-                @click="openUser(findMessage(message.reply).user.id)"
-              ></Profile-Picture>
+                @click="
+                  openUser(
+                    findMessage(message.reply)?.user?.id,
+                    findMessage(message.reply)?.user
+                  )
+                "
+              ></profile-picture>
               <b
                 class="message-text-medium"
-                @click="openUser(findMessage(message.reply).user.id)"
+                @click="
+                  openUser(
+                    findMessage(message.reply)?.user?.id,
+                    findMessage(message.reply)?.user
+                  )
+                "
                 style="margin: 4px 4px 0 4px"
               >
-                {{ "@" + findMessage(message.reply).user.username }}
+                {{
+                  findMessage(message.reply)?.user?.username
+                    ? "@" + findMessage(message.reply)?.user?.username
+                    : "@Deleted user"
+                }}
               </b>
               <p
                 class="message-text-medium-gray-hover"
                 @click="goToMessage(findMessage(message.reply))"
                 style="margin-top: 4px; margin-bottom: 0"
               >
-                {{ findMessage(message.reply).messageContents }}
+                {{ findMessage(message.reply)?.messageContents }}
               </p>
             </div>
             <div
@@ -288,13 +297,13 @@
                 display: flex;
               "
             >
-              <Icons
+              <icons
                 color="darkgrey"
                 size="16"
                 icon="reply"
                 style="margin-right: 4px"
               />
-              <Icons color="darkgrey" size="16" icon="account" />
+              <icons color="darkgrey" size="16" icon="account" />
               <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
                 Message has been deleted
               </b>
@@ -308,15 +317,15 @@
             >
               <div
                 v-if="!merge(message, index)"
-                @click="openUser(message.user?.id)"
+                @click="openUser(message.user?.id, message?.user)"
                 style="margin: 0 4px; cursor: pointer; border-radius: 16px"
                 class="message-item"
               >
-                <Profile-Picture
+                <profile-picture
                   style="margin: 4px"
                   size="32"
                   :avatar="message.user?.avatar"
-                ></Profile-Picture>
+                ></profile-picture>
               </div>
               <div v-else class="message-time">
                 <b class="message-text-small">
@@ -330,12 +339,16 @@
                 <div style="line-height: 11.5px" v-if="!merge(message, index)">
                   <b
                     class="message-text-medium"
-                    @click="openUser(message.user?.id)"
+                    @click="openUser(message.user?.id, message?.user)"
                   >
-                    {{ message.user?.username }}
+                    {{
+                      message.user?.username
+                        ? message.user.username
+                        : "Deleted user"
+                    }}
                   </b>
                   <b class="message-text-small">
-                    {{ " " + dayjs(message.createdAt) }}
+                    {{ " " + $store.dayjs(message.createdAt) }}
                   </b>
                 </div>
                 <input
@@ -356,15 +369,15 @@
                       (edited)
                     </b>
                   </div>
-                  <Embeds
+                  <embeds
                     v-for="(embed, index) in message.embeds"
                     :key="index"
                     :embed="embed"
-                  ></Embeds>
+                  ></embeds>
                 </div>
               </div>
               <div class="message-icons" v-show="editing !== message.id">
-                <Icons
+                <icons
                   v-show="message.user?.id === $store.loggedIn?.id"
                   style="cursor: pointer"
                   size="20"
@@ -375,13 +388,13 @@
                       scroll(message)
                   "
                 />
-                <Icons
+                <icons
                   style="cursor: pointer"
                   size="20"
                   icon="reply"
                   @click="replyToMessage(message.id)"
                 />
-                <Icons
+                <icons
                   v-show="
                     $store.loggedIn?.admin ||
                     message.user.id === $store.loggedIn?.id
@@ -421,7 +434,7 @@
                 class="scroll-button"
                 @click="scroll"
               >
-                <Icons size="12" icon="down-arrow" />
+                <icons size="12" icon="down-arrow" />
                 <p class="message-text-medium">Scroll to bottom</p>
               </div>
             </transition>
@@ -436,19 +449,33 @@
                 position: relative;
               "
             >
-              <Icons size="12" icon="reply" style="margin-right: 4px" />
-              <Profile-Picture
+              <icons size="12" icon="reply" style="margin-right: 4px" />
+              <profile-picture
                 size="12"
-                :avatar="findMessage(replyTo).user.avatar"
+                :avatar="findMessage(replyTo).user?.avatar"
                 :small="true"
-                @click="openUser(findMessage(replyTo).user.id)"
-              ></Profile-Picture>
+                @click="
+                  openUser(
+                    findMessage(replyTo).user.id,
+                    findMessage(replyTo).user
+                  )
+                "
+              ></profile-picture>
               <b
                 class="message-text-medium"
-                @click="openUser(findMessage(replyTo).user.id)"
+                @click="
+                  openUser(
+                    findMessage(replyTo).user.id,
+                    findMessage(replyTo).user
+                  )
+                "
                 style="margin: 0 4px 0 4px"
               >
-                {{ "@" + findMessage(replyTo).user.username }}
+                {{
+                  findMessage(replyTo).user?.username
+                    ? "@" + findMessage(replyTo).user?.username
+                    : "@Deleted user"
+                }}
               </b>
               <p
                 class="message-text-medium-gray"
@@ -476,7 +503,7 @@
         </div>
       </div>
     </div>
-    <Sidebar
+    <sidebar
       v-if="$store.sidebarOpen === 'true' || $store.search"
       :style="{ width: $store.search ? '342px' : '' }"
     >
@@ -504,18 +531,18 @@
             v-if="user.status !== 'offline'"
             style="cursor: pointer; margin: 0 0 4px"
             class="message-grid"
-            @click="openUser(user.id)"
+            @click="openUser(user.id, user)"
           >
             <div
               class="profile-picture"
               style="margin-right: 8px; height: 40px"
             >
-              <Profile-Picture
+              <profile-picture
                 style="margin: 4px"
                 size="32"
                 :avatar="user.avatar"
                 :small="true"
-              ></Profile-Picture>
+              ></profile-picture>
               <svg class="online-indicator" width="15" height="15">
                 <status-indicator
                   size="5"
@@ -565,17 +592,17 @@
             v-if="user.status === 'offline'"
             style="cursor: pointer; margin: 0 0 4px"
             class="message-grid"
-            @click="openUser(user.id)"
+            @click="openUser(user.id, user)"
           >
             <div
               class="profile-picture"
               style="margin-right: 8px; height: 40px"
             >
-              <Profile-Picture
+              <profile-picture
                 style="margin: 4px"
                 size="32"
                 :avatar="user.avatar"
-              ></Profile-Picture>
+              ></profile-picture>
               <svg class="online-indicator" width="15" height="15">
                 <status-indicator
                   size="5"
@@ -623,7 +650,7 @@
         />
         <div
           v-for="(message, index) in searchMessages"
-          :key="message.id"
+          :key="message"
           :id="'message-' + index"
           style="padding: 4px"
         >
@@ -649,33 +676,47 @@
             <div style="border-bottom: 1px solid #212425; width: 50%"></div>
           </div>
           <div
-            v-if="message.reply && findMessage(message.reply)?.user"
+            v-if="message.reply && findMessage(message.reply)"
             style="
               display: flex;
               overflow-wrap: break-word;
               margin: 0 0 8px 28px;
             "
           >
-            <Icons size="16" icon="reply" style="margin-right: 4px" />
-            <Profile-Picture
+            <icons size="16" icon="reply" style="margin-right: 4px" />
+            <profile-picture
               size="16"
-              :avatar="findMessage(message.reply).user.avatar"
+              :avatar="findMessage(message.reply)?.user?.avatar"
               :small="true"
-              @click="openUser(findMessage(message.reply).user.id)"
-            ></Profile-Picture>
+              @click="
+                openUser(
+                  findMessage(message.reply)?.user?.id,
+                  findMessage(message.reply)?.user
+                )
+              "
+            ></profile-picture>
             <b
               class="message-text-medium"
-              @click="openUser(findMessage(message.reply).user.id)"
+              @click="
+                openUser(
+                  findMessage(message.reply)?.user?.id,
+                  findMessage(message.reply)?.user
+                )
+              "
               style="margin: 4px 4px 0 4px"
             >
-              {{ "@" + findMessage(message.reply).user.username }}
+              {{
+                findMessage(message.reply)?.user?.username
+                  ? "@" + findMessage(message.reply)?.user?.username
+                  : "@Deleted user"
+              }}
             </b>
             <p
               class="message-text-medium-gray-hover"
               @click="goToMessage(findMessage(message.reply))"
               style="margin-top: 4px; margin-bottom: 0"
             >
-              {{ findMessage(message.reply).messageContents }}
+              {{ findMessage(message.reply)?.messageContents }}
             </p>
           </div>
           <div
@@ -686,13 +727,13 @@
               display: flex;
             "
           >
-            <Icons
+            <icons
               color="darkgrey"
               size="16"
               icon="reply"
               style="margin-right: 4px"
             />
-            <Icons color="darkgrey" size="16" icon="account" />
+            <icons color="darkgrey" size="16" icon="account" />
             <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
               Message has been deleted
             </b>
@@ -704,14 +745,14 @@
           >
             <div
               v-if="!merge(message, index)"
-              @click="openUser(message.user?.id)"
+              @click="openUser(message.user?.id, message?.user)"
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
             >
-              <Profile-Picture
+              <profile-picture
                 size="32"
                 :avatar="message.user?.avatar"
-              ></Profile-Picture>
+              ></profile-picture>
             </div>
             <div v-else class="message-time">
               <b class="message-text-small">
@@ -725,12 +766,12 @@
               <div style="line-height: 11.5px" v-if="!merge(message, index)">
                 <b
                   class="message-text-medium"
-                  @click="openUser(message.user?.id)"
+                  @click="openUser(message.user?.id, message?.user)"
                 >
                   {{ message.user?.username }}
                 </b>
                 <b class="message-text-small">
-                  {{ " " + dayjs(message.createdAt) }}
+                  {{ " " + $store.dayjs(message.createdAt) }}
                 </b>
               </div>
               <div>
@@ -740,11 +781,11 @@
                     (edited)
                   </b>
                 </div>
-                <Embeds
+                <embeds
                   v-for="(embed, index) in message.embeds"
                   :key="index"
                   :embed="embed"
-                ></Embeds>
+                ></embeds>
               </div>
             </div>
           </div>
@@ -753,7 +794,7 @@
       <div class="center" v-else>
         <div style="text-align: center" class="loader"></div>
       </div>
-    </Sidebar>
+    </sidebar>
   </div>
 </template>
 
@@ -765,9 +806,11 @@ import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 import Sidebar from "@/components/Sidebar.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
+import SidebarLeft from "@/components/Sidebarleft.vue"
 
 export default {
   components: {
+    SidebarLeft,
     ProfilePicture,
     Sidebar,
     Icons,
@@ -789,7 +832,6 @@ export default {
       editStatus: "",
       editing: false,
       searchText: "",
-      error: "",
       profileShown: false,
       loadingMessages: true,
       loadingUsers: true,
@@ -813,7 +855,7 @@ export default {
         })
         .catch((e) => {
           if (e.message === "Request failed with status code 401") {
-            this.error = "Error 401, You are not logged in"
+            this.$store.error = "Error 401, You are not logged in"
             this.$router.push("/login")
           } else {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
@@ -830,7 +872,7 @@ export default {
         })
         .catch((e) => {
           if (e.message === "Request failed with status code 401") {
-            this.error = "Error 401, You are not logged in"
+            this.$store.error = "Error 401, You are not logged in"
             this.$router.push("/login")
           } else {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
@@ -875,17 +917,23 @@ export default {
       if (this.inputText.trim()) {
         this.axios
           .post("/api/message", {
-            messageContents: this.inputText,
+            messageContents: this.inputText.trim(),
             reply: this.replyTo
           })
-          .then(() => {
+          .then((res) => {
             this.inputText = ""
             this.replyTo = null
-            this.getMessages()
+            this.messages = res.data
+            this.messages.focus = false
+            this.loadingMessages = false
+            this.verification = false
+            this.chat = "Global"
+            this.description = "This is the global chat available to everyone"
+            this.scroll()
           })
           .catch((e) => {
-            this.error = e.response.data.message
-            setTimeout(this.errorFalse, 5000)
+            this.$store.error = e.response.data.message
+            setTimeout(this.$store.errorFalse, 5000)
           })
       }
     },
@@ -904,13 +952,19 @@ export default {
         .patch(`/api/edit/${messageId}`, {
           messageContents: this.editText.trim()
         })
-        .then(() => {
+        .then((res) => {
           this.editing = false
-          this.getMessages()
+          this.messages = res.data
+          this.messages.focus = false
+          this.loadingMessages = false
+          this.verification = false
+          this.chat = "Global"
+          this.description = "This is the global chat available to everyone"
+          this.scroll()
         })
         .catch((e) => {
-          this.error = e.response.data.message
-          setTimeout(this.errorFalse, 5000)
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
         })
     },
     editStatusMessage() {
@@ -930,8 +984,8 @@ export default {
           this.getUsers()
         })
         .catch((e) => {
-          this.error = e.response.data.message
-          setTimeout(this.errorFalse, 5000)
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
         })
     },
     searchChat() {
@@ -950,9 +1004,6 @@ export default {
       const input = document.getElementById("input")
       input?.focus()
     },
-    errorFalse() {
-      this.error = false
-    },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     },
@@ -962,21 +1013,23 @@ export default {
     dayjsDate(date) {
       return dayjs(date).format("D MMMM YYYY")
     },
-    openUser(userId) {
-      this.axios
-        .get("/api/user/" + userId)
-        .then((res) => {
-          this.showUser = res.data
-          this.profileShown = true
-          if (this.showUser.tetris) {
-            this.showUser.tetris = this.formatINI(this.showUser.tetris)
-          }
-        })
-        .catch((e) => {
-          this.error = e.response
-          console.log(e)
-          setTimeout(this.errorFalse, 5000)
-        })
+    openUser(userId, user) {
+      if (user !== null) {
+        this.axios
+          .get("/api/user/" + userId)
+          .then((res) => {
+            this.showUser = res.data
+            this.profileShown = true
+            if (this.showUser.tetris) {
+              this.showUser.tetris = this.formatINI(this.showUser.tetris)
+            }
+          })
+          .catch((e) => {
+            this.$store.error = e.response
+            console.log(e)
+            setTimeout(this.$store.errorFalse, 5000)
+          })
+      }
     },
     formatINI(ini) {
       const lines = ini.split("\r\n")
@@ -1085,8 +1138,8 @@ export default {
           this.openUser(userId)
         })
         .catch((e) => {
-          this.error = e.response.data.message
-          setTimeout(this.errorFalse, 5000)
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
         })
     },
     escPressed(event) {

@@ -65,7 +65,7 @@
               Change Password
             </div>
             <div class="settings-spacer"></div>
-            Creation date: {{ dayjs($store.loggedIn?.createdAt) }}
+            Creation date: {{ $store.dayjs($store.loggedIn?.createdAt) }}
             <div class="settings-spacer"></div>
             Account ID: {{ $store.loggedIn?.id }}
             <div class="settings-spacer"></div>
@@ -133,7 +133,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.137</div>
+            <div>Version: 1.138</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -147,7 +147,7 @@
                 <th>{{ index }}</th>
                 <th>{{ feedback.userID }}</th>
                 <th>{{ feedback.feedback }}</th>
-                <th>{{ dayjs(feedback.createdAt) }}</th>
+                <th>{{ $store.dayjs(feedback.createdAt) }}</th>
                 <th>
                   <Icons
                     size="16"
@@ -166,7 +166,6 @@
 </template>
 
 <script>
-import dayjs from "dayjs"
 import Modal from "@/components/Modal.vue"
 import Icons from "@/components/Icons.vue"
 
@@ -207,7 +206,7 @@ export default {
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
-            setTimeout(this.errorFalse, 5000)
+            setTimeout(this.$store.errorFalse, 5000)
           })
       }
     },
@@ -220,7 +219,7 @@ export default {
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
-            setTimeout(this.errorFalse, 5000)
+            setTimeout(this.$store.errorFalse, 5000)
           })
       }
     },
@@ -246,15 +245,9 @@ export default {
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
-            setTimeout(this.errorFalse, 5000)
+            setTimeout(this.$store.errorFalse, 5000)
           })
       }
-    },
-    dayjs(date) {
-      return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
-    },
-    errorFalse() {
-      this.$store.error = false
     },
     toggleDropdown() {
       this.isOpen = !this.isOpen
@@ -273,7 +266,7 @@ export default {
         })
         .catch((e) => {
           this.$store.error = "Error 503, Cannot Connect to Server " + e
-          setTimeout(this.errorFalse, 5000)
+          setTimeout(this.$store.errorFalse, 5000)
         })
       this.modalOpen = false
       this.feedbackText = ""
@@ -284,7 +277,7 @@ export default {
         .then(this.getAdmin)
         .catch((e) => {
           this.$store.error = "Error 503, Cannot Connect to Server " + e
-          setTimeout(this.errorFalse, 5000)
+          setTimeout(this.$store.errorFalse, 5000)
         })
     },
     editFocus() {
@@ -302,6 +295,10 @@ export default {
     if (this.pages.includes(this.$route.params.id)) {
       this.page = this.$route.params.id
     } else {
+      if (this.$route.params.id === "feedback") {
+        this.modalOpen = true
+        console.log(this.modalOpen)
+      }
       this.$router.push("/account/account")
     }
     if (this.page === "admin") {

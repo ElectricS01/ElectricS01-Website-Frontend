@@ -37,39 +37,31 @@
       <div class="icon-mobile" @click="responsive_navbar()">☰</div>
     </div>
     <div class="chat-navbar" v-else>
-      <router-link to="/test">Better Test</router-link>
-      <div
-        v-if="active('/test')"
-        @click="toggleChatBar"
-        class="left"
-        style="width: 28px; height: 28px; padding: 10px"
-      >
+      <router-link class="responsive-chat chat-button" to="/test">
+        Better Test
+      </router-link>
+      <div v-if="active('/test')" @click="toggleChatBar" class="left chat-icon">
         <Icons size="28" icon="chats" />
       </div>
       <router-link
         v-if="$store.loggedIn"
-        class="right"
+        class="right chat-icon"
         to="/account/account"
-        style="width: 28px; height: 28px; padding: 10px"
       >
         <Icons size="28" icon="settings" />
       </router-link>
-      <router-link v-else class="right" to="/login">Login</router-link>
-      <router-link class="right" to="/">Home</router-link>
+      <router-link v-else class="right chat-button" to="/login">
+        Login
+      </router-link>
+      <router-link class="right chat-button" to="/">Home</router-link>
       <div
         v-if="active('/test')"
         @click="toggleSidebar"
-        class="right"
-        style="width: 28px; height: 28px; padding: 10px"
+        class="right chat-icon"
       >
         <Icons size="28" icon="account" />
       </div>
-      <div
-        v-if="active('/test')"
-        @click="toggleSearch"
-        class="right"
-        style="width: 28px; height: 28px; padding: 10px"
-      >
+      <div v-if="active('/test')" @click="toggleSearch" class="right chat-icon">
         <Icons size="28" icon="search" />
       </div>
     </div>
@@ -127,9 +119,6 @@ export default {
     },
     toggleSearch() {
       this.$store.search = !this.$store.search
-    },
-    errorFalse() {
-      this.$store.error = false
     }
   },
   computed: {
@@ -172,8 +161,6 @@ export default {
     } else {
       this.$store.sortUsers = "id"
     }
-    this.$store.error = ""
-    this.$store.search = ""
   }
 }
 </script>

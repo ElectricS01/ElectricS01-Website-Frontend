@@ -167,6 +167,27 @@ button {
   opacity: 0;
 }
 
+@media screen and (max-width: 382px) {
+  .responsive-chat {
+    display: none;
+  }
+}
+
+.chat-icon {
+  width: 28px;
+  height: 28px;
+  padding: 10px;
+}
+
+.chat-button {
+  height: 20px;
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  font-size: 17px;
+}
+
 .chat-navbar a.right,
 .navbar a.right,
 .right {
@@ -190,7 +211,6 @@ button {
   z-index: 2;
 }
 
-.chat-navbar a,
 .navbar a {
   height: 20px;
   float: left;
@@ -533,6 +553,11 @@ h4 {
   .grid-item {
     flex: 0 0 8.33%;
   }
+}
+
+.sidebar {
+  height: calc(100% - 8px);
+  width: 246px;
 }
 
 .switch {
