@@ -3,11 +3,11 @@ import dayjs from "dayjs"
 
 export const useDataStore = defineStore("store", {
   state: () => ({
-    error: false
+    error: ""
   }),
   actions: {
     errorFalse() {
-      this.error = false
+      this.error = ""
     },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")

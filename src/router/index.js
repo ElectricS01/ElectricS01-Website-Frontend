@@ -51,6 +51,11 @@ const routes = [
     component: () => import("../views/BetterTest/Reset.vue")
   },
   {
+    path: "/verify",
+    name: "verify",
+    component: () => import("../views/BetterTest/Verify.vue")
+  },
+  {
     path: "/deez",
     name: "69",
     component: () => import("../views/69.vue")

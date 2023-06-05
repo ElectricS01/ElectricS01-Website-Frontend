@@ -63,6 +63,15 @@
               Change Email
             </div>
             <div class="settings-spacer"></div>
+            Email verified: {{ $store.loggedIn?.emailVerified }}
+            <div
+              v-if="!$store.loggedIn?.emailVerified"
+              @click="resendVerification()"
+              class="settings-button"
+            >
+              Resend email
+            </div>
+            <div class="settings-spacer"></div>
             Password: {{ $store.loggedIn?.password }}
             <div @click="changeUsername()" class="settings-button">
               Change Password
@@ -142,7 +151,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.139</div>
+            <div>Version: 1.140</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -236,6 +245,13 @@ export default {
       while (true) {
         console.log("Get Better™")
       }
+    },
+    resendVerification() {
+      this.axios.post("/api/resend-verification", {}).catch((e) => {
+        this.$store.error = "Error 503, Cannot Connect to Server " + e
+        setTimeout(this.$store.errorFalse, 5000)
+      })
+      this.getUser()
     },
     toggle(property, value) {
       if (this.properties.includes(property)) {

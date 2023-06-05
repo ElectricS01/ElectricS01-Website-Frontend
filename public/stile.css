@@ -496,8 +496,7 @@ h4 {
   background-color: #282a2b;
   display: flex;
   border-radius: 25px;
-  min-height: min(100%, 500px);
-  max-height: 100%;
+  height: 500px;
 }
 
 .grid {
