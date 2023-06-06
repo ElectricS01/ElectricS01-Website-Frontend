@@ -373,6 +373,7 @@
                     v-for="(embed, index) in message.embeds"
                     :key="index"
                     :embed="embed"
+                    :scroll="scroll"
                   ></embeds>
                 </div>
               </div>

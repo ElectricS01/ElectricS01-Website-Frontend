@@ -1,13 +1,18 @@
 <template>
   <div v-if="embed.type === 'image'">
-    <img :src="embed.mediaProxyLink" class="embed" alt="embedded image" />
+    <img
+      :src="embed.mediaProxyLink"
+      class="embed"
+      alt="embedded image"
+      @load="scroll()"
+    />
   </div>
 </template>
 
 <script>
 export default {
   name: "Embeds",
-  props: ["embed"]
+  props: ["embed", "scroll"]
 }
 </script>
 

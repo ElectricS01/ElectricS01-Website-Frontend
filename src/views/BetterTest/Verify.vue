@@ -21,6 +21,14 @@ export default {
           token: this.$route.query.token
         })
         .then(() => {
+          this.axios
+            .get("/api/user")
+            .then((res) => {
+              this.$store.loggedIn = res.data
+            })
+            .catch((e) => {
+              this.$store.error = "Error 503, Cannot Connect to Server " + e
+            })
           this.$router.push("/test")
         })
         .catch((e) => {
