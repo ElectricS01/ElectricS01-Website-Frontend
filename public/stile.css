@@ -31,6 +31,14 @@ body {
   padding: 0 8px 8px 8px;
 }
 
+.chat-container {
+  position: fixed;
+  top: 48px;
+  display: flex;
+  width: 100%;
+  height: calc(100% - 48px);
+}
+
 .small-container {
   margin: 16px;
 }
@@ -92,12 +100,37 @@ button {
 
 .profile-picture {
   position: relative;
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
+}
+
+.profile-picture-large {
+  position: relative;
+  margin-right: 16px;
+  height: 80px;
+  width: 80px;
 }
 
 .profile-spacer {
   border-bottom: 1px solid #3d4244;
   width: 100%;
   margin: 20px 0;
+}
+
+.profile-banner {
+  object-fit: cover;
+  width: min(500px, 100%);
+}
+
+.profile-page {
+  padding: 24px;
+  height: 448px;
+}
+
+.chanel-menu {
+  text-align: center;
+  margin: 32px 32px 18px 32px;
 }
 
 .online-indicator {
@@ -614,11 +647,11 @@ h4 {
 }
 
 input:checked + .slider {
-  background-color: #808080;
+  background-color: #3d3d3d;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #808080;
+  box-shadow: 0 0 1px #3d3d3d;
 }
 
 input:checked + .slider:before {

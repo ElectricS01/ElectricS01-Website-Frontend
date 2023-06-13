@@ -9,12 +9,12 @@
         :src="showUser.banner || 'https://i.troplo.com/i/d81dabf74c88.png'"
         width="500"
         height="100"
-        style="object-fit: cover; width: min(500px, 100%)"
         alt="Profile banner"
+        class="profile-banner"
       />
-      <div style="padding: 24px; height: 448px">
+      <div class="profile-page">
         <div class="profile-grid">
-          <div class="profile-picture" style="margin-right: 16px; height: 80px">
+          <div class="profile-picture-large">
             <profile-picture
               size="80"
               :avatar="showUser.avatar"
@@ -68,7 +68,8 @@
               v-if="
                 (showUser.id !== $store.loggedIn.id &&
                   showUser.directMessages !== 'no one') ||
-                (showUser.directMessages !== 'no one' && showUser.friendStatus)
+                (showUser.directMessages !== 'no one' &&
+                  showUser.friend?.status)
               "
               class="profile-button-message"
             >
@@ -84,7 +85,7 @@
               v-if="
                 showUser.friendRequests &&
                 showUser.id !== $store.loggedIn.id &&
-                !showUser.friendStatus
+                !showUser.friend?.status
               "
               class="profile-button-add"
               style="color: #47bf4c"
@@ -101,7 +102,7 @@
             <button
               v-if="
                 showUser.id !== $store.loggedIn.id &&
-                showUser.friendStatus === 'accepted'
+                showUser.friend?.status === 'accepted'
               "
               class="profile-button-remove"
               style="color: #ff2f2f"
@@ -117,7 +118,7 @@
             </button>
             <button
               v-if="
-                showUser.friendRequests && showUser.friendStatus === 'pending'
+                showUser.friendRequests && showUser.friend?.status === 'pending'
               "
               class="profile-button-pending"
               style="color: #808080"
@@ -134,7 +135,7 @@
             <button
               v-if="
                 showUser.id !== $store.loggedIn.id &&
-                showUser.friendStatus === 'incoming'
+                showUser.friend?.status === 'incoming'
               "
               class="profile-button-pending"
               style="color: #47bf4c"
@@ -177,18 +178,71 @@
       </div>
     </modal>
   </transition>
-  <div
-    style="
-      position: fixed;
-      top: 48px;
-      display: flex;
-      width: 100%;
-      height: calc(100% - 48px);
-    "
-  >
+  <transition>
+    <modal
+      v-if="createChatShown"
+      :is-active="createChatShown"
+      @close="
+        ;(createChatShown = false),
+          (chatNameInput = ''),
+          (chatDescriptionInput = ''),
+          (chatIconInput = ''),
+          (requireVerification = true)
+      "
+    >
+      <div class="chanel-menu">
+        <p class="message-text-large">Create New Chat</p>
+        <div class="text-small">
+          <label class="text-small" for="chat-name">Chat name</label>
+        </div>
+        <input
+          placeholder="Chat name"
+          @keydown.enter="createChat"
+          class="modal-input"
+          v-model="chatNameInput"
+          id="chat-name"
+        />
+        <div class="text-small">
+          <label for="chat-description">Chat description</label>
+        </div>
+        <input
+          placeholder="Chat description"
+          @keydown.enter="createChat"
+          class="modal-input"
+          v-model="chatDescriptionInput"
+          id="chat-description"
+        />
+        <div class="text-small">
+          <label for="chat-icon">Chat icon</label>
+        </div>
+        <input
+          placeholder="Chat icon"
+          @keydown.enter="createChat"
+          class="modal-input"
+          v-model="chatIconInput"
+          id="chat-icon"
+        />
+        <div class="text-small">
+          <label for="requireVerification">Require verification</label>
+        </div>
+        <div class="switch" @click="toggle()">
+          <input
+            type="checkbox"
+            :checked="requireVerification"
+            id="requireVerification"
+          />
+          <span class="slider"></span>
+        </div>
+        <button @click="createChat">Create</button>
+      </div>
+    </modal>
+  </transition>
+  <div class="chat-container">
     <sidebar-left v-if="$store.chatBarOpen === 'true'">
       <div v-if="!loadingChats">
-        <div class="filter-button" @click="createChat">Create chat</div>
+        <div class="filter-button" @click="createChatShown = true">
+          Create chat
+        </div>
         <div
           v-for="chat in chats"
           style="display: flex; margin: 0 0 4px; align-items: center"
@@ -203,10 +257,7 @@
                 chat.owner === $store.loggedIn.id ? 'calc(100% - 36px)' : '100%'
             }"
           >
-            <div
-              class="profile-picture"
-              style="margin-right: 8px; height: 40px"
-            >
+            <div class="profile-picture">
               <profile-picture
                 style="margin: 4px"
                 size="32"
@@ -214,7 +265,10 @@
                 :small="true"
               ></profile-picture>
             </div>
-            <div style="flex-grow: 1; width: 178px" class="message-item">
+            <div
+              style="flex-grow: 1; width: calc(100% - 48px)"
+              class="message-item"
+            >
               <b
                 class="message-text-large"
                 style="
@@ -270,7 +324,7 @@
         <div v-else>
           <div style="padding: 16px">
             <h1>Welcome to {{ currentChat.name }}</h1>
-            <b style="display: block">
+            <b style="display: block; overflow-wrap: break-word">
               {{ currentChat.description }}
             </b>
             <b
@@ -599,10 +653,7 @@
             class="message-grid"
             @click="openUser(user.id, user)"
           >
-            <div
-              class="profile-picture"
-              style="margin-right: 8px; height: 40px"
-            >
+            <div class="profile-picture">
               <profile-picture
                 style="margin: 4px"
                 size="32"
@@ -660,10 +711,7 @@
             class="message-grid"
             @click="openUser(user.id, user)"
           >
-            <div
-              class="profile-picture"
-              style="margin-right: 8px; height: 40px"
-            >
+            <div class="profile-picture">
               <profile-picture
                 style="margin: 4px"
                 size="32"
@@ -898,12 +946,17 @@ export default {
       editing: false,
       searchText: "",
       profileShown: false,
+      createChatShown: false,
       loadingMessages: true,
       loadingUsers: true,
       loadingChats: true,
       scrolledUp: false,
       showUser: false,
-      sortUsers: "id"
+      sortUsers: "id",
+      chatDescriptionInput: "",
+      chatNameInput: "",
+      chatIconInput: "",
+      requireVerification: true
     }
   },
   methods: {
@@ -1055,8 +1108,10 @@ export default {
           this.replyTo = null
           this.loadingMessages = false
           this.messages = res.data.messages
-          this.messages.focus = false
-          this.scroll()
+          if (this.messages) {
+            this.messages.focus = false
+            this.scroll()
+          }
         })
         .catch((e) => {
           this.$store.error = e.response.data.message
@@ -1139,26 +1194,37 @@ export default {
         })
     },
     createChat() {
-      this.axios
-        .post("/api/create-chat", {
-          name: "New chat",
-          description: "New chater",
-          requireVerification: false
-        })
-        .then((res) => {
-          this.chats = res.data.chats
-          this.chatSort()
-          this.currentChat = res.data.chat
-          this.replyTo = null
-          this.loadingMessages = false
-          this.messages = res.data.chat.messages
-          this.messages.focus = false
-          this.scroll()
-        })
-        .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
-        })
+      if (
+        this.chatNameInput &&
+        this.chatDescriptionInput &&
+        typeof requireVerification !== "boolean"
+      )
+        this.axios
+          .post("/api/create-chat", {
+            name: this.chatNameInput,
+            description: this.chatDescriptionInput,
+            icon: this.chatIconInput,
+            requireVerification: this.requireVerification
+          })
+          .then((res) => {
+            this.chats = res.data.chats
+            this.chatSort()
+            this.currentChat = res.data.chat
+            this.replyTo = null
+            this.loadingMessages = false
+            this.messages = res.data.chat.messages
+            if (this.messages) {
+              this.messages.focus = false
+              this.scroll()
+            }
+          })
+          .catch((e) => {
+            this.$store.error = e.response.data.message
+            setTimeout(this.$store.errorFalse, 5000)
+          })
+    },
+    toggle() {
+      this.requireVerification = !this.requireVerification
     },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
