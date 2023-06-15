@@ -140,10 +140,10 @@
             Coming soon™
           </div>
           <div v-else-if="page === 'about'" style="width: fit-content">
-            <h2 class="settings-text">About Better Test</h2>
+            <h2 class="settings-text">About Better Communications</h2>
             <div>
-              Better Test is currently a chatting platform without a Better™
-              name
+              Better Communications is free and open-source chatting platform
+              available to all
             </div>
             <div class="settings-spacer"></div>
             <div>
@@ -151,7 +151,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.143</div>
+            <div>Version: 1.144</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>

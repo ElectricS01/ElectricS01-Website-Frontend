@@ -22,9 +22,9 @@ const routes = [
     component: () => import("../views/Tetris.vue")
   },
   {
-    path: "/test",
-    name: "test",
-    component: () => import("../views/BetterTest/Test.vue")
+    path: "/chat",
+    name: "chat",
+    component: () => import("../views/BetterTest/Chat.vue")
   },
   {
     path: "/account/:id",

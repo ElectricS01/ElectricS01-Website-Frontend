@@ -9,12 +9,12 @@
         :src="showUser.banner || 'https://i.troplo.com/i/d81dabf74c88.png'"
         width="500"
         height="100"
-        style="object-fit: cover; width: min(500px, 100%)"
         alt="Profile banner"
+        class="profile-banner"
       />
-      <div style="padding: 24px; height: 448px">
+      <div class="profile-page">
         <div class="profile-grid">
-          <div class="profile-picture" style="margin-right: 16px; height: 80px">
+          <div class="profile-picture-large">
             <profile-picture
               size="80"
               :avatar="showUser.avatar"
@@ -68,12 +68,13 @@
               v-if="
                 (showUser.id !== $store.loggedIn.id &&
                   showUser.directMessages !== 'no one') ||
-                (showUser.directMessages !== 'no one' && showUser.friendStatus)
+                (showUser.directMessages !== 'no one' &&
+                  showUser.friend?.status)
               "
               class="profile-button-message"
             >
               <icons
-                style="top: 0; padding-right: 4px"
+                style="padding-right: 4px"
                 color="#1e90ff"
                 size="16"
                 icon="message"
@@ -84,14 +85,14 @@
               v-if="
                 showUser.friendRequests &&
                 showUser.id !== $store.loggedIn.id &&
-                !showUser.friendStatus
+                !showUser.friend?.status
               "
               class="profile-button-add"
               style="color: #47bf4c"
               @click="addFriend(showUser.id)"
             >
               <icons
-                style="top: 0; padding-right: 4px"
+                style="padding-right: 4px"
                 color="#47bf4c"
                 size="16"
                 icon="add-user"
@@ -101,14 +102,14 @@
             <button
               v-if="
                 showUser.id !== $store.loggedIn.id &&
-                showUser.friendStatus === 'accepted'
+                showUser.friend?.status === 'accepted'
               "
               class="profile-button-remove"
               style="color: #ff2f2f"
               @click="addFriend(showUser.id)"
             >
               <icons
-                style="top: 0; padding-right: 4px"
+                style="padding-right: 4px"
                 color="#FF2F2F"
                 size="16"
                 icon="remove-user"
@@ -117,14 +118,14 @@
             </button>
             <button
               v-if="
-                showUser.friendRequests && showUser.friendStatus === 'pending'
+                showUser.friendRequests && showUser.friend?.status === 'pending'
               "
               class="profile-button-pending"
               style="color: #808080"
               @click="addFriend(showUser.id)"
             >
               <icons
-                style="top: 0; padding-right: 4px"
+                style="padding-right: 4px"
                 color="#808080"
                 size="16"
                 icon="remove-user"
@@ -134,14 +135,14 @@
             <button
               v-if="
                 showUser.id !== $store.loggedIn.id &&
-                showUser.friendStatus === 'incoming'
+                showUser.friend?.status === 'incoming'
               "
               class="profile-button-pending"
               style="color: #47bf4c"
               @click="addFriend(showUser.id)"
             >
               <icons
-                style="top: 0; padding-right: 4px"
+                style="padding-right: 4px"
                 color="#47bf4c"
                 size="16"
                 icon="add-user"
@@ -177,17 +178,202 @@
       </div>
     </modal>
   </transition>
-  <div
-    style="
-      position: fixed;
-      top: 48px;
-      display: flex;
-      width: 100%;
-      height: calc(100% - 48px);
-    "
-  >
+  <transition>
+    <modal
+      v-if="createChatShown"
+      :is-active="createChatShown"
+      @close="
+        ;(createChatShown = false),
+          (chatNameInput = ''),
+          (chatDescriptionInput = ''),
+          (chatIconInput = ''),
+          (requireVerification = true)
+      "
+    >
+      <div class="chanel-menu">
+        <p class="message-text-large">Create New Chat</p>
+        <div class="text-small">
+          <label class="text-small" for="chat-name">Chat name</label>
+        </div>
+        <input
+          placeholder="Chat name"
+          @keydown.enter="createChat"
+          class="modal-input"
+          v-model="chatNameInput"
+          id="chat-name"
+        />
+        <div class="text-small">
+          <label for="chat-description">Chat description</label>
+        </div>
+        <input
+          placeholder="Chat description"
+          @keydown.enter="createChat"
+          class="modal-input"
+          v-model="chatDescriptionInput"
+          id="chat-description"
+        />
+        <div class="text-small">
+          <label for="chat-icon">Chat icon</label>
+        </div>
+        <input
+          placeholder="Chat icon"
+          @keydown.enter="createChat"
+          class="modal-input"
+          v-model="chatIconInput"
+          id="chat-icon"
+        />
+        <div v-if="$store.loggedIn.emailVerified">
+          <div class="text-small">
+            <label for="requireVerification">Require verification</label>
+          </div>
+          <div class="switch" @click="toggle()">
+            <input
+              type="checkbox"
+              :checked="requireVerification"
+              id="requireVerification"
+            />
+            <span class="slider"></span>
+          </div>
+        </div>
+        <button @click="createChat">Create</button>
+      </div>
+    </modal>
+  </transition>
+  <transition>
+    <modal
+      v-if="chatEdit"
+      :is-active="chatEdit !== false"
+      @close="
+        ;(chatEdit = false),
+          (chatNameInput = ''),
+          (chatDescriptionInput = ''),
+          (chatIconInput = ''),
+          (requireVerification = true)
+      "
+    >
+      <div class="chanel-menu">
+        <p class="message-text-large">Edit Chat</p>
+        <div class="text-small">
+          <label class="text-small" for="chat-name">Chat name</label>
+        </div>
+        <input
+          placeholder="Chat name"
+          @keydown.enter="saveChat"
+          class="modal-input"
+          v-model="chatNameInput"
+          id="chat-name"
+        />
+        <div class="text-small">
+          <label for="chat-description">Chat description</label>
+        </div>
+        <input
+          placeholder="Chat description"
+          @keydown.enter="saveChat"
+          class="modal-input"
+          v-model="chatDescriptionInput"
+          id="chat-description"
+        />
+        <div class="text-small">
+          <label for="chat-icon">Chat icon</label>
+        </div>
+        <input
+          placeholder="Chat icon"
+          @keydown.enter="saveChat"
+          class="modal-input"
+          v-model="chatIconInput"
+          id="chat-icon"
+        />
+        <div v-if="$store.loggedIn.emailVerified">
+          <div class="text-small">
+            <label for="requireVerification">Require verification</label>
+          </div>
+          <div class="switch" @click="toggle()">
+            <input
+              type="checkbox"
+              :checked="requireVerification"
+              id="requireVerification"
+            />
+            <span class="slider"></span>
+          </div>
+        </div>
+        <button @click="saveChat">Save</button>
+        <button
+          v-if="chatEdit !== 1"
+          class="red-button"
+          @click="deleteChat(chatEdit)"
+        >
+          Delete
+        </button>
+      </div>
+    </modal>
+  </transition>
+  <div class="chat-container">
     <sidebar-left v-if="$store.chatBarOpen === 'true'">
-      <div class="filter-button">Home</div>
+      <div v-if="!loadingChats">
+        <div class="filter-button" @click="createChatShown = true">
+          Create chat
+        </div>
+        <div
+          v-for="chat in chats"
+          style="display: flex; margin: 0 0 4px; align-items: center"
+        >
+          <div
+            style="cursor: pointer"
+            class="message-grid"
+            @click="openChat(chat.id)"
+            :style="{
+              backgroundColor: currentChat.id === chat.id ? '#212425' : '',
+              width:
+                chat.owner === $store.loggedIn.id ? 'calc(100% - 36px)' : '100%'
+            }"
+          >
+            <div class="profile-picture">
+              <profile-picture
+                style="margin: 4px"
+                size="32"
+                :avatar="chat.icon"
+                :small="true"
+              ></profile-picture>
+            </div>
+            <div
+              style="flex-grow: 1; width: calc(100% - 48px)"
+              class="message-item"
+            >
+              <b
+                class="message-text-large"
+                style="
+                  margin: 4px 0 2px 0;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                "
+              >
+                {{ chat.name }}
+              </b>
+              <p
+                class="message-text-medium-gray"
+                style="
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                "
+              >
+                {{ chat.description }}
+              </p>
+            </div>
+          </div>
+          <div
+            v-if="chat.owner === $store.loggedIn.id"
+            @click="editChat(chat)"
+            class="chats-settings"
+          >
+            <icons size="20" icon="settings"></icons>
+          </div>
+        </div>
+      </div>
+      <div class="center" v-else>
+        <div style="text-align: center" class="loader"></div>
+      </div>
     </sidebar-left>
     <div
       style="
@@ -207,11 +393,14 @@
         </div>
         <div v-else>
           <div style="padding: 16px">
-            <h1>Welcome to {{ chat }}</h1>
-            <b style="display: block">
-              {{ description }}
+            <h1>Welcome to {{ currentChat.name }}</h1>
+            <b style="display: block; overflow-wrap: break-word">
+              {{ currentChat.description }}
             </b>
-            <b class="message-text-medium-gray" v-if="!verification">
+            <b
+              class="message-text-medium-gray"
+              v-if="!currentChat.requireVerification"
+            >
               This chat does not require verification
             </b>
             <b class="message-text-medium-gray" v-else>
@@ -534,10 +723,7 @@
             class="message-grid"
             @click="openUser(user.id, user)"
           >
-            <div
-              class="profile-picture"
-              style="margin-right: 8px; height: 40px"
-            >
+            <div class="profile-picture">
               <profile-picture
                 style="margin: 4px"
                 size="32"
@@ -595,10 +781,7 @@
             class="message-grid"
             @click="openUser(user.id, user)"
           >
-            <div
-              class="profile-picture"
-              style="margin-right: 8px; height: 40px"
-            >
+            <div class="profile-picture">
               <profile-picture
                 style="margin: 4px"
                 size="32"
@@ -824,9 +1007,8 @@ export default {
       messages: [],
       searchMessages: [],
       users: [],
-      chat: "",
-      description: "",
-      verification: true,
+      chats: [],
+      currentChat: {},
       inputText: "",
       replyTo: null,
       editText: "",
@@ -834,24 +1016,28 @@ export default {
       editing: false,
       searchText: "",
       profileShown: false,
+      createChatShown: false,
       loadingMessages: true,
       loadingUsers: true,
+      loadingChats: true,
       scrolledUp: false,
       showUser: false,
-      sortUsers: "id"
+      sortUsers: "id",
+      chatDescriptionInput: "",
+      chatNameInput: "",
+      chatIconInput: "",
+      requireVerification: true,
+      chatEdit: false
     }
   },
   methods: {
     async getMessages() {
       await this.axios
-        .get("/api/messages")
+        .get(`/api/messages/${1}`)
         .then((res) => {
           this.messages = res.data
           this.messages.focus = false
           this.loadingMessages = false
-          this.verification = false
-          this.chat = "Global"
-          this.description = "This is the global chat available to everyone"
           this.scroll()
         })
         .catch((e) => {
@@ -870,6 +1056,23 @@ export default {
           this.users = res.data
           this.loadingUsers = false
           this.userSort(this.sortUsers)
+        })
+        .catch((e) => {
+          if (e.message === "Request failed with status code 401") {
+            this.$store.error = "Error 401, You are not logged in"
+            this.$router.push("/login")
+          } else {
+            this.$store.error = "Error 503, Cannot Connect to Server " + e
+          }
+        })
+    },
+    async getChats() {
+      await this.axios
+        .get("/api/chats")
+        .then((res) => {
+          this.chats = res.data
+          this.loadingChats = false
+          this.chatSort()
         })
         .catch((e) => {
           if (e.message === "Request failed with status code 401") {
@@ -914,22 +1117,36 @@ export default {
         })
       }
     },
+    chatSort() {
+      this.chats.sort((a, b) => {
+        if (a.latest && b.latest) {
+          return new Date(b.latest) - new Date(a.latest)
+        } else if (a.latest) {
+          return -1
+        } else if (b.latest) {
+          return 1
+        }
+        return 0
+      })
+    },
     submit() {
       if (this.inputText.trim()) {
         this.axios
           .post("/api/message", {
             messageContents: this.inputText.trim(),
-            reply: this.replyTo
+            reply: this.replyTo,
+            chatId: this.currentChat.id
           })
           .then((res) => {
+            console.log(res.data)
+            this.chats = res.data.chats
+            this.chatSort()
+            this.currentChat = res.data.chat
             this.inputText = ""
             this.replyTo = null
-            this.messages = res.data
+            this.messages = res.data.chat.messages
             this.messages.focus = false
             this.loadingMessages = false
-            this.verification = false
-            this.chat = "Global"
-            this.description = "This is the global chat available to everyone"
             this.scroll()
           })
           .catch((e) => {
@@ -939,9 +1156,50 @@ export default {
       }
     },
     deleteMessage(messageId) {
-      this.axios.delete(`/api/delete/${messageId}`).then(() => {
-        this.getMessages()
-      })
+      this.axios
+        .delete(`/api/delete/${messageId}`)
+        .then((res) => {
+          this.messages = res.data
+          this.messages.focus = false
+          this.loadingMessages = false
+          this.scroll()
+        })
+        .catch((e) => {
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
+        })
+    },
+    editChat(chat) {
+      this.chatEdit = chat.id
+      this.chatNameInput = chat.name
+      this.chatDescriptionInput = chat.description
+      this.chatIconInput = chat.icon
+      this.requireVerification = chat.requireVerification
+    },
+    deleteChat(chatId) {
+      this.axios
+        .delete(`/api/delete-chat/${chatId}`)
+        .then((res) => {
+          this.chatEdit = false
+          this.chatNameInput = ""
+          this.chatDescriptionInput = ""
+          this.chatIconInput = ""
+          this.requireVerification = true
+          this.chats = res.data.chats
+          this.chatSort()
+          this.currentChat = res.data.chat
+          this.replyTo = null
+          this.loadingMessages = false
+          this.messages = res.data.chat.messages
+          if (this.messages) {
+            this.messages.focus = false
+            this.scroll()
+          }
+        })
+        .catch((e) => {
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
+        })
     },
     editMessage(messageId) {
       if (
@@ -958,9 +1216,6 @@ export default {
           this.messages = res.data
           this.messages.focus = false
           this.loadingMessages = false
-          this.verification = false
-          this.chat = "Global"
-          this.description = "This is the global chat available to everyone"
           this.scroll()
         })
         .catch((e) => {
@@ -1005,6 +1260,101 @@ export default {
       const input = document.getElementById("input")
       input?.focus()
     },
+    async getChat(id) {
+      await this.axios
+        .get(`/api/chat/${id || 1}`)
+        .then((res) => {
+          this.currentChat = res.data
+          this.replyTo = null
+          this.loadingMessages = false
+          this.messages = res.data.messages
+          this.messages.focus = false
+          this.scroll()
+        })
+        .catch((e) => {
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
+        })
+    },
+    createChat() {
+      if (this.$store.loggedIn.emailVerified === false) {
+        this.requireVerification = false
+      }
+      if (
+        this.chatNameInput &&
+        this.chatDescriptionInput &&
+        typeof requireVerification !== "boolean"
+      )
+        this.axios
+          .post("/api/create-chat", {
+            name: this.chatNameInput,
+            description: this.chatDescriptionInput,
+            icon: this.chatIconInput,
+            requireVerification: this.requireVerification
+          })
+          .then((res) => {
+            this.createChatShown = false
+            this.chatNameInput = ""
+            this.chatDescriptionInput = ""
+            this.chatIconInput = ""
+            this.requireVerification = true
+            this.chats = res.data.chats
+            this.chatSort()
+            this.currentChat = res.data.chat
+            this.replyTo = null
+            this.loadingMessages = false
+            this.messages = res.data.chat.messages
+            if (this.messages) {
+              this.messages.focus = false
+              this.scroll()
+            }
+          })
+          .catch((e) => {
+            this.$store.error = e.response.data.message
+            setTimeout(this.$store.errorFalse, 5000)
+          })
+    },
+    saveChat() {
+      if (this.$store.loggedIn.emailVerified === false) {
+        this.requireVerification = false
+      }
+      if (
+        this.chatNameInput &&
+        this.chatDescriptionInput &&
+        typeof requireVerification !== "boolean"
+      )
+        this.axios
+          .patch(`/api/edit-chat/${this.chatEdit}`, {
+            name: this.chatNameInput,
+            description: this.chatDescriptionInput,
+            icon: this.chatIconInput,
+            requireVerification: this.requireVerification
+          })
+          .then((res) => {
+            this.chatEdit = false
+            this.chatNameInput = ""
+            this.chatDescriptionInput = ""
+            this.chatIconInput = ""
+            this.requireVerification = true
+            this.chats = res.data.chats
+            this.chatSort()
+            this.currentChat = res.data.chat
+            this.replyTo = null
+            this.loadingMessages = false
+            this.messages = res.data.chat.messages
+            if (this.messages) {
+              this.messages.focus = false
+              this.scroll()
+            }
+          })
+          .catch((e) => {
+            this.$store.error = e.response.data.message
+            setTimeout(this.$store.errorFalse, 5000)
+          })
+    },
+    toggle() {
+      this.requireVerification = !this.requireVerification
+    },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     },
@@ -1032,6 +1382,9 @@ export default {
           })
       }
     },
+    openChat(chatId) {
+      this.getChat(chatId)
+    },
     formatINI(ini) {
       const lines = ini.split("\r\n")
 
@@ -1058,7 +1411,7 @@ export default {
     scroll(override) {
       this.$nextTick(() => {
         try {
-          if (!this.scrolledUp || override) {
+          if ((!this.scrolledUp || override) && this.messages) {
             const lastIndex = this.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
             if (this.editing) {
@@ -1175,8 +1528,9 @@ export default {
     const div = document.getElementById("div")
     div.addEventListener("scroll", this.scrollEvent)
 
-    await this.getMessages()
     await this.getUsers()
+    await this.getChats()
+    await this.getChat()
     this.scroll(true)
   },
   created() {

@@ -72,7 +72,7 @@ export default {
             headers: { Authorization: res.data.token }
           })
           this.getUser()
-          this.$router.push("/test")
+          this.$router.push("/chat")
         })
         .catch((e) => {
           this.$store.error = e.response.data.message

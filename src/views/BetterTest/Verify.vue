@@ -29,7 +29,7 @@ export default {
             .catch((e) => {
               this.$store.error = "Error 503, Cannot Connect to Server " + e
             })
-          this.$router.push("/test")
+          this.$router.push("/chat")
         })
         .catch((e) => {
           this.$store.error = e.response.data.message

@@ -71,6 +71,10 @@ button {
   cursor: pointer;
 }
 
+.red-button {
+  color: #ff2f2f;
+}
+
 .profile-button-message,
 .profile-button-add,
 .profile-button-remove,
@@ -178,7 +182,7 @@ button {
   margin: 0;
   font-size: 16px;
   overflow: hidden;
-  background-color: red;
+  background-color: #ff2f2f;
   position: fixed;
   top: 48px;
   left: 0;
@@ -200,7 +204,7 @@ button {
   opacity: 0;
 }
 
-@media screen and (max-width: 382px) {
+@media screen and (max-width: 478px) {
   .responsive-chat {
     display: none;
   }
@@ -514,7 +518,7 @@ h4 {
 }
 
 .error-message {
-  color: red;
+  color: #ff2f2f;
   font-size: 10px;
 }
 
@@ -706,6 +710,7 @@ input:checked + .slider:before {
   background-color: #212425
 }
 
+.red-button:hover,
 .settings-button-red:hover {
   background-color: rgb(255, 47, 47, 0.1);
 }

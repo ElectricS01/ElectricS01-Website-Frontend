@@ -37,10 +37,10 @@
       <div class="icon-mobile" @click="responsive_navbar()">☰</div>
     </div>
     <div class="chat-navbar" v-else>
-      <router-link class="responsive-chat chat-button" to="/test">
-        Better Test
+      <router-link class="responsive-chat chat-button" to="/chat">
+        Better Communications
       </router-link>
-      <div v-if="active('/test')" @click="toggleChatBar" class="left chat-icon">
+      <div v-if="active('/chat')" @click="toggleChatBar" class="left chat-icon">
         <Icons size="28" icon="chats" />
       </div>
       <router-link
@@ -55,13 +55,13 @@
       </router-link>
       <router-link class="right chat-button" to="/">Home</router-link>
       <div
-        v-if="active('/test')"
+        v-if="active('/chat')"
         @click="toggleSidebar"
         class="right chat-icon"
       >
         <Icons size="28" icon="account" />
       </div>
-      <div v-if="active('/test')" @click="toggleSearch" class="right chat-icon">
+      <div v-if="active('/chat')" @click="toggleSearch" class="right chat-icon">
         <Icons size="28" icon="search" />
       </div>
     </div>
@@ -124,7 +124,7 @@ export default {
   computed: {
     navbarShown() {
       return (
-        !this.$route.path.startsWith("/test") &&
+        !this.$route.path.startsWith("/chat") &&
         !this.$route.path.startsWith("/login") &&
         !this.$route.path.startsWith("/register") &&
         !this.$route.path.startsWith("/account") &&
