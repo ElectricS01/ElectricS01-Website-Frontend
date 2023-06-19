@@ -151,7 +151,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.144</div>
+            <div>Version: 1.145</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -163,7 +163,7 @@
               <tr v-for="(feedback, index) in adminData" :key="feedback">
                 <th>{{ feedback.id }}</th>
                 <th>{{ index }}</th>
-                <th>{{ feedback.userID }}</th>
+                <th>{{ feedback.userId }}</th>
                 <th>{{ feedback.feedback }}</th>
                 <th>{{ $store.dayjs(feedback.createdAt) }}</th>
                 <th>

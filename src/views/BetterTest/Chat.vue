@@ -72,6 +72,7 @@
                   showUser.friend?.status)
               "
               class="profile-button-message"
+              @click="sendDm(showUser.id)"
             >
               <icons
                 style="padding-right: 4px"
@@ -340,6 +341,35 @@
               class="message-item"
             >
               <b
+                v-if="chat.type === 0 || chat.type === 2"
+                class="message-text-large"
+                style="
+                  margin: 4px 0 2px 0;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                "
+              >
+                {{ chat.name }}
+              </b>
+              <b
+                v-else-if="
+                  chat.type === 1 && chat.ownerDetails.id !== $store.loggedIn.id
+                "
+                class="message-text-large"
+                style="
+                  margin: 4px 0 2px 0;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                "
+              >
+                {{ chat.ownerDetails.username }}
+              </b>
+              <b
+                v-else-if="
+                  chat.type === 1 && chat.ownerDetails.id === $store.loggedIn.id
+                "
                 class="message-text-large"
                 style="
                   margin: 4px 0 2px 0;
@@ -393,17 +423,29 @@
         </div>
         <div v-else>
           <div style="padding: 16px">
-            <h1>Welcome to {{ currentChat.name }}</h1>
+            <h1 v-if="currentChat.type !== 1">
+              Welcome to {{ currentChat.name }}
+            </h1>
+            <h1 v-else-if="currentChat.owner !== $store.loggedIn.id">
+              Welcome to your Direct Message with
+              {{ currentChat?.users[0].username }}
+            </h1>
+            <h1 v-else>
+              Welcome to your Direct Message with {{ currentChat.name }}
+            </h1>
             <b style="display: block; overflow-wrap: break-word">
               {{ currentChat.description }}
             </b>
             <b
               class="message-text-medium-gray"
-              v-if="!currentChat.requireVerification"
+              v-if="!currentChat.requireVerification && currentChat.type !== 1"
             >
               This chat does not require verification
             </b>
-            <b class="message-text-medium-gray" v-else>
+            <b
+              class="message-text-medium-gray"
+              v-else-if="currentChat.type !== 1"
+            >
               This chat requires verification
             </b>
           </div>
@@ -705,7 +747,7 @@
           <p v-else-if="sortUsers === 'statusMessage'">Sort: Status Message</p>
         </div>
         <div
-          v-if="users.some((user) => user.status !== 'offline')"
+          v-if="currentChat.users?.some((user) => user.status !== 'offline')"
           style="
             padding: 0 4px;
             display: flex;
@@ -716,7 +758,7 @@
           <p style="padding-right: 4px" class="message-text-small">Online</p>
           <div style="border-bottom: 1px solid #212425; width: 100%"></div>
         </div>
-        <div v-for="user in users">
+        <div v-for="user in currentChat.users">
           <div
             v-if="user.status !== 'offline'"
             style="cursor: pointer; margin: 0 0 4px"
@@ -763,7 +805,7 @@
           </div>
         </div>
         <div
-          v-if="users.some((user) => user.status === 'offline')"
+          v-if="currentChat.users?.some((user) => user.status === 'offline')"
           style="
             padding: 0 4px;
             display: flex;
@@ -774,7 +816,7 @@
           <p style="padding-right: 4px" class="message-text-small">Offline</p>
           <div style="border-bottom: 1px solid #212425; width: 100%"></div>
         </div>
-        <div v-for="user in users">
+        <div v-for="user in currentChat.users">
           <div
             v-if="user.status === 'offline'"
             style="cursor: pointer; margin: 0 0 4px"
@@ -1138,7 +1180,6 @@ export default {
             chatId: this.currentChat.id
           })
           .then((res) => {
-            console.log(res.data)
             this.chats = res.data.chats
             this.chatSort()
             this.currentChat = res.data.chat
@@ -1493,6 +1534,24 @@ export default {
         })
         .catch((e) => {
           this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
+        })
+    },
+    sendDm(id) {
+      this.axios
+        .post(`/api/direct-message/${id}`)
+        .then((res) => {
+          this.profileShown = false
+          this.editing = false
+          this.currentChat = res.data
+          this.replyTo = null
+          this.loadingMessages = false
+          this.messages = res.data.messages
+          this.messages.focus = false
+          this.scroll()
+        })
+        .catch((e) => {
+          this.$store.error = e.response
           setTimeout(this.$store.errorFalse, 5000)
         })
     },
