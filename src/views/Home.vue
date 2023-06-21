@@ -51,7 +51,8 @@
             <p class="text-medium">BetterCompass Club</p>
             <div class="spacer"></div>
             <p class="message-text-medium-gray">
-              A Club/Tutorial page for BetterCompass made with HTML
+              A Club/Tutorial page for BetterCompass made with HTML (No longer
+              available)
             </p>
           </div>
         </a>
@@ -67,7 +68,7 @@
             <p class="text-medium">BetterCompass By ElectricS01</p>
             <div class="spacer"></div>
             <p class="message-text-medium-gray">
-              My own BetterCompass instance maintained by me
+              BetterCompass maintained by me (No longer available)
             </p>
           </div>
         </a>
