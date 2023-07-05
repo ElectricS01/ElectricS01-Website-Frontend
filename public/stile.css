@@ -58,7 +58,7 @@ body {
 
 .icon-image {
   width: 18px;
-  height: 12px
+  height: 12px;
 }
 
 .button a,
@@ -486,12 +486,12 @@ h4 {
 .message-text-medium-gray {
   color: darkgrey;
   font-size: 12px;
-  margin: 0
+  margin: 0;
 }
 
 .message-text-medium-gray-hover:hover {
   cursor: pointer;
-  color: white
+  color: white;
 }
 
 .message-text-small {
@@ -502,11 +502,11 @@ h4 {
 .text-small {
   color: white;
   font-size: 10px;
-  text-align: left
+  text-align: left;
 }
 
 .text-medium {
-  height: 19px
+  height: 19px;
 }
 
 .text-main {
@@ -590,7 +590,7 @@ h4 {
 
 .grid-image {
   width: 300px;
-  height: 300px
+  height: 300px;
 }
 
 @media (min-width: 600px) {
@@ -707,7 +707,7 @@ input:checked + .slider:before {
   font-size: 16px;
   display: table;
   color: #ff2f2f;
-  background-color: #212425
+  background-color: #212425;
 }
 
 .red-button:hover,

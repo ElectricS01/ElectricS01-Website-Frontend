@@ -1048,7 +1048,6 @@ export default {
     return {
       messages: [],
       searchMessages: [],
-      users: [],
       chats: [],
       currentChat: {},
       inputText: "",
@@ -1073,41 +1072,6 @@ export default {
     }
   },
   methods: {
-    async getMessages() {
-      await this.axios
-        .get(`/api/messages/${1}`)
-        .then((res) => {
-          this.messages = res.data
-          this.messages.focus = false
-          this.loadingMessages = false
-          this.scroll()
-        })
-        .catch((e) => {
-          if (e.message === "Request failed with status code 401") {
-            this.$store.error = "Error 401, You are not logged in"
-            this.$router.push("/login")
-          } else {
-            this.$store.error = "Error 503, Cannot Connect to Server " + e
-          }
-        })
-    },
-    async getUsers() {
-      await this.axios
-        .get("/api/users")
-        .then((res) => {
-          this.users = res.data
-          this.loadingUsers = false
-          this.userSort(this.sortUsers)
-        })
-        .catch((e) => {
-          if (e.message === "Request failed with status code 401") {
-            this.$store.error = "Error 401, You are not logged in"
-            this.$router.push("/login")
-          } else {
-            this.$store.error = "Error 503, Cannot Connect to Server " + e
-          }
-        })
-    },
     async getChats() {
       await this.axios
         .get("/api/chats")
@@ -1142,7 +1106,7 @@ export default {
     },
     userSort(property) {
       if (property !== "id") {
-        this.users.sort(function (a, b) {
+        this.currentChat.users.sort(function (a, b) {
           if (a[property] === null && b[property] === null) {
             return 0
           } else if (a[property] === null) {
@@ -1154,7 +1118,7 @@ export default {
           }
         })
       } else {
-        this.users.sort(function (a, b) {
+        this.currentChat.users.sort(function (a, b) {
           return a.id - b.id
         })
       }
@@ -1272,13 +1236,14 @@ export default {
         return (this.editing = false)
       }
       this.axios
-        .patch("/api/editStatusMessage", {
+        .patch("/api/edit-status-message", {
           statusMessage: this.editStatus.trim()
         })
         .then((res) => {
-          this.showUser.statusMessage = res.data
+          this.showUser.statusMessage = res.data.statusMessage
           this.editing = false
-          this.getUsers()
+          this.currentChat.users = res.data.users
+          this.userSort(this.sortUsers)
         })
         .catch((e) => {
           this.$store.error = e.response.data.message
@@ -1306,6 +1271,7 @@ export default {
         .get(`/api/chat/${id || 1}`)
         .then((res) => {
           this.currentChat = res.data
+          this.loadingUsers = false
           this.replyTo = null
           this.loadingMessages = false
           this.messages = res.data.messages
@@ -1543,10 +1509,13 @@ export default {
         .then((res) => {
           this.profileShown = false
           this.editing = false
-          this.currentChat = res.data
+          this.chats = res.data.chats
+          this.chatSort()
+          this.currentChat = res.data.chat
+          this.inputText = ""
           this.replyTo = null
           this.loadingMessages = false
-          this.messages = res.data.messages
+          this.messages = res.data.chat.messages
           this.messages.focus = false
           this.scroll()
         })
@@ -1587,7 +1556,6 @@ export default {
     const div = document.getElementById("div")
     div.addEventListener("scroll", this.scrollEvent)
 
-    await this.getUsers()
     await this.getChats()
     await this.getChat()
     this.scroll(true)
