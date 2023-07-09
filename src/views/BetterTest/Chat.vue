@@ -332,7 +332,11 @@
               <profile-picture
                 style="margin: 4px"
                 size="32"
-                :avatar="chat.icon"
+                :avatar="
+                  chat.type === 1 && chat.ownerDetails.id !== $store.loggedIn.id
+                    ? chat.ownerDetails?.avatar
+                    : chat.icon
+                "
                 :small="true"
               ></profile-picture>
             </div>

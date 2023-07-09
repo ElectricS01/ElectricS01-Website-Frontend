@@ -137,7 +137,22 @@
             <h2 class="settings-text">Profile</h2>
             Change your profile settings
             <div class="settings-spacer"></div>
-            Coming soon™
+            <div style="display: flex; align-items: center">
+              <profile-picture
+                size="48"
+                :avatar="$store.loggedIn?.avatar"
+                style="margin-right: 8px"
+              ></profile-picture>
+              <input
+                placeholder="Edit your profile picture"
+                @keydown.enter="toggle('avatar', editAvatar)"
+                v-model="editAvatar"
+                type="text"
+                style="margin: 1px; height: fit-content"
+                id="avatar"
+                autocomplete="off"
+              />
+            </div>
           </div>
           <div v-else-if="page === 'about'" style="width: fit-content">
             <h2 class="settings-text">About Better Communications</h2>
@@ -151,7 +166,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.148</div>
+            <div>Version: 1.149</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -186,15 +201,17 @@
 <script>
 import Modal from "@/components/Modal.vue"
 import Icons from "@/components/Icons.vue"
+import ProfilePicture from "@/components/ProfilePicture.vue"
 
 export default {
-  components: { Icons, Modal },
+  components: { ProfilePicture, Icons, Modal },
   data() {
     return {
       page: "account",
       pages: ["account", "privacy", "appearance", "profile", "about", "admin"],
-      properties: ["directMessages", "friendRequests", "showCreated"],
+      properties: ["directMessages", "friendRequests", "showCreated", "avatar"],
       user: [],
+      editAvatar: "",
       isOpen: false,
       options: ["no one", "friends", "everyone"],
       modalOpen: false,
@@ -253,25 +270,39 @@ export default {
       })
       this.getUser()
     },
-    toggle(property, value) {
+    async checkImage(url) {
+      try {
+        const res = await fetch(url)
+        const buff = await res.blob()
+        return buff.type.startsWith("image/")
+      } catch (e) {
+        this.$store.error = "Invalid image"
+      }
+    },
+    async toggle(property, value) {
       if (this.properties.includes(property)) {
-        if (!value) {
-          if (this.$store.loggedIn) {
-            value = !this.$store.loggedIn[property]
+        if (
+          (property === "avatar" && value && (await this.checkImage(value))) ||
+          property !== "avatar"
+        ) {
+          if (!value) {
+            if (this.$store.loggedIn) {
+              value = !this.$store.loggedIn[property]
+            }
           }
+          this.axios
+            .post("/api/user-prop", {
+              prop: property,
+              val: value
+            })
+            .then(() => {
+              this.getUser()
+            })
+            .catch((e) => {
+              this.$store.error = "Error 503, Cannot Connect to Server " + e
+              setTimeout(this.$store.errorFalse, 5000)
+            })
         }
-        this.axios
-          .post("/api/user-prop", {
-            prop: property,
-            val: value
-          })
-          .then(() => {
-            this.getUser()
-          })
-          .catch((e) => {
-            this.$store.error = "Error 503, Cannot Connect to Server " + e
-            setTimeout(this.$store.errorFalse, 5000)
-          })
       }
     },
     toggleDropdown() {
@@ -329,6 +360,7 @@ export default {
     if (this.page === "admin") {
       this.getAdmin()
     }
+    this.editAvatar = this.$store.loggedIn?.avatar
   },
   watch: {
     modalOpen(newValue, oldValue) {
