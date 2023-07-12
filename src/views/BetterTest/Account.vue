@@ -153,6 +153,22 @@
                 autocomplete="off"
               />
             </div>
+            <div style="display: flex; align-items: center">
+              <profile-picture
+                size="48"
+                :avatar="$store.loggedIn?.banner"
+                style="margin-right: 8px"
+              ></profile-picture>
+              <input
+                placeholder="Edit your profile picture"
+                @keydown.enter="toggle('banner', editBanner)"
+                v-model="editBanner"
+                type="text"
+                style="margin: 1px; height: fit-content"
+                id="banner"
+                autocomplete="off"
+              />
+            </div>
           </div>
           <div v-else-if="page === 'about'" style="width: fit-content">
             <h2 class="settings-text">About Better Communications</h2>
@@ -166,7 +182,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.150</div>
+            <div>Version: 1.151</div>
           </div>
           <div v-else-if="page === 'admin'" style="width: fit-content">
             <h2 class="settings-text">Admin panel</h2>
@@ -209,9 +225,16 @@ export default {
     return {
       page: "account",
       pages: ["account", "privacy", "appearance", "profile", "about", "admin"],
-      properties: ["directMessages", "friendRequests", "showCreated", "avatar"],
+      properties: [
+        "directMessages",
+        "friendRequests",
+        "showCreated",
+        "avatar",
+        "banner"
+      ],
       user: [],
       editAvatar: "",
+      editBanner: "",
       isOpen: false,
       options: ["no one", "friends", "everyone"],
       modalOpen: false,
@@ -282,8 +305,10 @@ export default {
     async toggle(property, value) {
       if (this.properties.includes(property)) {
         if (
-          (property === "avatar" && value && (await this.checkImage(value))) ||
-          property !== "avatar"
+          ((property === "avatar" || property === "banner") &&
+            value &&
+            (await this.checkImage(value))) ||
+          (property !== "avatar" && property !== "banner")
         ) {
           if (!value) {
             if (this.$store.loggedIn) {
@@ -361,6 +386,7 @@ export default {
       this.getAdmin()
     }
     this.editAvatar = this.$store.loggedIn?.avatar
+    this.editBanner = this.$store.loggedIn?.banner
   },
   watch: {
     modalOpen(newValue, oldValue) {
