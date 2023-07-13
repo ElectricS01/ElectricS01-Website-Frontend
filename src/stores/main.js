@@ -11,6 +11,9 @@ export const useDataStore = defineStore("store", {
     },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
+    },
+    dayjsDate(date) {
+      return dayjs(date).format("D MMMM YYYY")
     }
   }
 })

@@ -681,6 +681,10 @@ input:checked + .slider:before {
   overflow-y: auto;
 }
 
+.settings-page-container {
+  width: fit-content;
+}
+
 .settings-sidebar {
   width: 199px;
   border-right: 1px solid #212425;

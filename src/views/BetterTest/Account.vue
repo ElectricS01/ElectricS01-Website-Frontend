@@ -22,11 +22,7 @@
     <div class="grid-menu">
       <div class="settings-menu">
         <div class="settings-sidebar scroll-bar">
-          <div
-            @click="changePage('account')"
-            class="settings-item"
-            style="border-top-left-radius: 25px"
-          >
+          <div @click="changePage('account')" class="settings-item">
             Account
           </div>
           <div @click="changePage('privacy')" class="settings-item">
@@ -49,7 +45,7 @@
           <div @click="openFeedback" class="settings-item">Any feedback?</div>
         </div>
         <div class="settings-page scroll-bar-dark">
-          <div v-if="page === 'account'" style="width: fit-content">
+          <div v-if="page === 'account'" class="settings-page-container">
             <h2 class="settings-text">Account</h2>
             Change your account settings
             <div class="settings-spacer"></div>
@@ -85,7 +81,7 @@
               Close account
             </div>
           </div>
-          <div v-else-if="page === 'privacy'" style="width: fit-content">
+          <div v-else-if="page === 'privacy'" class="settings-page-container">
             <h2 class="settings-text">Privacy</h2>
             Change your privacy settings
             <div class="settings-spacer"></div>
@@ -127,50 +123,181 @@
               <span class="slider"></span>
             </label>
           </div>
-          <div v-else-if="page === 'appearance'" style="width: fit-content">
+          <div
+            v-else-if="page === 'appearance'"
+            class="settings-page-container"
+          >
             <h2 class="settings-text">Appearance</h2>
             Change your appearance settings
             <div class="settings-spacer"></div>
             Coming soon™
           </div>
-          <div v-else-if="page === 'profile'" style="width: fit-content">
+          <div v-else-if="page === 'profile'" class="settings-page-container">
             <h2 class="settings-text">Profile</h2>
             Change your profile settings
             <div class="settings-spacer"></div>
-            <div style="display: flex; align-items: center">
-              <profile-picture
-                size="48"
-                :avatar="$store.loggedIn?.avatar"
-                style="margin-right: 8px"
-              ></profile-picture>
-              <input
-                placeholder="Edit your profile picture"
-                @keydown.enter="toggle('avatar', editAvatar)"
-                v-model="editAvatar"
-                type="text"
-                style="margin: 1px; height: fit-content"
-                id="avatar"
-                autocomplete="off"
-              />
-            </div>
-            <div style="display: flex; align-items: center">
-              <profile-picture
-                size="48"
-                :avatar="$store.loggedIn?.banner"
-                style="margin-right: 8px"
-              ></profile-picture>
-              <input
-                placeholder="Edit your profile picture"
-                @keydown.enter="toggle('banner', editBanner)"
-                v-model="editBanner"
-                type="text"
-                style="margin: 1px; height: fit-content"
-                id="banner"
-                autocomplete="off"
-              />
+            <div style="display: flex">
+              <div style="width: min(500px, 100%)">
+                <img
+                  :src="
+                    $store.loggedIn?.banner ||
+                    'https://i.troplo.com/i/d81dabf74c88.png'
+                  "
+                  width="500"
+                  height="100"
+                  alt="Profile banner"
+                  class="profile-banner"
+                />
+                <input
+                  placeholder="Edit your profile picture"
+                  @keydown.enter="toggle('banner', editBanner)"
+                  v-model="editBanner"
+                  type="text"
+                  style="
+                    margin: 1px;
+                    height: fit-content;
+                    width: calc(100% - 2px);
+                  "
+                  id="banner"
+                  autocomplete="off"
+                />
+                <div class="profile-page">
+                  <div class="profile-grid">
+                    <div class="profile-picture-large">
+                      <profile-picture
+                        size="80"
+                        :avatar="$store.loggedIn?.avatar"
+                      ></profile-picture>
+                      <svg class="online-indicator" width="20" height="20">
+                        <status-indicator
+                          size="8"
+                          :status="$store.loggedIn?.status"
+                        ></status-indicator>
+                      </svg>
+                    </div>
+                    <div
+                      style="
+                        flex: 1 1 auto;
+                        word-wrap: break-word;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                      "
+                      class="message-item"
+                    >
+                      <h4 style="word-wrap: break-word">
+                        {{ $store.loggedIn?.username }}
+                      </h4>
+                      <p
+                        v-if="editing !== 'status'"
+                        class="message-text-large"
+                        style="word-wrap: break-word"
+                      >
+                        {{ $store.loggedIn?.statusMessage }}
+                        <icons
+                          style="cursor: pointer"
+                          size="16"
+                          icon="edit"
+                          @click="
+                            ;(editing = 'status'),
+                              (editStatus = $store.loggedIn?.statusMessage),
+                              editFocus()
+                          "
+                        />
+                      </p>
+                      <input
+                        v-else
+                        placeholder="Edit your status"
+                        @keydown.enter="editStatusMessage()"
+                        v-model="editStatus"
+                        type="text"
+                        style="margin: 1px; width: calc(100% - 2px)"
+                        id="status"
+                        autocomplete="off"
+                      />
+                    </div>
+                  </div>
+                  <input
+                    placeholder="Edit your profile picture"
+                    @keydown.enter="toggle('avatar', editAvatar)"
+                    v-model="editAvatar"
+                    type="text"
+                    style="margin: 1px; height: fit-content"
+                    id="avatar"
+                    autocomplete="off"
+                  />
+                  <div class="profile-spacer"></div>
+                  <div
+                    style="height: 332px; overflow-y: auto"
+                    class="scroll-bar"
+                  >
+                    <div v-if="$store.loggedIn?.createdAt">
+                      <p>Date Created</p>
+                      <p class="message-text-large">
+                        {{ $store.dayjsDate($store.loggedIn?.createdAt) }}
+                      </p>
+                      <div class="profile-spacer"></div>
+                    </div>
+                    <div>
+                      <p>
+                        Description
+                        <icons
+                          style="cursor: pointer"
+                          size="16"
+                          icon="edit"
+                          @click="
+                            ;(editing = 'description'),
+                              (editDescription = $store.loggedIn?.description),
+                              editFocus()
+                          "
+                        />
+                      </p>
+                      <p
+                        v-if="editing !== 'description'"
+                        class="message-text-large"
+                        style="word-wrap: break-word"
+                      >
+                        {{
+                          $store.loggedIn?.description ||
+                          `Hi, I'm ${$store.loggedIn?.username}!`
+                        }}
+                      </p>
+                      <input
+                        v-else
+                        placeholder="Edit your description"
+                        @keydown.enter="toggle('description', editDescription)"
+                        v-model="editDescription"
+                        type="text"
+                        style="margin: 1px; width: calc(100% - 2px)"
+                        id="description"
+                        autocomplete="off"
+                      />
+                    </div>
+                    <div v-if="$store.loggedIn?.tetris">
+                      <div class="profile-spacer"></div>
+                      <p>Tetris Scores</p>
+                      <p>
+                        Easy mode:
+                        {{ $store.loggedIn?.tetris[0].highscore_easy }} lines
+                      </p>
+                      <p>
+                        Medium mode:
+                        {{ $store.loggedIn?.tetris[1].highscore_medium }} lines
+                      </p>
+                      <p>
+                        Hard mode:
+                        {{ $store.loggedIn?.tetris[2].highscore_hard }} lines
+                      </p>
+                      <p>
+                        God mode:
+                        {{ $store.loggedIn?.tetris[3].highscore_god }} lines
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div v-else-if="page === 'about'" style="width: fit-content">
+          <div v-else-if="page === 'about'" class="settings-page-container">
             <h2 class="settings-text">About Better Communications</h2>
             <div>
               Better Communications is free and open-source chatting platform
@@ -182,9 +309,9 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.151</div>
+            <div>Version: 1.152</div>
           </div>
-          <div v-else-if="page === 'admin'" style="width: fit-content">
+          <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
             Admin info
             <div class="settings-spacer"></div>
@@ -218,9 +345,10 @@
 import Modal from "@/components/Modal.vue"
 import Icons from "@/components/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
+import StatusIndicator from "@/components/StatusIndicator.vue"
 
 export default {
-  components: { ProfilePicture, Icons, Modal },
+  components: { StatusIndicator, ProfilePicture, Icons, Modal },
   data() {
     return {
       page: "account",
@@ -230,7 +358,8 @@ export default {
         "friendRequests",
         "showCreated",
         "avatar",
-        "banner"
+        "banner",
+        "description"
       ],
       user: [],
       editAvatar: "",
@@ -238,6 +367,9 @@ export default {
       isOpen: false,
       options: ["no one", "friends", "everyone"],
       modalOpen: false,
+      editing: false,
+      editStatus: "",
+      editDescription: "",
       feedbackText: "",
       adminData: []
     }
@@ -304,6 +436,9 @@ export default {
     },
     async toggle(property, value) {
       if (this.properties.includes(property)) {
+        if (this.editing === "description") {
+          this.editing = false
+        }
         if (
           ((property === "avatar" || property === "banner") &&
             value &&
@@ -329,6 +464,26 @@ export default {
             })
         }
       }
+    },
+    editStatusMessage() {
+      if (
+        this.editStatus.trim() === this.$store.loggedIn.statusMessage ||
+        this.editStatus.trim().length > 50
+      ) {
+        return (this.editing = false)
+      }
+      this.axios
+        .patch("/api/edit-status-message", {
+          statusMessage: this.editStatus.trim()
+        })
+        .then((res) => {
+          this.$store.loggedIn.statusMessage = res.data.statusMessage
+          this.editing = false
+        })
+        .catch((e) => {
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
+        })
     },
     toggleDropdown() {
       this.isOpen = !this.isOpen
