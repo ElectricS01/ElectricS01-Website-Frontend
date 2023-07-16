@@ -40,7 +40,7 @@
               <p class="message-text-large" style="word-wrap: break-word">
                 {{ showUser.statusMessage }}
                 <icons
-                  v-if="showUser.id === $store.loggedIn.id"
+                  v-if="showUser.id === $store.userData.id"
                   style="cursor: pointer"
                   size="16"
                   icon="edit"
@@ -66,7 +66,7 @@
           <div style="flex: 0 1 auto; white-space: nowrap">
             <button
               v-if="
-                (showUser.id !== $store.loggedIn.id &&
+                (showUser.id !== $store.userData.id &&
                   showUser.directMessages !== 'no one') ||
                 (showUser.directMessages !== 'no one' &&
                   showUser.friend?.status)
@@ -85,7 +85,7 @@
             <button
               v-if="
                 showUser.friendRequests &&
-                showUser.id !== $store.loggedIn.id &&
+                showUser.id !== $store.userData.id &&
                 !showUser.friend?.status
               "
               class="profile-button-add"
@@ -102,7 +102,7 @@
             </button>
             <button
               v-if="
-                showUser.id !== $store.loggedIn.id &&
+                showUser.id !== $store.userData.id &&
                 showUser.friend?.status === 'accepted'
               "
               class="profile-button-remove"
@@ -135,7 +135,7 @@
             </button>
             <button
               v-if="
-                showUser.id !== $store.loggedIn.id &&
+                showUser.id !== $store.userData.id &&
                 showUser.friend?.status === 'incoming'
               "
               class="profile-button-pending"
@@ -223,7 +223,7 @@
           v-model="chatIconInput"
           id="chat-icon"
         />
-        <div v-if="$store.loggedIn.emailVerified">
+        <div v-if="$store.userData.emailVerified">
           <div class="text-small">
             <label for="requireVerification">Require verification</label>
           </div>
@@ -284,7 +284,7 @@
           v-model="chatIconInput"
           id="chat-icon"
         />
-        <div v-if="$store.loggedIn.emailVerified">
+        <div v-if="$store.userData.emailVerified">
           <div class="text-small">
             <label for="requireVerification">Require verification</label>
           </div>
@@ -325,7 +325,9 @@
             :style="{
               backgroundColor: currentChat.id === chat.id ? '#212425' : '',
               width:
-                chat.owner === $store.loggedIn.id ? 'calc(100% - 36px)' : '100%'
+                chat.owner === $store.userData.id && chat.type !== 1
+                  ? 'calc(100% - 36px)'
+                  : '100%'
             }"
           >
             <div class="profile-picture">
@@ -333,7 +335,7 @@
                 style="margin: 4px"
                 size="32"
                 :avatar="
-                  chat.type === 1 && chat.ownerDetails.id !== $store.loggedIn.id
+                  chat.type === 1 && chat.ownerDetails.id !== $store.userData.id
                     ? chat.ownerDetails?.avatar
                     : chat.icon
                 "
@@ -358,7 +360,7 @@
               </b>
               <b
                 v-else-if="
-                  chat.type === 1 && chat.ownerDetails.id !== $store.loggedIn.id
+                  chat.type === 1 && chat.ownerDetails.id !== $store.userData.id
                 "
                 class="message-text-large"
                 style="
@@ -372,7 +374,7 @@
               </b>
               <b
                 v-else-if="
-                  chat.type === 1 && chat.ownerDetails.id === $store.loggedIn.id
+                  chat.type === 1 && chat.ownerDetails.id === $store.userData.id
                 "
                 class="message-text-large"
                 style="
@@ -397,7 +399,7 @@
             </div>
           </div>
           <div
-            v-if="chat.owner === $store.loggedIn.id"
+            v-if="chat.owner === $store.userData.id && chat.type !== 1"
             @click="editChat(chat)"
             class="chats-settings"
           >
@@ -430,7 +432,7 @@
             <h1 v-if="currentChat.type !== 1">
               Welcome to {{ currentChat.name }}
             </h1>
-            <h1 v-else-if="currentChat.owner !== $store.loggedIn.id">
+            <h1 v-else-if="currentChat.owner !== $store.userData.id">
               Welcome to your Direct Message with
               {{ currentChat?.users[0].username }}
             </h1>
@@ -614,7 +616,7 @@
               </div>
               <div class="message-icons" v-show="editing !== message.id">
                 <icons
-                  v-show="message.user?.id === $store.loggedIn?.id"
+                  v-show="message.user?.id === $store.userData?.id"
                   style="cursor: pointer"
                   size="20"
                   icon="edit"
@@ -632,8 +634,8 @@
                 />
                 <icons
                   v-show="
-                    $store.loggedIn?.admin ||
-                    message.user?.id === $store.loggedIn?.id
+                    $store.userData?.admin ||
+                    message.user?.id === $store.userData?.id
                   "
                   style="cursor: pointer"
                   size="20"
@@ -1288,7 +1290,7 @@ export default {
         })
     },
     createChat() {
-      if (this.$store.loggedIn.emailVerified === false) {
+      if (this.$store.userData.emailVerified === false) {
         this.requireVerification = false
       }
       if (
@@ -1326,7 +1328,7 @@ export default {
           })
     },
     saveChat() {
-      if (this.$store.loggedIn.emailVerified === false) {
+      if (this.$store.userData.emailVerified === false) {
         this.requireVerification = false
       }
       if (
@@ -1489,7 +1491,7 @@ export default {
     },
     editLast() {
       this.messageEdit = this.messages.filter(
-        (message) => Number(message.userName) === this.$store.loggedIn.id
+        (message) => Number(message.userName) === this.$store.userData.id
       )
       if (this.messageEdit.length > 0) {
         this.editText = this.messageEdit.slice(-1)[0].messageContents

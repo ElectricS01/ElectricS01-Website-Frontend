@@ -83,7 +83,7 @@ export default {
       this.axios
         .get("/api/user")
         .then((res) => {
-          this.$store.loggedIn = res.data
+          this.$store.userData = res.data
         })
         .catch((e) => {
           this.$store.error = "Error 503, Cannot Connect to Server " + e

@@ -27,7 +27,7 @@
       </router-link>
       <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
       <router-link
-        v-if="$store.loggedIn"
+        v-if="$store.userData"
         class="right"
         to="/account"
         @click="responsive_navbar()"
@@ -44,7 +44,7 @@
         <Icons size="28" icon="chats" />
       </div>
       <router-link
-        v-if="$store.loggedIn"
+        v-if="$store.userData"
         class="right chat-icon"
         to="/account/account"
       >
@@ -140,7 +140,7 @@ export default {
       this.axios
         .get("/api/user")
         .then((res) => {
-          this.$store.loggedIn = res.data
+          this.$store.userData = res.data
         })
         .catch((e) => {
           this.$store.error = "Error 503, Cannot Connect to Server " + e

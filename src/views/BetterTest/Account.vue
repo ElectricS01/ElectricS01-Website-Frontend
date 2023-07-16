@@ -35,7 +35,7 @@
             Profile
           </div>
           <div
-            v-if="$store.loggedIn?.admin"
+            v-if="$store.userData?.admin"
             @click="changePage('admin')"
             class="settings-item"
           >
@@ -49,33 +49,33 @@
             <h2 class="settings-text">Account</h2>
             Change your account settings
             <div class="settings-spacer"></div>
-            Username: {{ $store.loggedIn?.username }}
+            Username: {{ $store.userData?.username }}
             <div @click="changeUsername()" class="settings-button">
               Change Username
             </div>
             <div class="settings-spacer"></div>
-            Email: {{ $store.loggedIn?.email }}
+            Email: {{ $store.userData?.email }}
             <div @click="changeUsername()" class="settings-button">
               Change Email
             </div>
             <div class="settings-spacer"></div>
-            Email verified: {{ $store.loggedIn?.emailVerified }}
+            Email verified: {{ $store.userData?.emailVerified }}
             <div
-              v-if="!$store.loggedIn?.emailVerified"
+              v-if="!$store.userData?.emailVerified"
               @click="resendVerification()"
               class="settings-button"
             >
               Resend email
             </div>
             <div class="settings-spacer"></div>
-            Password: {{ $store.loggedIn?.password }}
+            Password: {{ $store.userData?.password }}
             <div @click="changeUsername()" class="settings-button">
               Change Password
             </div>
             <div class="settings-spacer"></div>
-            Creation date: {{ $store.dayjs($store.loggedIn?.createdAt) }}
+            Creation date: {{ $store.dayjs($store.userData?.createdAt) }}
             <div class="settings-spacer"></div>
-            Account ID: {{ $store.loggedIn?.id }}
+            Account ID: {{ $store.userData?.id }}
             <div class="settings-spacer"></div>
             <div @click="changeUsername()" class="settings-button-red">
               Close account
@@ -89,7 +89,7 @@
             <div>
               <div class="dropdown">
                 <div class="dropdown-toggle" @click="toggleDropdown">
-                  {{ $store.loggedIn?.directMessages }}
+                  {{ $store.userData?.directMessages }}
                 </div>
                 <ul class="dropdown-menu" v-if="isOpen">
                   <li
@@ -107,7 +107,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$store.loggedIn?.friendRequests"
+                :checked="$store.userData?.friendRequests"
                 @click="toggle('friendRequests')"
               />
               <span class="slider"></span>
@@ -117,7 +117,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$store.loggedIn?.showCreated"
+                :checked="$store.userData?.showCreated"
                 @click="toggle('showCreated')"
               />
               <span class="slider"></span>
@@ -140,7 +140,7 @@
               <div style="width: min(500px, 100%)">
                 <img
                   :src="
-                    $store.loggedIn?.banner ||
+                    $store.userData?.banner ||
                     'https://i.troplo.com/i/d81dabf74c88.png'
                   "
                   width="500"
@@ -166,12 +166,12 @@
                     <div class="profile-picture-large">
                       <profile-picture
                         size="80"
-                        :avatar="$store.loggedIn?.avatar"
+                        :avatar="$store.userData?.avatar"
                       ></profile-picture>
                       <svg class="online-indicator" width="20" height="20">
                         <status-indicator
                           size="8"
-                          :status="$store.loggedIn?.status"
+                          :status="$store.userData?.status"
                         ></status-indicator>
                       </svg>
                     </div>
@@ -185,21 +185,21 @@
                       class="message-item"
                     >
                       <h4 style="word-wrap: break-word">
-                        {{ $store.loggedIn?.username }}
+                        {{ $store.userData?.username }}
                       </h4>
                       <p
                         v-if="editing !== 'status'"
                         class="message-text-large"
                         style="word-wrap: break-word"
                       >
-                        {{ $store.loggedIn?.statusMessage }}
+                        {{ $store.userData?.statusMessage }}
                         <icons
                           style="cursor: pointer"
                           size="16"
                           icon="edit"
                           @click="
                             ;(editing = 'status'),
-                              (editStatus = $store.loggedIn?.statusMessage),
+                              (editStatus = $store.userData?.statusMessage),
                               editFocus()
                           "
                         />
@@ -230,10 +230,10 @@
                     style="height: 332px; overflow-y: auto"
                     class="scroll-bar"
                   >
-                    <div v-if="$store.loggedIn?.createdAt">
+                    <div v-if="$store.userData?.createdAt">
                       <p>Date Created</p>
                       <p class="message-text-large">
-                        {{ $store.dayjsDate($store.loggedIn?.createdAt) }}
+                        {{ $store.dayjsDate($store.userData?.createdAt) }}
                       </p>
                       <div class="profile-spacer"></div>
                     </div>
@@ -246,7 +246,7 @@
                           icon="edit"
                           @click="
                             ;(editing = 'description'),
-                              (editDescription = $store.loggedIn?.description),
+                              (editDescription = $store.userData?.description),
                               editFocus()
                           "
                         />
@@ -257,8 +257,8 @@
                         style="word-wrap: break-word"
                       >
                         {{
-                          $store.loggedIn?.description ||
-                          `Hi, I'm ${$store.loggedIn?.username}!`
+                          $store.userData?.description ||
+                          `Hi, I'm ${$store.userData?.username}!`
                         }}
                       </p>
                       <input
@@ -272,24 +272,24 @@
                         autocomplete="off"
                       />
                     </div>
-                    <div v-if="$store.loggedIn?.tetris">
+                    <div v-if="$store.userData?.tetris">
                       <div class="profile-spacer"></div>
                       <p>Tetris Scores</p>
                       <p>
                         Easy mode:
-                        {{ $store.loggedIn?.tetris[0].highscore_easy }} lines
+                        {{ $store.userData?.tetris[0].highscore_easy }} lines
                       </p>
                       <p>
                         Medium mode:
-                        {{ $store.loggedIn?.tetris[1].highscore_medium }} lines
+                        {{ $store.userData?.tetris[1].highscore_medium }} lines
                       </p>
                       <p>
                         Hard mode:
-                        {{ $store.loggedIn?.tetris[2].highscore_hard }} lines
+                        {{ $store.userData?.tetris[2].highscore_hard }} lines
                       </p>
                       <p>
                         God mode:
-                        {{ $store.loggedIn?.tetris[3].highscore_god }} lines
+                        {{ $store.userData?.tetris[3].highscore_god }} lines
                       </p>
                     </div>
                   </div>
@@ -309,7 +309,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.152</div>
+            <div>Version: 1.153</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -392,7 +392,7 @@ export default {
         this.axios
           .get("/api/user")
           .then((res) => {
-            this.$store.loggedIn = res.data
+            this.$store.userData = res.data
           })
           .catch((e) => {
             this.$store.error = "Error 503, Cannot Connect to Server " + e
@@ -446,8 +446,8 @@ export default {
           (property !== "avatar" && property !== "banner")
         ) {
           if (!value) {
-            if (this.$store.loggedIn) {
-              value = !this.$store.loggedIn[property]
+            if (this.$store.userData) {
+              value = !this.$store.userData[property]
             }
           }
           this.axios
@@ -467,7 +467,7 @@ export default {
     },
     editStatusMessage() {
       if (
-        this.editStatus.trim() === this.$store.loggedIn.statusMessage ||
+        this.editStatus.trim() === this.$store.userData.statusMessage ||
         this.editStatus.trim().length > 50
       ) {
         return (this.editing = false)
@@ -477,7 +477,7 @@ export default {
           statusMessage: this.editStatus.trim()
         })
         .then((res) => {
-          this.$store.loggedIn.statusMessage = res.data.statusMessage
+          this.$store.userData.statusMessage = res.data.statusMessage
           this.editing = false
         })
         .catch((e) => {
@@ -540,8 +540,8 @@ export default {
     if (this.page === "admin") {
       this.getAdmin()
     }
-    this.editAvatar = this.$store.loggedIn?.avatar
-    this.editBanner = this.$store.loggedIn?.banner
+    this.editAvatar = this.$store.userData?.avatar
+    this.editBanner = this.$store.userData?.banner
   },
   watch: {
     modalOpen(newValue, oldValue) {
