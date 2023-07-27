@@ -5,7 +5,7 @@
   >
     <h2>ElectricS01's Calculator</h2>
     <label for="equation">Enter your equation:</label>
-    <input id="equation" v-model="equation" type="text" />
+    <input id="equation" v-model="equation" type="text" autocomplete="off" />
     <p class="text-main" id="result">{{ result }}</p>
   </div>
 </template>
@@ -105,9 +105,25 @@ export default {
     },
     calculateResult() {
       try {
-        const regex = /(-?\d*\.?\d+)|([\+\-\*\/\^\(\)])/g
+        const regex = /(\d*\.?\d+)|(.)|([\+\-\*\/\(\)])/g
         const tokens = this.equation.match(regex)
-        this.result = this.evaluateExpression(tokens)
+
+        if (tokens === null) {
+          this.result = "0"
+          return
+        }
+        let result = []
+        for (let i = 0; i < tokens.length; i++) {
+          if (tokens[i] === "-" && i > 0 && tokens[i - 1] === "^") {
+            let merged = tokens[i] + tokens[i + 1]
+            result.pop()
+            result.push("^", merged)
+            i++
+          } else {
+            result.push(tokens[i])
+          }
+        }
+        this.result = this.evaluateExpression(result)
       } catch (error) {
         this.result = error.message
       }
