@@ -105,11 +105,9 @@ export default {
     },
     calculateResult() {
       try {
-        const tokens = this.equation
-          .split(/([\+\-\*\/\^\(\)])/)
-          .filter((token) => token !== "")
+        const regex = /(-?\d*\.?\d+)|([\+\-\*\/\^\(\)])/g
+        const tokens = this.equation.match(regex)
         this.result = this.evaluateExpression(tokens)
-        console.log("e")
       } catch (error) {
         this.result = error.message
       }
