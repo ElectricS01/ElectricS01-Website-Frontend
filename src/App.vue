@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="navbar" id="mobile-navbar" v-if="navbarShown">
-      <router-link class="main" to="/" @click="responsive_navbar(true)">
+      <router-link class="main" to="/" @click="responsive_navbar()">
         ElectricS01.com
       </router-link>
       <router-link
@@ -86,14 +86,12 @@ export default {
     active(route) {
       return route === this.$route.path
     },
-    responsive_navbar(override) {
+    responsive_navbar() {
       const responsive_navbar = document.getElementById("mobile-navbar")
-      if (!override) {
-        if (responsive_navbar.className === "navbar") {
-          responsive_navbar.className += " responsive"
-        } else {
-          responsive_navbar.className = "navbar"
-        }
+      if (responsive_navbar.className === "navbar") {
+        responsive_navbar.className += " responsive"
+      } else {
+        responsive_navbar.className = "navbar"
       }
     },
     toggleSidebar() {

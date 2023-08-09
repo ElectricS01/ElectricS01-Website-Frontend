@@ -35,13 +35,24 @@ export default {
           throw new Error("Invalid operator")
       }
     },
+    factorial(n) {
+      if (n === 0 || n === 1) {
+        return 1
+      }
+      let result = 1
+      for (let i = 2; i <= n; i++) {
+        result *= i
+      }
+      return result
+    },
     evaluateExpression(tokens) {
       const precedence = {
         "+": 1,
         "-": 1,
         "*": 2,
         "/": 2,
-        "^": 3
+        "^": 3,
+        "!": 4
       }
 
       const values = []
@@ -105,7 +116,7 @@ export default {
     },
     calculateResult() {
       try {
-        const regex = /(\d*\.?\d+)|(.)|([\+\-\*\/\(\)])/g
+        const regex = /(\d*\.?\d+)|([\+\-\*\/\(\)]|\^|!)/g
         const tokens = this.equation.match(regex)
 
         if (tokens === null) {
@@ -139,6 +150,15 @@ export default {
               } else {
                 result.push(tokens[i])
               }
+            } else {
+              result.push(tokens[i])
+            }
+          } else if (tokens[i] === "!") {
+            const prevToken = result[result.length - 1]
+            if (!isNaN(prevToken)) {
+              result.pop()
+              const num = parseFloat(prevToken)
+              result.push(this.factorial(num))
             } else {
               result.push(tokens[i])
             }
