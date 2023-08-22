@@ -5,7 +5,7 @@
   >
     <h2>ElectricS01's Calculator</h2>
     <label for="equation">Enter your equation:</label>
-    <input id="equation" v-model="equation" type="text" autocomplete="off" />
+    <input id="equation" v-model="equation" autocomplete="off" />
     <p class="text-main" id="result">{{ result }}</p>
   </div>
 </template>

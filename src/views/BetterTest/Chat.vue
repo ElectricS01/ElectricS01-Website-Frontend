@@ -57,7 +57,6 @@
               placeholder="Edit your status"
               @keydown.enter="editStatusMessage()"
               v-model="editStatus"
-              type="text"
               style="margin: 1px; width: calc(100% - 2px)"
               id="status"
               autocomplete="off"
@@ -316,6 +315,7 @@
         </div>
         <div
           v-for="chat in chats"
+          :key="chat"
           style="display: flex; margin: 0 0 4px; align-items: center"
         >
           <div
@@ -594,7 +594,6 @@
                   @keydown.enter="editMessage(message.id)"
                   class="responder"
                   v-model="editText"
-                  type="text"
                   style="width: 100%; margin-left: 0"
                   id="edit"
                   autocomplete="off"
@@ -733,7 +732,6 @@
             @keydown.up.prevent="editLast(), scroll(true)"
             class="responder"
             v-model="inputText"
-            type="text"
             id="input"
             autocomplete="off"
           />
@@ -764,7 +762,7 @@
           <p style="padding-right: 4px" class="message-text-small">Online</p>
           <div style="border-bottom: 1px solid #212425; width: 100%"></div>
         </div>
-        <div v-for="user in currentChat.users">
+        <div v-for="user in currentChat.users" :key="user">
           <div
             v-if="user.status !== 'offline'"
             style="cursor: pointer; margin: 0 0 4px"
@@ -822,7 +820,7 @@
           <p style="padding-right: 4px" class="message-text-small">Offline</p>
           <div style="border-bottom: 1px solid #212425; width: 100%"></div>
         </div>
-        <div v-for="user in currentChat.users">
+        <div v-for="user in currentChat.users" :key="user">
           <div
             v-if="user.status === 'offline'"
             style="cursor: pointer; margin: 0 0 4px"
@@ -876,7 +874,6 @@
           placeholder="Search this chat"
           @keydown.enter="searchChat"
           v-model="searchText"
-          type="text"
           id="status"
           autocomplete="off"
         />
@@ -1531,16 +1528,18 @@ export default {
         })
     },
     escPressed(event) {
-      if (event.key === "Escape" && this.editing === "status") {
-        this.editing = false
-      } else if (event.key === "Escape" && this.profileShown) {
-        this.profileShown = false
-      } else if (event.key === "Escape" && this.editing) {
-        this.editing = false
-      } else if (event.key === "Escape" && this.replyTo) {
-        this.replyTo = null
-      } else if (event.key === "Escape" && !this.profileShown) {
-        this.scroll(true)
+      if (event.key === "Escape") {
+        if (this.editing === "status") {
+          this.editing = false
+        } else if (this.profileShown) {
+          this.profileShown = false
+        } else if (this.editing) {
+          this.editing = false
+        } else if (this.replyTo) {
+          this.replyTo = null
+        } else if (!this.profileShown) {
+          this.scroll(true)
+        }
       }
     },
     scrollEvent() {
@@ -1569,11 +1568,10 @@ export default {
   created() {
     this.sortUsers = this.$store.sortUsers
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave() {
     document.removeEventListener("keydown", this.escPressed)
     const div = document.getElementById("div")
     div.removeEventListener("scroll", this.scrollEvent)
-    next()
   },
   unmounted() {
     document.removeEventListener("keydown", this.escPressed)

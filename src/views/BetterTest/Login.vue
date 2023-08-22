@@ -20,10 +20,10 @@
           <input
             placeholder="Password"
             @keydown.enter="submit"
-            type="password"
             class="modal-input"
             v-model="password"
             id="password"
+            type="password"
           />
           <div style="display: flex; justify-content: space-between">
             <div class="text-small">

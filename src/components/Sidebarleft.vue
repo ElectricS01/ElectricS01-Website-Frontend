@@ -7,11 +7,8 @@
 </template>
 
 <script>
-import Icons from "@/components/Icons.vue"
-
 export default {
   name: "sidebarLeft",
-  components: { Icons },
   props: {
     isActive: {
       type: Boolean,

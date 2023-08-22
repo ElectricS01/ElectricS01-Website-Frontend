@@ -152,7 +152,6 @@
                   placeholder="Edit your profile picture"
                   @keydown.enter="toggle('banner', editBanner)"
                   v-model="editBanner"
-                  type="text"
                   style="
                     margin: 1px;
                     height: fit-content;
@@ -209,7 +208,6 @@
                         placeholder="Edit your status"
                         @keydown.enter="editStatusMessage()"
                         v-model="editStatus"
-                        type="text"
                         style="margin: 1px; width: calc(100% - 2px)"
                         id="status"
                         autocomplete="off"
@@ -220,7 +218,6 @@
                     placeholder="Edit your profile picture"
                     @keydown.enter="toggle('avatar', editAvatar)"
                     v-model="editAvatar"
-                    type="text"
                     style="margin: 1px; height: fit-content"
                     id="avatar"
                     autocomplete="off"
@@ -266,7 +263,6 @@
                         placeholder="Edit your description"
                         @keydown.enter="toggle('description', editDescription)"
                         v-model="editDescription"
-                        type="text"
                         style="margin: 1px; width: calc(100% - 2px)"
                         id="description"
                         autocomplete="off"
@@ -309,7 +305,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.157</div>
+            <div>Version: 1.158</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
