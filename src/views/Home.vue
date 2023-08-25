@@ -14,7 +14,7 @@
             class="grid-image"
           />
           <div class="small-container">
-            <p class="text-medium">TonkGame(WIP)</p>
+            <p class="text-medium">TonkGame (WIP)</p>
             <div class="spacer"></div>
             <p class="message-text-medium-gray">
               My first ever coding project, a simple 2D Top Down Shooter made
@@ -39,6 +39,22 @@
             </p>
           </div>
         </router-link>
+      </div>
+      <div class="box grid-item">
+        <a class="border" href="https://mapit.electrics01.com">
+          <img
+            src="../assets/mapit.webp"
+            alt="Mapit By ElectricS01"
+            class="grid-image"
+          />
+          <div class="small-container">
+            <p class="text-medium">Mapit (Demo)</p>
+            <div class="spacer"></div>
+            <p class="message-text-medium-gray">
+              Mapit is an interactive school map program to make it easier for all people to navigate school
+            </p>
+          </div>
+        </a>
       </div>
       <div class="box grid-item">
         <a class="border" href="https://bettercompassclub.netlify.app">
