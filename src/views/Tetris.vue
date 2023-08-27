@@ -11,6 +11,10 @@
       width="600"
     ></iframe>
     <h3>Tetris By ElectricS01 0.23</h3>
+    <p class="message-text-medium-gray">
+      My own rendition of the popular game Tetris made with GameMaker
+      Studio
+    </p>
   </div>
 </template>
 
