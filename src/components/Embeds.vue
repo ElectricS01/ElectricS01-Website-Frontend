@@ -4,7 +4,7 @@
       :src="embed.mediaProxyLink"
       class="embed"
       alt="embedded image"
-      @load="scroll()"
+      @load="scroll ? scroll() : ''"
     />
   </div>
 </template>

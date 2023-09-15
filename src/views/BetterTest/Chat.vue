@@ -321,7 +321,7 @@
           <div
             style="cursor: pointer"
             class="message-grid"
-            @click="openChat(chat.id)"
+            @click="getChat(chat.id)"
             :style="{
               backgroundColor: currentChat.id === chat.id ? '#212425' : '',
               width:
@@ -598,20 +598,14 @@
                   id="edit"
                   autocomplete="off"
                 />
-                <div>
-                  <div v-show="editing !== message.id" v-markdown>
-                    {{ message.messageContents }}
-                    <b class="message-text-small" v-if="message.edited">
-                      (edited)
-                    </b>
-                  </div>
-                  <embeds
-                    v-for="(embed, index) in message.embeds"
-                    :key="index"
-                    :embed="embed"
-                    :scroll="scroll"
-                  ></embeds>
-                </div>
+                <custom-message
+                  v-show="editing !== message.id"
+                  :message="message.messageContents"
+                  :edited="message.edited"
+                  :handleClick="handleClick"
+                  :embeds="message.embeds"
+                  :scroll="scroll"
+                ></custom-message>
               </div>
               <div class="message-icons" v-show="editing !== message.id">
                 <icons
@@ -1004,17 +998,12 @@
                 </b>
               </div>
               <div>
-                <div v-markdown>
-                  {{ message.messageContents }}
-                  <b class="message-text-small" v-if="message.edited">
-                    (edited)
-                  </b>
-                </div>
-                <embeds
-                  v-for="(embed, index) in message.embeds"
-                  :key="index"
-                  :embed="embed"
-                ></embeds>
+                <custom-message
+                  :message="message.messageContents"
+                  :edited="message.edited"
+                  :handleClick="handleClick"
+                  :embeds="message.embeds"
+                ></custom-message>
               </div>
             </div>
           </div>
@@ -1029,21 +1018,21 @@
 
 <script>
 import dayjs from "dayjs"
-import Embeds from "@/components/Embeds.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 import Sidebar from "@/components/Sidebar.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import SidebarLeft from "@/components/Sidebarleft.vue"
+import CustomMessage from "@/components/CustomMessage.vue"
 
 export default {
   components: {
+    CustomMessage,
     SidebarLeft,
     ProfilePicture,
     Sidebar,
     Icons,
-    Embeds,
     Modal,
     StatusIndicator
   },
@@ -1293,7 +1282,7 @@ export default {
       if (
         this.chatNameInput &&
         this.chatDescriptionInput &&
-        typeof requireVerification !== "boolean"
+        typeof this.requireVerification !== "boolean"
       )
         this.axios
           .post("/api/create-chat", {
@@ -1331,7 +1320,7 @@ export default {
       if (
         this.chatNameInput &&
         this.chatDescriptionInput &&
-        typeof requireVerification !== "boolean"
+        typeof this.requireVerification !== "boolean"
       )
         this.axios
           .patch(`/api/edit-chat/${this.chatEdit}`, {
@@ -1392,9 +1381,6 @@ export default {
           })
       }
     },
-    openChat(chatId) {
-      this.getChat(chatId)
-    },
     formatINI(ini) {
       const lines = ini.split("\r\n")
 
@@ -1417,6 +1403,11 @@ export default {
       return keyValuePairs.map((pair) => ({
         [pair.key]: pair.value
       }))
+    },
+    handleClick(part) {
+      if (part.startsWith('<span @click="handleUserMentionClick(')) {
+        this.openUser(part.match(/\d+/)[0])
+      }
     },
     scroll(override) {
       this.$nextTick(() => {

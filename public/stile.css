@@ -322,6 +322,16 @@ button:hover,
   max-height: 300px;
 }
 
+.mention {
+  background-color: rgb(30, 144, 255, 0.5);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.mention:hover {
+  background-color: rgb(30, 144, 255);
+}
+
 .border {
   background-color: #282a2b;
   border-radius: 15px;
@@ -668,6 +678,9 @@ input:checked + .slider:before {
   font-size: 20px;
   text-align: left;
   padding: 16px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .settings-page {

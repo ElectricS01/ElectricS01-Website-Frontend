@@ -11,13 +11,14 @@ const md = new MarkdownIt({
   linkify: true
 })
 
+const pinia = createPinia()
+const app = createApp(App).use(router)
+
 // Modify the 'p' rule to return an empty string
 md.renderer.rules.paragraph_open = function () {
   return ""
 }
 
-const pinia = createPinia()
-const app = createApp(App).use(router)
 app.directive("markdown", {
   mounted(el) {
     // Extract the message contents and (edited) status
@@ -37,11 +38,8 @@ app.directive("markdown", {
     // Create a new element to contain the processed content
     const container = document.createElement("div")
 
-    // Process the text content with the Markdown library
-    const processedHtml = md.render(el.textContent)
-
-    // Set the processed content as the innerHTML of the container element
-    container.innerHTML = processedHtml
+    // Process the text content with the Markdown library then set it as the innerHTML of the container element
+    container.innerHTML = md.render(el.textContent)
 
     // Append the "(edited)" text after the processed content
     if (editedText) {
