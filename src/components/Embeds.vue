@@ -3,7 +3,7 @@
     <img
       :src="embed.mediaProxyLink"
       class="embed"
-      alt="embedded image"
+      alt="Embedded image"
       @load="scroll ? scroll() : ''"
     />
   </div>
@@ -16,8 +16,8 @@ export default {
 }
 </script>
 
-<style>
-embed {
-  border-radius: 8px;
+<style scoped>
+.embed {
+  border-radius: 2px;
 }
 </style>

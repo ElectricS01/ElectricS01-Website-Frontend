@@ -8,9 +8,9 @@
       <span v-if="check(index)" v-html="part"></span>
       <span v-markdown v-if="!check(index)">{{ part }}</span>
     </span>
-    <b class="message-text-small" v-if="edited">(edited)</b>
+    <b class="message-text-small" v-if="message.edited">(edited)</b>
     <embeds
-      v-for="(embed, index) in embeds"
+      v-for="(embed, index) in message.embeds"
       :key="index"
       :embed="embed"
       :scroll="scroll"
@@ -24,17 +24,18 @@ import Embeds from "@/components/Embeds.vue"
 export default {
   name: "CustomMessage",
   components: { Embeds },
-  props: ["message", "edited", "handleClick", "embeds", "scroll"],
+  props: ["message", "handleClick", "scroll", "findUser"],
   computed: {
     messageParts() {
-      const parts = this.message
+      const parts = this.message.messageContents
         .split(/(<@\d+>)/g)
         .filter((part) => part !== "")
-      console.log(parts)
       return parts.map((part) => {
         if (part.startsWith("<@")) {
           const userId = part.match(/\d+/)[0]
-          return `<span @click="handleUserMentionClick(${userId})" class="mention">@${userId}</span>`
+          return `<span @click="handleUserMentionClick(${userId})" class="mention">@${this.findUser(
+            userId
+          )}</span>`
         }
         return part
       })
@@ -42,11 +43,10 @@ export default {
   },
   methods: {
     check(index) {
-      const parts = this.message
+      const parts = this.message.messageContents
         .split(/(<@\d+>)/g)
         .filter((part) => part !== "")
       if (parts[index].startsWith("<@")) {
-        console.log("4321" + parts[index])
         return true
       }
     }

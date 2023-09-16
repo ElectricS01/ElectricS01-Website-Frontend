@@ -592,19 +592,16 @@
                   v-if="editing === message.id"
                   placeholder="Edit your message"
                   @keydown.enter="editMessage(message.id)"
-                  class="responder"
                   v-model="editText"
-                  style="width: 100%; margin-left: 0"
                   id="edit"
                   autocomplete="off"
                 />
                 <custom-message
                   v-show="editing !== message.id"
-                  :message="message.messageContents"
-                  :edited="message.edited"
+                  :message="message"
                   :handleClick="handleClick"
-                  :embeds="message.embeds"
                   :scroll="scroll"
+                  :findUser="findUser"
                 ></custom-message>
               </div>
               <div class="message-icons" v-show="editing !== message.id">
@@ -724,7 +721,7 @@
             autofocus
             @keydown.enter="submit"
             @keydown.up.prevent="editLast(), scroll(true)"
-            class="responder"
+            class="message-input"
             v-model="inputText"
             id="input"
             autocomplete="off"
@@ -997,14 +994,11 @@
                   {{ " " + $store.dayjs(message.createdAt) }}
                 </b>
               </div>
-              <div>
-                <custom-message
-                  :message="message.messageContents"
-                  :edited="message.edited"
-                  :handleClick="handleClick"
-                  :embeds="message.embeds"
-                ></custom-message>
-              </div>
+              <custom-message
+                :message="message"
+                :handleClick="handleClick"
+                :findUser="findUser"
+              ></custom-message>
             </div>
           </div>
         </div>
@@ -1018,22 +1012,22 @@
 
 <script>
 import dayjs from "dayjs"
-import StatusIndicator from "@/components/StatusIndicator.vue"
+import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
-import Sidebar from "@/components/Sidebar.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
+import Sidebar from "@/components/Sidebar.vue"
 import SidebarLeft from "@/components/Sidebarleft.vue"
-import CustomMessage from "@/components/CustomMessage.vue"
+import StatusIndicator from "@/components/StatusIndicator.vue"
 
 export default {
   components: {
     CustomMessage,
-    SidebarLeft,
-    ProfilePicture,
-    Sidebar,
     Icons,
     Modal,
+    ProfilePicture,
+    Sidebar,
+    SidebarLeft,
     StatusIndicator
   },
   data() {
@@ -1375,7 +1369,7 @@ export default {
             }
           })
           .catch((e) => {
-            this.$store.error = e.response
+            this.$store.error = e.response.data.message
             console.log(e)
             setTimeout(this.$store.errorFalse, 5000)
           })
@@ -1408,6 +1402,14 @@ export default {
       if (part.startsWith('<span @click="handleUserMentionClick(')) {
         this.openUser(part.match(/\d+/)[0])
       }
+    },
+    findUser(userId) {
+      const user = this.currentChat.users.find(
+        (user) => user.id === parseInt(userId)
+      )?.username
+      if (user) {
+        return user
+      } else return userId
     },
     scroll(override) {
       this.$nextTick(() => {

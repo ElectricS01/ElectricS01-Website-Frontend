@@ -434,7 +434,7 @@ input:focus {
   background-color: #212425;
 }
 
-.responder {
+.message-input {
   width: calc(100% - 100px);
   margin: 8px;
 }

@@ -64,5 +64,3 @@ export default {
   props: ["color", "size", "icon"]
 }
 </script>
-
-<style scoped></style>
