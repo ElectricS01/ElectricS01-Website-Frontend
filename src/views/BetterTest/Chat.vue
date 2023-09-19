@@ -1276,7 +1276,7 @@ export default {
       if (
         this.chatNameInput &&
         this.chatDescriptionInput &&
-        typeof this.requireVerification !== "boolean"
+        typeof this.requireVerification === "boolean"
       )
         this.axios
           .post("/api/create-chat", {
@@ -1314,7 +1314,7 @@ export default {
       if (
         this.chatNameInput &&
         this.chatDescriptionInput &&
-        typeof this.requireVerification !== "boolean"
+        typeof this.requireVerification === "boolean"
       )
         this.axios
           .patch(`/api/edit-chat/${this.chatEdit}`, {

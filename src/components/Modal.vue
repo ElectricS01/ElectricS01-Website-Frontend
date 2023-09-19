@@ -75,7 +75,7 @@ export default {
   background-color: #282a2b;
   width: min(500px, calc(100% - 20px));
   overflow-y: auto;
-  border-radius: 24px;
+  border-radius: 16px;
   max-height: 100%;
 }
 </style>
