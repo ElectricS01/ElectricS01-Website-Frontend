@@ -288,6 +288,12 @@ button:hover,
   background-color: #313435;
 }
 
+.context-menu-item:hover,
+.chats-settings:hover,
+.message-grid:hover {
+  background-color: #212425;
+}
+
 .icon-mobile {
   display: none;
 }
@@ -373,10 +379,6 @@ button:hover,
   line-height: 17px;
 }
 
-.message-grid:hover {
-  background-color: #212425;
-}
-
 .message-grid:hover .message-icons,
 .message-grid:hover .message-time b {
   display: flex;
@@ -436,13 +438,15 @@ input::placeholder {
   cursor: pointer;
 }
 
-.chats-settings:hover {
-  background-color: #212425;
-}
-
 .message-input {
   width: calc(100% - 100px);
   margin: 8px;
+}
+
+.context-menu-item {
+  padding: 4px;
+  cursor: pointer;
+  width: max-content;
 }
 
 .highlight {
@@ -715,22 +719,23 @@ input:checked + .slider:before {
 
 .settings-button {
   background-color: #212425;
-  color: #ffffff;
   padding: 8px;
   margin: 8px;
   cursor: pointer;
   font-size: 16px;
   display: table;
+  border-radius: 2px;
 }
 
 .settings-button-red {
+  background-color: #212425;
   padding: 8px;
   margin: 8px;
   cursor: pointer;
   font-size: 16px;
   display: table;
   color: #ff2f2f;
-  background-color: #212425;
+  border-radius: 2px;
 }
 
 .red-button:hover,
@@ -765,7 +770,7 @@ input:checked + .slider:before {
   cursor: pointer;
   padding: 8px;
   border: 1px solid #282a2b;
-  border-radius: 4px;
+  border-radius: 2px;
   text-transform: capitalize;
   background-color: #212425;
 }
@@ -777,13 +782,14 @@ input:checked + .slider:before {
   width: 200px;
   padding: 4px;
   border: 1px solid #282a2b;
-  border-radius: 4px;
+  border-radius: 2px;
   background-color: #212425;
   list-style: none;
   z-index: 1;
 }
 
 .dropdown-menu li {
+  border-radius: 2px;
   cursor: pointer;
   padding: 4px;
   text-transform: capitalize;

@@ -753,50 +753,50 @@
           <p style="padding-right: 4px" class="message-text-small">Online</p>
           <div style="border-bottom: 1px solid #212425; width: 100%"></div>
         </div>
-        <div v-for="user in currentChat.users" :key="user">
-          <div
-            v-if="user.status !== 'offline'"
-            style="cursor: pointer; margin: 0 0 4px"
-            class="message-grid"
-            @click="openUser(user.id, user)"
-          >
-            <div class="profile-picture">
-              <profile-picture
-                style="margin: 4px"
-                size="32"
-                :avatar="user.avatar"
-                :small="true"
-              ></profile-picture>
-              <svg class="online-indicator" width="15" height="15">
-                <status-indicator
-                  size="5"
-                  :status="user.status"
-                ></status-indicator>
-              </svg>
-            </div>
-            <div style="flex-grow: 1; width: 178px" class="message-item">
-              <b
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
-              >
-                {{ user.username }}
-              </b>
-              <p
-                class="message-text-medium-gray"
-                style="
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
-              >
-                {{ user.statusMessage }}
-              </p>
-            </div>
+        <div
+          v-for="user in onlineUsers"
+          :key="user"
+          @contextmenu.prevent="showContextMenu($event, user.id)"
+          style="cursor: pointer; margin: 0 0 4px; border-radius: 2px"
+          class="message-grid"
+          @click="openUser(user.id, user)"
+        >
+          <div class="profile-picture">
+            <profile-picture
+              style="margin: 4px"
+              size="32"
+              :avatar="user.avatar"
+              :small="true"
+            ></profile-picture>
+            <svg class="online-indicator" width="15" height="15">
+              <status-indicator
+                size="5"
+                :status="user.status"
+              ></status-indicator>
+            </svg>
+          </div>
+          <div style="flex-grow: 1; width: 178px" class="message-item">
+            <b
+              class="message-text-large"
+              style="
+                margin: 4px 0 2px 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              "
+            >
+              {{ user.username }}
+            </b>
+            <p
+              class="message-text-medium-gray"
+              style="
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              "
+            >
+              {{ user.statusMessage }}
+            </p>
           </div>
         </div>
         <div
@@ -811,53 +811,118 @@
           <p style="padding-right: 4px" class="message-text-small">Offline</p>
           <div style="border-bottom: 1px solid #212425; width: 100%"></div>
         </div>
-        <div v-for="user in currentChat.users" :key="user">
-          <div
-            v-if="user.status === 'offline'"
-            style="cursor: pointer; margin: 0 0 4px"
-            class="message-grid"
-            @click="openUser(user.id, user)"
-          >
-            <div class="profile-picture">
-              <profile-picture
-                style="margin: 4px"
-                size="32"
-                :avatar="user.avatar"
-              ></profile-picture>
-              <svg class="online-indicator" width="15" height="15">
-                <status-indicator
-                  size="5"
-                  :status="user.status"
-                ></status-indicator>
-              </svg>
-            </div>
-            <div class="message-item">
-              <b
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  width: 178px;
-                "
-              >
-                {{ user.username }}
-              </b>
-              <p
-                class="message-text-medium-gray"
-                style="
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  width: 178px;
-                "
-              >
-                {{ user.statusMessage }}
-              </p>
-            </div>
+        <div
+          v-for="user in offlineUsers"
+          :key="user"
+          @contextmenu.prevent="showContextMenu($event, user.id)"
+          style="cursor: pointer; margin: 0 0 4px; border-radius: 2px"
+          class="message-grid"
+          @click="openUser(user.id, user)"
+        >
+          <div class="profile-picture">
+            <profile-picture
+              style="margin: 4px"
+              size="32"
+              :avatar="user.avatar"
+            ></profile-picture>
+            <svg class="online-indicator" width="15" height="15">
+              <status-indicator
+                size="5"
+                :status="user.status"
+              ></status-indicator>
+            </svg>
+          </div>
+          <div class="message-item">
+            <b
+              class="message-text-large"
+              style="
+                margin: 4px 0 2px 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 178px;
+              "
+            >
+              {{ user.username }}
+            </b>
+            <p
+              class="message-text-medium-gray"
+              style="
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 178px;
+              "
+            >
+              {{ user.statusMessage }}
+            </p>
           </div>
         </div>
+        <context-menu
+          v-if="contextMenuVisible"
+          @close="contextMenuVisible = false"
+          :position="contextMenuPosition"
+        >
+          <div
+            class="context-menu-item"
+            @click="openUser(contextMenuItemIndex, true)"
+          >
+            Profile
+          </div>
+          <div
+            class="context-menu-item"
+            v-if="contextMenuItemIndex !== $store.userData.id"
+            @click="sendDm(contextMenuItemIndex)"
+          >
+            Message {{ findUser(contextMenuItemIndex).username }}
+          </div>
+          <div
+            class="context-menu-item"
+            v-if="
+              contextMenuItemIndex !== $store.userData.id &&
+              findUser(contextMenuItemIndex).friendRequests &&
+              !findUser(contextMenuItemIndex).friend?.status
+            "
+          >
+            Friend {{ findUser(contextMenuItemIndex).username }}
+          </div>
+          <div
+            class="context-menu-item"
+            v-else-if="
+              contextMenuItemIndex !== $store.userData.id &&
+              findUser(contextMenuItemIndex).friend?.status === 'accepted'
+            "
+          >
+            Remove {{ findUser(contextMenuItemIndex).username }}
+          </div>
+          <div
+            class="context-menu-item"
+            v-else-if="
+              contextMenuItemIndex !== $store.userData.id &&
+              findUser(contextMenuItemIndex).friend?.status === 'pending'
+            "
+          >
+            Cancel {{ findUser(contextMenuItemIndex).username }}
+          </div>
+          <div
+            class="context-menu-item"
+            v-else-if="
+              contextMenuItemIndex !== $store.userData.id &&
+              findUser(contextMenuItemIndex).friend?.status === 'incoming'
+            "
+          >
+            Accept {{ findUser(contextMenuItemIndex).username }}
+          </div>
+          <div
+            class="context-menu-item"
+            v-if="
+              currentChat.owner === $store.userData.id &&
+              contextMenuItemIndex !== $store.userData.id
+            "
+          >
+            Remove {{ findUser(contextMenuItemIndex.username) }}
+          </div>
+        </context-menu>
       </div>
       <div v-else-if="$store.search">
         <input
@@ -1019,9 +1084,11 @@ import ProfilePicture from "@/components/ProfilePicture.vue"
 import Sidebar from "@/components/Sidebar.vue"
 import SidebarLeft from "@/components/Sidebarleft.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
+import ContextMenu from "@/components/ContextMenu.vue"
 
 export default {
   components: {
+    ContextMenu,
     CustomMessage,
     Icons,
     Modal,
@@ -1054,7 +1121,10 @@ export default {
       chatNameInput: "",
       chatIconInput: "",
       requireVerification: true,
-      chatEdit: false
+      chatEdit: false,
+      contextMenuVisible: false,
+      contextMenuItemIndex: -1,
+      contextMenuPosition: { x: 0, y: 0 }
     }
   },
   methods: {
@@ -1359,6 +1429,7 @@ export default {
     },
     openUser(userId, user) {
       if (user !== null) {
+        this.contextMenuVisible = false
         this.axios
           .get("/api/user/" + userId)
           .then((res) => {
@@ -1406,10 +1477,10 @@ export default {
     findUser(userId) {
       const user = this.currentChat.users.find(
         (user) => user.id === parseInt(userId)
-      )?.username
+      )
       if (user) {
         return user
-      } else return userId
+      } else return { username: userId }
     },
     scroll(override) {
       this.$nextTick(() => {
@@ -1500,6 +1571,7 @@ export default {
         })
     },
     sendDm(id) {
+      this.contextMenuVisible = false
       this.axios
         .post(`/api/direct-message/${id}`)
         .then((res) => {
@@ -1520,9 +1592,17 @@ export default {
           setTimeout(this.$store.errorFalse, 5000)
         })
     },
+    showContextMenu(event, index) {
+      event.preventDefault()
+      this.contextMenuPosition = { x: event.clientX, y: event.clientY }
+      this.contextMenuVisible = true
+      this.contextMenuItemIndex = index
+    },
     escPressed(event) {
       if (event.key === "Escape") {
-        if (this.editing === "status") {
+        if (this.contextMenuVisible) {
+          this.contextMenuVisible = false
+        } else if (this.editing === "status") {
           this.editing = false
         } else if (this.profileShown) {
           this.profileShown = false
@@ -1544,6 +1624,14 @@ export default {
       this.scrolledUp =
         scrollTop + clientHeight <=
         scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
+    }
+  },
+  computed: {
+    onlineUsers() {
+      return this.currentChat.users.filter((user) => user.status === "online")
+    },
+    offlineUsers() {
+      return this.currentChat.users.filter((user) => user.status === "offline")
     }
   },
   async mounted() {

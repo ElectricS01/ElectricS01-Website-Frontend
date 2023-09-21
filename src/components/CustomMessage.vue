@@ -33,9 +33,9 @@ export default {
       return parts.map((part) => {
         if (part.startsWith("<@")) {
           const userId = part.match(/\d+/)[0]
-          return `<span @click="handleUserMentionClick(${userId})" class="mention">@${this.findUser(
-            userId
-          )}</span>`
+          return `<span @click="handleUserMentionClick(${userId})" class="mention">@${
+            this.findUser(userId).username
+          }</span>`
         }
         return part
       })
