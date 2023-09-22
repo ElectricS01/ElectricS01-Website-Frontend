@@ -25,7 +25,14 @@
       >
         Tetris
       </router-link>
-      <a href="https://bettercompassclub.netlify.app">BetterCompass Club</a>
+      <router-link
+        to="/collider"
+        :class="{ active: active('/collider') }"
+        @click="responsive_navbar()"
+      >
+        Collider
+      </router-link>
+      <a href="https://mapit.electrics01.com">Mapit (Demo)</a>
       <router-link
         v-if="$store.userData"
         class="right"

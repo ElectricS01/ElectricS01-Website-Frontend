@@ -22,6 +22,11 @@ const routes = [
     component: () => import("../views/Tetris.vue")
   },
   {
+    path: "/collider",
+    name: "collider",
+    component: () => import("../views/Collider.vue")
+  },
+  {
     path: "/chat",
     name: "chat",
     component: () => import("../views/BetterTest/Chat.vue")
@@ -54,11 +59,6 @@ const routes = [
     path: "/verify",
     name: "verify",
     component: () => import("../views/BetterTest/Verify.vue")
-  },
-  {
-    path: "/deez",
-    name: "69",
-    component: () => import("../views/69.vue")
   },
   {
     path: "/:a",

@@ -13,6 +13,9 @@
     <p class="message-text-medium-gray">
       My own rendition of the popular game Tetris made with GameMaker Studio
     </p>
+    <p class="message-text-medium-gray">
+      <a href="https://github.com/ElectricS01/Tetris">source code</a>
+    </p>
   </div>
 </template>
 
