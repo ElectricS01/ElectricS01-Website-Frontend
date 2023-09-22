@@ -31,12 +31,12 @@ export default {
   // created() {
   //   window.addEventListener("beforeunload", this.leaving)
   // },
-  // mounted() {
-  //   console.log(this.searchLocalStorageItems("userdata.ini")[0].value)
-  //   const favicon = document.getElementById("favicon")
-  //   favicon.href = "/icons/tetris.ico"
-  //   window.addEventListener("resize", this.updateDimensions)
-  // },
+  mounted() {
+    // console.log(this.searchLocalStorageItems("userdata.ini")[0].value)
+    // const favicon = document.getElementById("favicon")
+    // favicon.href = "/icons/tetris.ico"
+    window.addEventListener("resize", this.updateDimensions)
+  },
   methods: {
     // leaving() {
     //   this.axios
