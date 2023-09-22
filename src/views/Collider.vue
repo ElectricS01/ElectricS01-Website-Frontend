@@ -24,8 +24,8 @@
 export default {
   data() {
     return {
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight
+      viewportWidth: window.innerWidth - 16,
+      viewportHeight: window.innerHeight - 48
     }
   },
   // created() {
@@ -62,18 +62,16 @@ export default {
     //   return matchingItems
     // },
     updateDimensions() {
-      this.viewportWidth = window.innerWidth
-      this.viewportHeight = window.innerHeight
+      this.viewportWidth = window.innerWidth - 16
+      this.viewportHeight = window.innerHeight - 48
     }
   },
   computed: {
     minDimension() {
       const minWidthHeight = Math.min(this.viewportWidth, this.viewportHeight)
-      console.log(minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px")
-      console.log(minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px")
       return {
-        minWidth: minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px",
-        minHeight: minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px"
+        width: minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px",
+        height: minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px"
       }
     }
   },
