@@ -46,5 +46,6 @@ export default {
   border: 1px solid #212425;
   padding: 2px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  width: max-content;
 }
 </style>

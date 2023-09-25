@@ -446,7 +446,6 @@ input::placeholder {
 .context-menu-item {
   padding: 4px;
   cursor: pointer;
-  width: max-content;
 }
 
 .highlight {

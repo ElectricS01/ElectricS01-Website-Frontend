@@ -456,7 +456,7 @@
             </b>
           </div>
           <div
-            v-for="(message, index) in messages"
+            v-for="(message, index) in currentChat.messages"
             :key="message"
             :id="'message-' + index"
             style="padding: 4px"
@@ -470,7 +470,7 @@
               "
               v-if="
                 dayjsDate(message.createdAt) !==
-                dayjsDate(messages[index - 1]?.createdAt)
+                dayjsDate(currentChat.messages[index - 1]?.createdAt)
               "
             >
               <div style="border-bottom: 1px solid #212425; width: 50%"></div>
@@ -756,7 +756,7 @@
         <div
           v-for="user in onlineUsers"
           :key="user"
-          @contextmenu.prevent="showContextMenu($event, user.id)"
+          @contextmenu.prevent="showContextMenu($event, user)"
           style="cursor: pointer; margin: 0 0 4px; border-radius: 2px"
           class="message-grid"
           @click="openUser(user.id, user)"
@@ -814,7 +814,7 @@
         <div
           v-for="user in offlineUsers"
           :key="user"
-          @contextmenu.prevent="showContextMenu($event, user.id)"
+          @contextmenu.prevent="showContextMenu($event, user)"
           style="cursor: pointer; margin: 0 0 4px; border-radius: 2px"
           class="message-grid"
           @click="openUser(user.id, user)"
@@ -865,62 +865,68 @@
         >
           <div
             class="context-menu-item"
-            @click="openUser(contextMenuItemIndex, true)"
+            @click="openUser(contextMenuItemUser.id, true)"
           >
             Profile
           </div>
           <div
             class="context-menu-item"
-            v-if="contextMenuItemIndex !== $store.userData.id"
-            @click="sendDm(contextMenuItemIndex)"
+            v-if="contextMenuItemUser.id !== $store.userData.id"
+            @click="sendDm(contextMenuItemUser.id)"
           >
-            Message {{ findUser(contextMenuItemIndex).username }}
+            Message {{ contextMenuItemUser.username }}
           </div>
           <div
             class="context-menu-item"
             v-if="
-              contextMenuItemIndex !== $store.userData.id &&
-              findUser(contextMenuItemIndex).friendRequests &&
-              !findUser(contextMenuItemIndex).friend?.status
+              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.friendRequests &&
+              !contextMenuItemUser.friend?.status
             "
+            @click="addFriend(contextMenuItemUser.id, true)"
           >
-            Friend {{ findUser(contextMenuItemIndex).username }}
+            Friend {{ contextMenuItemUser.username }}
           </div>
           <div
             class="context-menu-item"
             v-else-if="
-              contextMenuItemIndex !== $store.userData.id &&
-              findUser(contextMenuItemIndex).friend?.status === 'accepted'
+              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.friend?.status === 'accepted'
             "
+            @click="addFriend(contextMenuItemUser.id, true)"
           >
-            Remove {{ findUser(contextMenuItemIndex).username }}
+            Unfriend {{ contextMenuItemUser.username }}
           </div>
           <div
             class="context-menu-item"
             v-else-if="
-              contextMenuItemIndex !== $store.userData.id &&
-              findUser(contextMenuItemIndex).friend?.status === 'pending'
+              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.friend?.status === 'pending'
             "
+            @click="addFriend(contextMenuItemUser.id, true)"
           >
-            Cancel {{ findUser(contextMenuItemIndex).username }}
+            Cancel {{ contextMenuItemUser.username }}
           </div>
           <div
             class="context-menu-item"
             v-else-if="
-              contextMenuItemIndex !== $store.userData.id &&
-              findUser(contextMenuItemIndex).friend?.status === 'incoming'
+              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.friend?.status === 'incoming'
             "
+            @click="addFriend(contextMenuItemUser.id, true)"
           >
-            Accept {{ findUser(contextMenuItemIndex).username }}
+            Accept {{ contextMenuItemUser.username }}
           </div>
           <div
             class="context-menu-item"
             v-if="
               currentChat.owner === $store.userData.id &&
-              contextMenuItemIndex !== $store.userData.id
+              contextMenuItemUser.id !== $store.userData.id &&
+              currentChat.type === 0
             "
+            @click="removeUser(contextMenuItemUser.id)"
           >
-            Remove {{ findUser(contextMenuItemIndex.username) }}
+            Remove {{ contextMenuItemUser.username }}
           </div>
         </context-menu>
       </div>
@@ -948,7 +954,7 @@
             "
             v-if="
               dayjsDate(message.createdAt) !==
-              dayjsDate(messages[index - 1]?.createdAt)
+              dayjsDate(currentChat.messages[index - 1]?.createdAt)
             "
           >
             <div style="border-bottom: 1px solid #212425; width: 50%"></div>
@@ -1099,7 +1105,6 @@ export default {
   },
   data() {
     return {
-      messages: [],
       searchMessages: [],
       chats: [],
       currentChat: {},
@@ -1123,7 +1128,7 @@ export default {
       requireVerification: true,
       chatEdit: false,
       contextMenuVisible: false,
-      contextMenuItemIndex: -1,
+      contextMenuItemUser: {},
       contextMenuPosition: { x: 0, y: 0 }
     }
   },
@@ -1162,17 +1167,29 @@ export default {
     },
     userSort(property) {
       if (property !== "id") {
-        this.currentChat.users.sort(function (a, b) {
-          if (a[property] === null && b[property] === null) {
-            return 0
-          } else if (a[property] === null) {
-            return 1
-          } else if (b[property] === null) {
-            return -1
-          } else {
-            return a[property].localeCompare(b[property])
-          }
-        })
+        this.currentChat.users
+          .sort(function (a, b) {
+            if (a.username === null && b.username === null) {
+              return 0
+            } else if (a.username === null) {
+              return 1
+            } else if (b.username === null) {
+              return -1
+            } else {
+              return a.username.localeCompare(b.username)
+            }
+          })
+          .sort(function (a, b) {
+            if (a[property] === null && b[property] === null) {
+              return 0
+            } else if (a[property] === null) {
+              return 1
+            } else if (b[property] === null) {
+              return -1
+            } else {
+              return a[property].localeCompare(b[property])
+            }
+          })
       } else {
         this.currentChat.users.sort(function (a, b) {
           return a.id - b.id
@@ -1205,9 +1222,7 @@ export default {
             this.currentChat = res.data.chat
             this.inputText = ""
             this.replyTo = null
-            this.messages = res.data.chat.messages
-            this.messages.focus = false
-            this.loadingMessages = false
+            this.currentChat.messages.focus = false
             this.scroll()
           })
           .catch((e) => {
@@ -1220,9 +1235,8 @@ export default {
       this.axios
         .delete(`/api/delete/${messageId}`)
         .then((res) => {
-          this.messages = res.data
-          this.messages.focus = false
-          this.loadingMessages = false
+          this.currentChat.messages = res.data
+          this.currentChat.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
@@ -1250,10 +1264,8 @@ export default {
           this.chatSort()
           this.currentChat = res.data.chat
           this.replyTo = null
-          this.loadingMessages = false
-          this.messages = res.data.chat.messages
-          if (this.messages) {
-            this.messages.focus = false
+          if (this.currentChat.messages) {
+            this.currentChat.messages.focus = false
             this.scroll()
           }
         })
@@ -1274,9 +1286,8 @@ export default {
         })
         .then((res) => {
           this.editing = false
-          this.messages = res.data
-          this.messages.focus = false
-          this.loadingMessages = false
+          this.currentChat.messages = res.data
+          this.currentChat.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
@@ -1310,15 +1321,15 @@ export default {
       if (this.searchText) {
         const keywords = this.searchText.toLowerCase().split(" ")
 
-        this.searchMessages = this.messages.filter((message) => {
+        this.searchMessages = this.currentChat.messages.filter((message) => {
           return keywords.some((keyword) => {
             return message.messageContents.toLowerCase().includes(keyword)
           })
         })
       }
     },
-    replyToMessage(messsageId) {
-      this.replyTo = messsageId
+    replyToMessage(messageId) {
+      this.replyTo = messageId
       const input = document.getElementById("input")
       input?.focus()
     },
@@ -1327,11 +1338,11 @@ export default {
         .get(`/api/chat/${id || 1}`)
         .then((res) => {
           this.currentChat = res.data
+          this.userSort(this.sortUsers)
           this.loadingUsers = false
           this.replyTo = null
           this.loadingMessages = false
-          this.messages = res.data.messages
-          this.messages.focus = false
+          this.currentChat.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
@@ -1365,10 +1376,8 @@ export default {
             this.chatSort()
             this.currentChat = res.data.chat
             this.replyTo = null
-            this.loadingMessages = false
-            this.messages = res.data.chat.messages
-            if (this.messages) {
-              this.messages.focus = false
+            if (this.currentChat.messages) {
+              this.currentChat.messages.focus = false
               this.scroll()
             }
           })
@@ -1403,10 +1412,8 @@ export default {
             this.chatSort()
             this.currentChat = res.data.chat
             this.replyTo = null
-            this.loadingMessages = false
-            this.messages = res.data.chat.messages
-            if (this.messages) {
-              this.messages.focus = false
+            if (this.currentChat.messages) {
+              this.currentChat.messages.focus = false
               this.scroll()
             }
           })
@@ -1482,11 +1489,29 @@ export default {
         return user
       } else return { username: userId }
     },
+    removeUser(userId) {
+      this.contextMenuVisible = false
+      this.axios
+        .post(`/api/remove/${this.currentChat.id}/${userId}`)
+        .then((res) => {
+          this.chats = res.data.chats
+          this.chatSort()
+          this.currentChat = res.data.chat
+          if (this.currentChat.messages) {
+            this.currentChat.messages.focus = false
+            this.scroll()
+          }
+        })
+        .catch((e) => {
+          this.$store.error = e.response.data.message
+          setTimeout(this.$store.errorFalse, 5000)
+        })
+    },
     scroll(override) {
       this.$nextTick(() => {
         try {
-          if ((!this.scrolledUp || override) && this.messages) {
-            const lastIndex = this.messages.length - 1
+          if ((!this.scrolledUp || override) && this.currentChat.messages) {
+            const lastIndex = this.currentChat.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
             if (this.editing) {
               this.scrolledUp = false
@@ -1503,8 +1528,8 @@ export default {
       })
     },
     merge(message, index) {
-      if (this.messages[index - 1]) {
-        const previousMessage = this.messages[index - 1]
+      if (this.currentChat.messages[index - 1]) {
+        const previousMessage = this.currentChat.messages[index - 1]
         return (
           previousMessage.userName === message.userName &&
           !message.reply &&
@@ -1515,12 +1540,14 @@ export default {
       }
     },
     findMessage(messageId) {
-      return this.messages.find((message) => message.id === messageId)
+      return this.currentChat.messages.find(
+        (message) => message.id === messageId
+      )
     },
     goToMessage(messageId) {
       const div = document.getElementById("div")
       const element = document.getElementById(
-        "message-" + this.messages.indexOf(messageId)
+        "message-" + this.currentChat.messages.indexOf(messageId)
       )
       const elementRect = element.getBoundingClientRect()
       const absoluteElementTop = elementRect.top + div.scrollTop
@@ -1551,7 +1578,7 @@ export default {
       })
     },
     editLast() {
-      this.messageEdit = this.messages.filter(
+      this.messageEdit = this.currentChat.messages.filter(
         (message) => Number(message.userName) === this.$store.userData.id
       )
       if (this.messageEdit.length > 0) {
@@ -1559,11 +1586,18 @@ export default {
         this.editing = this.messageEdit.slice(-1)[0].id
       }
     },
-    addFriend(userId) {
+    addFriend(userId, notOpen) {
       this.axios
         .post(`/api/friend/${userId}`)
-        .then(() => {
-          this.openUser(userId)
+        .then(async () => {
+          if (!notOpen) {
+            this.openUser(userId)
+          } else {
+            await this.getChat(this.currentChat.id)
+            this.contextMenuItemUser = await this.findUser(
+              this.contextMenuItemUser.id
+            )
+          }
         })
         .catch((e) => {
           this.$store.error = e.response.data.message
@@ -1582,9 +1616,7 @@ export default {
           this.currentChat = res.data.chat
           this.inputText = ""
           this.replyTo = null
-          this.loadingMessages = false
-          this.messages = res.data.chat.messages
-          this.messages.focus = false
+          this.currentChat.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
@@ -1592,11 +1624,11 @@ export default {
           setTimeout(this.$store.errorFalse, 5000)
         })
     },
-    showContextMenu(event, index) {
+    showContextMenu(event, user) {
       event.preventDefault()
       this.contextMenuPosition = { x: event.clientX, y: event.clientY }
       this.contextMenuVisible = true
-      this.contextMenuItemIndex = index
+      this.contextMenuItemUser = user
     },
     escPressed(event) {
       if (event.key === "Escape") {
