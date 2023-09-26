@@ -27,7 +27,20 @@ const routes = [
     component: () => import("../views/Collider.vue")
   },
   {
+    path: "/user",
+    redirect: "/chat/1"
+  },
+  {
+    path: "/user/:id",
+    name: "user",
+    component: () => import("../views/BetterTest/Chat.vue")
+  },
+  {
     path: "/chat",
+    redirect: "/chat/1"
+  },
+  {
+    path: "/chat/:id",
     name: "chat",
     component: () => import("../views/BetterTest/Chat.vue")
   },

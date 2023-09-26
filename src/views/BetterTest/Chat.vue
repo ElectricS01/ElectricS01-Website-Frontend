@@ -1338,6 +1338,7 @@ export default {
         .get(`/api/chat/${id || 1}`)
         .then((res) => {
           this.currentChat = res.data
+          this.$router.push(`/chat/${this.currentChat.id}`)
           this.userSort(this.sortUsers)
           this.loadingUsers = false
           this.replyTo = null
@@ -1674,8 +1675,18 @@ export default {
     const div = document.getElementById("div")
     div.addEventListener("scroll", this.scrollEvent)
 
+    if (this.$route.path.startsWith("/user")) {
+      this.openUser(this.$route.params.id)
+    }
     await this.getChats()
-    await this.getChat()
+    if (
+      this.chats.find((chat) => chat.id === parseInt(this.$route.params.id))
+    ) {
+      await this.getChat(this.$route.params.id)
+    } else {
+      await this.getChat()
+      this.$router.push("/chat/1")
+    }
     this.scroll(true)
   },
   created() {
