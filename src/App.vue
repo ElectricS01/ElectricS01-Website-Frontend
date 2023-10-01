@@ -90,8 +90,8 @@ export default {
   name: "App",
   components: { Icons },
   methods: {
-    active(route) {
-      return route === this.$route.path
+    active(routePattern) {
+      return this.$route.path.startsWith(routePattern)
     },
     responsive_navbar() {
       const responsive_navbar = document.getElementById("mobile-navbar")

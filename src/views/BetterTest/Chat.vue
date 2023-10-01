@@ -1,13 +1,12 @@
 <template>
   <transition>
     <modal
-      v-if="profileShown"
-      :is-active="profileShown"
-      @close=";(profileShown = false), (editing = false)"
+      v-if="showUser"
+      :is-active="typeof showUser === 'object'"
+      @close=";(showUser = false), (editing = false)"
     >
       <img
-        :src="showUser.banner || 'https://i.troplo.com/i/d81dabf74c88.png'"
-        width="500"
+        :src="showUser.banner || 'https://i.electrics01.com/i/d81dabf74c88.png'"
         height="100"
         alt="Profile banner"
         class="profile-banner"
@@ -26,15 +25,7 @@
               ></status-indicator>
             </svg>
           </div>
-          <div
-            style="
-              flex: 1 1 auto;
-              word-wrap: break-word;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            "
-            class="message-item"
-          >
+          <div class="profile-user">
             <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
             <div v-if="editing !== 'status'">
               <p class="message-text-large" style="word-wrap: break-word">
@@ -57,12 +48,12 @@
               placeholder="Edit your status"
               @keydown.enter="editStatusMessage()"
               v-model="editStatus"
-              style="margin: 1px; width: calc(100% - 2px)"
+              class="profile-input"
               id="status"
               autocomplete="off"
             />
           </div>
-          <div style="flex: 0 1 auto; white-space: nowrap">
+          <div class="profile-buttons">
             <button
               v-if="
                 (showUser.id !== $store.userData.id &&
@@ -152,7 +143,7 @@
           </div>
         </div>
         <div class="profile-spacer"></div>
-        <div style="height: 332px; overflow-y: auto" class="scroll-bar">
+        <div class="profile-info scroll-bar">
           <div v-if="showUser.createdAt">
             <p>Date Created</p>
             <p class="message-text-large">
@@ -296,10 +287,20 @@
             <span class="slider"></span>
           </div>
         </div>
+        <div class="text-small">
+          <label for="add-user">Add a user</label>
+        </div>
+        <input
+          placeholder="Add a user"
+          @keydown.enter="chatUserEnter"
+          class="modal-input"
+          v-model="chatUserInput"
+          id="add-user"
+        />
         <button @click="saveChat">Save</button>
         <button
           v-if="chatEdit !== 1"
-          class="red-button"
+          class="button-red"
           @click="deleteChat(chatEdit)"
         >
           Delete
@@ -1114,7 +1115,6 @@ export default {
       editStatus: "",
       editing: false,
       searchText: "",
-      profileShown: false,
       createChatShown: false,
       loadingMessages: true,
       loadingUsers: true,
@@ -1126,6 +1126,8 @@ export default {
       chatNameInput: "",
       chatIconInput: "",
       requireVerification: true,
+      chatUserInput: "",
+      chatUsers: [],
       chatEdit: false,
       contextMenuVisible: false,
       contextMenuItemUser: {},
@@ -1136,10 +1138,20 @@ export default {
     async getChats() {
       await this.axios
         .get("/api/chats")
-        .then((res) => {
+        .then(async (res) => {
           this.chats = res.data
           this.loadingChats = false
           this.chatSort()
+          if (
+            this.chats.find(
+              (chat) => chat.id === parseInt(this.$route.params.id)
+            )
+          ) {
+            await this.getChat(this.$route.params.id)
+          } else {
+            await this.getChat()
+            this.$router.push("/chat/1")
+          }
         })
         .catch((e) => {
           if (e.message === "Request failed with status code 401") {
@@ -1250,6 +1262,7 @@ export default {
       this.chatDescriptionInput = chat.description
       this.chatIconInput = chat.icon
       this.requireVerification = chat.requireVerification
+      this.chatUsers = this.currentChat.users.map((user) => user.id)
     },
     deleteChat(chatId) {
       this.axios
@@ -1401,7 +1414,11 @@ export default {
             name: this.chatNameInput,
             description: this.chatDescriptionInput,
             icon: this.chatIconInput,
-            requireVerification: this.requireVerification
+            requireVerification: this.requireVerification,
+            users: this.chatUsers.filter(
+              (user) =>
+                !this.currentChat.users.map((user) => user.id).includes(user)
+            )
           })
           .then((res) => {
             this.chatEdit = false
@@ -1426,6 +1443,16 @@ export default {
     toggle() {
       this.requireVerification = !this.requireVerification
     },
+    chatUserEnter() {
+      const userId = parseInt(this.chatUserInput)
+      this.chatUserInput = ""
+      if (this.chatUsers.indexOf(userId) === -1 && Number.isInteger(userId)) {
+        this.chatUsers.push(userId)
+      } else {
+        this.$store.error = "This user is already apart of this group"
+        setTimeout(this.$store.errorFalse, 2500)
+      }
+    },
     dayjs(date) {
       return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     },
@@ -1442,7 +1469,6 @@ export default {
           .get("/api/user/" + userId)
           .then((res) => {
             this.showUser = res.data
-            this.profileShown = true
             if (this.showUser.tetris) {
               this.showUser.tetris = this.formatINI(this.showUser.tetris)
             }
@@ -1610,7 +1636,7 @@ export default {
       this.axios
         .post(`/api/direct-message/${id}`)
         .then((res) => {
-          this.profileShown = false
+          this.showUser = false
           this.editing = false
           this.chats = res.data.chats
           this.chatSort()
@@ -1637,13 +1663,15 @@ export default {
           this.contextMenuVisible = false
         } else if (this.editing === "status") {
           this.editing = false
-        } else if (this.profileShown) {
-          this.profileShown = false
+        } else if (this.showUser) {
+          this.showUser = false
+        } else if (this.chatEdit) {
+          this.chatEdit = false
         } else if (this.editing) {
           this.editing = false
         } else if (this.replyTo) {
           this.replyTo = null
-        } else if (!this.profileShown) {
+        } else if (!this.showUser) {
           this.scroll(true)
         }
       }
@@ -1679,14 +1707,6 @@ export default {
       this.openUser(this.$route.params.id)
     }
     await this.getChats()
-    if (
-      this.chats.find((chat) => chat.id === parseInt(this.$route.params.id))
-    ) {
-      await this.getChat(this.$route.params.id)
-    } else {
-      await this.getChat()
-      this.$router.push("/chat/1")
-    }
     this.scroll(true)
   },
   created() {

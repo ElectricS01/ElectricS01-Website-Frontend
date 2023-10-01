@@ -28,7 +28,7 @@ body {
   height: calc(100% - 48px);
   overflow-y: auto;
   text-align: center;
-  padding: 0 8px 8px 8px;
+  padding: 0 8px 8px;
 }
 
 .chat-container {
@@ -71,7 +71,7 @@ button {
   cursor: pointer;
 }
 
-.red-button {
+.button-red {
   color: #ff2f2f;
 }
 
@@ -80,7 +80,7 @@ button {
 .profile-button-remove,
 .profile-button-pending {
   color: #1e90ff;
-  padding: 8px 8px;
+  padding: 8px;
   font-size: 14px;
   display: flex;
   width: 100%;
@@ -94,6 +94,8 @@ button {
   background-color: rgb(71, 191, 76, 0.1);
 }
 
+.button-red:hover,
+.settings-button-red:hover,
 .profile-button-remove:hover {
   background-color: rgb(255, 47, 47, 0.1);
 }
@@ -102,24 +104,13 @@ button {
   background-color: rgb(128, 128, 128, 0.1);
 }
 
-.profile-picture {
-  position: relative;
-  margin-right: 8px;
-  height: 40px;
-  width: 40px;
+.profile-buttons {
+  white-space: nowrap;
 }
 
-.profile-picture-large {
-  position: relative;
-  margin-right: 16px;
-  height: 80px;
-  width: 80px;
-}
-
-.profile-spacer {
-  border-bottom: 1px solid #3d4244;
-  width: 100%;
-  margin: 20px 0;
+.profile-page {
+  padding: 24px;
+  height: 448px;
 }
 
 .profile-banner {
@@ -130,9 +121,41 @@ button {
   user-select: none;
 }
 
-.profile-page {
-  padding: 24px;
-  height: 448px;
+.profile-user {
+  flex: 1 1 auto;
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-input {
+  margin: 1px;
+  width: calc(100% - 2px);
+}
+
+.profile-spacer {
+  border-bottom: 1px solid #3d4244;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.profile-info {
+  height: 332px;
+  overflow-y: auto;
+}
+
+.profile-picture-large {
+  position: relative;
+  margin-right: 16px;
+  height: 80px;
+  width: 80px;
+}
+
+.profile-picture {
+  position: relative;
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
 }
 
 .chanel-menu {
@@ -570,7 +593,7 @@ h4 {
 }
 
 .grid {
-  padding: 18px 0 18px 0;
+  padding: 18px 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -733,13 +756,8 @@ input:checked + .slider:before {
   cursor: pointer;
   font-size: 16px;
   display: table;
-  color: #ff2f2f;
   border-radius: 2px;
-}
-
-.red-button:hover,
-.settings-button-red:hover {
-  background-color: rgb(255, 47, 47, 0.1);
+  color: #ff2f2f;
 }
 
 .settings-spacer {
@@ -750,7 +768,7 @@ input:checked + .slider:before {
 
 .settings-modal {
   text-align: center;
-  padding: 32px 32px 18px 32px;
+  padding: 32px 32px 18px;
 }
 
 .settings-input {

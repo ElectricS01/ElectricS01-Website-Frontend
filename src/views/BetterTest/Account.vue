@@ -141,7 +141,7 @@
                 <img
                   :src="
                     $store.userData?.banner ||
-                    'https://i.troplo.com/i/d81dabf74c88.png'
+                    'https://i.electrics01.com/i/d81dabf74c88.png'
                   "
                   width="500"
                   height="100"
@@ -305,7 +305,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.175</div>
+            <div>Version: 1.176</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
