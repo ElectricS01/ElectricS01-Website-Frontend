@@ -5,7 +5,7 @@
       Hi, I'm ElectricS01, I make things in Vue, Javascript, Python and
       GameMaker Studio
     </p>
-    <div class="grid">
+    <div class="grid-home">
       <div class="box grid-item">
         <router-link class="border" to="/tonkgame">
           <img
@@ -51,7 +51,8 @@
             <p class="text-medium">Mapit (Demo)</p>
             <div class="spacer"></div>
             <p class="message-text-medium-gray">
-              Mapit is an interactive school map program to make it easier for all people to navigate school
+              Mapit is an interactive school map program to make it easier for
+              all people to navigate school
             </p>
           </div>
         </a>

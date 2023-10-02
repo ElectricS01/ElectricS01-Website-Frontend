@@ -6,23 +6,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Sidebar",
-  props: {
-    isActive: {
-      type: Boolean,
-      default: false
-    }
-  },
-  methods: {
-    closeModal() {
-      this.$emit("close")
-    }
-  }
-}
-</script>
-
 <style scoped>
 .sidebar-border {
   overflow-y: auto;

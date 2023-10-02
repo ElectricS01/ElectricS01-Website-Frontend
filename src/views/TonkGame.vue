@@ -12,8 +12,8 @@
     ></iframe>
     <h3>TonkGame version 4.2.10.0 (beta 11)</h3>
     <p class="message-text-medium-gray">
-      My first ever coding project, a simple 2D Top Down Shooter made
-      with GameMaker Studio
+      My first ever coding project, a simple 2D Top Down Shooter made with
+      GameMaker Studio
     </p>
   </div>
 </template>

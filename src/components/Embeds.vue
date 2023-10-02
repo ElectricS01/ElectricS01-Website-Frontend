@@ -4,16 +4,13 @@
       :src="embed.mediaProxyLink"
       class="embed"
       alt="Embedded image"
-      @load="scroll ? scroll() : ''"
+      @load="scroll()"
     />
   </div>
 </template>
 
-<script>
-export default {
-  name: "Embeds",
-  props: ["embed", "scroll"]
-}
+<script setup>
+defineProps(["embed", "scroll"])
 </script>
 
 <style scoped>

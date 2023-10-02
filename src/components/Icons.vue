@@ -58,9 +58,6 @@
   </svg>
 </template>
 
-<script>
-export default {
-  name: "Icons",
-  props: ["color", "size", "icon"]
-}
+<script setup>
+defineProps(["color", "size", "icon"])
 </script>

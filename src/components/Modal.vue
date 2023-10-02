@@ -16,24 +16,17 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Icons from "@/components/Icons.vue"
 
-export default {
-  name: "Modal",
-  components: { Icons },
-  props: {
-    isActive: {
-      type: Boolean,
-      default: false
-    }
-  },
-  methods: {
-    closeModal() {
-      this.$emit("close")
-    }
+defineProps({
+  isActive: {
+    default: false
   }
-}
+})
+const emit = defineEmits(["close"])
+
+const closeModal = () => emit("close")
 </script>
 
 <style>

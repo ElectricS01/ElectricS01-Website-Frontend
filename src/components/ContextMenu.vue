@@ -4,39 +4,22 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    position: Object
-  },
-  computed: {
-    menuStyle() {
-      const adjustedX = this.position.x + window.scrollX
-      const adjustedY = this.position.y + window.scrollY
+<script setup>
+import { computed } from "vue"
 
-      return {
-        position: "absolute",
-        left: `${adjustedX}px`,
-        top: `${adjustedY - 48}px`,
-        zIndex: 3
-      }
-    }
-  },
-  mounted() {
-    document.addEventListener("click", this.handleDocumentClick)
-  },
-  beforeUnmount() {
-    document.removeEventListener("click", this.handleDocumentClick)
-  },
-  methods: {
-    handleDocumentClick(event) {
-      const contextMenuElement = this.$el
-      if (!contextMenuElement.contains(event.target)) {
-        this.$emit("close")
-      }
-    }
+const props = defineProps(["position"])
+
+const menuStyle = computed(() => {
+  const adjustedX = props.position.x + window.scrollX
+  const adjustedY = props.position.y + window.scrollY
+
+  return {
+    position: "absolute",
+    left: `${adjustedX}px`,
+    top: `${adjustedY - 48}px`,
+    zIndex: 3
   }
-}
+})
 </script>
 
 <style scoped>

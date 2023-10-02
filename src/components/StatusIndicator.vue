@@ -29,11 +29,6 @@
   />
 </template>
 
-<script>
-export default {
-  name: "StatusIndicator",
-  props: ["size", "status"]
-}
+<script setup>
+defineProps(["size", "status"])
 </script>
-
-<style scoped></style>

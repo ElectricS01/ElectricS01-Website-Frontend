@@ -1,174 +1,15 @@
 <template>
-  <transition>
-    <modal
-      v-if="showUser"
-      :is-active="typeof showUser === 'object'"
-      @close=";(showUser = false), (editing = false)"
-    >
-      <img
-        :src="showUser.banner || 'https://i.electrics01.com/i/d81dabf74c88.png'"
-        height="100"
-        alt="Profile banner"
-        class="profile-banner"
-      />
-      <div class="profile-page">
-        <div class="profile-grid">
-          <div class="profile-picture-large">
-            <profile-picture
-              size="80"
-              :avatar="showUser.avatar"
-            ></profile-picture>
-            <svg class="online-indicator" width="20" height="20">
-              <status-indicator
-                size="8"
-                :status="showUser.status"
-              ></status-indicator>
-            </svg>
-          </div>
-          <div class="profile-user">
-            <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
-            <div v-if="editing !== 'status'">
-              <p class="message-text-large" style="word-wrap: break-word">
-                {{ showUser.statusMessage }}
-                <icons
-                  v-if="showUser.id === $store.userData.id"
-                  style="cursor: pointer"
-                  size="16"
-                  icon="edit"
-                  @click="
-                    ;(editing = 'status'),
-                      (editStatus = showUser.statusMessage),
-                      editFocus()
-                  "
-                />
-              </p>
-            </div>
-            <input
-              v-else
-              placeholder="Edit your status"
-              @keydown.enter="editStatusMessage()"
-              v-model="editStatus"
-              class="profile-input"
-              id="status"
-              autocomplete="off"
-            />
-          </div>
-          <div class="profile-buttons">
-            <button
-              v-if="
-                (showUser.id !== $store.userData.id &&
-                  showUser.directMessages !== 'no one') ||
-                (showUser.directMessages !== 'no one' &&
-                  showUser.friend?.status)
-              "
-              class="profile-button-message"
-              @click="sendDm(showUser.id)"
-            >
-              <icons
-                style="padding-right: 4px"
-                color="#1e90ff"
-                size="16"
-                icon="message"
-              />
-              Send Message
-            </button>
-            <button
-              v-if="
-                showUser.friendRequests &&
-                showUser.id !== $store.userData.id &&
-                !showUser.friend?.status
-              "
-              class="profile-button-add"
-              style="color: #47bf4c"
-              @click="addFriend(showUser.id)"
-            >
-              <icons
-                style="padding-right: 4px"
-                color="#47bf4c"
-                size="16"
-                icon="add-user"
-              />
-              Add Friend
-            </button>
-            <button
-              v-if="
-                showUser.id !== $store.userData.id &&
-                showUser.friend?.status === 'accepted'
-              "
-              class="profile-button-remove"
-              style="color: #ff2f2f"
-              @click="addFriend(showUser.id)"
-            >
-              <icons
-                style="padding-right: 4px"
-                color="#FF2F2F"
-                size="16"
-                icon="remove-user"
-              />
-              Remove Friend
-            </button>
-            <button
-              v-if="
-                showUser.friendRequests && showUser.friend?.status === 'pending'
-              "
-              class="profile-button-pending"
-              style="color: #808080"
-              @click="addFriend(showUser.id)"
-            >
-              <icons
-                style="padding-right: 4px"
-                color="#808080"
-                size="16"
-                icon="remove-user"
-              />
-              Pending
-            </button>
-            <button
-              v-if="
-                showUser.id !== $store.userData.id &&
-                showUser.friend?.status === 'incoming'
-              "
-              class="profile-button-pending"
-              style="color: #47bf4c"
-              @click="addFriend(showUser.id)"
-            >
-              <icons
-                style="padding-right: 4px"
-                color="#47bf4c"
-                size="16"
-                icon="add-user"
-              />
-              Accept Friend
-            </button>
-          </div>
-        </div>
-        <div class="profile-spacer"></div>
-        <div class="profile-info scroll-bar">
-          <div v-if="showUser.createdAt">
-            <p>Date Created</p>
-            <p class="message-text-large">
-              {{ dayjsDate(showUser.createdAt) }}
-            </p>
-            <div class="profile-spacer"></div>
-          </div>
-          <div>
-            <p>Description</p>
-            <p class="message-text-large" style="word-wrap: break-word">
-              {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
-            </p>
-          </div>
-          <div v-if="showUser.tetris">
-            <div class="profile-spacer"></div>
-            <p>Tetris Scores</p>
-            <p>Easy mode: {{ showUser.tetris[0].highscore_easy }} lines</p>
-            <p>Medium mode: {{ showUser.tetris[1].highscore_medium }} lines</p>
-            <p>Hard mode: {{ showUser.tetris[2].highscore_hard }} lines</p>
-            <p>God mode: {{ showUser.tetris[3].highscore_god }} lines</p>
-          </div>
-        </div>
-      </div>
-    </modal>
-  </transition>
+  <user-preview
+    :showUser="showUser"
+    :editing="editing"
+    :sendDm="sendDm"
+    :addFriend="addFriend"
+    @showUser="showUser = $event"
+    @editing="editing = $event"
+    @statusMessage="showUser.statusMessage = $event"
+    @users="currentChat.user = $event"
+    @userSort="userSort($store.sortUsers)"
+  ></user-preview>
   <transition>
     <modal
       v-if="createChatShown"
@@ -470,8 +311,8 @@
                 align-items: center;
               "
               v-if="
-                dayjsDate(message.createdAt) !==
-                dayjsDate(currentChat.messages[index - 1]?.createdAt)
+                $store.dayjsDate(message.createdAt) !==
+                $store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
               "
             >
               <div style="border-bottom: 1px solid #212425; width: 50%"></div>
@@ -479,7 +320,7 @@
                 style="padding: 0 4px; white-space: nowrap"
                 class="message-text-small"
               >
-                {{ dayjsDate(message.createdAt) }}
+                {{ $store.dayjsDate(message.createdAt) }}
               </p>
               <div style="border-bottom: 1px solid #212425; width: 50%"></div>
             </div>
@@ -737,10 +578,12 @@
     >
       <div v-if="!loadingUsers && !$store.search">
         <div class="filter-button" @click="userSortPress()">
-          <p v-if="sortUsers === 'id'">Sort: Id</p>
-          <p v-else-if="sortUsers === 'username'">Sort: Username</p>
-          <p v-else-if="sortUsers === 'status'">Sort: Status</p>
-          <p v-else-if="sortUsers === 'statusMessage'">Sort: Status Message</p>
+          <p v-if="$store.sortUsers === 'id'">Sort: Id</p>
+          <p v-else-if="$store.sortUsers === 'username'">Sort: Username</p>
+          <p v-else-if="$store.sortUsers === 'status'">Sort: Status</p>
+          <p v-else-if="$store.sortUsers === 'statusMessage'">
+            Sort: Status Message
+          </p>
         </div>
         <div
           v-if="currentChat.users?.some((user) => user.status !== 'offline')"
@@ -954,8 +797,8 @@
               align-items: center;
             "
             v-if="
-              dayjsDate(message.createdAt) !==
-              dayjsDate(currentChat.messages[index - 1]?.createdAt)
+              $store.dayjsDate(message.createdAt) !==
+              $store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
             "
           >
             <div style="border-bottom: 1px solid #212425; width: 50%"></div>
@@ -963,7 +806,7 @@
               style="padding: 0 4px; white-space: nowrap"
               class="message-text-small"
             >
-              {{ dayjsDate(message.createdAt) }}
+              {{ $store.dayjsDate(message.createdAt) }}
             </p>
             <div style="border-bottom: 1px solid #212425; width: 50%"></div>
           </div>
@@ -1089,12 +932,14 @@ import Icons from "@/components/Icons.vue"
 import Modal from "@/components/Modal.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import Sidebar from "@/components/Sidebar.vue"
-import SidebarLeft from "@/components/Sidebarleft.vue"
+import SidebarLeft from "@/components/SidebarLeft.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/ContextMenu.vue"
+import UserPreview from "@/components/UserPreview.vue"
 
 export default {
   components: {
+    UserPreview,
     ContextMenu,
     CustomMessage,
     Icons,
@@ -1121,7 +966,6 @@ export default {
       loadingChats: true,
       scrolledUp: false,
       showUser: false,
-      sortUsers: "id",
       chatDescriptionInput: "",
       chatNameInput: "",
       chatIconInput: "",
@@ -1163,19 +1007,19 @@ export default {
         })
     },
     userSortPress() {
-      if (this.sortUsers === "id") {
+      if (this.$store.sortUsers === "id") {
         localStorage.setItem("sortUsers", "username")
-      } else if (this.sortUsers === "username") {
+      } else if (this.$store.sortUsers === "username") {
         localStorage.setItem("sortUsers", "status")
-      } else if (this.sortUsers === "status") {
+      } else if (this.$store.sortUsers === "status") {
         localStorage.setItem("sortUsers", "statusMessage")
       } else {
         localStorage.setItem("sortUsers", "id")
       }
       if (localStorage.getItem("sortUsers")) {
-        this.sortUsers = localStorage.getItem("sortUsers")
+        this.$store.sortUsers = localStorage.getItem("sortUsers")
       }
-      this.userSort(this.sortUsers)
+      this.userSort(this.$store.sortUsers)
     },
     userSort(property) {
       if (property !== "id") {
@@ -1308,28 +1152,6 @@ export default {
           setTimeout(this.$store.errorFalse, 5000)
         })
     },
-    editStatusMessage() {
-      if (
-        this.editStatus.trim() === this.showUser.statusMessage ||
-        this.editStatus.trim().length > 50
-      ) {
-        return (this.editing = false)
-      }
-      this.axios
-        .patch("/api/edit-status-message", {
-          statusMessage: this.editStatus.trim()
-        })
-        .then((res) => {
-          this.showUser.statusMessage = res.data.statusMessage
-          this.editing = false
-          this.currentChat.users = res.data.users
-          this.userSort(this.sortUsers)
-        })
-        .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-    },
     searchChat() {
       if (this.searchText) {
         const keywords = this.searchText.toLowerCase().split(" ")
@@ -1352,7 +1174,7 @@ export default {
         .then((res) => {
           this.currentChat = res.data
           this.$router.push(`/chat/${this.currentChat.id}`)
-          this.userSort(this.sortUsers)
+          this.userSort(this.$store.sortUsers)
           this.loadingUsers = false
           this.replyTo = null
           this.loadingMessages = false
@@ -1459,9 +1281,6 @@ export default {
     dayjsShort(date) {
       return dayjs(date).format("HH:mm:ss")
     },
-    dayjsDate(date) {
-      return dayjs(date).format("D MMMM YYYY")
-    },
     openUser(userId, user) {
       if (user !== null) {
         this.contextMenuVisible = false
@@ -1546,7 +1365,7 @@ export default {
             } else if (lastMessage) {
               lastMessage.scrollIntoView()
               this.scrolledUp = false
-              this.editFocus()
+              this.$store.editFocus()
             }
           }
         } catch (e) {
@@ -1589,20 +1408,6 @@ export default {
       setTimeout(() => {
         element.classList.remove("highlight")
       }, 1000)
-    },
-    editFocus() {
-      this.$nextTick(() => {
-        const status = document.getElementById("status")
-        const input = document.getElementById("edit")
-        if (status) {
-          status?.focus()
-        } else if (input) {
-          input?.focus()
-        } else {
-          const input = document.getElementById("input")
-          input?.focus()
-        }
-      })
     },
     editLast() {
       this.messageEdit = this.currentChat.messages.filter(
@@ -1709,9 +1514,6 @@ export default {
     await this.getChats()
     this.scroll(true)
   },
-  created() {
-    this.sortUsers = this.$store.sortUsers
-  },
   beforeRouteLeave() {
     document.removeEventListener("keydown", this.escPressed)
     const div = document.getElementById("div")
@@ -1722,7 +1524,7 @@ export default {
   },
   watch: {
     editing() {
-      this.editFocus()
+      this.$store.editFocus()
     }
   }
 }

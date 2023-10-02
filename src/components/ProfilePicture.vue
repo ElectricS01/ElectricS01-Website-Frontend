@@ -13,14 +13,10 @@
   <Icons style="cursor: pointer" v-else :size="size" icon="account" />
 </template>
 
-<script>
+<script setup>
 import Icons from "@/components/Icons.vue"
 
-export default {
-  name: "ProfilePicture",
-  components: { Icons },
-  props: ["avatar", "size", "small"]
-}
+defineProps(["avatar", "size", "small"])
 </script>
 
 <style scoped>

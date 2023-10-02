@@ -200,10 +200,6 @@ button {
   height: 20px;
 }
 
-.filter-button:hover {
-  background-color: #282a2b;
-}
-
 .error-banner {
   margin: 0;
   font-size: 16px;
@@ -292,6 +288,7 @@ button {
   background-color: #2d5431;
 }
 
+.filter-button:hover,
 .settings-item:hover {
   background-color: #282a2b;
 }
@@ -357,10 +354,10 @@ button:hover,
   background-color: rgb(30, 144, 255, 0.5);
   border-radius: 2px;
   cursor: pointer;
-}
 
-.mention:hover {
-  background-color: rgb(30, 144, 255);
+  &:hover {
+    background-color: rgb(30, 144, 255);
+  }
 }
 
 .border {
@@ -375,13 +372,6 @@ button:hover,
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.profile-grid {
-  display: flex;
-}
-
-.message-grid {
-  display: flex;
 }
 
 .message-icons {
@@ -402,6 +392,8 @@ button:hover,
   line-height: 17px;
 }
 
+.message-grid,
+.profile-grid,
 .message-grid:hover .message-icons,
 .message-grid:hover .message-time b {
   display: flex;
@@ -423,14 +415,14 @@ input {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: #3d3d3d;
-}
 
-input:focus {
-  outline: 1px solid white;
-}
+  &:focus {
+    outline: 1px solid white;
+  }
 
-input::placeholder {
-  color: grey;
+  &::placeholder {
+    color: grey;
+  }
 }
 
 .loader {
@@ -589,10 +581,14 @@ h4 {
   background-color: #282a2b;
   display: flex;
   border-radius: 16px;
-  height: 500px;
+  height: min(calc(100% - 32px), max(40%, 600px));
+
+  @media (max-width: 932px) {
+    width: min(100% - 16px, 700px);
+  }
 }
 
-.grid {
+.grid-home {
   padding: 18px 0;
   display: flex;
   flex-wrap: wrap;
@@ -606,17 +602,9 @@ h4 {
   align-items: center;
   height: 80%;
   width: 100%;
-}
 
-@media (max-height: 700px) or (max-width: 732px) {
-  .grid-menu {
+  @media (max-height: 700px) or (max-width: 732px) {
     height: 100%;
-  }
-}
-
-@media (max-width: 932px) {
-  .settings-menu {
-    width: min(100% - 20px, 700px);
   }
 }
 
@@ -624,27 +612,23 @@ h4 {
   flex: 0 0 25%;
   padding: 10px;
   transition: all 0.2s ease-in-out;
-}
 
-.grid-item:hover {
-  transform: scale(1.1);
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media (min-width: 600px) {
+    flex: 0 0 16.66%;
+  }
+
+  @media (min-width: 1000px) {
+    flex: 0 0 8.33%;
+  }
 }
 
 .grid-image {
   width: 300px;
   height: 300px;
-}
-
-@media (min-width: 600px) {
-  .grid-item {
-    flex: 0 0 16.66%;
-  }
-}
-
-@media (min-width: 1000px) {
-  .grid-item {
-    flex: 0 0 8.33%;
-  }
 }
 
 .sidebar {
@@ -734,7 +718,7 @@ input:checked + .slider:before {
   width: 199px;
   border-right: 1px solid #212425;
   background-color: #212425;
-  border-radius: 16px 0 0 25px;
+  border-radius: 16px 0 0 16px;
   float: left;
   overflow-y: auto;
 }

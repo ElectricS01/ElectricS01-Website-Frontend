@@ -18,38 +18,32 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Embeds from "@/components/Embeds.vue"
+import { computed } from "vue"
 
-export default {
-  name: "CustomMessage",
-  components: { Embeds },
-  props: ["message", "handleClick", "scroll", "findUser"],
-  computed: {
-    messageParts() {
-      const parts = this.message.messageContents
-        .split(/(<@\d+>)/g)
-        .filter((part) => part !== "")
-      return parts.map((part) => {
-        if (part.startsWith("<@")) {
-          const userId = part.match(/\d+/)[0]
-          return `<span @click="handleUserMentionClick(${userId})" class="mention">@${
-            this.findUser(userId).username
-          }</span>`
-        }
-        return part
-      })
-    }
-  },
-  methods: {
-    check(index) {
-      const parts = this.message.messageContents
-        .split(/(<@\d+>)/g)
-        .filter((part) => part !== "")
-      if (parts[index].startsWith("<@")) {
-        return true
-      }
-    }
+const props = defineProps(["message", "handleClick", "scroll", "findUser"])
+
+const check = (index) => {
+  const parts = props.message.messageContents
+    .split(/(<@\d+>)/g)
+    .filter((part) => part !== "")
+  if (parts[index].startsWith("<@")) {
+    return true
   }
 }
+const messageParts = computed(() => {
+  const parts = props.message.messageContents
+    .split(/(<@\d+>)/g)
+    .filter((part) => part !== "")
+  return parts.map((part) => {
+    if (part.startsWith("<@")) {
+      const userId = part.match(/\d+/)[0]
+      return `<span @click="handleUserMentionClick(${userId})" class="mention">@${
+        props.findUser(userId).username
+      }</span>`
+    }
+    return part
+  })
+})
 </script>
