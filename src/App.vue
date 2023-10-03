@@ -1,47 +1,47 @@
 <template>
   <header>
     <div class="navbar" id="mobile-navbar" v-if="navbarShown">
-      <router-link class="main" to="/" @click="responsive_navbar()">
+      <router-link class="main" to="/" @click="responsiveNavbar()">
         ElectricS01.com
       </router-link>
       <router-link
         to="/tonkgame"
         :class="{ active: active('/tonkgame') }"
-        @click="responsive_navbar()"
+        @click="responsiveNavbar()"
       >
         TonkGame
       </router-link>
       <router-link
         to="/calculator"
         :class="{ active: active('/calculator') }"
-        @click="responsive_navbar()"
+        @click="responsiveNavbar()"
       >
         Calculator
       </router-link>
       <router-link
         to="/tetris"
         :class="{ active: active('/tetris') }"
-        @click="responsive_navbar()"
+        @click="responsiveNavbar()"
       >
         Tetris
       </router-link>
       <router-link
         to="/collider"
         :class="{ active: active('/collider') }"
-        @click="responsive_navbar()"
+        @click="responsiveNavbar()"
       >
         Collider
       </router-link>
       <a href="https://mapit.electrics01.com">Mapit (Demo)</a>
       <router-link
-        v-if="$store.userData"
+        v-if="store.userData"
         class="right"
         to="/account"
-        @click="responsive_navbar()"
+        @click="responsiveNavbar()"
       >
         Account
       </router-link>
-      <div class="icon-mobile" @click="responsive_navbar()">☰</div>
+      <div class="icon-mobile" @click="responsiveNavbar()">☰</div>
     </div>
     <div class="chat-navbar" v-else>
       <router-link class="responsive-chat chat-button" to="/chat">
@@ -51,7 +51,7 @@
         <Icons size="28" icon="chats" />
       </div>
       <router-link
-        v-if="$store.userData"
+        v-if="store.userData"
         class="right chat-icon"
         to="/account/account"
       >
@@ -73,8 +73,8 @@
       </div>
     </div>
     <transition>
-      <p v-if="$store.error" class="error-banner">
-        {{ $store.error }}
+      <p v-if="store.error" class="error-banner">
+        {{ store.error }}
       </p>
     </transition>
   </header>
@@ -83,89 +83,77 @@
   </main>
 </template>
 
-<script>
+<script setup>
 import Icons from "@/components/Icons.vue"
+import { useRoute } from "vue-router"
+import { useDataStore } from "@/stores/main"
+import { computed } from "vue"
+import axios from "axios"
 
-export default {
-  name: "App",
-  components: { Icons },
-  methods: {
-    active(routePattern) {
-      return this.$route.path.startsWith(routePattern)
-    },
-    responsive_navbar() {
-      const responsive_navbar = document.getElementById("mobile-navbar")
-      if (responsive_navbar.className === "navbar") {
-        responsive_navbar.className += " responsive"
-      } else {
-        responsive_navbar.className = "navbar"
-      }
-    },
-    toggleSidebar() {
-      if (
-        localStorage.getItem("sidebarOpen") !== "true" ||
-        this.$store.search === true
-      ) {
-        localStorage.setItem("sidebarOpen", "true")
-        this.$store.search = false
-      } else {
-        localStorage.setItem("sidebarOpen", "false")
-        this.$store.search = false
-      }
-      this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
-    },
-    toggleChatBar() {
-      if (localStorage.getItem("chatBarOpen") !== "true") {
-        localStorage.setItem("chatBarOpen", "true")
-      } else {
-        localStorage.setItem("chatBarOpen", "false")
-      }
-      this.$store.chatBarOpen = localStorage.getItem("chatBarOpen")
-    },
-    toggleSearch() {
-      this.$store.search = !this.$store.search
-    }
-  },
-  computed: {
-    navbarShown() {
-      return (
-        !this.$route.path.startsWith("/chat") &&
-        !this.$route.path.startsWith("/login") &&
-        !this.$route.path.startsWith("/register") &&
-        !this.$route.path.startsWith("/account") &&
-        !this.$route.path.startsWith("/reset")
-      )
-    }
-  },
-  created() {
-    Object.assign(this.axios.defaults, {
-      headers: { Authorization: localStorage.getItem("token") }
-    })
-    if (localStorage.getItem("token")) {
-      this.axios
-        .get("/api/user")
-        .then((res) => {
-          this.$store.userData = res.data
-        })
-        .catch((e) => {
-          this.$store.error = "Error 503, Cannot Connect to Server " + e
-        })
-    }
-    if (localStorage.getItem("sidebarOpen")) {
-      this.$store.sidebarOpen = localStorage.getItem("sidebarOpen")
-    } else {
-      this.$store.sidebarOpen = false
-    }
-    if (localStorage.getItem("chatBarOpen")) {
-      this.$store.chatBarOpen = localStorage.getItem("chatBarOpen")
-    } else {
-      this.$store.chatBarOpen = false
-    }
-    if (localStorage.getItem("sortUsers")) {
-      this.$store.sortUsers = localStorage.getItem("sortUsers")
-    } else {
-      this.$store.sortUsers = "id"
-    }
+const route = useRoute()
+const store = useDataStore()
+
+Object.assign(axios.defaults, {
+  headers: { Authorization: localStorage.getItem("token") }
+})
+if (localStorage.getItem("token")) {
+  store.getUser()
+}
+if (localStorage.getItem("sidebarOpen")) {
+  store.sidebarOpen = localStorage.getItem("sidebarOpen")
+} else {
+  store.sidebarOpen = false
+}
+if (localStorage.getItem("chatBarOpen")) {
+  store.chatBarOpen = localStorage.getItem("chatBarOpen")
+} else {
+  store.chatBarOpen = false
+}
+if (localStorage.getItem("sortUsers")) {
+  store.sortUsers = localStorage.getItem("sortUsers")
+} else {
+  store.sortUsers = "id"
+}
+
+const active = (routePattern) => {
+  return route.path.startsWith(routePattern)
+}
+const responsiveNavbar = () => {
+  const responsiveNavbar = document.getElementById("mobile-navbar")
+  if (responsiveNavbar.className === "navbar") {
+    responsiveNavbar.className += " responsive"
+  } else {
+    responsiveNavbar.className = "navbar"
   }
 }
+const toggleSidebar = () => {
+  if (localStorage.getItem("sidebarOpen") !== "true" || store.search === true) {
+    localStorage.setItem("sidebarOpen", "true")
+    store.search = false
+  } else {
+    localStorage.setItem("sidebarOpen", "false")
+    store.search = false
+  }
+  store.sidebarOpen = localStorage.getItem("sidebarOpen")
+}
+const toggleChatBar = () => {
+  if (localStorage.getItem("chatBarOpen") !== "true") {
+    localStorage.setItem("chatBarOpen", "true")
+  } else {
+    localStorage.setItem("chatBarOpen", "false")
+  }
+  store.chatBarOpen = localStorage.getItem("chatBarOpen")
+}
+const toggleSearch = () => {
+  store.search = !store.search
+}
+const navbarShown = computed(() => {
+  return (
+    !route.path.startsWith("/chat") &&
+    !route.path.startsWith("/login") &&
+    !route.path.startsWith("/register") &&
+    !route.path.startsWith("/account") &&
+    !route.path.startsWith("/reset")
+  )
+})
 </script>

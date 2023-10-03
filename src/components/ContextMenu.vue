@@ -12,7 +12,6 @@ const props = defineProps(["position"])
 const menuStyle = computed(() => {
   const adjustedX = props.position.x + window.scrollX
   const adjustedY = props.position.y + window.scrollY
-
   return {
     position: "absolute",
     left: `${adjustedX}px`,

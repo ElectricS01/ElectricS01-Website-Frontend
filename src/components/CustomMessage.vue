@@ -10,8 +10,14 @@
     </span>
     <b class="message-text-small" v-if="message.edited">(edited)</b>
     <embeds
+      style="
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      "
       v-for="(embed, index) in message.embeds"
       :key="index"
+      @embed="emits('embed', embed.mediaProxyLink)"
       :embed="embed"
       :scroll="scroll"
     ></embeds>
@@ -23,6 +29,7 @@ import Embeds from "@/components/Embeds.vue"
 import { computed } from "vue"
 
 const props = defineProps(["message", "handleClick", "scroll", "findUser"])
+const emits = defineEmits(["embed"])
 
 const check = (index) => {
   const parts = props.message.messageContents
@@ -32,6 +39,7 @@ const check = (index) => {
     return true
   }
 }
+
 const messageParts = computed(() => {
   const parts = props.message.messageContents
     .split(/(<@\d+>)/g)

@@ -71,22 +71,11 @@ export default {
           Object.assign(this.axios.defaults, {
             headers: { Authorization: res.data.token }
           })
-          this.getUser()
+          this.$store.getUser()
           this.$router.push("/chat")
         })
         .catch((e) => {
           this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-    },
-    getUser() {
-      this.axios
-        .get("/api/user")
-        .then((res) => {
-          this.$store.userData = res.data
-        })
-        .catch((e) => {
-          this.$store.error = "Error 503, Cannot Connect to Server " + e
           setTimeout(this.$store.errorFalse, 5000)
         })
     }

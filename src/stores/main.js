@@ -1,10 +1,12 @@
 import { defineStore } from "pinia"
 import dayjs from "dayjs"
 import { nextTick } from "vue"
+import axios from "axios"
 
 export const useDataStore = defineStore("store", {
   state: () => ({
-    error: ""
+    error: "",
+    userData: {}
   }),
   actions: {
     errorFalse() {
@@ -29,6 +31,17 @@ export const useDataStore = defineStore("store", {
           input?.focus()
         }
       })
+    },
+    getUser() {
+      axios
+        .get("/api/user")
+        .then((res) => {
+          this.userData = res.data
+        })
+        .catch((e) => {
+          this.error = "Error 503, Cannot Connect to Server " + e
+          setTimeout(this.errorFalse, 5000)
+        })
     }
   }
 })

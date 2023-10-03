@@ -18,11 +18,7 @@
   </div>
 </template>
 
-<script>
-export default {
-  mounted() {
-    const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/tonkgameicon.ico"
-  }
-}
+<script setup>
+const favicon = document.getElementById("favicon")
+favicon.href = "/icons/tonkgameicon.ico"
 </script>

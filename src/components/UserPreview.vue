@@ -31,7 +31,7 @@
               <p class="message-text-large" style="word-wrap: break-word">
                 {{ showUser.statusMessage }}
                 <icons
-                  v-if="showUser.id === $store.userData.id"
+                  v-if="showUser.id === store.userData.id"
                   style="cursor: pointer"
                   size="16"
                   icon="edit"
@@ -52,7 +52,7 @@
           <div class="profile-buttons">
             <button
               v-if="
-                (showUser.id !== $store.userData.id &&
+                (showUser.id !== store.userData.id &&
                   showUser.directMessages !== 'no one') ||
                 (showUser.directMessages !== 'no one' &&
                   showUser.friend?.status)
@@ -71,7 +71,7 @@
             <button
               v-if="
                 showUser.friendRequests &&
-                showUser.id !== $store.userData.id &&
+                showUser.id !== store.userData.id &&
                 !showUser.friend?.status
               "
               class="profile-button-add"
@@ -88,7 +88,7 @@
             </button>
             <button
               v-if="
-                showUser.id !== $store.userData.id &&
+                showUser.id !== store.userData.id &&
                 showUser.friend?.status === 'accepted'
               "
               class="profile-button-remove"
@@ -121,7 +121,7 @@
             </button>
             <button
               v-if="
-                showUser.id !== $store.userData.id &&
+                showUser.id !== store.userData.id &&
                 showUser.friend?.status === 'incoming'
               "
               class="profile-button-pending"
@@ -143,7 +143,7 @@
           <div v-if="showUser.createdAt">
             <p>Date Created</p>
             <p class="message-text-large">
-              {{ $store.dayjsDate(showUser.createdAt) }}
+              {{ store.dayjsDate(showUser.createdAt) }}
             </p>
             <div class="profile-spacer"></div>
           </div>

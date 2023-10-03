@@ -305,7 +305,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.177</div>
+            <div>Version: 1.178</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -383,19 +383,6 @@ export default {
         this.getAdmin()
       }
     },
-    getUser() {
-      if (localStorage.getItem("token")) {
-        this.axios
-          .get("/api/user")
-          .then((res) => {
-            this.$store.userData = res.data
-          })
-          .catch((e) => {
-            this.$store.error = "Error 503, Cannot Connect to Server " + e
-            setTimeout(this.$store.errorFalse, 5000)
-          })
-      }
-    },
     getAdmin() {
       if (localStorage.getItem("token")) {
         this.axios
@@ -419,7 +406,9 @@ export default {
         this.$store.error = "Error 503, Cannot Connect to Server " + e
         setTimeout(this.$store.errorFalse, 5000)
       })
-      this.getUser()
+      if (localStorage.getItem("token")) {
+        this.$store.getUser()
+      }
     },
     async checkImage(url) {
       try {
@@ -452,7 +441,9 @@ export default {
               val: value
             })
             .then(() => {
-              this.getUser()
+              if (localStorage.getItem("token")) {
+                this.$store.getUser()
+              }
             })
             .catch((e) => {
               this.$store.error = "Error 503, Cannot Connect to Server " + e

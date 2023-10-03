@@ -11,6 +11,11 @@
     @userSort="userSort($store.sortUsers)"
   ></user-preview>
   <transition>
+    <modal-simple v-if="embed" :is-active="embed" @close="embed = false">
+      <img :src="embed" class="message-embed" alt="Embedded image" />
+    </modal-simple>
+  </transition>
+  <transition>
     <modal
       v-if="createChatShown"
       :is-active="createChatShown"
@@ -444,6 +449,7 @@
                   :handleClick="handleClick"
                   :scroll="scroll"
                   :findUser="findUser"
+                  @embed="embed = $event"
                 ></custom-message>
               </div>
               <div class="message-icons" v-show="editing !== message.id">
@@ -601,7 +607,7 @@
           v-for="user in onlineUsers"
           :key="user"
           @contextmenu.prevent="showContextMenu($event, user)"
-          style="cursor: pointer; margin: 0 0 4px; border-radius: 2px"
+          style="cursor: pointer; margin: 0 0 4px"
           class="message-grid"
           @click="openUser(user.id, user)"
         >
@@ -659,7 +665,7 @@
           v-for="user in offlineUsers"
           :key="user"
           @contextmenu.prevent="showContextMenu($event, user)"
-          style="cursor: pointer; margin: 0 0 4px; border-radius: 2px"
+          style="cursor: pointer; margin: 0 0 4px"
           class="message-grid"
           @click="openUser(user.id, user)"
         >
@@ -936,9 +942,11 @@ import SidebarLeft from "@/components/SidebarLeft.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
+import ModalSimple from "@/components/ModalSimple.vue"
 
 export default {
   components: {
+    ModalSimple,
     UserPreview,
     ContextMenu,
     CustomMessage,
@@ -953,6 +961,7 @@ export default {
     return {
       searchMessages: [],
       chats: [],
+      embed: "",
       currentChat: {},
       inputText: "",
       replyTo: null,
@@ -1274,9 +1283,6 @@ export default {
         this.$store.error = "This user is already apart of this group"
         setTimeout(this.$store.errorFalse, 2500)
       }
-    },
-    dayjs(date) {
-      return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
     },
     dayjsShort(date) {
       return dayjs(date).format("HH:mm:ss")
