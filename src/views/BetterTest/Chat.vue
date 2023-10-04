@@ -934,15 +934,15 @@
 <script>
 import dayjs from "dayjs"
 import CustomMessage from "@/components/CustomMessage.vue"
-import Icons from "@/components/Icons.vue"
-import Modal from "@/components/Modal.vue"
+import Icons from "@/components/core/Icons.vue"
+import Modal from "@/components/core/Modal.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
-import Sidebar from "@/components/Sidebar.vue"
-import SidebarLeft from "@/components/SidebarLeft.vue"
+import Sidebar from "@/components/core/Sidebar.vue"
+import SidebarLeft from "@/components/core/SidebarLeft.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
-import ContextMenu from "@/components/ContextMenu.vue"
+import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
-import ModalSimple from "@/components/ModalSimple.vue"
+import ModalSimple from "@/components/core/ModalSimple.vue"
 
 export default {
   components: {

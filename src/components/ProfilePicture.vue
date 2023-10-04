@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import Icons from "@/components/Icons.vue"
+import Icons from "@/components/core/Icons.vue"
 
 defineProps(["avatar", "size", "small"])
 </script>

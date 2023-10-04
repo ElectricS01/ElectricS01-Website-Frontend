@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import Icons from "@/components/Icons.vue"
+import Icons from "@/components/core/Icons.vue"
 import { useRoute } from "vue-router"
 import { useDataStore } from "@/stores/main"
 import { computed } from "vue"

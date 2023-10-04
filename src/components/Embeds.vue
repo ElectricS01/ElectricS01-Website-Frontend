@@ -1,5 +1,5 @@
 <template>
-  <div v-if="embed.type === 'image'">
+  <div v-if="embed.type === 'image'" class="embed-container">
     <img
       :src="embed.mediaProxyLink"
       class="embed"
@@ -21,5 +21,11 @@ const emits = defineEmits(["embed"])
   border-radius: 2px;
   max-width: min(400px, 100%);
   max-height: 300px;
+}
+
+.embed-container {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 </style>

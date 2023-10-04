@@ -245,6 +245,9 @@ button {
   text-align: center;
   padding: 14px 16px;
   font-size: 17px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .chat-navbar a.right,
@@ -277,6 +280,9 @@ button {
   text-align: center;
   padding: 14px 16px;
   font-size: 17px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .navbar a.main {

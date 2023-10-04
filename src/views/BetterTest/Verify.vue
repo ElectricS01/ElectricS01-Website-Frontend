@@ -11,28 +11,31 @@
   </div>
 </template>
 
-<script>
-export default {
-  methods: {
-    submit() {
-      this.$store.error = ""
-      this.axios
-        .post("/api/verify", {
-          token: this.$route.query.token
-        })
-        .then(() => {
-          this.$store.getUser()
-          this.$router.push("/chat")
-        })
-        .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-    }
-  },
-  mounted() {
-    const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/favicon.ico"
-  }
+<script setup>
+import { useRoute } from "vue-router"
+import { useDataStore } from "@/stores/main"
+import axios from "axios"
+import router from "@/router"
+
+const route = useRoute()
+const store = useDataStore()
+
+const favicon = document.getElementById("favicon")
+favicon.href = "/icons/favicon.ico"
+
+const submit = () => {
+  store.error = ""
+  axios
+    .post("/api/verify", {
+      token: route.query.token
+    })
+    .then(() => {
+      store.getUser()
+      router.push("/chat")
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
 }
 </script>

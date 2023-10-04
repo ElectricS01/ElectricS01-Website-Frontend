@@ -30,33 +30,30 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      email: "",
-      success: false
-    }
-  },
-  methods: {
-    submit() {
-      this.$store.error = ""
-      this.axios
-        .post("/api/reset-email", {
-          email: this.email.toLowerCase().trim()
-        })
-        .then(() => {
-          this.success = true
-        })
-        .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-    }
-  },
-  mounted() {
-    const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/favicon.ico"
-  }
+<script setup>
+import { useDataStore } from "@/stores/main"
+import axios from "axios"
+
+let email = ""
+let success = false
+
+const store = useDataStore()
+
+const favicon = document.getElementById("favicon")
+favicon.href = "/icons/favicon.ico"
+
+const submit = () => {
+  store.error = ""
+  axios
+    .post("/api/reset-email", {
+      email: email.toLowerCase().trim()
+    })
+    .then(() => {
+      success = true
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
 }
 </script>

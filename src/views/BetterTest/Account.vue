@@ -305,7 +305,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.178</div>
+            <div>Version: 1.179</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -338,8 +338,8 @@
 </template>
 
 <script>
-import Modal from "@/components/Modal.vue"
-import Icons from "@/components/Icons.vue"
+import Modal from "@/components/core/Modal.vue"
+import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 

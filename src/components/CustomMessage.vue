@@ -10,11 +10,6 @@
     </span>
     <b class="message-text-small" v-if="message.edited">(edited)</b>
     <embeds
-      style="
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
-      "
       v-for="(embed, index) in message.embeds"
       :key="index"
       @embed="emits('embed', embed.mediaProxyLink)"

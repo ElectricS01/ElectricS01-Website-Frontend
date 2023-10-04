@@ -167,8 +167,8 @@
   </transition>
 </template>
 <script setup>
-import Icons from "@/components/Icons.vue"
-import Modal from "@/components/Modal.vue"
+import Icons from "@/components/core/Icons.vue"
+import Modal from "@/components/core/Modal.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import { useDataStore } from "@/stores/main"
