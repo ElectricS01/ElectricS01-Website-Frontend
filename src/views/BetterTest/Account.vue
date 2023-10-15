@@ -35,47 +35,49 @@
             Profile
           </div>
           <div
-            v-if="$store.userData?.admin"
+            v-if="store.userData?.admin"
             @click="changePage('admin')"
             class="settings-item"
           >
             Admin
           </div>
           <div @click="changePage('about')" class="settings-item">About</div>
-          <div @click="openFeedback" class="settings-item">Any feedback?</div>
+          <div @click="modalOpen = true" class="settings-item">
+            Any feedback?
+          </div>
         </div>
         <div class="settings-page scroll-bar-dark">
           <div v-if="page === 'account'" class="settings-page-container">
             <h2 class="settings-text">Account</h2>
             Change your account settings
             <div class="settings-spacer"></div>
-            Username: {{ $store.userData?.username }}
+            Username: {{ store.userData?.username }}
             <div @click="changeUsername()" class="settings-button">
               Change Username
             </div>
             <div class="settings-spacer"></div>
-            Email: {{ $store.userData?.email }}
+            Email: {{ store.userData?.email }}
             <div @click="changeUsername()" class="settings-button">
               Change Email
             </div>
             <div class="settings-spacer"></div>
-            Email verified: {{ $store.userData?.emailVerified }}
+            Email verified: {{ store.userData?.emailVerified }}
             <div
-              v-if="!$store.userData?.emailVerified"
+              v-if="!store.userData?.emailVerified"
               @click="resendVerification()"
               class="settings-button"
             >
               Resend email
             </div>
             <div class="settings-spacer"></div>
-            Password: {{ $store.userData?.password }}
+            Password: {{ store.userData?.password }}
             <div @click="changeUsername()" class="settings-button">
               Change Password
             </div>
             <div class="settings-spacer"></div>
-            Creation date: {{ $store.dayjs($store.userData?.createdAt) }}
+            Creation date: {{ store.dayjs(store.userData?.createdAt) }}
             <div class="settings-spacer"></div>
-            Account ID: {{ $store.userData?.id }}
+            Account ID: {{ store.userData?.id }}
             <div class="settings-spacer"></div>
             <div @click="changeUsername()" class="settings-button-red">
               Close account
@@ -88,8 +90,8 @@
             Allow direct messages from
             <div>
               <div class="dropdown">
-                <div class="dropdown-toggle" @click="toggleDropdown">
-                  {{ $store.userData?.directMessages }}
+                <div class="dropdown-toggle" @click="isOpen = !isOpen">
+                  {{ store.userData?.directMessages }}
                 </div>
                 <ul class="dropdown-menu" v-if="isOpen">
                   <li
@@ -107,7 +109,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$store.userData?.friendRequests"
+                :checked="store.userData?.friendRequests"
                 @click="toggle('friendRequests')"
               />
               <span class="slider"></span>
@@ -117,7 +119,7 @@
             <label class="switch">
               <input
                 type="checkbox"
-                :checked="$store.userData?.showCreated"
+                :checked="store.userData?.showCreated"
                 @click="toggle('showCreated')"
               />
               <span class="slider"></span>
@@ -140,7 +142,7 @@
               <div style="width: min(500px, 100%)">
                 <img
                   :src="
-                    $store.userData?.banner ||
+                    store.userData?.banner ||
                     'https://i.electrics01.com/i/d81dabf74c88.png'
                   "
                   width="500"
@@ -165,12 +167,12 @@
                     <div class="profile-picture-large">
                       <profile-picture
                         size="80"
-                        :avatar="$store.userData?.avatar"
+                        :avatar="store.userData?.avatar"
                       ></profile-picture>
                       <svg class="online-indicator" width="20" height="20">
                         <status-indicator
                           size="8"
-                          :status="$store.userData?.status"
+                          :status="store.userData?.status"
                         ></status-indicator>
                       </svg>
                     </div>
@@ -184,21 +186,21 @@
                       class="message-item"
                     >
                       <h4 style="word-wrap: break-word">
-                        {{ $store.userData?.username }}
+                        {{ store.userData?.username }}
                       </h4>
                       <p
                         v-if="editing !== 'status'"
                         class="message-text-large"
                         style="word-wrap: break-word"
                       >
-                        {{ $store.userData?.statusMessage }}
+                        {{ store.userData?.statusMessage }}
                         <icons
                           style="cursor: pointer"
                           size="16"
                           icon="edit"
                           @click="
                             ;(editing = 'status'),
-                              (editStatus = $store.userData?.statusMessage),
+                              (editStatus = store.userData?.statusMessage),
                               editFocus()
                           "
                         />
@@ -227,10 +229,10 @@
                     style="height: 332px; overflow-y: auto"
                     class="scroll-bar"
                   >
-                    <div v-if="$store.userData?.createdAt">
+                    <div v-if="store.userData?.createdAt">
                       <p>Date Created</p>
                       <p class="message-text-large">
-                        {{ $store.dayjsDate($store.userData?.createdAt) }}
+                        {{ store.dayjsDate(store.userData?.createdAt) }}
                       </p>
                       <div class="profile-spacer"></div>
                     </div>
@@ -243,7 +245,7 @@
                           icon="edit"
                           @click="
                             ;(editing = 'description'),
-                              (editDescription = $store.userData?.description),
+                              (editDescription = store.userData?.description),
                               editFocus()
                           "
                         />
@@ -254,8 +256,8 @@
                         style="word-wrap: break-word"
                       >
                         {{
-                          $store.userData?.description ||
-                          `Hi, I'm ${$store.userData?.username}!`
+                          store.userData?.description ||
+                          `Hi, I'm ${store.userData?.username}!`
                         }}
                       </p>
                       <input
@@ -268,24 +270,24 @@
                         autocomplete="off"
                       />
                     </div>
-                    <div v-if="$store.userData?.tetris">
+                    <div v-if="store.userData?.tetris">
                       <div class="profile-spacer"></div>
                       <p>Tetris Scores</p>
                       <p>
                         Easy mode:
-                        {{ $store.userData?.tetris[0].highscore_easy }} lines
+                        {{ store.userData?.tetris[0].highscore_easy }} lines
                       </p>
                       <p>
                         Medium mode:
-                        {{ $store.userData?.tetris[1].highscore_medium }} lines
+                        {{ store.userData?.tetris[1].highscore_medium }} lines
                       </p>
                       <p>
                         Hard mode:
-                        {{ $store.userData?.tetris[2].highscore_hard }} lines
+                        {{ store.userData?.tetris[2].highscore_hard }} lines
                       </p>
                       <p>
                         God mode:
-                        {{ $store.userData?.tetris[3].highscore_god }} lines
+                        {{ store.userData?.tetris[3].highscore_god }} lines
                       </p>
                     </div>
                   </div>
@@ -305,7 +307,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.179</div>
+            <div>Version: 1.180</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -319,7 +321,7 @@
                 <th>{{ index }}</th>
                 <th>{{ feedback.userId }}</th>
                 <th>{{ feedback.feedback }}</th>
-                <th>{{ $store.dayjs(feedback.createdAt) }}</th>
+                <th>{{ store.dayjs(feedback.createdAt) }}</th>
                 <th>
                   <Icons
                     size="16"
@@ -337,205 +339,197 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Modal from "@/components/core/Modal.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
+import { useDataStore } from "@/stores/main"
+import router from "@/router"
+import axios from "axios"
+import { useRoute } from "vue-router"
+import { nextTick, ref, watch } from "vue"
 
-export default {
-  components: { StatusIndicator, ProfilePicture, Icons, Modal },
-  data() {
-    return {
-      page: "account",
-      pages: ["account", "privacy", "appearance", "profile", "about", "admin"],
-      properties: [
-        "directMessages",
-        "friendRequests",
-        "showCreated",
-        "avatar",
-        "banner",
-        "description"
-      ],
-      user: [],
-      editAvatar: "",
-      editBanner: "",
-      isOpen: false,
-      options: ["no one", "friends", "everyone"],
-      modalOpen: false,
-      editing: false,
-      editStatus: "",
-      editDescription: "",
-      feedbackText: "",
-      adminData: []
-    }
-  },
-  methods: {
-    changePage(page) {
-      if (this.pages.includes(page)) {
-        this.page = page
-        this.$router.push(`/account/${page}`)
-      } else {
-        this.page = "account"
-        this.$router.push("/account/account")
-      }
-      if (this.page === "admin") {
-        this.getAdmin()
-      }
-    },
-    getAdmin() {
-      if (localStorage.getItem("token")) {
-        this.axios
-          .get("/api/admin")
-          .then((res) => {
-            this.adminData = res.data
-          })
-          .catch((e) => {
-            this.$store.error = "Error 503, Cannot Connect to Server " + e
-            setTimeout(this.$store.errorFalse, 5000)
-          })
-      }
-    },
-    changeUsername() {
-      while (true) {
-        console.log("Get Better™")
-      }
-    },
-    resendVerification() {
-      this.axios.post("/api/resend-verification", {}).catch((e) => {
-        this.$store.error = "Error 503, Cannot Connect to Server " + e
-        setTimeout(this.$store.errorFalse, 5000)
+const store = useDataStore()
+const route = useRoute()
+
+const pages = ["account", "privacy", "appearance", "profile", "about", "admin"]
+const properties = [
+  "directMessages",
+  "friendRequests",
+  "showCreated",
+  "avatar",
+  "banner",
+  "description"
+]
+const options = ["no one", "friends", "everyone"]
+
+let page = "account"
+let modalOpen = ref(false)
+let isOpen = ref(false)
+let adminData = ref([])
+let feedbackText = ""
+let editing = false
+let editStatus = ""
+let editDescription = ""
+
+let editAvatar = store.userData?.avatar
+let editBanner = store.userData?.banner
+
+document.getElementById("favicon").href = "/icons/favicon.ico"
+if (pages.includes(route.params.id)) {
+  page = route.params.id
+} else {
+  if (route.params.id === "feedback") {
+    modalOpen.value = true
+  }
+  router.push("/account/account")
+}
+
+const getAdmin = () => {
+  if (localStorage.getItem("token")) {
+    axios
+      .get("/api/admin")
+      .then((res) => {
+        adminData.value = res.data
       })
-      if (localStorage.getItem("token")) {
-        this.$store.getUser()
-      }
-    },
-    async checkImage(url) {
-      try {
-        const res = await fetch(url)
-        const buff = await res.blob()
-        return buff.type.startsWith("image/")
-      } catch (e) {
-        this.$store.error = "Invalid image"
-      }
-    },
-    async toggle(property, value) {
-      if (this.properties.includes(property)) {
-        if (this.editing === "description") {
-          this.editing = false
+      .catch((e) => {
+        store.error = "Error 503, Cannot Connect to Server " + e
+        setTimeout(store.errorFalse, 5000)
+      })
+  }
+}
+const changePage = (newPage) => {
+  if (pages.includes(page)) {
+    page = newPage
+    router.push(`/account/${newPage}`)
+  } else {
+    page = "account"
+    router.push("/account/account")
+  }
+  if (page === "admin") {
+    getAdmin()
+  }
+}
+const submitFeedback = () => {
+  axios
+    .post("/api/feedback", {
+      feedback: feedbackText
+    })
+    .catch((e) => {
+      store.error = "Error 503, Cannot Connect to Server " + e
+      setTimeout(store.errorFalse, 5000)
+    })
+  modalOpen.value = false
+  feedbackText = ""
+}
+const deleteFeedback = (id) => {
+  axios
+    .delete(`/api/delete-feedback/${id}`)
+    .then(() => {
+      getAdmin()
+    })
+    .catch((e) => {
+      store.error = "Error 503, Cannot Connect to Server " + e
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const selectOption = (option) => {
+  toggle("directMessages", option)
+  isOpen.value = false
+}
+const editFocus = () => {
+  nextTick(() => {
+    const feedback = document.getElementById("feedback")
+    if (feedback) {
+      feedback?.focus()
+    }
+  })
+}
+const editStatusMessage = () => {
+  if (
+    editStatus.trim() === store.userData.statusMessage ||
+    editStatus.trim().length > 50
+  ) {
+    return (editing = false)
+  }
+  axios
+    .patch("/api/edit-status-message", {
+      statusMessage: editStatus.trim()
+    })
+    .then((res) => {
+      store.userData.statusMessage = res.data.statusMessage
+      editing = false
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const changeUsername = () => {
+  while (true) {
+    console.log("Get Better™")
+  }
+}
+const resendVerification = () => {
+  axios.post("/api/resend-verification", {}).catch((e) => {
+    store.error = "Error 503, Cannot Connect to Server " + e
+    setTimeout(store.errorFalse, 5000)
+  })
+  if (localStorage.getItem("token")) {
+    store.getUser()
+  }
+}
+
+async function toggle(property, value) {
+  if (properties.includes(property)) {
+    if (editing === "description") {
+      editing = false
+    }
+    if (
+      ((property === "avatar" || property === "banner") &&
+        value &&
+        (await checkImage(value))) ||
+      (property !== "avatar" && property !== "banner")
+    ) {
+      if (!value) {
+        if (store.userData) {
+          value = !store.userData[property]
         }
-        if (
-          ((property === "avatar" || property === "banner") &&
-            value &&
-            (await this.checkImage(value))) ||
-          (property !== "avatar" && property !== "banner")
-        ) {
-          if (!value) {
-            if (this.$store.userData) {
-              value = !this.$store.userData[property]
-            }
+      }
+      axios
+        .post("/api/user-prop", {
+          prop: property,
+          val: value
+        })
+        .then(() => {
+          if (localStorage.getItem("token")) {
+            store.getUser()
           }
-          this.axios
-            .post("/api/user-prop", {
-              prop: property,
-              val: value
-            })
-            .then(() => {
-              if (localStorage.getItem("token")) {
-                this.$store.getUser()
-              }
-            })
-            .catch((e) => {
-              this.$store.error = "Error 503, Cannot Connect to Server " + e
-              setTimeout(this.$store.errorFalse, 5000)
-            })
-        }
-      }
-    },
-    editStatusMessage() {
-      if (
-        this.editStatus.trim() === this.$store.userData.statusMessage ||
-        this.editStatus.trim().length > 50
-      ) {
-        return (this.editing = false)
-      }
-      this.axios
-        .patch("/api/edit-status-message", {
-          statusMessage: this.editStatus.trim()
-        })
-        .then((res) => {
-          this.$store.userData.statusMessage = res.data.statusMessage
-          this.editing = false
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = "Error 503, Cannot Connect to Server " + e
+          setTimeout(store.errorFalse, 5000)
         })
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen
-    },
-    selectOption(option) {
-      this.toggle("directMessages", option)
-      this.isOpen = false
-    },
-    openFeedback() {
-      this.modalOpen = true
-    },
-    submitFeedback() {
-      this.axios
-        .post("/api/feedback", {
-          feedback: this.feedbackText
-        })
-        .catch((e) => {
-          this.$store.error = "Error 503, Cannot Connect to Server " + e
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-      this.modalOpen = false
-      this.feedbackText = ""
-    },
-    deleteFeedback(id) {
-      this.axios
-        .delete(`/api/delete-feedback/${id}`)
-        .then(this.getAdmin)
-        .catch((e) => {
-          this.$store.error = "Error 503, Cannot Connect to Server " + e
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-    },
-    editFocus() {
-      this.$nextTick(() => {
-        const feedback = document.getElementById("feedback")
-        if (feedback) {
-          feedback?.focus()
-        }
-      })
-    }
-  },
-  mounted() {
-    const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/favicon.ico"
-    if (this.pages.includes(this.$route.params.id)) {
-      this.page = this.$route.params.id
-    } else {
-      if (this.$route.params.id === "feedback") {
-        this.modalOpen = true
-        console.log(this.modalOpen)
-      }
-      this.$router.push("/account/account")
-    }
-    if (this.page === "admin") {
-      this.getAdmin()
-    }
-    this.editAvatar = this.$store.userData?.avatar
-    this.editBanner = this.$store.userData?.banner
-  },
-  watch: {
-    modalOpen(newValue, oldValue) {
-      if (newValue === true && oldValue === false) {
-        this.editFocus()
-      }
     }
   }
 }
+async function checkImage(url) {
+  try {
+    const res = await fetch(url)
+    const buff = await res.blob()
+    return buff.type.startsWith("image/")
+  } catch (e) {
+    store.error = "Invalid image"
+  }
+}
+
+if (page === "admin") {
+  getAdmin()
+}
+watch(modalOpen, (newValue, oldValue) => {
+  if (newValue === true && oldValue === false) {
+    editFocus()
+  }
+})
 </script>

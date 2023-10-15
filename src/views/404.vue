@@ -8,6 +8,5 @@
 </template>
 
 <script setup>
-const favicon = document.getElementById("favicon")
-favicon.href = "/icons/favicon.ico"
+document.getElementById("favicon").href = "/icons/favicon.ico"
 </script>

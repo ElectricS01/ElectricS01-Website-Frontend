@@ -19,6 +19,5 @@
 </template>
 
 <script setup>
-const favicon = document.getElementById("favicon")
-favicon.href = "/icons/tonkgameicon.ico"
+document.getElementById("favicon").href = "/icons/tonkgameicon.ico"
 </script>

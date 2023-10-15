@@ -1507,8 +1507,7 @@ export default {
     }
   },
   async mounted() {
-    const favicon = document.getElementById("favicon")
-    favicon.href = "/icons/favicon.ico"
+    document.getElementById("favicon").href = "/icons/favicon.ico"
 
     document.addEventListener("keydown", this.escPressed)
     const div = document.getElementById("div")

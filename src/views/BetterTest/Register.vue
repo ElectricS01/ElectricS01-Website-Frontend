@@ -59,8 +59,7 @@ let password = ""
 
 const store = useDataStore()
 
-const favicon = document.getElementById("favicon")
-favicon.href = "/icons/favicon.ico"
+document.getElementById("favicon").href = "/icons/favicon.ico"
 
 const submit = () => {
   store.error = ""

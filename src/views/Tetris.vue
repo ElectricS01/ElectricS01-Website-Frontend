@@ -26,8 +26,7 @@ import { computed, onUnmounted } from "vue"
 let viewportWidth = window.innerWidth - 16
 let viewportHeight = window.innerHeight - 48
 
-const favicon = document.getElementById("favicon")
-favicon.href = "/icons/tetris.ico"
+document.getElementById("favicon").href = "/icons/tetris.ico"
 
 const leaving = () => {
   axios

@@ -16,8 +16,7 @@ import { ref, watch } from "vue"
 let equation = ref("")
 let resultant = null
 
-const favicon = document.getElementById("favicon")
-favicon.href = "/icons/favicon.ico"
+document.getElementById("favicon").href = "/icons/favicon.ico"
 
 const calculate = (operator, operand1, operand2) => {
   switch (operator) {
