@@ -324,7 +324,7 @@ button:hover,
   display: none;
 }
 
-@media screen and (max-width: 732px) {
+@media screen and (max-width: 768px) {
   .navbar a:not(:first-child) {
     display: none;
   }

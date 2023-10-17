@@ -13,7 +13,7 @@
 <script setup>
 import { ref, watch } from "vue"
 
-let equation = ref("")
+const equation = ref("")
 let resultant = null
 
 document.getElementById("favicon").href = "/icons/favicon.ico"

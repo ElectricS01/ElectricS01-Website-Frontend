@@ -34,9 +34,9 @@
       </router-link>
       <a href="https://mapit.electrics01.com">Mapit (Demo)</a>
       <router-link
-        v-if="store.userData"
+        v-if="store.userData.id"
         class="right"
-        to="/account"
+        to="/account/account"
         @click="responsiveNavbar()"
       >
         Account
@@ -51,7 +51,7 @@
         <Icons size="28" icon="chats" />
       </div>
       <router-link
-        v-if="store.userData"
+        v-if="store.userData.id"
         class="right chat-icon"
         to="/account/account"
       >

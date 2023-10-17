@@ -75,7 +75,7 @@
               Change Password
             </div>
             <div class="settings-spacer"></div>
-            Creation date: {{ store.dayjs(store.userData?.createdAt) }}
+            Creation date: {{ store.dayjsLong(store.userData?.createdAt) }}
             <div class="settings-spacer"></div>
             Account ID: {{ store.userData?.id }}
             <div class="settings-spacer"></div>
@@ -307,7 +307,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.180</div>
+            <div>Version: 1.181</div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -321,7 +321,7 @@
                 <th>{{ index }}</th>
                 <th>{{ feedback.userId }}</th>
                 <th>{{ feedback.feedback }}</th>
-                <th>{{ store.dayjs(feedback.createdAt) }}</th>
+                <th>{{ store.dayjsLong(feedback.createdAt) }}</th>
                 <th>
                   <Icons
                     size="16"
@@ -364,10 +364,10 @@ const properties = [
 ]
 const options = ["no one", "friends", "everyone"]
 
+const modalOpen = ref(false)
+const isOpen = ref(false)
+const adminData = ref([])
 let page = "account"
-let modalOpen = ref(false)
-let isOpen = ref(false)
-let adminData = ref([])
 let feedbackText = ""
 let editing = false
 let editStatus = ""

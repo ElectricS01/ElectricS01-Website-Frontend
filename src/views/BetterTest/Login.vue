@@ -44,38 +44,36 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: "",
-      password: ""
-    }
-  },
-  methods: {
-    submit() {
-      this.$store.error = ""
-      this.axios
-        .post("/api/login", {
-          username: this.username.toLowerCase().trim(),
-          password: this.password.trim()
-        })
-        .then((res) => {
-          localStorage.setItem("token", res.data.token)
-          Object.assign(this.axios.defaults, {
-            headers: { Authorization: res.data.token }
-          })
-          this.$store.getUser()
-          this.$router.push("/chat")
-        })
-        .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
-        })
-    }
-  },
-  mounted() {
-    document.getElementById("favicon").href = "/icons/favicon.ico"
-  }
+<script setup>
+import { useDataStore } from "@/stores/main"
+import axios from "axios"
+import router from "@/router"
+
+const store = useDataStore()
+
+let username = ""
+let password = ""
+
+document.getElementById("favicon").href = "/icons/favicon.ico"
+
+const submit = () => {
+  store.error = ""
+  axios
+    .post("/api/login", {
+      username: username.toLowerCase().trim(),
+      password: password.trim()
+    })
+    .then((res) => {
+      localStorage.setItem("token", res.data.token)
+      Object.assign(axios.defaults, {
+        headers: { Authorization: res.data.token }
+      })
+      store.getUser()
+      router.push("/chat")
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
 }
 </script>

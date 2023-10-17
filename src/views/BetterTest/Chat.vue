@@ -8,7 +8,7 @@
     @editing="editing = $event"
     @statusMessage="showUser.statusMessage = $event"
     @users="currentChat.user = $event"
-    @userSort="userSort($store.sortUsers)"
+    @userSort="userSort(store.sortUsers)"
   ></user-preview>
   <transition>
     <modal-simple v-if="embed" :is-active="embed" @close="embed = false">
@@ -59,7 +59,7 @@
           v-model="chatIconInput"
           id="chat-icon"
         />
-        <div v-if="$store.userData.emailVerified">
+        <div v-if="store.userData.emailVerified">
           <div class="text-small">
             <label for="requireVerification">Require verification</label>
           </div>
@@ -120,7 +120,7 @@
           v-model="chatIconInput"
           id="chat-icon"
         />
-        <div v-if="$store.userData.emailVerified">
+        <div v-if="store.userData.emailVerified">
           <div class="text-small">
             <label for="requireVerification">Require verification</label>
           </div>
@@ -155,7 +155,7 @@
     </modal>
   </transition>
   <div class="chat-container">
-    <sidebar-left v-if="$store.chatBarOpen === 'true'">
+    <sidebar-left v-if="store.chatBarOpen === 'true'">
       <div v-if="!loadingChats">
         <div class="filter-button" @click="createChatShown = true">
           Create chat
@@ -172,7 +172,7 @@
             :style="{
               backgroundColor: currentChat.id === chat.id ? '#212425' : '',
               width:
-                chat.owner === $store.userData.id && chat.type !== 1
+                chat.owner === store.userData.id && chat.type !== 1
                   ? 'calc(100% - 36px)'
                   : '100%'
             }"
@@ -182,7 +182,7 @@
                 style="margin: 4px"
                 size="32"
                 :avatar="
-                  chat.type === 1 && chat.ownerDetails.id !== $store.userData.id
+                  chat.type === 1 && chat.ownerDetails.id !== store.userData.id
                     ? chat.ownerDetails?.avatar
                     : chat.icon
                 "
@@ -207,7 +207,7 @@
               </b>
               <b
                 v-else-if="
-                  chat.type === 1 && chat.ownerDetails.id !== $store.userData.id
+                  chat.type === 1 && chat.ownerDetails.id !== store.userData.id
                 "
                 class="message-text-large"
                 style="
@@ -221,7 +221,7 @@
               </b>
               <b
                 v-else-if="
-                  chat.type === 1 && chat.ownerDetails.id === $store.userData.id
+                  chat.type === 1 && chat.ownerDetails.id === store.userData.id
                 "
                 class="message-text-large"
                 style="
@@ -246,7 +246,7 @@
             </div>
           </div>
           <div
-            v-if="chat.owner === $store.userData.id && chat.type !== 1"
+            v-if="chat.owner === store.userData.id && chat.type !== 1"
             @click="editChat(chat)"
             class="chats-settings"
           >
@@ -279,7 +279,7 @@
             <h1 v-if="currentChat.type !== 1">
               Welcome to {{ currentChat.name }}
             </h1>
-            <h1 v-else-if="currentChat.owner !== $store.userData.id">
+            <h1 v-else-if="currentChat.owner !== store.userData.id">
               Welcome to your Direct Message with
               {{ currentChat?.users[0].username }}
             </h1>
@@ -316,8 +316,8 @@
                 align-items: center;
               "
               v-if="
-                $store.dayjsDate(message.createdAt) !==
-                $store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
+                store.dayjsDate(message.createdAt) !==
+                store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
               "
             >
               <div style="border-bottom: 1px solid #212425; width: 50%"></div>
@@ -325,7 +325,7 @@
                 style="padding: 0 4px; white-space: nowrap"
                 class="message-text-small"
               >
-                {{ $store.dayjsDate(message.createdAt) }}
+                {{ store.dayjsDate(message.createdAt) }}
               </p>
               <div style="border-bottom: 1px solid #212425; width: 50%"></div>
             </div>
@@ -432,7 +432,7 @@
                     }}
                   </b>
                   <b class="message-text-small">
-                    {{ " " + $store.dayjs(message.createdAt) }}
+                    {{ " " + store.dayjsLong(message.createdAt) }}
                   </b>
                 </div>
                 <input
@@ -454,7 +454,7 @@
               </div>
               <div class="message-icons" v-show="editing !== message.id">
                 <icons
-                  v-show="message.user?.id === $store.userData?.id"
+                  v-show="message.user?.id === store.userData?.id"
                   style="cursor: pointer"
                   size="20"
                   icon="edit"
@@ -472,8 +472,8 @@
                 />
                 <icons
                   v-show="
-                    $store.userData?.admin ||
-                    message.user?.id === $store.userData?.id
+                    store.userData?.admin ||
+                    message.user?.id === store.userData?.id
                   "
                   style="cursor: pointer"
                   size="20"
@@ -493,12 +493,12 @@
                 :style="{
                   height: replyTo ? '36px' : '',
                   marginRight:
-                    $store.sidebarOpen === 'true' && !$store.search
+                    store.sidebarOpen === 'true' && !store.search
                       ? '250px'
-                      : $store.search
+                      : store.search
                       ? '350px'
                       : '',
-                  marginLeft: $store.chatBarOpen === 'true' ? '250px' : ''
+                  marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
                 }"
                 v-if="scrolledUp"
                 style="
@@ -579,15 +579,15 @@
       </div>
     </div>
     <sidebar
-      v-if="$store.sidebarOpen === 'true' || $store.search"
-      :style="{ width: $store.search ? '342px' : '' }"
+      v-if="store.sidebarOpen === 'true' || store.search"
+      :style="{ width: store.search ? '342px' : '' }"
     >
-      <div v-if="!loadingUsers && !$store.search">
+      <div v-if="!loadingUsers && !store.search">
         <div class="filter-button" @click="userSortPress()">
-          <p v-if="$store.sortUsers === 'id'">Sort: Id</p>
-          <p v-else-if="$store.sortUsers === 'username'">Sort: Username</p>
-          <p v-else-if="$store.sortUsers === 'status'">Sort: Status</p>
-          <p v-else-if="$store.sortUsers === 'statusMessage'">
+          <p v-if="store.sortUsers === 'id'">Sort: Id</p>
+          <p v-else-if="store.sortUsers === 'username'">Sort: Username</p>
+          <p v-else-if="store.sortUsers === 'status'">Sort: Status</p>
+          <p v-else-if="store.sortUsers === 'statusMessage'">
             Sort: Status Message
           </p>
         </div>
@@ -721,7 +721,7 @@
           </div>
           <div
             class="context-menu-item"
-            v-if="contextMenuItemUser.id !== $store.userData.id"
+            v-if="contextMenuItemUser.id !== store.userData.id"
             @click="sendDm(contextMenuItemUser.id)"
           >
             Message {{ contextMenuItemUser.username }}
@@ -729,7 +729,7 @@
           <div
             class="context-menu-item"
             v-if="
-              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friendRequests &&
               !contextMenuItemUser.friend?.status
             "
@@ -740,7 +740,7 @@
           <div
             class="context-menu-item"
             v-else-if="
-              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friend?.status === 'accepted'
             "
             @click="addFriend(contextMenuItemUser.id, true)"
@@ -750,7 +750,7 @@
           <div
             class="context-menu-item"
             v-else-if="
-              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friend?.status === 'pending'
             "
             @click="addFriend(contextMenuItemUser.id, true)"
@@ -760,7 +760,7 @@
           <div
             class="context-menu-item"
             v-else-if="
-              contextMenuItemUser.id !== $store.userData.id &&
+              contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friend?.status === 'incoming'
             "
             @click="addFriend(contextMenuItemUser.id, true)"
@@ -770,8 +770,8 @@
           <div
             class="context-menu-item"
             v-if="
-              currentChat.owner === $store.userData.id &&
-              contextMenuItemUser.id !== $store.userData.id &&
+              currentChat.owner === store.userData.id &&
+              contextMenuItemUser.id !== store.userData.id &&
               currentChat.type === 0
             "
             @click="removeUser(contextMenuItemUser.id)"
@@ -780,7 +780,7 @@
           </div>
         </context-menu>
       </div>
-      <div v-else-if="$store.search">
+      <div v-else-if="store.search">
         <input
           style="margin: 0"
           placeholder="Search this chat"
@@ -803,8 +803,8 @@
               align-items: center;
             "
             v-if="
-              $store.dayjsDate(message.createdAt) !==
-              $store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
+              store.dayjsDate(message.createdAt) !==
+              store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
             "
           >
             <div style="border-bottom: 1px solid #212425; width: 50%"></div>
@@ -812,7 +812,7 @@
               style="padding: 0 4px; white-space: nowrap"
               class="message-text-small"
             >
-              {{ $store.dayjsDate(message.createdAt) }}
+              {{ store.dayjsDate(message.createdAt) }}
             </p>
             <div style="border-bottom: 1px solid #212425; width: 50%"></div>
           </div>
@@ -912,7 +912,7 @@
                   {{ message.user?.username }}
                 </b>
                 <b class="message-text-small">
-                  {{ " " + $store.dayjs(message.createdAt) }}
+                  {{ " " + store.dayjsLong(message.createdAt) }}
                 </b>
               </div>
               <custom-message
@@ -931,8 +931,7 @@
   </div>
 </template>
 
-<script>
-import dayjs from "dayjs"
+<script setup>
 import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/core/Icons.vue"
 import Modal from "@/components/core/Modal.vue"
@@ -943,20 +942,17 @@ import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
+import { useDataStore } from "@/stores/main"
+
+const store = useDataStore()
+
+document.getElementById("favicon").href = "/icons/favicon.ico"
+</script>
+
+<script>
+import dayjs from "dayjs"
 
 export default {
-  components: {
-    ModalSimple,
-    UserPreview,
-    ContextMenu,
-    CustomMessage,
-    Icons,
-    Modal,
-    ProfilePicture,
-    Sidebar,
-    SidebarLeft,
-    StatusIndicator
-  },
   data() {
     return {
       searchMessages: [],
@@ -1507,8 +1503,6 @@ export default {
     }
   },
   async mounted() {
-    document.getElementById("favicon").href = "/icons/favicon.ico"
-
     document.addEventListener("keydown", this.escPressed)
     const div = document.getElementById("div")
     div.addEventListener("scroll", this.scrollEvent)
