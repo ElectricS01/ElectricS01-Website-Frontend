@@ -42,6 +42,9 @@
             Admin
           </div>
           <div @click="changePage('about')" class="settings-item">About</div>
+          <div @click="changePage('changelog')" class="settings-item">
+            Changelog
+          </div>
           <div @click="modalOpen = true" class="settings-item">
             Any feedback?
           </div>
@@ -307,7 +310,23 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.182</div>
+            <div>Version: 1.183</div>
+          </div>
+          <div v-else-if="page === 'changelog'" class="settings-page-container">
+            <h2 class="settings-text">Changelog</h2>
+            <div>Better Communications changelog</div>
+            <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.183 - Changelog Added</h2>
+            <div class="settings-spacer"></div>
+            <div v-markdown>- Added changelog</div>
+            <div v-markdown>- Added "New Messages" status indicator</div>
+            <div v-markdown>- Fixed issue with search</div>
+            <div v-markdown>- Fixed issue with changing status message</div>
+            <div v-markdown>- Support for TypeScript backend</div>
+            <div v-markdown>- Switched more code to `script setup`</div>
+            <div v-markdown>- Refactoring</div>
+            <div v-markdown>- Updated deps</div>
+            <div class="settings-spacer"></div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -353,7 +372,15 @@ import { nextTick, ref, watch } from "vue"
 const store = useDataStore()
 const route = useRoute()
 
-const pages = ["account", "privacy", "appearance", "profile", "about", "admin"]
+const pages = [
+  "account",
+  "privacy",
+  "appearance",
+  "profile",
+  "about",
+  "changelog",
+  "admin"
+]
 const properties = [
   "directMessages",
   "friendRequests",

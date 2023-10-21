@@ -63,7 +63,7 @@ const minDimension = computed(() => {
 })
 
 window.addEventListener("beforeunload", leaving)
-window.addEventListener("resize", updateDimensions)
+document.addEventListener("resize", updateDimensions)
 
 onUnmounted(() => {
   axios
@@ -73,7 +73,7 @@ onUnmounted(() => {
     .catch((e) => {
       console.log("Error 503, Cannot Connect to Server " + e)
     })
-  document.removeEventListener("beforeunload", leaving)
-  window.removeEventListener("resize", updateDimensions)
+  window.removeEventListener("beforeunload", leaving)
+  document.removeEventListener("resize", updateDimensions)
 })
 </script>

@@ -63,7 +63,10 @@
           <div class="text-small">
             <label for="requireVerification">Require verification</label>
           </div>
-          <div class="switch" @click="toggle()">
+          <div
+            class="switch"
+            @click="requireVerification = !requireVerification"
+          >
             <input
               type="checkbox"
               :checked="requireVerification"
@@ -124,7 +127,10 @@
           <div class="text-small">
             <label for="requireVerification">Require verification</label>
           </div>
-          <div class="switch" @click="toggle()">
+          <div
+            class="switch"
+            @click="requireVerification = !requireVerification"
+          >
             <input
               type="checkbox"
               :checked="requireVerification"
@@ -161,7 +167,7 @@
           Create chat
         </div>
         <div
-          v-for="chat in chats"
+          v-for="chat in chatsList"
           :key="chat"
           style="display: flex; margin: 0 0 4px; align-items: center"
         >
@@ -308,6 +314,24 @@
             :id="'message-' + index"
             style="padding: 4px"
           >
+            <div
+              v-if="latest === message.id - 1"
+              style="
+                padding-bottom: 8px;
+                height: 16px;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <div style="border-bottom: 1px solid #ff2f2f; width: 50%"></div>
+              <p
+                style="padding: 0 4px; white-space: nowrap; color: #ff2f2f"
+                class="message-text-small"
+              >
+                New messages
+              </p>
+              <div style="border-bottom: 1px solid #ff2f2f; width: 50%"></div>
+            </div>
             <div
               style="
                 padding-bottom: 8px;
@@ -592,7 +616,9 @@
           </p>
         </div>
         <div
-          v-if="currentChat.users?.some((user) => user.status !== 'offline')"
+          v-if="
+            currentChat.users?.some((someUser) => someUser.status !== 'offline')
+          "
           style="
             padding: 0 4px;
             display: flex;
@@ -650,7 +676,9 @@
           </div>
         </div>
         <div
-          v-if="currentChat.users?.some((user) => user.status === 'offline')"
+          v-if="
+            currentChat.users?.some((someUser) => someUser.status === 'offline')
+          "
           style="
             padding: 0 4px;
             display: flex;
@@ -731,7 +759,7 @@
             v-if="
               contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friendRequests &&
-              !contextMenuItemUser.friend?.status
+              !contextMenuItemUser.friend[0]?.status
             "
             @click="addFriend(contextMenuItemUser.id, true)"
           >
@@ -741,7 +769,7 @@
             class="context-menu-item"
             v-else-if="
               contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friend?.status === 'accepted'
+              contextMenuItemUser.friend[0]?.status === 'accepted'
             "
             @click="addFriend(contextMenuItemUser.id, true)"
           >
@@ -751,7 +779,7 @@
             class="context-menu-item"
             v-else-if="
               contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friend?.status === 'pending'
+              contextMenuItemUser.friend[0]?.status === 'pending'
             "
             @click="addFriend(contextMenuItemUser.id, true)"
           >
@@ -761,7 +789,7 @@
             class="context-menu-item"
             v-else-if="
               contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friend?.status === 'incoming'
+              contextMenuItemUser.friend[0]?.status === 'incoming'
             "
             @click="addFriend(contextMenuItemUser.id, true)"
           >
@@ -786,7 +814,6 @@
           placeholder="Search this chat"
           @keydown.enter="searchChat"
           v-model="searchText"
-          id="status"
           autocomplete="off"
         />
         <div
@@ -919,6 +946,7 @@
                 :message="message"
                 :handleClick="handleClick"
                 :findUser="findUser"
+                :scroll="scroll"
               ></custom-message>
             </div>
           </div>
@@ -942,40 +970,44 @@ import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
-import { useDataStore } from "@/stores/main"
-
-const store = useDataStore()
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 </script>
 
 <script>
 import dayjs from "dayjs"
+import router from "@/router"
+import { useDataStore } from "@/stores/main"
+import axios from "axios"
+import { nextTick, ref } from "vue"
 
+const store = useDataStore()
+
+const latest = ref(parseInt(localStorage.getItem("latest")))
+const searchMessages = ref([])
+const chatsList = ref([])
+const embed = ref()
+const currentChat = ref({})
+const replyTo = ref()
+const editing = ref()
+const requireVerification = ref(true)
+
+let inputText
+let editText
+let searchText
+let chatNameInput
+let chatDescriptionInput
+let chatIconInput
+let chatUserInput
 export default {
   data() {
     return {
-      searchMessages: [],
-      chats: [],
-      embed: "",
-      currentChat: {},
-      inputText: "",
-      replyTo: null,
-      editText: "",
-      editStatus: "",
-      editing: false,
-      searchText: "",
       createChatShown: false,
       loadingMessages: true,
       loadingUsers: true,
       loadingChats: true,
       scrolledUp: false,
       showUser: false,
-      chatDescriptionInput: "",
-      chatNameInput: "",
-      chatIconInput: "",
-      requireVerification: true,
-      chatUserInput: "",
       chatUsers: [],
       chatEdit: false,
       contextMenuVisible: false,
@@ -985,50 +1017,50 @@ export default {
   },
   methods: {
     async getChats() {
-      await this.axios
+      await axios
         .get("/api/chats")
         .then(async (res) => {
-          this.chats = res.data
+          chatsList.value = res.data
           this.loadingChats = false
           this.chatSort()
           if (
-            this.chats.find(
+            chatsList.value.find(
               (chat) => chat.id === parseInt(this.$route.params.id)
             )
           ) {
             await this.getChat(this.$route.params.id)
           } else {
             await this.getChat()
-            this.$router.push("/chat/1")
+            router.push("/chat/1")
           }
         })
         .catch((e) => {
           if (e.message === "Request failed with status code 401") {
-            this.$store.error = "Error 401, You are not logged in"
-            this.$router.push("/login")
+            store.error = "Error 401, You are not logged in"
+            router.push("/login")
           } else {
-            this.$store.error = "Error 503, Cannot Connect to Server " + e
+            store.error = "Error 503, Cannot Connect to Server " + e
           }
         })
     },
     userSortPress() {
-      if (this.$store.sortUsers === "id") {
+      if (store.sortUsers === "id") {
         localStorage.setItem("sortUsers", "username")
-      } else if (this.$store.sortUsers === "username") {
+      } else if (store.sortUsers === "username") {
         localStorage.setItem("sortUsers", "status")
-      } else if (this.$store.sortUsers === "status") {
+      } else if (store.sortUsers === "status") {
         localStorage.setItem("sortUsers", "statusMessage")
       } else {
         localStorage.setItem("sortUsers", "id")
       }
       if (localStorage.getItem("sortUsers")) {
-        this.$store.sortUsers = localStorage.getItem("sortUsers")
+        store.sortUsers = localStorage.getItem("sortUsers")
       }
-      this.userSort(this.$store.sortUsers)
+      this.userSort(store.sortUsers)
     },
     userSort(property) {
       if (property !== "id") {
-        this.currentChat.users
+        currentChat.value.users
           .sort(function (a, b) {
             if (a.username === null && b.username === null) {
               return 0
@@ -1052,13 +1084,13 @@ export default {
             }
           })
       } else {
-        this.currentChat.users.sort(function (a, b) {
+        currentChat.value.users.sort(function (a, b) {
           return a.id - b.id
         })
       }
     },
     chatSort() {
-      this.chats.sort((a, b) => {
+      chatsList.value.sort((a, b) => {
         if (a.latest && b.latest) {
           return new Date(b.latest) - new Date(a.latest)
         } else if (a.latest) {
@@ -1070,98 +1102,101 @@ export default {
       })
     },
     submit() {
-      if (this.inputText.trim()) {
-        this.axios
+      if (inputText.trim()) {
+        axios
           .post("/api/message", {
-            messageContents: this.inputText.trim(),
-            reply: this.replyTo,
-            chatId: this.currentChat.id
+            messageContents: inputText.trim(),
+            reply: replyTo.value,
+            chatId: currentChat.value.id
           })
           .then((res) => {
-            this.chats = res.data.chats
+            chatsList.value = res.data.chats
             this.chatSort()
-            this.currentChat = res.data.chat
-            this.inputText = ""
-            this.replyTo = null
-            this.currentChat.messages.focus = false
+            currentChat.value = res.data.chat
+            localStorage.setItem(
+              "latest",
+              currentChat.value.messages[currentChat.value.messages.length - 1]
+                .id
+            )
+            inputText = ""
+            replyTo.value = null
+            currentChat.value.messages.focus = false
             this.scroll()
           })
           .catch((e) => {
-            this.$store.error = e.response.data.message
-            setTimeout(this.$store.errorFalse, 5000)
+            store.error = e.response.data.message
+            setTimeout(store.errorFalse, 5000)
           })
       }
     },
     deleteMessage(messageId) {
-      this.axios
+      axios
         .delete(`/api/delete/${messageId}`)
         .then((res) => {
-          this.currentChat.messages = res.data
-          this.currentChat.messages.focus = false
+          currentChat.value.messages = res.data
+          currentChat.value.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response.data.message
+          setTimeout(store.errorFalse, 5000)
         })
     },
     editChat(chat) {
       this.chatEdit = chat.id
-      this.chatNameInput = chat.name
-      this.chatDescriptionInput = chat.description
-      this.chatIconInput = chat.icon
-      this.requireVerification = chat.requireVerification
-      this.chatUsers = this.currentChat.users.map((user) => user.id)
+      chatNameInput = chat.name
+      chatDescriptionInput = chat.description
+      chatIconInput = chat.icon
+      requireVerification.value = chat.requireVerification
+      this.chatUsers = currentChat.value.users.map((user) => user.id)
     },
     deleteChat(chatId) {
-      this.axios
+      axios
         .delete(`/api/delete-chat/${chatId}`)
         .then((res) => {
           this.chatEdit = false
-          this.chatNameInput = ""
-          this.chatDescriptionInput = ""
-          this.chatIconInput = ""
-          this.requireVerification = true
-          this.chats = res.data.chats
+          chatNameInput = ""
+          chatDescriptionInput = ""
+          chatIconInput = ""
+          requireVerification.value = true
+          chatsList.value = res.data.chats
           this.chatSort()
-          this.currentChat = res.data.chat
-          this.replyTo = null
-          if (this.currentChat.messages) {
-            this.currentChat.messages.focus = false
+          currentChat.value = res.data.chat
+          replyTo.value = null
+          if (currentChat.value.messages) {
+            currentChat.value.messages.focus = false
             this.scroll()
           }
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response.data.message
+          setTimeout(store.errorFalse, 5000)
         })
     },
     editMessage(messageId) {
-      if (
-        this.editText.trim() === this.findMessage(messageId).messageContents
-      ) {
-        return (this.editing = false)
+      if (editText.trim() === this.findMessage(messageId).messageContents) {
+        return (editing.value = false)
       }
-      this.axios
+      axios
         .patch(`/api/edit/${messageId}`, {
-          messageContents: this.editText.trim()
+          messageContents: editText.trim()
         })
         .then((res) => {
-          this.editing = false
-          this.currentChat.messages = res.data
-          this.currentChat.messages.focus = false
+          editing.value = false
+          currentChat.value.messages = res.data
+          currentChat.value.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response.data.message
+          setTimeout(store.errorFalse, 5000)
         })
     },
     searchChat() {
-      if (this.searchText) {
-        const keywords = this.searchText.toLowerCase().split(" ")
+      if (searchText) {
+        const keywords = searchText.toLowerCase().split(" ")
 
-        this.searchMessages = this.currentChat.messages.filter((message) => {
+        searchMessages.value = currentChat.value.messages.filter((message) => {
           return keywords.some((keyword) => {
             return message.messageContents.toLowerCase().includes(keyword)
           })
@@ -1169,106 +1204,103 @@ export default {
       }
     },
     replyToMessage(messageId) {
-      this.replyTo = messageId
+      replyTo.value = messageId
       const input = document.getElementById("input")
       input?.focus()
     },
     async getChat(id) {
-      await this.axios
+      await axios
         .get(`/api/chat/${id || 1}`)
         .then((res) => {
-          this.currentChat = res.data
-          this.$router.push(`/chat/${this.currentChat.id}`)
-          this.userSort(this.$store.sortUsers)
+          currentChat.value = res.data
+          router.push(`/chat/${currentChat.value.id}`)
+          this.userSort(store.sortUsers)
           this.loadingUsers = false
-          this.replyTo = null
+          replyTo.value = null
           this.loadingMessages = false
-          this.currentChat.messages.focus = false
+          currentChat.value.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response.data.message
+          setTimeout(store.errorFalse, 5000)
         })
     },
     createChat() {
-      if (this.$store.userData.emailVerified === false) {
-        this.requireVerification = false
+      if (store.userData.emailVerified === false) {
+        requireVerification.value = false
       }
       if (
-        this.chatNameInput &&
-        this.chatDescriptionInput &&
-        typeof this.requireVerification === "boolean"
+        chatNameInput &&
+        chatDescriptionInput &&
+        typeof requireVerification.value === "boolean"
       )
-        this.axios
+        axios
           .post("/api/create-chat", {
-            name: this.chatNameInput,
-            description: this.chatDescriptionInput,
-            icon: this.chatIconInput,
-            requireVerification: this.requireVerification
+            name: chatNameInput,
+            description: chatDescriptionInput,
+            icon: chatIconInput,
+            requireVerification: requireVerification
           })
           .then((res) => {
             this.createChatShown = false
-            this.chatNameInput = ""
-            this.chatDescriptionInput = ""
-            this.chatIconInput = ""
-            this.requireVerification = true
-            this.chats = res.data.chats
+            chatNameInput = ""
+            chatDescriptionInput = ""
+            chatIconInput = ""
+            requireVerification.value = true
+            chatsList.value = res.data.chats
             this.chatSort()
-            this.currentChat = res.data.chat
-            this.replyTo = null
-            if (this.currentChat.messages) {
-              this.currentChat.messages.focus = false
+            currentChat.value = res.data.chat
+            replyTo.value = null
+            if (currentChat.value.messages) {
+              currentChat.value.messages.focus = false
               this.scroll()
             }
           })
           .catch((e) => {
-            this.$store.error = e.response.data.message
-            setTimeout(this.$store.errorFalse, 5000)
+            store.error = e.response.data.message
+            setTimeout(store.errorFalse, 5000)
           })
     },
     saveChat() {
-      if (this.$store.userData.emailVerified === false) {
-        this.requireVerification = false
+      if (store.userData.emailVerified === false) {
+        requireVerification.value = false
       }
       if (
-        this.chatNameInput &&
-        this.chatDescriptionInput &&
-        typeof this.requireVerification === "boolean"
+        chatNameInput &&
+        chatDescriptionInput &&
+        typeof requireVerification.value === "boolean"
       )
-        this.axios
+        axios
           .patch(`/api/edit-chat/${this.chatEdit}`, {
-            name: this.chatNameInput,
-            description: this.chatDescriptionInput,
-            icon: this.chatIconInput,
-            requireVerification: this.requireVerification,
+            name: chatNameInput,
+            description: chatDescriptionInput,
+            icon: chatIconInput,
+            requireVerification: requireVerification,
             users: this.chatUsers.filter(
               (user) =>
-                !this.currentChat.users.map((user) => user.id).includes(user)
+                !currentChat.value.users.map((user) => user.id).includes(user)
             )
           })
           .then((res) => {
             this.chatEdit = false
-            this.chatNameInput = ""
-            this.chatDescriptionInput = ""
-            this.chatIconInput = ""
-            this.requireVerification = true
-            this.chats = res.data.chats
+            chatNameInput = ""
+            chatDescriptionInput = ""
+            chatIconInput = ""
+            requireVerification.value = true
+            chatsList.value = res.data.chats
             this.chatSort()
-            this.currentChat = res.data.chat
-            this.replyTo = null
-            if (this.currentChat.messages) {
-              this.currentChat.messages.focus = false
+            currentChat.value = res.data.chat
+            replyTo.value = null
+            if (currentChat.value.messages) {
+              currentChat.value.messages.focus = false
               this.scroll()
             }
           })
           .catch((e) => {
-            this.$store.error = e.response.data.message
-            setTimeout(this.$store.errorFalse, 5000)
+            store.error = e.response.data.message
+            setTimeout(store.errorFalse, 5000)
           })
-    },
-    toggle() {
-      this.requireVerification = !this.requireVerification
     },
     chatUserEnter() {
       const userId = parseInt(this.chatUserInput)
@@ -1276,8 +1308,8 @@ export default {
       if (this.chatUsers.indexOf(userId) === -1 && Number.isInteger(userId)) {
         this.chatUsers.push(userId)
       } else {
-        this.$store.error = "This user is already apart of this group"
-        setTimeout(this.$store.errorFalse, 2500)
+        store.error = "This user is already apart of this group"
+        setTimeout(store.errorFalse, 2500)
       }
     },
     dayjsShort(date) {
@@ -1286,7 +1318,7 @@ export default {
     openUser(userId, user) {
       if (user !== null) {
         this.contextMenuVisible = false
-        this.axios
+        axios
           .get("/api/user/" + userId)
           .then((res) => {
             this.showUser = res.data
@@ -1295,9 +1327,9 @@ export default {
             }
           })
           .catch((e) => {
-            this.$store.error = e.response.data.message
+            store.error = e.response.data.message
             console.log(e)
-            setTimeout(this.$store.errorFalse, 5000)
+            setTimeout(store.errorFalse, 5000)
           })
       }
     },
@@ -1330,7 +1362,7 @@ export default {
       }
     },
     findUser(userId) {
-      const user = this.currentChat.users.find(
+      const user = currentChat.value.users.find(
         (user) => user.id === parseInt(userId)
       )
       if (user) {
@@ -1339,35 +1371,35 @@ export default {
     },
     removeUser(userId) {
       this.contextMenuVisible = false
-      this.axios
-        .post(`/api/remove/${this.currentChat.id}/${userId}`)
+      axios
+        .post(`/api/remove/${currentChat.value.id}/${userId}`)
         .then((res) => {
-          this.chats = res.data.chats
+          chatsList.value = res.data.chats
           this.chatSort()
-          this.currentChat = res.data.chat
-          if (this.currentChat.messages) {
-            this.currentChat.messages.focus = false
+          currentChat.value = res.data.chat
+          if (currentChat.value.messages) {
+            currentChat.value.messages.focus = false
             this.scroll()
           }
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response.data.message
+          setTimeout(store.errorFalse, 5000)
         })
     },
     scroll(override) {
-      this.$nextTick(() => {
+      nextTick(() => {
         try {
-          if ((!this.scrolledUp || override) && this.currentChat.messages) {
-            const lastIndex = this.currentChat.messages.length - 1
+          if ((!this.scrolledUp || override) && currentChat.value.messages) {
+            const lastIndex = currentChat.value.messages.length - 1
             const lastMessage = document.querySelector(`#message-${lastIndex}`)
-            if (this.editing) {
+            if (editing.value) {
               this.scrolledUp = false
               lastMessage.scrollIntoView()
             } else if (lastMessage) {
               lastMessage.scrollIntoView()
               this.scrolledUp = false
-              this.$store.editFocus()
+              store.editFocus()
             }
           }
         } catch (e) {
@@ -1376,8 +1408,8 @@ export default {
       })
     },
     merge(message, index) {
-      if (this.currentChat.messages[index - 1]) {
-        const previousMessage = this.currentChat.messages[index - 1]
+      if (currentChat.value.messages[index - 1]) {
+        const previousMessage = currentChat.value.messages[index - 1]
         return (
           previousMessage.userName === message.userName &&
           !message.reply &&
@@ -1388,14 +1420,14 @@ export default {
       }
     },
     findMessage(messageId) {
-      return this.currentChat.messages.find(
+      return currentChat.value.messages.find(
         (message) => message.id === messageId
       )
     },
     goToMessage(messageId) {
       const div = document.getElementById("div")
       const element = document.getElementById(
-        "message-" + this.currentChat.messages.indexOf(messageId)
+        "message-" + currentChat.value.messages.indexOf(messageId)
       )
       const elementRect = element.getBoundingClientRect()
       const absoluteElementTop = elementRect.top + div.scrollTop
@@ -1412,50 +1444,50 @@ export default {
       }, 1000)
     },
     editLast() {
-      this.messageEdit = this.currentChat.messages.filter(
-        (message) => Number(message.userName) === this.$store.userData.id
+      this.messageEdit = currentChat.value.messages.filter(
+        (message) => Number(message.userName) === store.userData.id
       )
       if (this.messageEdit.length > 0) {
-        this.editText = this.messageEdit.slice(-1)[0].messageContents
-        this.editing = this.messageEdit.slice(-1)[0].id
+        editText = this.messageEdit.slice(-1)[0].messageContents
+        editing.value = this.messageEdit.slice(-1)[0].id
       }
     },
     addFriend(userId, notOpen) {
-      this.axios
+      axios
         .post(`/api/friend/${userId}`)
         .then(async () => {
           if (!notOpen) {
             this.openUser(userId)
           } else {
-            await this.getChat(this.currentChat.id)
+            await this.getChat(currentChat.value.id)
             this.contextMenuItemUser = await this.findUser(
               this.contextMenuItemUser.id
             )
           }
         })
         .catch((e) => {
-          this.$store.error = e.response.data.message
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response.data.message
+          setTimeout(store.errorFalse, 5000)
         })
     },
     sendDm(id) {
       this.contextMenuVisible = false
-      this.axios
+      axios
         .post(`/api/direct-message/${id}`)
         .then((res) => {
           this.showUser = false
-          this.editing = false
-          this.chats = res.data.chats
+          editing.value = false
+          chatsList.value = res.data.chats
           this.chatSort()
-          this.currentChat = res.data.chat
-          this.inputText = ""
-          this.replyTo = null
-          this.currentChat.messages.focus = false
+          currentChat.value = res.data.chat
+          inputText = ""
+          replyTo.value = null
+          currentChat.value.messages.focus = false
           this.scroll()
         })
         .catch((e) => {
-          this.$store.error = e.response
-          setTimeout(this.$store.errorFalse, 5000)
+          store.error = e.response
+          setTimeout(store.errorFalse, 5000)
         })
     },
     showContextMenu(event, user) {
@@ -1464,20 +1496,22 @@ export default {
       this.contextMenuVisible = true
       this.contextMenuItemUser = user
     },
-    escPressed(event) {
-      if (event.key === "Escape") {
+    escPressed({ key }) {
+      if (key === "Escape") {
         if (this.contextMenuVisible) {
           this.contextMenuVisible = false
-        } else if (this.editing === "status") {
-          this.editing = false
+        } else if (editing.value === "status") {
+          editing.value = false
         } else if (this.showUser) {
           this.showUser = false
+        } else if (embed.value) {
+          embed.value = false
         } else if (this.chatEdit) {
           this.chatEdit = false
-        } else if (this.editing) {
-          this.editing = false
-        } else if (this.replyTo) {
-          this.replyTo = null
+        } else if (editing.value) {
+          editing.value = false
+        } else if (replyTo.value) {
+          replyTo.value = null
         } else if (!this.showUser) {
           this.scroll(true)
         }
@@ -1496,10 +1530,10 @@ export default {
   },
   computed: {
     onlineUsers() {
-      return this.currentChat.users.filter((user) => user.status === "online")
+      return currentChat.value.users.filter((user) => user.status === "online")
     },
     offlineUsers() {
-      return this.currentChat.users.filter((user) => user.status === "offline")
+      return currentChat.value.users.filter((user) => user.status === "offline")
     }
   },
   async mounted() {
@@ -1523,7 +1557,7 @@ export default {
   },
   watch: {
     editing() {
-      this.$store.editFocus()
+      store.editFocus()
     }
   }
 }

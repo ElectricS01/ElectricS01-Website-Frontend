@@ -55,7 +55,7 @@
                 (showUser.id !== store.userData.id &&
                   showUser.directMessages !== 'no one') ||
                 (showUser.directMessages !== 'no one' &&
-                  showUser.friend?.status)
+                  showUser.friend[0]?.status)
               "
               class="profile-button-message"
               @click="sendDm(showUser.id)"
@@ -72,7 +72,7 @@
               v-if="
                 showUser.friendRequests &&
                 showUser.id !== store.userData.id &&
-                !showUser.friend?.status
+                !showUser.friend[0]?.status
               "
               class="profile-button-add"
               style="color: #47bf4c"
@@ -89,7 +89,7 @@
             <button
               v-if="
                 showUser.id !== store.userData.id &&
-                showUser.friend?.status === 'accepted'
+                showUser.friend[0]?.status === 'accepted'
               "
               class="profile-button-remove"
               style="color: #ff2f2f"
@@ -105,7 +105,8 @@
             </button>
             <button
               v-if="
-                showUser.friendRequests && showUser.friend?.status === 'pending'
+                showUser.friendRequests &&
+                showUser.friend[0]?.status === 'pending'
               "
               class="profile-button-pending"
               style="color: #808080"
@@ -122,7 +123,7 @@
             <button
               v-if="
                 showUser.id !== store.userData.id &&
-                showUser.friend?.status === 'incoming'
+                showUser.friend[0]?.status === 'incoming'
               "
               class="profile-button-pending"
               style="color: #47bf4c"
@@ -196,7 +197,7 @@ const editStatusMessage = () => {
     editStatus.trim() === props.showUser.statusMessage ||
     editStatus.trim().length > 50
   ) {
-    return (this.editing = false)
+    return emits("editing", false)
   }
   axios
     .patch("/api/edit-status-message", {
