@@ -27,13 +27,12 @@ const closeModal = () => emit("close")
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2;
+  z-index: 3;
 }
 
 .modal {
   width: 100%;
-  height: calc(100% - 48px);
-  padding-top: 48px;
+  height: 100%;
   display: none;
   overflow-y: auto;
 }

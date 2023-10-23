@@ -127,6 +127,21 @@
               />
               <span class="slider"></span>
             </label>
+            <div class="settings-spacer"></div>
+            Save Quick Switcher history online
+            <label class="switch">
+              <input
+                type="checkbox"
+                :checked="store.userData?.saveSwitcher"
+                @click="toggle('saveSwitcher')"
+              />
+              <span class="slider"></span>
+            </label>
+            <div class="settings-spacer"></div>
+            Clear your Quick Switcher history
+            <div @click="clearHistory()" class="settings-button">
+              Clear history
+            </div>
           </div>
           <div
             v-else-if="page === 'appearance'"
@@ -310,22 +325,45 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.183</div>
+            <div>Version: 1.184</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
-            <h2 class="settings-text">1.183 - Changelog Added</h2>
+            <h2 class="settings-text">1.184 Quick Switcher Added</h2>
             <div class="settings-spacer"></div>
-            <div v-markdown>- Added changelog</div>
-            <div v-markdown>- Added "New Messages" status indicator</div>
-            <div v-markdown>- Fixed issue with search</div>
-            <div v-markdown>- Fixed issue with changing status message</div>
-            <div v-markdown>- Support for TypeScript backend</div>
-            <div v-markdown>- Switched more code to `script setup`</div>
-            <div v-markdown>- Refactoring</div>
-            <div v-markdown>- Updated deps</div>
+            <ul>
+              <li>Added Quick Switcher</li>
+              <li>
+                Added an option to not save Quick Switcher history online in
+                <router-link to="/account/privacy">
+                  Privacy Settings
+                </router-link>
+              </li>
+              <li>Added a button to clear your Quick Switcher history</li>
+              <li>
+                Added
+                <router-link to="/mapit">/mapit link</router-link>
+              </li>
+              <li v-markdown>Switched more code to `script setup`</li>
+              <li v-markdown>Remove `VueAxios` as a dependency</li>
+              <li>Refactoring</li>
+              <li>Updated dependencies</li>
+            </ul>
+            <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.183 Changelog Added</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>Added changelog</li>
+              <li>Added "New Messages" status indicator</li>
+              <li>Fixed issue with search</li>
+              <li>Fixed issue with changing status message</li>
+              <li>Support for TypeScript backend</li>
+              <li v-markdown>Switched more code to `script setup`</li>
+              <li>Refactoring</li>
+              <li>Updated dependencies</li>
+            </ul>
             <div class="settings-spacer"></div>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
@@ -385,6 +423,7 @@ const properties = [
   "directMessages",
   "friendRequests",
   "showCreated",
+  "saveSwitcher",
   "avatar",
   "banner",
   "description"
@@ -498,8 +537,14 @@ const changeUsername = () => {
     console.log("Get Better™")
   }
 }
+const clearHistory = () => {
+  axios.delete("/api/clear-history").catch((e) => {
+    store.error = "Error 503, Cannot Connect to Server " + e
+    setTimeout(store.errorFalse, 5000)
+  })
+}
 const resendVerification = () => {
-  axios.post("/api/resend-verification", {}).catch((e) => {
+  axios.post("/api/resend-verification").catch((e) => {
     store.error = "Error 503, Cannot Connect to Server " + e
     setTimeout(store.errorFalse, 5000)
   })

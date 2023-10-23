@@ -1,8 +1,8 @@
 <template>
   <transition>
     <modal
-      v-if="showUser"
-      :is-active="typeof showUser === 'object'"
+      v-if="showUser && !store.quickSwitcherShown"
+      :is-active="typeof showUser === 'object' && !store.quickSwitcherShown"
       @close="emits('showUser', false), emits('editing', false)"
     >
       <img

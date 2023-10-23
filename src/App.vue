@@ -1,34 +1,34 @@
 <template>
   <header>
     <div class="navbar" id="mobile-navbar" v-if="navbarShown">
-      <router-link class="main" to="/" @click="responsiveNavbar()">
+      <router-link class="main" to="/" @click="mobileNav">
         ElectricS01.com
       </router-link>
       <router-link
         to="/tonkgame"
         :class="{ active: active('/tonkgame') }"
-        @click="responsiveNavbar()"
+        @click="mobileNav"
       >
         TonkGame
       </router-link>
       <router-link
         to="/calculator"
         :class="{ active: active('/calculator') }"
-        @click="responsiveNavbar()"
+        @click="mobileNav"
       >
         Calculator
       </router-link>
       <router-link
         to="/tetris"
         :class="{ active: active('/tetris') }"
-        @click="responsiveNavbar()"
+        @click="mobileNav"
       >
         Tetris
       </router-link>
       <router-link
         to="/collider"
         :class="{ active: active('/collider') }"
-        @click="responsiveNavbar()"
+        @click="mobileNav"
       >
         Collider
       </router-link>
@@ -37,11 +37,11 @@
         v-if="store.userData.id"
         class="right"
         to="/account/account"
-        @click="responsiveNavbar()"
+        @click="mobileNav"
       >
         Account
       </router-link>
-      <div class="icon-mobile" @click="responsiveNavbar()">☰</div>
+      <div class="icon-mobile" @click="mobileNav">☰</div>
     </div>
     <div class="chat-navbar" v-else>
       <router-link class="responsive-chat chat-button" to="/chat">
@@ -68,7 +68,11 @@
       >
         <Icons size="28" icon="account" />
       </div>
-      <div v-if="active('/chat')" @click="toggleSearch" class="right chat-icon">
+      <div
+        v-if="active('/chat')"
+        @click="store.search = !store.search"
+        class="right chat-icon"
+      >
         <Icons size="28" icon="search" />
       </div>
     </div>
@@ -79,6 +83,33 @@
     </transition>
   </header>
   <main>
+    <transition>
+      <modal-simple
+        v-if="store.quickSwitcherShown"
+        :is-active="store.quickSwitcherShown"
+        @close="store.quickSwitcherShown = false"
+      >
+        <div class="switcher-modal">
+          <input
+            placeholder="Quick switcher"
+            @keydown.enter="activateItem"
+            @keydown.down.prevent="moveHighlight(1)"
+            @keydown.up.prevent="moveHighlight(-1)"
+            class="switcher-input"
+            v-model="switcherInput"
+            id="quick-switcher"
+          />
+          <div
+            v-for="(item, index) in searchedItems"
+            :key="item"
+            class="switcher-item"
+            :class="{ highlighted: index === highlightedIndex }"
+          >
+            {{ item }}
+          </div>
+        </div>
+      </modal-simple>
+    </transition>
     <router-view />
   </main>
 </template>
@@ -87,11 +118,28 @@
 import Icons from "@/components/core/Icons.vue"
 import { useRoute } from "vue-router"
 import { useDataStore } from "@/stores/main"
-import { computed } from "vue"
+import { computed, nextTick, ref, watch } from "vue"
 import axios from "axios"
+import ModalSimple from "@/components/core/ModalSimple.vue"
+import router from "@/router"
 
 const route = useRoute()
 const store = useDataStore()
+
+const switcherItems = [
+  "Home",
+  "TonkGame",
+  "Calculator",
+  "Tetris",
+  "Collider",
+  "Mapit",
+  "Account",
+  "Chat"
+]
+
+const highlightedIndex = ref(0)
+const switcherInput = ref()
+let searchedItems = switcherItems
 
 Object.assign(axios.defaults, {
   headers: { Authorization: localStorage.getItem("token") }
@@ -118,12 +166,12 @@ if (localStorage.getItem("sortUsers")) {
 const active = (routePattern) => {
   return route.path.startsWith(routePattern)
 }
-const responsiveNavbar = () => {
-  const responsiveNavbar = document.getElementById("mobile-navbar")
-  if (responsiveNavbar.className === "navbar") {
-    responsiveNavbar.className += " responsive"
+const mobileNav = () => {
+  const nav = document.getElementById("mobile-navbar")
+  if (nav.className === "navbar") {
+    nav.className += " responsive"
   } else {
-    responsiveNavbar.className = "navbar"
+    nav.className = "navbar"
   }
 }
 const toggleSidebar = () => {
@@ -144,9 +192,82 @@ const toggleChatBar = () => {
   }
   store.chatBarOpen = localStorage.getItem("chatBarOpen")
 }
-const toggleSearch = () => {
-  store.search = !store.search
+const toggleQuickSwitcher = ({ repeat, metaKey, ctrlKey, key }) => {
+  if (repeat) return
+  if ((metaKey || ctrlKey) && (key === "k" || key === "/")) {
+    store.quickSwitcherShown = !store.quickSwitcherShown
+    if (store.quickSwitcherShown) {
+      nextTick(() => {
+        const quickSwitcher = document.getElementById("quick-switcher")
+        quickSwitcher?.focus()
+      })
+    }
+  }
 }
+const searchItems = () => {
+  const lastSearchedItems = searchedItems
+  searchedItems = switcherItems.filter((item) => {
+    return item.toLowerCase().includes(switcherInput.value.toLowerCase())
+  })
+  searchedItems.sort((a, b) => {
+    const aStartsWithSearch = a
+      .toLowerCase()
+      .startsWith(switcherInput.value.toLowerCase())
+    const bStartsWithSearch = b
+      .toLowerCase()
+      .startsWith(switcherInput.value.toLowerCase())
+    if (aStartsWithSearch && !bStartsWithSearch) {
+      return -1
+    } else if (!aStartsWithSearch && bStartsWithSearch) {
+      return 1
+    }
+    return 0
+  })
+  if (JSON.stringify(lastSearchedItems) !== JSON.stringify(searchedItems)) {
+    highlightedIndex.value = 0
+  }
+}
+const moveHighlight = (step) => {
+  if (Object.keys(searchedItems).length === 0) return
+  if (highlightedIndex.value === -1 && step === -1) {
+    highlightedIndex.value = searchedItems.length - 1
+  } else if (
+    highlightedIndex.value === searchedItems.length - 1 &&
+    step === 1
+  ) {
+    highlightedIndex.value = 0
+  } else {
+    highlightedIndex.value =
+      (highlightedIndex.value + step + searchedItems.length) %
+      searchedItems.length
+  }
+  nextTick(() => {
+    const highlightedElement = document.getElementById("highlighted")
+    if (highlightedElement) {
+      highlightedElement.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "nearest"
+      })
+    }
+  })
+}
+const activateItem = () => {
+  if (highlightedIndex.value !== -1 && searchedItems.length) {
+    router.push(`/${searchedItems[highlightedIndex.value]}`)
+    switcherInput.value = ""
+    store.quickSwitcherShown = false
+  }
+}
+const escPressed = ({ key }) => {
+  if (key === "Escape") {
+    store.quickSwitcherShown = false
+  }
+}
+
+document.addEventListener("keydown", toggleQuickSwitcher)
+document.addEventListener("keydown", escPressed)
+
 const navbarShown = computed(() => {
   return (
     !route.path.startsWith("/chat") &&
@@ -155,5 +276,9 @@ const navbarShown = computed(() => {
     !route.path.startsWith("/account") &&
     !route.path.startsWith("/reset")
   )
+})
+
+watch(switcherInput, () => {
+  searchItems()
 })
 </script>

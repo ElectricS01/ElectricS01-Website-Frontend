@@ -8,5 +8,15 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue"
+import { useRoute } from "vue-router"
+
+const route = useRoute()
+
 document.getElementById("favicon").href = "/icons/favicon.ico"
+onMounted(() => {
+  if (route.path.toLowerCase().startsWith("/mapit")) {
+    window.location.href = "https://mapit.electrics01.com"
+  }
+})
 </script>

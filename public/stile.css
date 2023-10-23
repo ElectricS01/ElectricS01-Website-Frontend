@@ -56,9 +56,29 @@ body {
   margin: 3px 0;
 }
 
-.icon-image {
-  width: 18px;
-  height: 12px;
+.switcher-modal {
+  height: 400px;
+  width: min(calc(100vw - 48px), 400px);
+  background-color: #282a2b80;
+  border-radius: 2px;
+  padding: 16px;
+}
+
+.switcher-input {
+  margin: 0 0 4px;
+}
+
+.switcher-item {
+  margin: 0 0 4px;
+  padding: 4px;
+
+  &:hover {
+    background-color: #31343580;
+  }
+}
+
+.highlighted {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .button a,
@@ -509,8 +529,13 @@ h4 {
 }
 
 .icon-text a {
-  display: block;
+  display: inline-flex;
   margin-bottom: 18px;
+}
+
+.icon-image {
+  width: 24px;
+  height: 16px;
 }
 
 .message-text-medium {
