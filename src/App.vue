@@ -146,6 +146,10 @@ Object.assign(axios.defaults, {
 })
 if (localStorage.getItem("token")) {
   store.getUser()
+} else {
+  store.userData.switcherHistory = JSON.parse(
+    localStorage.getItem("switcherHistory")
+  )
 }
 if (localStorage.getItem("sidebarOpen")) {
   store.sidebarOpen = localStorage.getItem("sidebarOpen")
@@ -253,10 +257,41 @@ const moveHighlight = (step) => {
   })
 }
 const activateItem = () => {
-  if (highlightedIndex.value !== -1 && searchedItems.length) {
+  if (
+    highlightedIndex.value !== -1 &&
+    searchedItems.length &&
+    store.quickSwitcherShown
+  ) {
     router.push(`/${searchedItems[highlightedIndex.value]}`)
-    switcherInput.value = ""
     store.quickSwitcherShown = false
+    console.log(store.userData.switcherHistory)
+    const existingPage = store.userData.switcherHistory.find(
+      (page) => page.page === searchedItems[highlightedIndex.value]
+    )
+    if (existingPage) {
+      existingPage.searches++
+    } else {
+      store.userData.switcherHistory.push({
+        page: searchedItems[highlightedIndex.value],
+        searches: 1
+      })
+    }
+    switcherInput.value = ""
+    if (store.userData.saveSwitcher) {
+      axios
+        .post("/api/history", {
+          history: store.userData.switcherHistory
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    } else {
+      localStorage.setItem(
+        "switcherHistory",
+        JSON.stringify(store.userData.switcherHistory)
+      )
+    }
+    console.log(store.userData.switcherHistory)
   }
 }
 const escPressed = ({ key }) => {

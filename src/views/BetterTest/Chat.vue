@@ -1011,145 +1011,146 @@ let chatDescriptionInput
 let chatIconInput
 let chatUserInput
 let chatUsers
+
+const userSort = (property) => {
+  if (property !== "id") {
+    currentChat.value.users
+      .sort(function (a, b) {
+        if (a.username === null && b.username === null) {
+          return 0
+        } else if (a.username === null) {
+          return 1
+        } else if (b.username === null) {
+          return -1
+        } else {
+          return a.username.localeCompare(b.username)
+        }
+      })
+      .sort(function (a, b) {
+        if (a[property] === null && b[property] === null) {
+          return 0
+        } else if (a[property] === null) {
+          return 1
+        } else if (b[property] === null) {
+          return -1
+        } else {
+          return a[property].localeCompare(b[property])
+        }
+      })
+  } else {
+    currentChat.value.users.sort(function (a, b) {
+      return a.id - b.id
+    })
+  }
+}
+const userSortPress = () => {
+  if (store.sortUsers === "id") {
+    localStorage.setItem("sortUsers", "username")
+  } else if (store.sortUsers === "username") {
+    localStorage.setItem("sortUsers", "status")
+  } else if (store.sortUsers === "status") {
+    localStorage.setItem("sortUsers", "statusMessage")
+  } else {
+    localStorage.setItem("sortUsers", "id")
+  }
+  if (localStorage.getItem("sortUsers")) {
+    store.sortUsers = localStorage.getItem("sortUsers")
+  }
+  userSort(store.sortUsers)
+}
+const submit = () => {
+  if (inputText.trim()) {
+    axios
+      .post("/api/message", {
+        messageContents: inputText.trim(),
+        reply: replyTo.value,
+        chatId: currentChat.value.id
+      })
+      .then((res) => {
+        store.chatsList = res.data.chats
+        store.chatSort()
+        currentChat.value = res.data.chat
+        localStorage.setItem(
+          "latest",
+          currentChat.value.messages[currentChat.value.messages.length - 1].id
+        )
+        latest.value = -1
+        inputText = ""
+        replyTo.value = null
+        currentChat.value.messages.focus = false
+        this.scrollDown()
+      })
+      .catch((e) => {
+        store.error = e.response.data.message
+        setTimeout(store.errorFalse, 5000)
+      })
+  }
+}
+const deleteMessage = (messageId) => {
+  axios
+    .delete(`/api/delete/${messageId}`)
+    .then((res) => {
+      currentChat.value.messages = res.data
+      currentChat.value.messages.focus = false
+      this.scrollDown()
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const editChat = (chat) => {
+  chatEdit.value = chat.id
+  chatNameInput = chat.name
+  chatDescriptionInput = chat.description
+  chatIconInput = chat.icon
+  requireVerification.value = chat.requireVerification
+  chatUsers = currentChat.value.users.map((user) => user.id)
+}
+const deleteChat = (chatId) => {
+  axios
+    .delete(`/api/delete-chat/${chatId}`)
+    .then((res) => {
+      chatEdit.value = false
+      chatNameInput = ""
+      chatDescriptionInput = ""
+      chatIconInput = ""
+      requireVerification.value = true
+      store.chatsList = res.data.chats
+      store.chatSort()
+      currentChat.value = res.data.chat
+      replyTo.value = null
+      if (currentChat.value.messages) {
+        currentChat.value.messages.focus = false
+        this.scrollDown()
+      }
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const editMessage = (messageId) => {
+  if (editText.trim() === this.findMessage(messageId).messageContents) {
+    return (editing.value = false)
+  }
+  axios
+    .patch(`/api/edit/${messageId}`, {
+      messageContents: editText.trim()
+    })
+    .then((res) => {
+      editing.value = false
+      currentChat.value.messages = res.data
+      currentChat.value.messages.focus = false
+      this.scrollDown()
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
 export default {
   methods: {
-    userSortPress() {
-      if (store.sortUsers === "id") {
-        localStorage.setItem("sortUsers", "username")
-      } else if (store.sortUsers === "username") {
-        localStorage.setItem("sortUsers", "status")
-      } else if (store.sortUsers === "status") {
-        localStorage.setItem("sortUsers", "statusMessage")
-      } else {
-        localStorage.setItem("sortUsers", "id")
-      }
-      if (localStorage.getItem("sortUsers")) {
-        store.sortUsers = localStorage.getItem("sortUsers")
-      }
-      this.userSort(store.sortUsers)
-    },
-    userSort(property) {
-      if (property !== "id") {
-        currentChat.value.users
-          .sort(function (a, b) {
-            if (a.username === null && b.username === null) {
-              return 0
-            } else if (a.username === null) {
-              return 1
-            } else if (b.username === null) {
-              return -1
-            } else {
-              return a.username.localeCompare(b.username)
-            }
-          })
-          .sort(function (a, b) {
-            if (a[property] === null && b[property] === null) {
-              return 0
-            } else if (a[property] === null) {
-              return 1
-            } else if (b[property] === null) {
-              return -1
-            } else {
-              return a[property].localeCompare(b[property])
-            }
-          })
-      } else {
-        currentChat.value.users.sort(function (a, b) {
-          return a.id - b.id
-        })
-      }
-    },
-    submit() {
-      if (inputText.trim()) {
-        axios
-          .post("/api/message", {
-            messageContents: inputText.trim(),
-            reply: replyTo.value,
-            chatId: currentChat.value.id
-          })
-          .then((res) => {
-            store.chatsList = res.data.chats
-            store.chatSort()
-            currentChat.value = res.data.chat
-            localStorage.setItem(
-              "latest",
-              currentChat.value.messages[currentChat.value.messages.length - 1]
-                .id
-            )
-            inputText = ""
-            replyTo.value = null
-            currentChat.value.messages.focus = false
-            this.scrollDown()
-          })
-          .catch((e) => {
-            store.error = e.response.data.message
-            setTimeout(store.errorFalse, 5000)
-          })
-      }
-    },
-    deleteMessage(messageId) {
-      axios
-        .delete(`/api/delete/${messageId}`)
-        .then((res) => {
-          currentChat.value.messages = res.data
-          currentChat.value.messages.focus = false
-          this.scrollDown()
-        })
-        .catch((e) => {
-          store.error = e.response.data.message
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
-    editChat(chat) {
-      chatEdit.value = chat.id
-      chatNameInput = chat.name
-      chatDescriptionInput = chat.description
-      chatIconInput = chat.icon
-      requireVerification.value = chat.requireVerification
-      chatUsers = currentChat.value.users.map((user) => user.id)
-    },
-    deleteChat(chatId) {
-      axios
-        .delete(`/api/delete-chat/${chatId}`)
-        .then((res) => {
-          chatEdit.value = false
-          chatNameInput = ""
-          chatDescriptionInput = ""
-          chatIconInput = ""
-          requireVerification.value = true
-          store.chatsList = res.data.chats
-          store.chatSort()
-          currentChat.value = res.data.chat
-          replyTo.value = null
-          if (currentChat.value.messages) {
-            currentChat.value.messages.focus = false
-            this.scrollDown()
-          }
-        })
-        .catch((e) => {
-          store.error = e.response.data.message
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
-    editMessage(messageId) {
-      if (editText.trim() === this.findMessage(messageId).messageContents) {
-        return (editing.value = false)
-      }
-      axios
-        .patch(`/api/edit/${messageId}`, {
-          messageContents: editText.trim()
-        })
-        .then((res) => {
-          editing.value = false
-          currentChat.value.messages = res.data
-          currentChat.value.messages.focus = false
-          this.scrollDown()
-        })
-        .catch((e) => {
-          store.error = e.response.data.message
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
     searchChat() {
       if (searchText) {
         const keywords = searchText.toLowerCase().split(" ")
@@ -1172,7 +1173,7 @@ export default {
         .then((res) => {
           currentChat.value = res.data
           router.push(`/chat/${currentChat.value.id}`)
-          this.userSort(store.sortUsers)
+          userSort(store.sortUsers)
           replyTo.value = null
           loadingMessages.value = false
           currentChat.value.messages.focus = false
@@ -1456,9 +1457,8 @@ export default {
     },
     escPressed({ key }) {
       if (key === "Escape") {
-        if (latest.value) {
+        if (latest.value !== -1) {
           latest.value = -1
-          localStorage.setItem("latest", "-1")
         } else if (contextMenuVisible.value) {
           contextMenuVisible.value = false
         } else if (editing.value === "status") {

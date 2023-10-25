@@ -325,12 +325,21 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.184</div>
+            <div>Version: 1.185</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.185 Quick Switcher updates</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>Quick Switcher history will now be saved</li>
+              <li>Experimental fix for context menus</li>
+              <li>Fixes to the "New Messages" status indicator</li>
+              <li>Fix to CSS on homepage</li>
+              <li v-markdown>Switched more code to `script setup`</li>
+            </ul>
             <h2 class="settings-text">1.184 Quick Switcher Added</h2>
             <div class="settings-spacer"></div>
             <ul>
@@ -538,6 +547,7 @@ const changeUsername = () => {
   }
 }
 const clearHistory = () => {
+  localStorage.removeItem("switcherHistory")
   axios.delete("/api/clear-history").catch((e) => {
     store.error = "Error 503, Cannot Connect to Server " + e
     setTimeout(store.errorFalse, 5000)

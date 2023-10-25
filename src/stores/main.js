@@ -28,6 +28,11 @@ export const useDataStore = defineStore("store", () => {
       .get("/api/user")
       .then((res) => {
         userData.value = res.data
+        if (!userData.value.saveSwitcher) {
+          console.log(localStorage.getItem("switcherHistory"))
+          userData.value.history =
+            JSON.parse(localStorage.getItem("switcherHistory")) || []
+        }
       })
       .catch((e) => {
         error.value = "Error 503, Cannot Connect to Server " + e
