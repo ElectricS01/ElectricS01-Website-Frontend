@@ -3,7 +3,7 @@
     <modal
       v-if="showUser && !store.quickSwitcherShown"
       :is-active="typeof showUser === 'object' && !store.quickSwitcherShown"
-      @close="emits('showUser', false), emits('editing', false)"
+      @close="emits('showUser'), emits('editing', false)"
     >
       <img
         :src="showUser.banner || 'https://i.electrics01.com/i/d81dabf74c88.png'"

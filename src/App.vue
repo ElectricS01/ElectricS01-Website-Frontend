@@ -126,30 +126,16 @@ import router from "@/router"
 const route = useRoute()
 const store = useDataStore()
 
-const switcherItems = [
-  "Home",
-  "TonkGame",
-  "Calculator",
-  "Tetris",
-  "Collider",
-  "Mapit",
-  "Account",
-  "Chat"
-]
-
 const highlightedIndex = ref(0)
 const switcherInput = ref()
-let searchedItems = switcherItems
+
+let searchedItems = store.switcherItems
 
 Object.assign(axios.defaults, {
   headers: { Authorization: localStorage.getItem("token") }
 })
 if (localStorage.getItem("token")) {
   store.getUser()
-} else {
-  store.userData.switcherHistory = JSON.parse(
-    localStorage.getItem("switcherHistory")
-  )
 }
 if (localStorage.getItem("sidebarOpen")) {
   store.sidebarOpen = localStorage.getItem("sidebarOpen")
@@ -200,6 +186,7 @@ const toggleQuickSwitcher = ({ repeat, metaKey, ctrlKey, key }) => {
   if (repeat) return
   if ((metaKey || ctrlKey) && (key === "k" || key === "/")) {
     store.quickSwitcherShown = !store.quickSwitcherShown
+    searchedItems = store.switcherItems
     if (store.quickSwitcherShown) {
       nextTick(() => {
         const quickSwitcher = document.getElementById("quick-switcher")
@@ -210,7 +197,7 @@ const toggleQuickSwitcher = ({ repeat, metaKey, ctrlKey, key }) => {
 }
 const searchItems = () => {
   const lastSearchedItems = searchedItems
-  searchedItems = switcherItems.filter((item) => {
+  searchedItems = store.switcherItems.filter((item) => {
     return item.toLowerCase().includes(switcherInput.value.toLowerCase())
   })
   searchedItems.sort((a, b) => {
@@ -264,7 +251,6 @@ const activateItem = () => {
   ) {
     router.push(`/${searchedItems[highlightedIndex.value]}`)
     store.quickSwitcherShown = false
-    console.log(store.userData.switcherHistory)
     const existingPage = store.userData.switcherHistory.find(
       (page) => page.page === searchedItems[highlightedIndex.value]
     )
@@ -291,7 +277,7 @@ const activateItem = () => {
         JSON.stringify(store.userData.switcherHistory)
       )
     }
-    console.log(store.userData.switcherHistory)
+    store.sortSwitcher()
   }
 }
 const escPressed = ({ key }) => {

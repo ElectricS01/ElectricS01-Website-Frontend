@@ -4,10 +4,10 @@
     :editing="editing"
     :sendDm="sendDm"
     :addFriend="addFriend"
-    @showUser="showUser = $event"
+    @showUser="showUser = false"
     @editing="editing = $event"
     @statusMessage="showUser.statusMessage = $event"
-    @users="currentChat.user = $event"
+    @users="currentChat.users = $event"
     @userSort="userSort(store.sortUsers)"
   ></user-preview>
   <transition>
@@ -975,17 +975,15 @@ import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-</script>
-
-<script>
 import dayjs from "dayjs"
 import router from "@/router"
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
-import { nextTick, ref } from "vue"
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
+import { useRoute } from "vue-router"
 
 const store = useDataStore()
+const route = useRoute()
 
 const latest = ref(parseInt(localStorage.getItem("latest")))
 const searchMessages = ref([])
@@ -1011,6 +1009,8 @@ let chatDescriptionInput
 let chatIconInput
 let chatUserInput
 let chatUsers
+
+document.getElementById("favicon").href = "/icons/favicon.ico"
 
 const userSort = (property) => {
   if (property !== "id") {
@@ -1078,7 +1078,7 @@ const submit = () => {
         inputText = ""
         replyTo.value = null
         currentChat.value.messages.focus = false
-        this.scrollDown()
+        scrollDown()
       })
       .catch((e) => {
         store.error = e.response.data.message
@@ -1092,7 +1092,7 @@ const deleteMessage = (messageId) => {
     .then((res) => {
       currentChat.value.messages = res.data
       currentChat.value.messages.focus = false
-      this.scrollDown()
+      scrollDown()
     })
     .catch((e) => {
       store.error = e.response.data.message
@@ -1122,7 +1122,7 @@ const deleteChat = (chatId) => {
       replyTo.value = null
       if (currentChat.value.messages) {
         currentChat.value.messages.focus = false
-        this.scrollDown()
+        scrollDown()
       }
     })
     .catch((e) => {
@@ -1131,7 +1131,7 @@ const deleteChat = (chatId) => {
     })
 }
 const editMessage = (messageId) => {
-  if (editText.trim() === this.findMessage(messageId).messageContents) {
+  if (editText.trim() === findMessage(messageId).messageContents) {
     return (editing.value = false)
   }
   axios
@@ -1142,384 +1142,368 @@ const editMessage = (messageId) => {
       editing.value = false
       currentChat.value.messages = res.data
       currentChat.value.messages.focus = false
-      this.scrollDown()
+      scrollDown()
     })
     .catch((e) => {
       store.error = e.response.data.message
       setTimeout(store.errorFalse, 5000)
     })
 }
-export default {
-  methods: {
-    searchChat() {
-      if (searchText) {
-        const keywords = searchText.toLowerCase().split(" ")
+const searchChat = () => {
+  if (searchText) {
+    const keywords = searchText.toLowerCase().split(" ")
 
-        searchMessages.value = currentChat.value.messages.filter((message) => {
-          return keywords.some((keyword) => {
-            return message.messageContents.toLowerCase().includes(keyword)
-          })
-        })
-      }
-    },
-    replyToMessage(messageId) {
-      replyTo.value = messageId
-      const input = document.getElementById("input")
-      input?.focus()
-    },
-    async getChat(id) {
-      await axios
-        .get(`/api/chat/${id || 1}`)
-        .then((res) => {
-          currentChat.value = res.data
-          router.push(`/chat/${currentChat.value.id}`)
-          userSort(store.sortUsers)
-          replyTo.value = null
-          loadingMessages.value = false
+    searchMessages.value = currentChat.value.messages.filter((message) => {
+      return keywords.some((keyword) => {
+        return message.messageContents.toLowerCase().includes(keyword)
+      })
+    })
+  }
+}
+const replyToMessage = (messageId) => {
+  replyTo.value = messageId
+  const input = document.getElementById("input")
+  input?.focus()
+}
+const createChat = () => {
+  if (store.userData.emailVerified === false) {
+    requireVerification.value = false
+  }
+  if (
+    chatNameInput &&
+    chatDescriptionInput &&
+    typeof requireVerification.value === "boolean"
+  )
+    axios
+      .post("/api/create-chat", {
+        name: chatNameInput,
+        description: chatDescriptionInput,
+        icon: chatIconInput,
+        requireVerification: requireVerification
+      })
+      .then((res) => {
+        createChatShown.value = false
+        chatNameInput = ""
+        chatDescriptionInput = ""
+        chatIconInput = ""
+        requireVerification.value = true
+        store.chatsList = res.data.chats
+        store.chatSort()
+        currentChat.value = res.data.chat
+        replyTo.value = null
+        if (currentChat.value.messages) {
           currentChat.value.messages.focus = false
-          this.scrollDown()
-        })
-        .catch((e) => {
-          store.error = "Error 503, Cannot Connect to Server " + e
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
-    createChat() {
-      if (store.userData.emailVerified === false) {
-        requireVerification.value = false
-      }
-      if (
-        chatNameInput &&
-        chatDescriptionInput &&
-        typeof requireVerification.value === "boolean"
-      )
-        axios
-          .post("/api/create-chat", {
-            name: chatNameInput,
-            description: chatDescriptionInput,
-            icon: chatIconInput,
-            requireVerification: requireVerification
-          })
-          .then((res) => {
-            createChatShown.value = false
-            chatNameInput = ""
-            chatDescriptionInput = ""
-            chatIconInput = ""
-            requireVerification.value = true
-            store.chatsList = res.data.chats
-            store.chatSort()
-            currentChat.value = res.data.chat
-            replyTo.value = null
-            if (currentChat.value.messages) {
-              currentChat.value.messages.focus = false
-              this.scrollDown()
-            }
-          })
-          .catch((e) => {
-            store.error = e.response.data.message
-            setTimeout(store.errorFalse, 5000)
-          })
-    },
-    saveChat() {
-      if (store.userData.emailVerified === false) {
-        requireVerification.value = false
-      }
-      if (
-        chatNameInput &&
-        chatDescriptionInput &&
-        typeof requireVerification.value === "boolean"
-      )
-        axios
-          .patch(`/api/edit-chat/${chatEdit.value}`, {
-            name: chatNameInput,
-            description: chatDescriptionInput,
-            icon: chatIconInput,
-            requireVerification: requireVerification,
-            users: chatUsers.filter(
-              (user) =>
-                !currentChat.value.users.map((user) => user.id).includes(user)
-            )
-          })
-          .then((res) => {
-            chatEdit.value = false
-            chatNameInput = ""
-            chatDescriptionInput = ""
-            chatIconInput = ""
-            requireVerification.value = true
-            store.chatsList = res.data.chats
-            store.chatSort()
-            currentChat.value = res.data.chat
-            replyTo.value = null
-            if (currentChat.value.messages) {
-              currentChat.value.messages.focus = false
-              this.scrollDown()
-            }
-          })
-          .catch((e) => {
-            store.error = e.response.data.message
-            setTimeout(store.errorFalse, 5000)
-          })
-    },
-    chatUserEnter() {
-      const userId = parseInt(this.chatUserInput)
-      this.chatUserInput = ""
-      if (chatUsers.indexOf(userId) === -1 && Number.isInteger(userId)) {
-        chatUsers.push(userId)
-      } else {
-        store.error = "This user is already apart of this group"
-        setTimeout(store.errorFalse, 2500)
-      }
-    },
-    dayjsShort(date) {
-      return dayjs(date).format("HH:mm:ss")
-    },
-    openUser(userId, user) {
-      if (user !== null) {
-        contextMenuVisible.value = false
-        axios
-          .get("/api/user/" + userId)
-          .then((res) => {
-            showUser.value = res.data
-            if (showUser.value.tetris) {
-              showUser.value.tetris = this.formatINI(showUser.value.tetris)
-            }
-          })
-          .catch((e) => {
-            store.error = e.response.data.message
-            console.log(e)
-            setTimeout(store.errorFalse, 5000)
-          })
-      }
-    },
-    formatINI(ini) {
-      const lines = ini.split("\r\n")
-
-      const nonEmptyLines = lines.filter(
-        (line) => line.trim() !== "" && line.includes("=")
-      )
-
-      const keyValuePairs = nonEmptyLines.map((line) => {
-        const separatorIndex = line.indexOf("=")
-        const key = line.slice(0, separatorIndex).trim()
-        let value = line.slice(separatorIndex + 1).trim()
-
-        if (value.startsWith('"') && value.endsWith('"')) {
-          value = value.slice(1, -1)
-        }
-
-        return { key, value }
-      })
-
-      return keyValuePairs.map((pair) => ({
-        [pair.key]: pair.value
-      }))
-    },
-    handleClick(part) {
-      if (part.startsWith('<span @click="handleUserMentionClick(')) {
-        this.openUser(part.match(/\d+/)[0])
-      }
-    },
-    findUser(userId) {
-      const user = currentChat.value.users.find(
-        (user) => user.id === parseInt(userId)
-      )
-      if (user) {
-        return user
-      } else return { username: userId }
-    },
-    removeUser(userId) {
-      contextMenuVisible.value = false
-      axios
-        .post(`/api/remove/${currentChat.value.id}/${userId}`)
-        .then((res) => {
-          store.chatsList = res.data.chats
-          store.chatSort()
-          currentChat.value = res.data.chat
-          if (currentChat.value.messages) {
-            currentChat.value.messages.focus = false
-            this.scrollDown()
-          }
-        })
-        .catch((e) => {
-          store.error = e.response.data.message
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
-    scrollDown(override) {
-      nextTick(() => {
-        try {
-          if ((!scrolledUp.value || override) && currentChat.value.messages) {
-            const lastMessage = document.querySelector(
-              `#message-${currentChat.value.messages.length - 1}`
-            )
-            if (editing.value) {
-              scrolledUp.value = false
-              lastMessage.scrollIntoView()
-            } else if (lastMessage) {
-              lastMessage.scrollIntoView()
-              scrolledUp.value = false
-              store.editFocus()
-            }
-          }
-        } catch (e) {
-          console.log(e)
+          scrollDown()
         }
       })
-    },
-    merge(message, index) {
-      if (currentChat.value.messages[index - 1]) {
-        const previousMessage = currentChat.value.messages[index - 1]
-        return (
-          previousMessage.userName === message.userName &&
-          !message.reply &&
-          !dayjs(previousMessage.createdAt).isBefore(
-            dayjs(message.createdAt).subtract(15, "minutes")
-          )
+      .catch((e) => {
+        store.error = e.response.data.message
+        setTimeout(store.errorFalse, 5000)
+      })
+}
+const saveChat = () => {
+  if (store.userData.emailVerified === false) {
+    requireVerification.value = false
+  }
+  if (
+    chatNameInput &&
+    chatDescriptionInput &&
+    typeof requireVerification.value === "boolean"
+  )
+    axios
+      .patch(`/api/edit-chat/${chatEdit.value}`, {
+        name: chatNameInput,
+        description: chatDescriptionInput,
+        icon: chatIconInput,
+        requireVerification: requireVerification,
+        users: chatUsers.filter(
+          (user) =>
+            !currentChat.value.users.map((user) => user.id).includes(user)
         )
-      }
-    },
-    findMessage(messageId) {
-      return currentChat.value.messages.find(
-        (message) => message.id === messageId
-      )
-    },
-    goToMessage(messageId) {
-      const div = document.getElementById("div")
-      const element = document.getElementById(
-        "message-" + currentChat.value.messages.indexOf(messageId)
-      )
-      const elementRect = element.getBoundingClientRect()
-      const absoluteElementTop = elementRect.top + div.scrollTop
-      const middleOfScreen = div.clientHeight / 2
-      const scrollTo = absoluteElementTop - middleOfScreen
-
-      div.scrollTo({
-        top: scrollTo,
-        behavior: "smooth"
       })
-      element.classList.add("highlight")
-      setTimeout(() => {
-        element.classList.remove("highlight")
-      }, 1000)
-    },
-    editLast() {
-      this.messageEdit = currentChat.value.messages.filter(
-        (message) => Number(message.userName) === store.userData.id
-      )
-      if (this.messageEdit.length > 0) {
-        editText = this.messageEdit.slice(-1)[0].messageContents
-        editing.value = this.messageEdit.slice(-1)[0].id
-      }
-    },
-    addFriend(userId, notOpen) {
-      axios
-        .post(`/api/friend/${userId}`)
-        .then(async () => {
-          if (!notOpen) {
-            this.openUser(userId)
-          } else {
-            await this.getChat(currentChat.value.id)
-            contextMenuItemUser.value = await this.findUser(
-              contextMenuItemUser.value.id
-            )
-          }
-        })
-        .catch((e) => {
-          store.error = e.response.data.message
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
-    sendDm(id) {
-      contextMenuVisible.value = false
-      axios
-        .post(`/api/direct-message/${id}`)
-        .then((res) => {
-          showUser.value = false
-          editing.value = false
-          store.chatsList = res.data.chats
-          store.chatSort()
-          currentChat.value = res.data.chat
-          inputText = ""
-          replyTo.value = null
+      .then((res) => {
+        chatEdit.value = false
+        chatNameInput = ""
+        chatDescriptionInput = ""
+        chatIconInput = ""
+        requireVerification.value = true
+        store.chatsList = res.data.chats
+        store.chatSort()
+        currentChat.value = res.data.chat
+        replyTo.value = null
+        if (currentChat.value.messages) {
           currentChat.value.messages.focus = false
-          this.scrollDown()
-        })
-        .catch((e) => {
-          store.error = e.response.data.message
-          setTimeout(store.errorFalse, 5000)
-        })
-    },
-    showContextMenu(event, user) {
-      event.preventDefault()
-      contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-      contextMenuVisible.value = true
-      contextMenuItemUser.value = user
-    },
-    escPressed({ key }) {
-      if (key === "Escape") {
-        if (latest.value !== -1) {
-          latest.value = -1
-        } else if (contextMenuVisible.value) {
-          contextMenuVisible.value = false
-        } else if (editing.value === "status") {
-          editing.value = false
-        } else if (showUser.value) {
-          showUser.value = false
-        } else if (embed.value) {
-          embed.value = false
-        } else if (chatEdit.value) {
-          chatEdit.value = false
-        } else if (editing.value) {
-          editing.value = false
-        } else if (replyTo.value) {
-          replyTo.value = null
-        } else if (!showUser.value) {
-          this.scrollDown(true)
+          scrollDown()
+        }
+      })
+      .catch((e) => {
+        store.error = e.response.data.message
+        setTimeout(store.errorFalse, 5000)
+      })
+}
+const chatUserEnter = () => {
+  const userId = parseInt(chatUserInput)
+  chatUserInput = ""
+  if (chatUsers.indexOf(userId) === -1 && Number.isInteger(userId)) {
+    chatUsers.push(userId)
+  } else {
+    store.error = "This user is already apart of this group"
+    setTimeout(store.errorFalse, 2500)
+  }
+}
+const dayjsShort = (date) => {
+  return dayjs(date).format("HH:mm:ss")
+}
+const openUser = (userId, user) => {
+  if (user !== null) {
+    contextMenuVisible.value = false
+    axios
+      .get("/api/user/" + userId)
+      .then((res) => {
+        showUser.value = res.data
+        if (showUser.value.tetris) {
+          showUser.value.tetris = formatINI(showUser.value.tetris)
+        }
+      })
+      .catch((e) => {
+        store.error = e.response.data.message
+        console.log(e)
+        setTimeout(store.errorFalse, 5000)
+      })
+  }
+}
+const formatINI = (ini) => {
+  const lines = ini.split("\r\n")
+
+  const nonEmptyLines = lines.filter(
+    (line) => line.trim() !== "" && line.includes("=")
+  )
+
+  const keyValuePairs = nonEmptyLines.map((line) => {
+    const separatorIndex = line.indexOf("=")
+    const key = line.slice(0, separatorIndex).trim()
+    let value = line.slice(separatorIndex + 1).trim()
+
+    if (value.startsWith('"') && value.endsWith('"')) {
+      value = value.slice(1, -1)
+    }
+
+    return { key, value }
+  })
+
+  return keyValuePairs.map((pair) => ({
+    [pair.key]: pair.value
+  }))
+}
+const handleClick = (part) => {
+  if (part.startsWith('<span @click="handleUserMentionClick(')) {
+    openUser(part.match(/\d+/)[0])
+  }
+}
+const findUser = (userId) => {
+  const user = currentChat.value.users.find(
+    (user) => user.id === parseInt(userId)
+  )
+  if (user) {
+    return user
+  } else return { username: userId }
+}
+const removeUser = (userId) => {
+  contextMenuVisible.value = false
+  axios
+    .post(`/api/remove/${currentChat.value.id}/${userId}`)
+    .then((res) => {
+      store.chatsList = res.data.chats
+      store.chatSort()
+      currentChat.value = res.data.chat
+      if (currentChat.value.messages) {
+        currentChat.value.messages.focus = false
+        scrollDown()
+      }
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const scrollDown = (override) => {
+  nextTick(() => {
+    try {
+      if ((!scrolledUp.value || override) && currentChat.value.messages) {
+        const lastMessage = document.querySelector(
+          `#message-${currentChat.value.messages.length - 1}`
+        )
+        if (editing.value) {
+          scrolledUp.value = false
+          lastMessage.scrollIntoView()
+        } else if (lastMessage) {
+          lastMessage.scrollIntoView()
+          scrolledUp.value = false
+          store.editFocus()
         }
       }
-    },
-    scrollEvent() {
-      const div = document.getElementById("div")
-      const scrollHeight = div.scrollHeight
-      const scrollTop = div.scrollTop
-      const clientHeight = div.clientHeight
-      scrolledUp.value =
-        scrollTop + clientHeight <=
-        scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
+    } catch (e) {
+      console.log(e)
     }
-  },
-  computed: {
-    onlineUsers() {
-      return currentChat.value.users.filter((user) => user.status === "online")
-    },
-    offlineUsers() {
-      return currentChat.value.users.filter((user) => user.status === "offline")
-    }
-  },
-  async mounted() {
-    document.addEventListener("keydown", this.escPressed)
-    const div = document.getElementById("div")
-    div.addEventListener("scroll", this.scrollEvent)
+  })
+}
+const merge = (message, index) => {
+  if (currentChat.value.messages[index - 1]) {
+    const previousMessage = currentChat.value.messages[index - 1]
+    return (
+      previousMessage.userName === message.userName &&
+      !message.reply &&
+      !dayjs(previousMessage.createdAt).isBefore(
+        dayjs(message.createdAt).subtract(15, "minutes")
+      )
+    )
+  }
+}
+const findMessage = (messageId) => {
+  return currentChat.value.messages.find((message) => message.id === messageId)
+}
+const goToMessage = (messageId) => {
+  const div = document.getElementById("div")
+  const element = document.getElementById(
+    "message-" + currentChat.value.messages.indexOf(messageId)
+  )
+  const elementRect = element.getBoundingClientRect()
+  const absoluteElementTop = elementRect.top + div.scrollTop
+  const middleOfScreen = div.clientHeight / 2
+  const scrollTo = absoluteElementTop - middleOfScreen
 
-    if (this.$route.path.startsWith("/user")) {
-      this.openUser(this.$route.params.id)
-    }
-    await store.getChats().then()
-    await this.getChat(this.$route.params.id)
-    this.scrollDown(true)
-  },
-  beforeRouteLeave() {
-    document.removeEventListener("keydown", this.escPressed)
-    const div = document.getElementById("div")
-    div.removeEventListener("scroll", this.scrollEvent)
-  },
-  unmounted() {
-    document.removeEventListener("keydown", this.escPressed)
-  },
-  watch: {
-    editing() {
-      store.editFocus()
+  div.scrollTo({
+    top: scrollTo,
+    behavior: "smooth"
+  })
+  element.classList.add("highlight")
+  setTimeout(() => {
+    element.classList.remove("highlight")
+  }, 1000)
+}
+const editLast = () => {
+  const messageEdit = currentChat.value.messages.filter(
+    (message) => Number(message.userName) === store.userData.id
+  )
+  if (messageEdit.length > 0) {
+    editText = messageEdit.slice(-1)[0].messageContents
+    editing.value = messageEdit.slice(-1)[0].id
+  }
+}
+const addFriend = (userId, notOpen) => {
+  axios
+    .post(`/api/friend/${userId}`)
+    .then(async () => {
+      if (!notOpen) {
+        openUser(userId)
+      } else {
+        await getChat(currentChat.value.id)
+        contextMenuItemUser.value = await findUser(contextMenuItemUser.value.id)
+      }
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const sendDm = (id) => {
+  contextMenuVisible.value = false
+  axios
+    .post(`/api/direct-message/${id}`)
+    .then((res) => {
+      showUser.value = false
+      editing.value = false
+      store.chatsList = res.data.chats
+      store.chatSort()
+      currentChat.value = res.data.chat
+      inputText = ""
+      replyTo.value = null
+      currentChat.value.messages.focus = false
+      scrollDown()
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const showContextMenu = (event, user) => {
+  event.preventDefault()
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  contextMenuVisible.value = true
+  contextMenuItemUser.value = user
+}
+const escPressed = ({ key }) => {
+  if (key === "Escape") {
+    if (latest.value !== -1) {
+      latest.value = -1
+    } else if (contextMenuVisible.value) {
+      contextMenuVisible.value = false
+    } else if (editing.value === "status") {
+      editing.value = false
+    } else if (showUser.value) {
+      showUser.value = false
+    } else if (embed.value) {
+      embed.value = false
+    } else if (chatEdit.value) {
+      chatEdit.value = false
+    } else if (editing.value) {
+      editing.value = false
+    } else if (replyTo.value) {
+      replyTo.value = null
+    } else if (!showUser.value) {
+      scrollDown(true)
     }
   }
 }
+const scrollEvent = () => {
+  const div = document.getElementById("div")
+  const scrollHeight = div.scrollHeight
+  const scrollTop = div.scrollTop
+  const clientHeight = div.clientHeight
+  scrolledUp.value =
+    scrollTop + clientHeight <=
+    scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
+}
+const onlineUsers = computed(() => {
+  return currentChat.value.users.filter((user) => user.status === "online")
+})
+const offlineUsers = computed(() => {
+  return currentChat.value.users.filter((user) => user.status === "offline")
+})
+async function getChat(id) {
+  await axios
+    .get(`/api/chat/${id || 1}`)
+    .then((res) => {
+      currentChat.value = res.data
+      router.push(`/chat/${currentChat.value.id}`)
+      userSort(store.sortUsers)
+      replyTo.value = null
+      loadingMessages.value = false
+      currentChat.value.messages.focus = false
+      scrollDown()
+    })
+    .catch((e) => {
+      store.error = "Error 503, Cannot Connect to Server " + e
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+
+onMounted(async () => {
+  document.addEventListener("keydown", escPressed)
+  document.getElementById("div").addEventListener("scroll", scrollEvent)
+
+  if (route.path.startsWith("/user")) {
+    openUser(route.params.id)
+  }
+  await store.getChats().then()
+  await getChat(route.params.id)
+  scrollDown(true)
+})
+onUnmounted(() => {
+  document.removeEventListener("keydown", escPressed)
+  document.getElementById("div").removeEventListener("scroll", scrollEvent)
+})
+watch(editing, () => {
+  store.editFocus()
+})
 </script>

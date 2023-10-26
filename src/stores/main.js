@@ -5,14 +5,26 @@ import axios from "axios"
 import router from "@/router"
 import { useRoute } from "vue-router"
 
+const switcherPages = [
+  "Home",
+  "TonkGame",
+  "Calculator",
+  "Tetris",
+  "Collider",
+  "Mapit",
+  "Account",
+  "Chat"
+]
+
 export const useDataStore = defineStore("store", () => {
+  const route = useRoute()
+
   const error = ref("")
   const userData = ref({})
   const quickSwitcherShown = ref(false)
   const chatsList = ref([])
   const loadingChats = ref(true)
-
-  const route = useRoute()
+  const switcherItems = ref(switcherPages)
 
   const errorFalse = () => {
     error.value = ""
@@ -23,16 +35,27 @@ export const useDataStore = defineStore("store", () => {
   const dayjsDate = (date) => {
     return dayjs(date).format("D MMMM YYYY")
   }
+  const sortSwitcher = () => {
+    switcherItems.value.sort((a, b) => {
+      const searchesA =
+        userData.value.switcherHistory.find((item) => item.page === a)
+          ?.searches || 0
+      const searchesB =
+        userData.value.switcherHistory.find((item) => item.page === b)
+          ?.searches || 0
+      return searchesB - searchesA
+    })
+  }
   const getUser = () => {
     axios
       .get("/api/user")
       .then((res) => {
         userData.value = res.data
         if (!userData.value.saveSwitcher) {
-          console.log(localStorage.getItem("switcherHistory"))
           userData.value.history =
             JSON.parse(localStorage.getItem("switcherHistory")) || []
         }
+        sortSwitcher()
       })
       .catch((e) => {
         error.value = "Error 503, Cannot Connect to Server " + e
@@ -94,9 +117,11 @@ export const useDataStore = defineStore("store", () => {
     quickSwitcherShown,
     chatsList,
     loadingChats,
+    switcherItems,
     errorFalse,
     dayjsLong,
     dayjsDate,
+    sortSwitcher,
     getUser,
     chatSort,
     getChats,

@@ -325,12 +325,20 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.185</div>
+            <div>Version: 1.186</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.186 Quick Switcher History</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>
+                Your most switched pages will be sorted to the top of the quick
+                switcher
+              </li>
+            </ul>
             <h2 class="settings-text">1.185 Quick Switcher updates</h2>
             <div class="settings-spacer"></div>
             <ul>
