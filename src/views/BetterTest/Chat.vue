@@ -979,8 +979,8 @@ import dayjs from "dayjs"
 import router from "@/router"
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
-import { useRoute } from "vue-router"
+import { computed, nextTick, onMounted, ref, watch } from "vue"
+import { onBeforeRouteLeave, useRoute } from "vue-router"
 
 const store = useDataStore()
 const route = useRoute()
@@ -1059,7 +1059,7 @@ const userSortPress = () => {
   userSort(store.sortUsers)
 }
 const submit = () => {
-  if (inputText.trim()) {
+  if (inputText?.trim()) {
     axios
       .post("/api/message", {
         messageContents: inputText.trim(),
@@ -1495,11 +1495,11 @@ onMounted(async () => {
   if (route.path.startsWith("/user")) {
     openUser(route.params.id)
   }
-  await store.getChats().then()
+  await store.getChats()
   await getChat(route.params.id)
   scrollDown(true)
 })
-onUnmounted(() => {
+onBeforeRouteLeave(() => {
   document.removeEventListener("keydown", escPressed)
   document.getElementById("div").removeEventListener("scroll", scrollEvent)
 })

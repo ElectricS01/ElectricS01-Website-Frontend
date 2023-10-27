@@ -64,6 +64,11 @@ body {
   padding: 16px;
 }
 
+.switch-container {
+  overflow-y: auto;
+  height: calc(100% - 32px);
+}
+
 .switcher-input {
   margin: 0 0 4px;
 }

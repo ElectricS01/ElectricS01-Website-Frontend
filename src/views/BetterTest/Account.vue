@@ -325,12 +325,21 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.186</div>
+            <div>Version: 1.187</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">
+              1.187 Quick Switcher communications updates
+            </h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>Your chats are now shown in the Quick Switcher</li>
+              <li>Bug fixes</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.186 Quick Switcher History</h2>
             <div class="settings-spacer"></div>
             <ul>
@@ -338,6 +347,8 @@
                 Your most switched pages will be sorted to the top of the quick
                 switcher
               </li>
+              <li>Bug fixes</li>
+              <li v-markdown>Finish switch to `script setup`</li>
             </ul>
             <h2 class="settings-text">1.185 Quick Switcher updates</h2>
             <div class="settings-spacer"></div>
@@ -368,7 +379,6 @@
               <li>Refactoring</li>
               <li>Updated dependencies</li>
             </ul>
-            <div class="settings-spacer"></div>
             <h2 class="settings-text">1.183 Changelog Added</h2>
             <div class="settings-spacer"></div>
             <ul>

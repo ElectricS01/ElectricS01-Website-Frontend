@@ -35,14 +35,33 @@ export const useDataStore = defineStore("store", () => {
   const dayjsDate = (date) => {
     return dayjs(date).format("D MMMM YYYY")
   }
+  const getItemSearches = (item) => {
+    if (Array.isArray(item)) {
+      const id = item[0]
+      return (
+        userData.value.switcherHistory.find((historyItem) => {
+          if (Array.isArray(historyItem.page)) {
+            return historyItem.page[0] === id
+          }
+          return historyItem.page === id
+        })?.searches || 0
+      )
+    } else {
+      return (
+        userData.value.switcherHistory.find((historyItem) => {
+          if (Array.isArray(historyItem.page)) {
+            return historyItem.page[0] === item
+          }
+          return historyItem.page === item
+        })?.searches || 0
+      )
+    }
+  }
   const sortSwitcher = () => {
     switcherItems.value.sort((a, b) => {
-      const searchesA =
-        userData.value.switcherHistory.find((item) => item.page === a)
-          ?.searches || 0
-      const searchesB =
-        userData.value.switcherHistory.find((item) => item.page === b)
-          ?.searches || 0
+      const searchesA = getItemSearches(a)
+      const searchesB = getItemSearches(b)
+
       return searchesB - searchesA
     })
   }
@@ -82,6 +101,7 @@ export const useDataStore = defineStore("store", () => {
         loadingChats.value = false
         chatSort()
         if (
+          route.path.startsWith("/chat") &&
           !chatsList.value.find(
             (chat) => chat?.id === parseInt(route.params.id)
           )

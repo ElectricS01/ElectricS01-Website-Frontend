@@ -44,7 +44,11 @@
       <div class="icon-mobile" @click="mobileNav">☰</div>
     </div>
     <div class="chat-navbar" v-else>
-      <router-link class="responsive-chat chat-button" to="/chat">
+      <router-link
+        class="chat-button"
+        :class="{ 'responsive-chat': route.path.startsWith('/chat') }"
+        to="/chat"
+      >
         Better Communications
       </router-link>
       <div v-if="active('/chat')" @click="toggleChatBar" class="left chat-icon">
@@ -99,13 +103,15 @@
             v-model="switcherInput"
             id="quick-switcher"
           />
-          <div
-            v-for="(item, index) in searchedItems"
-            :key="item"
-            class="switcher-item"
-            :class="{ highlighted: index === highlightedIndex }"
-          >
-            {{ item }}
+          <div class="switch-container scroll-bar">
+            <div
+              v-for="(item, index) in searchedItems"
+              :key="item"
+              class="switcher-item"
+              :class="{ highlighted: index === highlightedIndex }"
+            >
+              {{ typeof item === "string" ? item : item[0] }}
+            </div>
           </div>
         </div>
       </modal-simple>
@@ -118,7 +124,7 @@
 import Icons from "@/components/core/Icons.vue"
 import { useRoute } from "vue-router"
 import { useDataStore } from "@/stores/main"
-import { computed, nextTick, ref, watch } from "vue"
+import { computed, nextTick, onMounted, ref, watch } from "vue"
 import axios from "axios"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 import router from "@/router"
@@ -196,26 +202,32 @@ const toggleQuickSwitcher = ({ repeat, metaKey, ctrlKey, key }) => {
   }
 }
 const searchItems = () => {
-  const lastSearchedItems = searchedItems
-  searchedItems = store.switcherItems.filter((item) => {
-    return item.toLowerCase().includes(switcherInput.value.toLowerCase())
-  })
-  searchedItems.sort((a, b) => {
-    const aStartsWithSearch = a
-      .toLowerCase()
-      .startsWith(switcherInput.value.toLowerCase())
-    const bStartsWithSearch = b
-      .toLowerCase()
-      .startsWith(switcherInput.value.toLowerCase())
-    if (aStartsWithSearch && !bStartsWithSearch) {
-      return -1
-    } else if (!aStartsWithSearch && bStartsWithSearch) {
-      return 1
+  if (store.quickSwitcherShown) {
+    const lastSearchedItems = searchedItems
+    searchedItems = store.switcherItems.filter((item) => {
+      return typeof item === "string"
+        ? item.toLowerCase().includes(switcherInput.value.toLowerCase())
+        : item[0].toLowerCase().includes(switcherInput.value.toLowerCase())
+    })
+    searchedItems.sort((a, b) => {
+      const aStartsWithSearch =
+        typeof a === "string"
+          ? a.toLowerCase().startsWith(switcherInput.value.toLowerCase())
+          : a[0].toLowerCase().startsWith(switcherInput.value.toLowerCase())
+      const bStartsWithSearch =
+        typeof b === "string"
+          ? b.toLowerCase().startsWith(switcherInput.value.toLowerCase())
+          : b[0].toLowerCase().startsWith(switcherInput.value.toLowerCase())
+      if (aStartsWithSearch && !bStartsWithSearch) {
+        return -1
+      } else if (!aStartsWithSearch && bStartsWithSearch) {
+        return 1
+      }
+      return 0
+    })
+    if (JSON.stringify(lastSearchedItems) !== JSON.stringify(searchedItems)) {
+      highlightedIndex.value = 0
     }
-    return 0
-  })
-  if (JSON.stringify(lastSearchedItems) !== JSON.stringify(searchedItems)) {
-    highlightedIndex.value = 0
   }
 }
 const moveHighlight = (step) => {
@@ -249,16 +261,29 @@ const activateItem = () => {
     searchedItems.length &&
     store.quickSwitcherShown
   ) {
-    router.push(`/${searchedItems[highlightedIndex.value]}`)
-    store.quickSwitcherShown = false
-    const existingPage = store.userData.switcherHistory.find(
-      (page) => page.page === searchedItems[highlightedIndex.value]
+    router.push(
+      typeof searchedItems[highlightedIndex.value] === "string"
+        ? `/${searchedItems[highlightedIndex.value]}`
+        : `/chat/${searchedItems[highlightedIndex.value][1]}`
     )
+    store.quickSwitcherShown = false
+    console.log(store.userData.switcherHistory)
+    const existingPage = store.userData.switcherHistory.find((page) => {
+      if (typeof page.page === "string") {
+        return page.page === searchedItems[highlightedIndex.value]
+      } else return page.page[1] === searchedItems[highlightedIndex.value][1]
+    })
     if (existingPage) {
       existingPage.searches++
     } else {
       store.userData.switcherHistory.push({
-        page: searchedItems[highlightedIndex.value],
+        page:
+          typeof searchedItems[highlightedIndex.value] === "string"
+            ? searchedItems[highlightedIndex.value]
+            : [
+                searchedItems[highlightedIndex.value][0],
+                searchedItems[highlightedIndex.value][1]
+              ],
         searches: 1
       })
     }
@@ -297,6 +322,11 @@ const navbarShown = computed(() => {
     !route.path.startsWith("/account") &&
     !route.path.startsWith("/reset")
   )
+})
+
+onMounted(async () => {
+  await store.getChats()
+  store.switcherItems.push(...store.chatsList.map((obj) => [obj.name, obj.id]))
 })
 
 watch(switcherInput, () => {
