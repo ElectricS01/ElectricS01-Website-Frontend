@@ -318,7 +318,7 @@ const navbarShown = computed(() => {
 })
 
 onMounted(async () => {
-  if (store.userData) await store.getChats()
+  if (store.userData.length) await store.getChats()
 })
 
 watch(switcherInput, () => {
