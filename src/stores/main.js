@@ -98,12 +98,15 @@ export const useDataStore = defineStore("store", () => {
       .get("/api/chats")
       .then(async (res) => {
         chatsList.value = res.data
+        switcherItems.value.push(
+          ...chatsList.value.map((obj) => [obj.name, obj.id])
+        )
         loadingChats.value = false
         chatSort()
         if (
           route.path.startsWith("/chat") &&
           !chatsList.value.find(
-            (chat) => chat?.id === parseInt(route.params.id)
+            (chat) => chat?.id === parseInt(route.params.chatId)
           )
         )
           await router.push("/chat/1")

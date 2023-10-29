@@ -325,12 +325,19 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.187</div>
+            <div>Version: 1.188</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.188 Quick Switcher updates</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>You can now press on Quick Switcher items</li>
+              <li>Updates to "New Messages" status indicator</li>
+              <li>Bug fixes</li>
+            </ul>
             <h2 class="settings-text">
               1.187 Quick Switcher communications updates
             </h2>
@@ -510,7 +517,9 @@ const submitFeedback = () => {
       feedback: feedbackText
     })
     .catch((e) => {
-      store.error = "Error 503, Cannot Connect to Server " + e
+      if (e.response.data.message) {
+        store.error = e.message + ": " + e.response.data.message
+      } else store.error = e.message
       setTimeout(store.errorFalse, 5000)
     })
   modalOpen.value = false

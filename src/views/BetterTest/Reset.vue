@@ -44,7 +44,7 @@ document.getElementById("favicon").href = "/icons/favicon.ico"
 const submit = () => {
   store.error = ""
   axios
-    .post("/api/reset-email", {
+    .post("/api/reset-password", {
       email: email.toLowerCase().trim()
     })
     .then(() => {

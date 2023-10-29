@@ -44,7 +44,7 @@ const routes = [
     redirect: "/chat/1"
   },
   {
-    path: "/chat/:id",
+    path: "/chat/:chatId",
     name: "chat",
     component: () => import("../views/BetterTest/Chat.vue")
   },

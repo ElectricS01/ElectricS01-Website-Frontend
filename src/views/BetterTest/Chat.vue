@@ -285,7 +285,7 @@
           <div class="loader"></div>
         </div>
         <div v-else>
-          <div style="padding: 16px">
+          <div style="padding: 12px 16px">
             <h1 v-if="currentChat.type !== 1">
               Welcome to {{ currentChat.name }}
             </h1>
@@ -316,13 +316,12 @@
             v-for="(message, index) in currentChat.messages"
             :key="message"
             :id="'message-' + index"
-            style="padding: 4px"
           >
             <div
-              v-if="latest === message.id - 1"
+              v-if="currentChat.lastRead === index"
               style="
-                padding-bottom: 8px;
-                height: 16px;
+                padding: 0 4px;
+                height: 12px;
                 display: flex;
                 align-items: center;
               "
@@ -422,7 +421,7 @@
             </div>
             <div
               class="message-grid"
-              style="position: relative; width: 100%"
+              style="position: relative; width: 100%; margin: 8px 4px 4px"
               :style="{
                 backgroundColor: editing === message.id ? '#212425' : ''
               }"
@@ -595,14 +594,14 @@
           <input
             placeholder="Send a message"
             autofocus
-            @keydown.enter="submit"
+            @keydown.enter="sendMessage"
             @keydown.up.prevent="editLast(), scrollDown(true)"
             class="message-input"
             v-model="inputText"
             id="input"
             autocomplete="off"
           />
-          <button @click="submit" style="cursor: pointer">Send</button>
+          <button @click="sendMessage" style="cursor: pointer">Send</button>
         </div>
       </div>
     </div>
@@ -621,7 +620,9 @@
         </div>
         <div
           v-if="
-            currentChat.users?.some((someUser) => someUser.status !== 'offline')
+            currentChat.users?.some(
+              (someUser) => someUser?.status !== 'offline'
+            )
           "
           style="
             padding: 0 4px;
@@ -681,7 +682,9 @@
         </div>
         <div
           v-if="
-            currentChat.users?.some((someUser) => someUser.status === 'offline')
+            currentChat.users?.some(
+              (someUser) => someUser?.status === 'offline'
+            )
           "
           style="
             padding: 0 4px;
@@ -985,7 +988,6 @@ import { onBeforeRouteLeave, useRoute } from "vue-router"
 const store = useDataStore()
 const route = useRoute()
 
-const latest = ref(parseInt(localStorage.getItem("latest")))
 const searchMessages = ref([])
 const embed = ref()
 const currentChat = ref({})
@@ -1016,25 +1018,29 @@ const userSort = (property) => {
   if (property !== "id") {
     currentChat.value.users
       .sort(function (a, b) {
-        if (a.username === null && b.username === null) {
-          return 0
-        } else if (a.username === null) {
-          return 1
-        } else if (b.username === null) {
-          return -1
-        } else {
-          return a.username.localeCompare(b.username)
+        if (a && b) {
+          if (a.username === null && b.username === null) {
+            return 0
+          } else if (a.username === null) {
+            return 1
+          } else if (b.username === null) {
+            return -1
+          } else {
+            return a.username.localeCompare(b.username)
+          }
         }
       })
       .sort(function (a, b) {
-        if (a[property] === null && b[property] === null) {
-          return 0
-        } else if (a[property] === null) {
-          return 1
-        } else if (b[property] === null) {
-          return -1
-        } else {
-          return a[property].localeCompare(b[property])
+        if (a && b) {
+          if (a[property] === null && b[property] === null) {
+            return 0
+          } else if (a[property] === null) {
+            return 1
+          } else if (b[property] === null) {
+            return -1
+          } else {
+            return a[property].localeCompare(b[property])
+          }
         }
       })
   } else {
@@ -1058,7 +1064,7 @@ const userSortPress = () => {
   }
   userSort(store.sortUsers)
 }
-const submit = () => {
+const sendMessage = () => {
   if (inputText?.trim()) {
     axios
       .post("/api/message", {
@@ -1070,11 +1076,6 @@ const submit = () => {
         store.chatsList = res.data.chats
         store.chatSort()
         currentChat.value = res.data.chat
-        localStorage.setItem(
-          "latest",
-          currentChat.value.messages[currentChat.value.messages.length - 1].id
-        )
-        latest.value = -1
         inputText = ""
         replyTo.value = null
         currentChat.value.messages.focus = false
@@ -1434,8 +1435,9 @@ const showContextMenu = (event, user) => {
 }
 const escPressed = ({ key }) => {
   if (key === "Escape") {
-    if (latest.value !== -1) {
-      latest.value = -1
+    if (currentChat.value.lastRead !== currentChat.value.messages.length) {
+      currentChat.value.lastRead = currentChat.value.messages.length
+      axios.post(`/api/read-new/${currentChat.value.id}`)
     } else if (contextMenuVisible.value) {
       contextMenuVisible.value = false
     } else if (editing.value === "status") {
@@ -1465,10 +1467,10 @@ const scrollEvent = () => {
     scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
 }
 const onlineUsers = computed(() => {
-  return currentChat.value.users.filter((user) => user.status === "online")
+  return currentChat.value.users.filter((user) => user?.status === "online")
 })
 const offlineUsers = computed(() => {
-  return currentChat.value.users.filter((user) => user.status === "offline")
+  return currentChat.value.users.filter((user) => user?.status === "offline")
 })
 async function getChat(id) {
   await axios
@@ -1480,7 +1482,7 @@ async function getChat(id) {
       replyTo.value = null
       loadingMessages.value = false
       currentChat.value.messages.focus = false
-      scrollDown()
+      scrollDown(true)
     })
     .catch((e) => {
       store.error = "Error 503, Cannot Connect to Server " + e
@@ -1493,11 +1495,10 @@ onMounted(async () => {
   document.getElementById("div").addEventListener("scroll", scrollEvent)
 
   if (route.path.startsWith("/user")) {
-    openUser(route.params.id)
+    openUser(route.params.chatId)
   }
   await store.getChats()
-  await getChat(route.params.id)
-  scrollDown(true)
+  await getChat(route.params.chatId)
 })
 onBeforeRouteLeave(() => {
   document.removeEventListener("keydown", escPressed)
@@ -1506,4 +1507,10 @@ onBeforeRouteLeave(() => {
 watch(editing, () => {
   store.editFocus()
 })
+watch(
+  () => route.params.chatId,
+  async () => {
+    await getChat(route.params.chatId)
+  }
+)
 </script>

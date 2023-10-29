@@ -96,7 +96,7 @@
         <div class="switcher-modal">
           <input
             placeholder="Quick switcher"
-            @keydown.enter="activateItem"
+            @keydown.enter="activateItem(highlightedIndex)"
             @keydown.down.prevent="moveHighlight(1)"
             @keydown.up.prevent="moveHighlight(-1)"
             class="switcher-input"
@@ -109,6 +109,7 @@
               :key="item"
               class="switcher-item"
               :class="{ highlighted: index === highlightedIndex }"
+              @click="activateItem(index)"
             >
               {{ typeof item === "string" ? item : item[0] }}
             </div>
@@ -245,9 +246,9 @@ const moveHighlight = (step) => {
       searchedItems.length
   }
   nextTick(() => {
-    const highlightedElement = document.getElementById("highlighted")
+    const highlightedElement = document.getElementsByClassName("highlighted")
     if (highlightedElement) {
-      highlightedElement.scrollIntoView({
+      highlightedElement[0].scrollIntoView({
         behavior: "smooth",
         block: "nearest",
         inline: "nearest"
@@ -255,35 +256,27 @@ const moveHighlight = (step) => {
     }
   })
 }
-const activateItem = () => {
-  if (
-    highlightedIndex.value !== -1 &&
-    searchedItems.length &&
-    store.quickSwitcherShown
-  ) {
-    router.push(
-      typeof searchedItems[highlightedIndex.value] === "string"
-        ? `/${searchedItems[highlightedIndex.value]}`
-        : `/chat/${searchedItems[highlightedIndex.value][1]}`
-    )
+const activateItem = (id) => {
+  if (id !== -1 && searchedItems.length && store.quickSwitcherShown) {
     store.quickSwitcherShown = false
-    console.log(store.userData.switcherHistory)
+    router.push(
+      typeof searchedItems[id] === "string"
+        ? `/${searchedItems[id]}`
+        : `/chat/${searchedItems[id][1]}`
+    )
     const existingPage = store.userData.switcherHistory.find((page) => {
       if (typeof page.page === "string") {
-        return page.page === searchedItems[highlightedIndex.value]
-      } else return page.page[1] === searchedItems[highlightedIndex.value][1]
+        return page.page === searchedItems[id]
+      } else return page.page[1] === searchedItems[id][1]
     })
     if (existingPage) {
       existingPage.searches++
     } else {
       store.userData.switcherHistory.push({
         page:
-          typeof searchedItems[highlightedIndex.value] === "string"
-            ? searchedItems[highlightedIndex.value]
-            : [
-                searchedItems[highlightedIndex.value][0],
-                searchedItems[highlightedIndex.value][1]
-              ],
+          typeof searchedItems[id] === "string"
+            ? searchedItems[id]
+            : [searchedItems[id][0], searchedItems[id][1]],
         searches: 1
       })
     }
@@ -325,8 +318,7 @@ const navbarShown = computed(() => {
 })
 
 onMounted(async () => {
-  await store.getChats()
-  store.switcherItems.push(...store.chatsList.map((obj) => [obj.name, obj.id]))
+  if (store.userData) await store.getChats()
 })
 
 watch(switcherInput, () => {
