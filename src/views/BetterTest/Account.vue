@@ -28,6 +28,9 @@
           <div @click="changePage('privacy')" class="settings-item">
             Privacy
           </div>
+          <div @click="changePage('security')" class="settings-item">
+            Security
+          </div>
           <div @click="changePage('appearance')" class="settings-item">
             Appearance
           </div>
@@ -53,6 +56,8 @@
           <div v-if="page === 'account'" class="settings-page-container">
             <h2 class="settings-text">Account</h2>
             Change your account settings
+            <div class="settings-spacer"></div>
+            <div @click="logout()" class="settings-button-red">Logout</div>
             <div class="settings-spacer"></div>
             Username: {{ store.userData?.username }}
             <div @click="changeUsername()" class="settings-button">
@@ -142,6 +147,11 @@
             <div @click="clearHistory()" class="settings-button">
               Clear history
             </div>
+          </div>
+          <div v-else-if="page === 'security'" class="settings-page-container">
+            <h2 class="settings-text">Security</h2>
+            Change your security settings
+            <div class="settings-spacer"></div>
           </div>
           <div
             v-else-if="page === 'appearance'"
@@ -325,12 +335,30 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.188.1</div>
+            <div>Version: 1.189</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.189 Logout button</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>
+                Added a logout button in
+                <router-link to="/account/account">
+                  Account Settings
+                </router-link>
+              </li>
+              <li>
+                Added
+                <router-link to="/account/account">
+                  Security Settings
+                </router-link>
+              </li>
+              <li>Bug fixes</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.188 Quick Switcher updates</h2>
             <div class="settings-spacer"></div>
             <ul>
@@ -447,6 +475,7 @@ const route = useRoute()
 const pages = [
   "account",
   "privacy",
+  "security",
   "appearance",
   "profile",
   "about",
@@ -567,6 +596,13 @@ const editStatusMessage = () => {
       store.error = e.response.data.message
       setTimeout(store.errorFalse, 5000)
     })
+}
+const logout = () => {
+  Object.assign(axios.defaults, {
+    headers: { Authorization: null }
+  })
+  localStorage.removeItem("token")
+  router.push("/login")
 }
 const changeUsername = () => {
   while (true) {

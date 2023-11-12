@@ -1473,21 +1473,23 @@ const offlineUsers = computed(() => {
   return currentChat.value.users.filter((user) => user?.status === "offline")
 })
 async function getChat(id) {
-  await axios
-    .get(`/api/chat/${id || 1}`)
-    .then((res) => {
-      currentChat.value = res.data
-      router.push(`/chat/${currentChat.value.id}`)
-      userSort(store.sortUsers)
-      replyTo.value = null
-      loadingMessages.value = false
-      currentChat.value.messages.focus = false
-      scrollDown(true)
-    })
-    .catch((e) => {
-      store.error = "Error 503, Cannot Connect to Server " + e
-      setTimeout(store.errorFalse, 5000)
-    })
+  if (id) {
+    await axios
+      .get(`/api/chat/${id || 1}`)
+      .then((res) => {
+        currentChat.value = res.data
+        router.push(`/chat/${currentChat.value.id}`)
+        userSort(store.sortUsers)
+        replyTo.value = null
+        loadingMessages.value = false
+        currentChat.value.messages.focus = false
+        scrollDown(true)
+      })
+      .catch((e) => {
+        store.error = "Error 503, Cannot Connect to Server " + e
+        setTimeout(store.errorFalse, 5000)
+      })
+  }
 }
 
 onMounted(async () => {
