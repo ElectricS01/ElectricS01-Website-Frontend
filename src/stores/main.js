@@ -69,9 +69,9 @@ export const useDataStore = defineStore("store", () => {
     axios
       .get("/api/user")
       .then((res) => {
-        userData.value = res.data
+        if (typeof res.data === "object") userData.value = res.data
         if (!userData.value.saveSwitcher) {
-          userData.value.history =
+          userData.value.switcherHistory =
             JSON.parse(localStorage.getItem("switcherHistory")) || []
         }
         sortSwitcher()
