@@ -335,7 +335,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.189</div>
+            <div>Version: 1.189.1</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>

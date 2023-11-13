@@ -143,6 +143,10 @@ Object.assign(axios.defaults, {
 })
 if (localStorage.getItem("token")) {
   store.getUser()
+} else {
+  store.userData.switcherHistory =
+    JSON.parse(localStorage.getItem("switcherHistory")) || []
+  store.sortSwitcher()
 }
 if (localStorage.getItem("sidebarOpen")) {
   store.sidebarOpen = localStorage.getItem("sidebarOpen")
