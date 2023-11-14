@@ -9,7 +9,7 @@
     @statusMessage="showUser.statusMessage = $event"
     @users="currentChat.users = $event"
     @userSort="userSort(store.sortUsers)"
-  ></user-preview>
+  />
   <transition>
     <modal-simple
       v-if="embed && !store.quickSwitcherShown"
@@ -197,7 +197,7 @@
                     : chat.icon
                 "
                 :small="true"
-              ></profile-picture>
+              />
             </div>
             <div
               style="flex-grow: 1; width: calc(100% - 48px)"
@@ -260,7 +260,7 @@
             @click="editChat(chat)"
             class="chats-settings"
           >
-            <icons size="20" icon="settings"></icons>
+            <icons size="20" icon="settings" />
           </div>
         </div>
       </div>
@@ -375,7 +375,7 @@
                     findMessage(message.reply)?.user
                   )
                 "
-              ></profile-picture>
+              />
               <b
                 class="message-text-medium"
                 @click="
@@ -436,7 +436,7 @@
                   style="margin: 4px"
                   size="32"
                   :avatar="message.user?.avatar"
-                ></profile-picture>
+                />
               </div>
               <div v-else class="message-time">
                 <b class="message-text-small">
@@ -477,7 +477,7 @@
                   :scroll="scrollDown"
                   :findUser="findUser"
                   @embed="embed = $event"
-                ></custom-message>
+                />
               </div>
               <div class="message-icons" v-show="editing !== message.id">
                 <icons
@@ -563,7 +563,7 @@
                     findMessage(replyTo).user
                   )
                 "
-              ></profile-picture>
+              />
               <b
                 class="message-text-medium"
                 @click="
@@ -648,12 +648,9 @@
               size="32"
               :avatar="user.avatar"
               :small="true"
-            ></profile-picture>
+            />
             <svg class="online-indicator" width="15" height="15">
-              <status-indicator
-                size="5"
-                :status="user.status"
-              ></status-indicator>
+              <status-indicator size="5" :status="user.status" />
             </svg>
           </div>
           <div style="flex-grow: 1; width: 178px" class="message-item">
@@ -709,12 +706,9 @@
               style="margin: 4px"
               size="32"
               :avatar="user.avatar"
-            ></profile-picture>
+            />
             <svg class="online-indicator" width="15" height="15">
-              <status-indicator
-                size="5"
-                :status="user.status"
-              ></status-indicator>
+              <status-indicator size="5" :status="user.status" />
             </svg>
           </div>
           <div class="message-item">
@@ -743,11 +737,7 @@
             </p>
           </div>
         </div>
-        <context-menu
-          v-if="contextMenuVisible"
-          @close="contextMenuVisible = false"
-          :position="contextMenuPosition"
-        >
+        <context-menu v-if="contextMenuVisible" :position="contextMenuPosition">
           <div
             class="context-menu-item"
             @click="openUser(contextMenuItemUser.id, true)"
@@ -869,7 +859,7 @@
                   findMessage(message.reply)?.user
                 )
               "
-            ></profile-picture>
+            />
             <b
               class="message-text-medium"
               @click="
@@ -924,10 +914,7 @@
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
             >
-              <profile-picture
-                size="32"
-                :avatar="message.user?.avatar"
-              ></profile-picture>
+              <profile-picture size="32" :avatar="message.user?.avatar" />
             </div>
             <div v-else class="message-time">
               <b class="message-text-small">
@@ -954,7 +941,7 @@
                 :handleClick="handleClick"
                 :findUser="findUser"
                 :scroll="scrollDown"
-              ></custom-message>
+              />
             </div>
           </div>
         </div>

@@ -21,6 +21,10 @@ body {
   border-radius: 3px;
 }
 
+iframe {
+  border: 0;
+}
+
 .container {
   position: fixed;
   top: 48px;

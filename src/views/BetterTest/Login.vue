@@ -61,7 +61,8 @@ const submit = () => {
   axios
     .post("/api/login", {
       username: username.toLowerCase().trim(),
-      password: password.trim()
+      password: password.trim(),
+      userAgent: navigator.userAgent
     })
     .then((res) => {
       localStorage.setItem("token", res.data.token)

@@ -67,7 +67,8 @@ const submit = () => {
     .post("/api/register", {
       username: username.trim(),
       email: email.toLowerCase().trim(),
-      password: password.trim()
+      password: password.trim(),
+      userAgent: navigator.userAgent
     })
     .then((res) => {
       localStorage.setItem("token", res.data.token)

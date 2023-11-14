@@ -8,23 +8,44 @@
       <span v-if="check(index)" v-html="part"></span>
       <span v-markdown v-if="!check(index)">{{ part }}</span>
     </span>
-    <b class="message-text-small" v-if="message.edited">(edited)</b>
+    <b
+      @mouseover="showEdited()"
+      @mouseleave=";(editShown = false), (editHover = false)"
+      class="message-text-small"
+      v-if="message.edited"
+      :id="'edit-' + message.id"
+    >
+      (edited)
+    </b>
+    <transition>
+      <text-context
+        v-if="editShown"
+        :position="editShownPosition"
+        :text="store.dayjsLong(message.updatedAt)"
+      />
+    </transition>
     <embeds
       v-for="(embed, index) in message.embeds"
       :key="index"
       @embed="emits('embed', embed.mediaProxyLink)"
       :embed="embed"
       :scroll="scroll"
-    ></embeds>
+    />
   </div>
 </template>
 
 <script setup>
 import Embeds from "@/components/Embeds.vue"
-import { computed } from "vue"
+import { computed, ref } from "vue"
+import { useDataStore } from "@/stores/main.js"
+import TextContext from "@/components/core/TextContext.vue"
 
+const store = useDataStore()
 const props = defineProps(["message", "handleClick", "scroll", "findUser"])
 const emits = defineEmits(["embed"])
+const editShown = ref(false)
+let editHover = false
+let editShownPosition = { x: 0, y: 0 }
 
 const check = (index) => {
   const parts = props.message.messageContents
@@ -33,6 +54,21 @@ const check = (index) => {
   if (parts[index].startsWith("<@")) {
     return true
   }
+}
+const showEdited = () => {
+  editHover = true
+  setTimeout(() => {
+    if (editHover) {
+      const editMessage = document
+        .getElementById("edit-" + props.message.id)
+        .getBoundingClientRect()
+      editShownPosition = {
+        x: editMessage.x + editMessage.width / 2,
+        y: editMessage.y
+      }
+      editShown.value = true
+    }
+  }, 500)
 }
 
 const messageParts = computed(() => {

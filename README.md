@@ -1,8 +1,8 @@
 # Electrics01-Website-Frontend
 
-My main website written in Vue.js 3 and Pinia and Vite.js using the Composition
-API, it includes a showcase of the games and tools I've made and a chatting
-platform and account system currently in beta
+My main website written in Vue.js 3, Pinia, and Vite.js using the Composition
+API, it includes a showcase of the games and tools I've made, and a chatting
+platform and account system currently in beta.
 
 ## Project setup
 

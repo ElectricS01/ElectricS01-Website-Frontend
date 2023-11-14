@@ -152,6 +152,12 @@
             <h2 class="settings-text">Security</h2>
             Change your security settings
             <div class="settings-spacer"></div>
+            Sessions
+            <div v-for="session in sessions">
+              {{ session.id }}
+              {{ store.dayjsLong(session.createdAt) }}
+              {{ session.userAgent }}
+            </div>
           </div>
           <div
             v-else-if="page === 'appearance'"
@@ -196,12 +202,12 @@
                       <profile-picture
                         size="80"
                         :avatar="store.userData?.avatar"
-                      ></profile-picture>
+                      />
                       <svg class="online-indicator" width="20" height="20">
                         <status-indicator
                           size="8"
                           :status="store.userData?.status"
-                        ></status-indicator>
+                        />
                       </svg>
                     </div>
                     <div
@@ -335,12 +341,33 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.189.2</div>
+            <div>Version: 1.190</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.190 Sessions</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>
+                Quick switcher now works offline or without being logged in
+                (1.189.2 and 1.189.2)
+              </li>
+              <li>
+                Added Sessions in
+                <router-link to="/account/account">
+                  Security Settings
+                </router-link>
+              </li>
+              <li>
+                The date and time when a message was edited can now be seen by
+                hovering over the "(edited)" text next to the message
+              </li>
+              <li>Fixed context menus going off the screen</li>
+              <li>Refactoring</li>
+              <li>Bug fixes</li>
+            </ul>
             <h2 class="settings-text">1.189 Logout button</h2>
             <div class="settings-spacer"></div>
             <ul>
@@ -495,6 +522,7 @@ const options = ["no one", "friends", "everyone"]
 
 const modalOpen = ref(false)
 const isOpen = ref(false)
+const sessions = ref([])
 const adminData = ref([])
 let page = "account"
 let feedbackText = ""
@@ -528,6 +556,19 @@ const getAdmin = () => {
       })
   }
 }
+const getSessions = () => {
+  if (localStorage.getItem("token")) {
+    axios
+      .get("/api/sessions")
+      .then((res) => {
+        sessions.value = res.data
+      })
+      .catch((e) => {
+        store.error = "Error 503, Cannot Connect to Server " + e
+        setTimeout(store.errorFalse, 5000)
+      })
+  }
+}
 const changePage = (newPage) => {
   if (pages.includes(page)) {
     page = newPage
@@ -536,7 +577,9 @@ const changePage = (newPage) => {
     page = "account"
     router.push("/account/account")
   }
-  if (page === "admin") {
+  if (page === "security") {
+    getSessions()
+  } else if (page === "admin") {
     getAdmin()
   }
 }
@@ -644,7 +687,7 @@ async function toggle(property, value) {
       }
       axios
         .post("/api/user-prop", {
-          prop: property,
+          property: property,
           val: value
         })
         .then(() => {
@@ -669,7 +712,9 @@ async function checkImage(url) {
   }
 }
 
-if (page === "admin") {
+if (page === "security") {
+  getSessions()
+} else if (page === "admin") {
   getAdmin()
 }
 watch(modalOpen, (newValue, oldValue) => {

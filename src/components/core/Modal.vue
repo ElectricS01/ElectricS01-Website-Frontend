@@ -8,7 +8,7 @@
             height="32"
             icon="close"
             style="padding: 4px; cursor: pointer"
-          ></icons>
+          />
         </button>
         <slot></slot>
       </div>

@@ -14,15 +14,9 @@
       <div class="profile-page">
         <div class="profile-grid">
           <div class="profile-picture-large">
-            <profile-picture
-              size="80"
-              :avatar="showUser.avatar"
-            ></profile-picture>
+            <profile-picture size="80" :avatar="showUser.avatar" />
             <svg class="online-indicator" width="20" height="20">
-              <status-indicator
-                size="8"
-                :status="showUser.status"
-              ></status-indicator>
+              <status-indicator size="8" :status="showUser.status" />
             </svg>
           </div>
           <div class="profile-user">
