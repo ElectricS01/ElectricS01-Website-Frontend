@@ -631,6 +631,22 @@ h4 {
   }
 }
 
+.grid-sessions {
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(100%);
+}
+
+.grid-sessions-item {
+  min-width: 150px;
+  margin: 10px;
+  padding: 10px;
+  background-color: #212425;
+  border-radius: 15px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
 .grid-home {
   padding: 18px 0;
   display: flex;
@@ -773,7 +789,7 @@ input:checked + .slider:before {
   cursor: pointer;
   font-size: 16px;
   display: table;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .settings-button-red {
@@ -783,7 +799,7 @@ input:checked + .slider:before {
   cursor: pointer;
   font-size: 16px;
   display: table;
-  border-radius: 2px;
+  border-radius: 4px;
   color: #ff2f2f;
 }
 
@@ -814,7 +830,7 @@ input:checked + .slider:before {
   cursor: pointer;
   padding: 8px;
   border: 1px solid #282a2b;
-  border-radius: 2px;
+  border-radius: 4px;
   text-transform: capitalize;
   background-color: #212425;
 }
@@ -826,14 +842,13 @@ input:checked + .slider:before {
   width: 200px;
   padding: 4px;
   border: 1px solid #282a2b;
-  border-radius: 2px;
+  border-radius: 4px;
   background-color: #212425;
   list-style: none;
   z-index: 1;
 }
 
 .dropdown-menu li {
-  border-radius: 2px;
   cursor: pointer;
   padding: 4px;
   text-transform: capitalize;

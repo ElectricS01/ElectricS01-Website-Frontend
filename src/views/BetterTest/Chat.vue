@@ -966,14 +966,14 @@ import UserPreview from "@/components/UserPreview.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 
 import dayjs from "dayjs"
-import router from "@/router"
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
 import { computed, nextTick, onMounted, ref, watch } from "vue"
-import { onBeforeRouteLeave, useRoute } from "vue-router"
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 
 const store = useDataStore()
 const route = useRoute()
+const router = useRouter()
 
 const searchMessages = ref([])
 const embed = ref()

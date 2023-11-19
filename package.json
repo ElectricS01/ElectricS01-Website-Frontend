@@ -12,19 +12,19 @@
   "repository": "https://github.com/ElectricS01/ElectricS01-Website-Frontend.git",
   "author": "ElectricS01 <103579308+ElectricS01@users.noreply.github.com>",
   "dependencies": {
-    "@vitejs/plugin-vue": "^4.4.0",
-    "axios": "^1.6.0",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "markdown-it": "^13.0.2",
     "pinia": "^2.1.7",
     "register-service-worker": "^1.7.2",
-    "vite": "^4.5.0",
-    "vite-plugin-pwa": "^0.16.5",
-    "vue": "^3.3.6",
+    "vite": "^5.0.0",
+    "vite-plugin-pwa": "^0.16.7",
+    "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "eslint-plugin-vue": "^9.18.1"
   }
 }

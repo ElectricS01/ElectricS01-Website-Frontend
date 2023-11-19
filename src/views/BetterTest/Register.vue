@@ -49,15 +49,16 @@
 </template>
 
 <script setup>
-import router from "@/router"
 import axios from "axios"
 import { useDataStore } from "@/stores/main"
+import { useRouter } from "vue-router"
 
 let username = ""
 let email = ""
 let password = ""
 
 const store = useDataStore()
+const router = useRouter()
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 

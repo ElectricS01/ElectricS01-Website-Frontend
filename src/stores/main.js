@@ -2,8 +2,7 @@ import { defineStore } from "pinia"
 import dayjs from "dayjs"
 import { nextTick, ref } from "vue"
 import axios from "axios"
-import router from "@/router"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 
 const switcherPages = [
   "Home",
@@ -18,6 +17,7 @@ const switcherPages = [
 
 export const useDataStore = defineStore("store", () => {
   const route = useRoute()
+  const router = useRouter()
 
   const error = ref("")
   const userData = ref({})

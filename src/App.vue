@@ -123,14 +123,14 @@
 
 <script setup>
 import Icons from "@/components/core/Icons.vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useDataStore } from "@/stores/main"
 import { computed, nextTick, onMounted, ref, watch } from "vue"
 import axios from "axios"
 import ModalSimple from "@/components/core/ModalSimple.vue"
-import router from "@/router"
 
 const route = useRoute()
+const router = useRouter()
 const store = useDataStore()
 
 const highlightedIndex = ref(0)

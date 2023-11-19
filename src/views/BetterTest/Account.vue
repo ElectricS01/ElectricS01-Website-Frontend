@@ -18,6 +18,25 @@
       </div>
     </modal>
   </transition>
+  <transition>
+    <modal
+      v-if="passwordModalOpen"
+      :is-active="passwordModalOpen"
+      @close="passwordModalOpen = false"
+    >
+      <div class="settings-modal">
+        <p class="settings-text">Logout everywhere</p>
+        <input
+          placeholder="Password"
+          @keydown.enter="logoutAllSubmit"
+          class="settings-input"
+          v-model="password"
+          autocomplete="off"
+        />
+        <button @click="logoutAllSubmit">Enter</button>
+      </div>
+    </modal>
+  </transition>
   <div class="container">
     <div class="grid-menu">
       <div class="settings-menu">
@@ -57,7 +76,7 @@
             <h2 class="settings-text">Account</h2>
             Change your account settings
             <div class="settings-spacer"></div>
-            <div @click="logout()" class="settings-button-red">Logout</div>
+            <div @click="logout" class="settings-button-red">Logout</div>
             <div class="settings-spacer"></div>
             Username: {{ store.userData?.username }}
             <div @click="changeUsername()" class="settings-button">
@@ -152,11 +171,18 @@
             <h2 class="settings-text">Security</h2>
             Change your security settings
             <div class="settings-spacer"></div>
+            Log you out on every device
+            <div @click="logoutAll" class="settings-button-red">
+              Logout everywhere
+            </div>
+            <div class="settings-spacer"></div>
             Sessions
-            <div v-for="session in sessions">
-              {{ session.id }}
-              {{ store.dayjsLong(session.createdAt) }}
-              {{ session.userAgent }}
+            <div class="grid-sessions">
+              <div v-for="session in sessions" class="grid-sessions-item">
+                <p>Id: {{ session.id }}</p>
+                <p>Date created: {{ store.dayjsLong(session.createdAt) }}</p>
+                <p>Platform: {{ platform(session.userAgent) }}</p>
+              </div>
             </div>
           </div>
           <div
@@ -341,17 +367,35 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.190</div>
+            <div>Version: 1.191</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer"></div>
+            <h2 class="settings-text">1.191 Logout everywhere</h2>
+            <div class="settings-spacer"></div>
+            <ul>
+              <li>
+                Added
+                <router-link to="/scheduler">/scheduler link</router-link>
+              </li>
+              <li>Added Sign out everywhere in</li>
+              <router-link to="/account/security">
+                Security Settings
+              </router-link>
+              <li>Logging out will now delete your session</li>
+              <li>Sessions updates</li>
+              <li>Upgrade to Vite 5</li>
+              <li>UI cleanup</li>
+              <li>Bug fixes</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.190 Sessions</h2>
             <div class="settings-spacer"></div>
             <ul>
               <li>
-                Quick switcher now works offline or without being logged in
+                Quick Switcher now works offline or without being logged in
                 (1.189.2 and 1.189.2)
               </li>
               <li>
@@ -491,13 +535,13 @@ import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import { useDataStore } from "@/stores/main"
-import router from "@/router"
 import axios from "axios"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { nextTick, ref, watch } from "vue"
 
 const store = useDataStore()
 const route = useRoute()
+const router = useRouter()
 
 const pages = [
   "account",
@@ -521,6 +565,7 @@ const properties = [
 const options = ["no one", "friends", "everyone"]
 
 const modalOpen = ref(false)
+const passwordModalOpen = ref(false)
 const isOpen = ref(false)
 const sessions = ref([])
 const adminData = ref([])
@@ -529,6 +574,7 @@ let feedbackText = ""
 let editing = false
 let editStatus = ""
 let editDescription = ""
+let password = ""
 
 let editAvatar = store.userData?.avatar
 let editBanner = store.userData?.banner
@@ -641,11 +687,47 @@ const editStatusMessage = () => {
     })
 }
 const logout = () => {
-  Object.assign(axios.defaults, {
-    headers: { Authorization: null }
-  })
-  localStorage.removeItem("token")
-  router.push("/login")
+  axios
+    .post("/api/logout")
+    .then(() => {
+      Object.assign(axios.defaults, {
+        headers: { Authorization: null }
+      })
+      localStorage.removeItem("token")
+      router.push("/login")
+    })
+    .catch((e) => {
+      store.error = "Error 503, Cannot Connect to Server " + e
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const logoutAll = () => {
+  passwordModalOpen.value = true
+  password = ""
+}
+const logoutAllSubmit = () => {
+  if (password) {
+    axios
+      .post("/api/logout-all", {
+        password: password
+      })
+      .then(() => {
+        Object.assign(axios.defaults, {
+          headers: { Authorization: null }
+        })
+        localStorage.removeItem("token")
+        router.push("/login")
+      })
+      .catch((e) => {
+        console.log(e)
+        store.error =
+          "Error " +
+          e.request.status +
+          ", " +
+          (e.response.data.message || e.request.statusMessage)
+        setTimeout(store.errorFalse, 5000)
+      })
+  }
 }
 const changeUsername = () => {
   while (true) {
@@ -667,6 +749,34 @@ const resendVerification = () => {
   if (localStorage.getItem("token")) {
     store.getUser()
   }
+}
+const platform = (userAgent) => {
+  let total = ""
+  if (userAgent.toLowerCase().includes("windows")) {
+    total += "Windows"
+  } else if (userAgent.toLowerCase().includes("mac")) {
+    total += "macOS"
+  } else if (userAgent.toLowerCase().includes("iphone")) {
+    total += "iOS"
+  } else if (userAgent.toLowerCase().includes("android")) {
+    total += "Android"
+  } else if (userAgent.toLowerCase().includes("linux")) {
+    total += "Linux"
+  } else {
+    total += "Unknown OS"
+  }
+  if (userAgent.toLowerCase().includes("chrome")) {
+    total += " Chrome"
+  } else if (userAgent.toLowerCase().includes("firefox")) {
+    total += " Firefox"
+  } else if (userAgent.toLowerCase().includes("safari")) {
+    total += " Safari"
+  } else if (userAgent.toLowerCase().includes("chromium")) {
+    total += " Chromium"
+  } else {
+    total += " Unknown Browser"
+  }
+  return total
 }
 
 async function toggle(property, value) {
@@ -722,4 +832,10 @@ watch(modalOpen, (newValue, oldValue) => {
     editFocus()
   }
 })
+watch(
+  () => route.params.id,
+  () => {
+    changePage(route.params.id)
+  }
+)
 </script>

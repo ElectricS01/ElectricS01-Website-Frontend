@@ -17,6 +17,8 @@ document.getElementById("favicon").href = "/icons/favicon.ico"
 onMounted(() => {
   if (route.path.toLowerCase().startsWith("/mapit")) {
     window.location.href = "https://mapit.electrics01.com"
+  } else if (route.path.toLowerCase().startsWith("/schedule")) {
+    window.location.href = "https://scheduler.electrics01.com"
   }
 })
 </script>

@@ -12,12 +12,12 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
-import router from "@/router"
 
 const route = useRoute()
+const router = useRouter()
 const store = useDataStore()
 
 document.getElementById("favicon").href = "/icons/favicon.ico"

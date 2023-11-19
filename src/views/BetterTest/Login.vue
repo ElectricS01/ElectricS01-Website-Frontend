@@ -47,9 +47,10 @@
 <script setup>
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
-import router from "@/router"
+import { useRouter } from "vue-router"
 
 const store = useDataStore()
+const router = useRouter()
 
 let username = ""
 let password = ""
