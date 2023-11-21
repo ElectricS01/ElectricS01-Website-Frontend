@@ -1032,7 +1032,7 @@ const userSort = (property) => {
       })
   } else {
     currentChat.value.users.sort(function (a, b) {
-      return a.id - b.id
+      return a?.id - b?.id
     })
   }
 }
@@ -1255,7 +1255,6 @@ const openUser = (userId, user) => {
       })
       .catch((e) => {
         store.error = e.response.data.message
-        console.log(e)
         setTimeout(store.errorFalse, 5000)
       })
   }
