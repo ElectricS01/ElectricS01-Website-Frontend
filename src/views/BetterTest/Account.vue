@@ -178,7 +178,11 @@
             <div class="settings-spacer"></div>
             Sessions
             <div class="grid-sessions">
-              <div v-for="session in sessions" class="grid-sessions-item">
+              <div
+                v-for="session in sessions"
+                class="grid-sessions-item"
+                :key="session.id"
+              >
                 <p>Id: {{ session.id }}</p>
                 <p>Date created: {{ store.dayjsLong(session.createdAt) }}</p>
                 <p>Platform: {{ platform(session.userAgent) }}</p>
@@ -367,7 +371,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer"></div>
-            <div>Version: 1.191</div>
+            <div>Version: 1.191.1</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
@@ -835,7 +839,7 @@ watch(modalOpen, (newValue, oldValue) => {
 watch(
   () => route.params.id,
   () => {
-    changePage(route.params.id)
+    if (route.params.id) changePage(route.params.id)
   }
 )
 </script>
