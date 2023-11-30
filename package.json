@@ -19,12 +19,14 @@
     "pinia": "^2.1.7",
     "register-service-worker": "^1.7.2",
     "vite": "^5.0.0",
-    "vite-plugin-pwa": "^0.16.7",
-    "vue": "^3.3.8",
+    "vite-plugin-pwa": "^0.17.2",
+    "vue": "^3.3.9",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-vue": "^9.18.1"
   }
 }

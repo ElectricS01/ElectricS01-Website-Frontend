@@ -9,7 +9,7 @@
 <script setup>
 import { computed } from "vue"
 
-const props = defineProps(["position", "text"])
+const props = defineProps({ position: Object, text: String })
 
 const menuStyle = computed(() => {
   const adjustedX = props.position.x + window.scrollX

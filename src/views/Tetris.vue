@@ -1,12 +1,12 @@
 <template>
   <div class="container scroll-bar">
     <iframe
+      id="game_drop"
       :style="minDimension"
       title="Tetris"
       allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
       src="/tetrisGame.html"
       allowtransparency="true"
-      id="game_drop"
     />
     <h3>Tetris By ElectricS01 0.25</h3>
     <p class="message-text-medium-gray">

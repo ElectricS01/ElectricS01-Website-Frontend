@@ -8,22 +8,22 @@
             <label class="text-small" for="username">Username</label>
           </div>
           <input
-            placeholder="Username"
-            @keydown.enter="submit"
-            class="modal-input"
-            v-model="username"
             id="username"
+            v-model="username"
+            placeholder="Username"
+            class="modal-input"
+            @keydown.enter="submit"
           />
           <div class="text-small">
             <label for="password">Password</label>
           </div>
           <input
-            placeholder="Password"
-            @keydown.enter="submit"
-            class="modal-input"
-            v-model="password"
             id="password"
+            v-model="password"
+            placeholder="Password"
+            class="modal-input"
             type="password"
+            @keydown.enter="submit"
           />
           <div style="display: flex; justify-content: space-between">
             <div class="text-small">

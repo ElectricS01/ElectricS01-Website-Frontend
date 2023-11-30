@@ -5,14 +5,14 @@
       class="embed"
       alt="Embedded image"
       @load="scroll()"
-      @click="emits('embed')"
+      @click="emit('embed')"
     />
   </div>
 </template>
 
 <script setup>
-defineProps(["embed", "scroll"])
-const emits = defineEmits(["embed"])
+defineProps({ embed: Object, scroll: Function })
+const emit = defineEmits(["embed"])
 </script>
 
 <style scoped>

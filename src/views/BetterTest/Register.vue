@@ -8,33 +8,33 @@
             <label for="username">Username</label>
           </div>
           <input
-            placeholder="Username"
-            @keydown.enter="submit"
-            class="modal-input"
             id="username"
             v-model="username"
+            placeholder="Username"
+            class="modal-input"
+            @keydown.enter="submit"
           />
           <div class="text-small">
             <label for="email">Email</label>
           </div>
           <input
-            placeholder="Email"
-            @keydown.enter="submit"
-            class="modal-input"
             id="email"
             v-model="email"
+            placeholder="Email"
+            class="modal-input"
             type="email"
+            @keydown.enter="submit"
           />
           <div class="text-small">
             <label for="password">Password</label>
           </div>
           <input
-            placeholder="Password"
-            @keydown.enter="submit"
-            class="modal-input"
             id="password"
             v-model="password"
+            placeholder="Password"
+            class="modal-input"
             type="password"
+            @keydown.enter="submit"
           />
           <div class="text-small">
             <router-link class="text-small" to="/login">

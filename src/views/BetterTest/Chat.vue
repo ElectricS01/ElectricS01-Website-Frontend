@@ -1,14 +1,14 @@
 <template>
   <user-preview
-    :showUser="showUser"
+    :show-user="showUser"
     :editing="editing"
-    :sendDm="sendDm"
-    :addFriend="addFriend"
-    @showUser="showUser = false"
+    :send-dm="sendDm"
+    :add-friend="addFriend"
+    @show-user="showUser = false"
     @editing="editing = $event"
-    @statusMessage="showUser.statusMessage = $event"
+    @status-message="showUser.statusMessage = $event"
     @users="currentChat.users = $event"
-    @userSort="userSort(store.sortUsers)"
+    @user-sort="userSort(store.sortUsers)"
   />
   <transition>
     <modal-simple
@@ -37,31 +37,31 @@
           <label class="text-small" for="chat-name">Chat name</label>
         </div>
         <input
-          placeholder="Chat name"
-          @keydown.enter="createChat"
-          class="modal-input"
-          v-model="chatNameInput"
           id="chat-name"
+          v-model="chatNameInput"
+          placeholder="Chat name"
+          class="modal-input"
+          @keydown.enter="createChat"
         />
         <div class="text-small">
           <label for="chat-description">Chat description</label>
         </div>
         <input
-          placeholder="Chat description"
-          @keydown.enter="createChat"
-          class="modal-input"
-          v-model="chatDescriptionInput"
           id="chat-description"
+          v-model="chatDescriptionInput"
+          placeholder="Chat description"
+          class="modal-input"
+          @keydown.enter="createChat"
         />
         <div class="text-small">
           <label for="chat-icon">Chat icon</label>
         </div>
         <input
-          placeholder="Chat icon"
-          @keydown.enter="createChat"
-          class="modal-input"
-          v-model="chatIconInput"
           id="chat-icon"
+          v-model="chatIconInput"
+          placeholder="Chat icon"
+          class="modal-input"
+          @keydown.enter="createChat"
         />
         <div v-if="store.userData.emailVerified">
           <div class="text-small">
@@ -72,11 +72,11 @@
             @click="requireVerification = !requireVerification"
           >
             <input
+              id="requireVerification"
               type="checkbox"
               :checked="requireVerification"
-              id="requireVerification"
             />
-            <span class="slider"></span>
+            <span class="slider" />
           </div>
         </div>
         <button @click="createChat">Create</button>
@@ -101,31 +101,31 @@
           <label class="text-small" for="chat-name">Chat name</label>
         </div>
         <input
-          placeholder="Chat name"
-          @keydown.enter="saveChat"
-          class="modal-input"
-          v-model="chatNameInput"
           id="chat-name"
+          v-model="chatNameInput"
+          placeholder="Chat name"
+          class="modal-input"
+          @keydown.enter="saveChat"
         />
         <div class="text-small">
           <label for="chat-description">Chat description</label>
         </div>
         <input
-          placeholder="Chat description"
-          @keydown.enter="saveChat"
-          class="modal-input"
-          v-model="chatDescriptionInput"
           id="chat-description"
+          v-model="chatDescriptionInput"
+          placeholder="Chat description"
+          class="modal-input"
+          @keydown.enter="saveChat"
         />
         <div class="text-small">
           <label for="chat-icon">Chat icon</label>
         </div>
         <input
-          placeholder="Chat icon"
-          @keydown.enter="saveChat"
-          class="modal-input"
-          v-model="chatIconInput"
           id="chat-icon"
+          v-model="chatIconInput"
+          placeholder="Chat icon"
+          class="modal-input"
+          @keydown.enter="saveChat"
         />
         <div v-if="store.userData.emailVerified">
           <div class="text-small">
@@ -136,22 +136,22 @@
             @click="requireVerification = !requireVerification"
           >
             <input
+              id="requireVerification"
               type="checkbox"
               :checked="requireVerification"
-              id="requireVerification"
             />
-            <span class="slider"></span>
+            <span class="slider" />
           </div>
         </div>
         <div class="text-small">
           <label for="add-user">Add a user</label>
         </div>
         <input
-          placeholder="Add a user"
-          @keydown.enter="chatUserEnter"
-          class="modal-input"
-          v-model="chatUserInput"
           id="add-user"
+          v-model="chatUserInput"
+          placeholder="Add a user"
+          class="modal-input"
+          @keydown.enter="chatUserEnter"
         />
         <button @click="saveChat">Save</button>
         <button
@@ -178,7 +178,6 @@
           <div
             style="cursor: pointer"
             class="message-grid"
-            @click="getChat(chat.id)"
             :style="{
               backgroundColor: currentChat.id === chat.id ? '#212425' : '',
               width:
@@ -186,6 +185,7 @@
                   ? 'calc(100% - 36px)'
                   : '100%'
             }"
+            @click="getChat(chat.id)"
           >
             <div class="profile-picture">
               <profile-picture
@@ -257,15 +257,15 @@
           </div>
           <div
             v-if="chat.owner === store.userData.id && chat.type !== 1"
-            @click="editChat(chat)"
             class="chats-settings"
+            @click="editChat(chat)"
           >
             <icons size="20" icon="settings" />
           </div>
         </div>
       </div>
-      <div class="center" v-else>
-        <div style="text-align: center" class="loader"></div>
+      <div v-else class="center">
+        <div style="text-align: center" class="loader" />
       </div>
     </sidebar-left>
     <div
@@ -277,12 +277,12 @@
       "
     >
       <div
-        style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
         id="div"
+        style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
         class="scroll-bar"
       >
         <div v-if="loadingMessages" class="center">
-          <div class="loader"></div>
+          <div class="loader" />
         </div>
         <div v-else>
           <div style="padding: 12px 16px">
@@ -300,22 +300,22 @@
               {{ currentChat.description }}
             </b>
             <b
-              class="message-text-medium-gray"
               v-if="!currentChat.requireVerification && currentChat.type !== 1"
+              class="message-text-medium-gray"
             >
               This chat does not require verification
             </b>
             <b
-              class="message-text-medium-gray"
               v-else-if="currentChat.type !== 1"
+              class="message-text-medium-gray"
             >
               This chat requires verification
             </b>
           </div>
           <div
             v-for="(message, index) in currentChat.messages"
-            :key="message"
             :id="'message-' + index"
+            :key="message"
           >
             <div
               v-if="currentChat.lastRead === index"
@@ -326,35 +326,35 @@
                 align-items: center;
               "
             >
-              <div style="border-bottom: 1px solid #ff2f2f; width: 50%"></div>
+              <div style="border-bottom: 1px solid #ff2f2f; width: 50%" />
               <p
                 style="padding: 0 4px; white-space: nowrap; color: #ff2f2f"
                 class="message-text-small"
               >
                 New messages
               </p>
-              <div style="border-bottom: 1px solid #ff2f2f; width: 50%"></div>
+              <div style="border-bottom: 1px solid #ff2f2f; width: 50%" />
             </div>
             <div
+              v-if="
+                store.dayjsDate(message.createdAt) !==
+                store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
+              "
               style="
                 padding-bottom: 8px;
                 height: 16px;
                 display: flex;
                 align-items: center;
               "
-              v-if="
-                store.dayjsDate(message.createdAt) !==
-                store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
-              "
             >
-              <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+              <div style="border-bottom: 1px solid #212425; width: 50%" />
               <p
                 style="padding: 0 4px; white-space: nowrap"
                 class="message-text-small"
               >
                 {{ store.dayjsDate(message.createdAt) }}
               </p>
-              <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+              <div style="border-bottom: 1px solid #212425; width: 50%" />
             </div>
             <div
               v-if="message.reply && findMessage(message.reply)"
@@ -378,13 +378,13 @@
               />
               <b
                 class="message-text-medium"
+                style="margin: 4px 4px 0 4px"
                 @click="
                   openUser(
                     findMessage(message.reply)?.user?.id,
                     findMessage(message.reply)?.user
                   )
                 "
-                style="margin: 4px 4px 0 4px"
               >
                 {{
                   findMessage(message.reply)?.user?.username
@@ -394,8 +394,8 @@
               </b>
               <p
                 class="message-text-medium-gray-hover"
-                @click="goToMessage(findMessage(message.reply))"
                 style="margin-top: 4px; margin-bottom: 0"
+                @click="goToMessage(findMessage(message.reply))"
               >
                 {{ findMessage(message.reply)?.messageContents }}
               </p>
@@ -409,12 +409,12 @@
               "
             >
               <icons
-                color="darkgrey"
+                colour="darkgrey"
                 size="16"
                 icon="reply"
                 style="margin-right: 4px"
               />
-              <icons color="darkgrey" size="16" icon="account" />
+              <icons colour="darkgrey" size="16" icon="account" />
               <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
                 Message has been deleted
               </b>
@@ -428,9 +428,9 @@
             >
               <div
                 v-if="!merge(message, index)"
-                @click="openUser(message.user?.id, message?.user)"
                 style="margin: 0 4px; cursor: pointer; border-radius: 16px"
                 class="message-item"
+                @click="openUser(message.user?.id, message?.user)"
               >
                 <profile-picture
                   style="margin: 4px"
@@ -447,7 +447,7 @@
                 class="message-item"
                 style="width: calc(100% - 96px); overflow-wrap: break-word"
               >
-                <div style="line-height: 11.5px" v-if="!merge(message, index)">
+                <div v-if="!merge(message, index)" style="line-height: 11.5px">
                   <b
                     class="message-text-medium"
                     @click="openUser(message.user?.id, message?.user)"
@@ -464,22 +464,22 @@
                 </div>
                 <input
                   v-if="editing === message.id"
-                  placeholder="Edit your message"
-                  @keydown.enter="editMessage(message.id)"
-                  v-model="editText"
                   id="edit"
+                  v-model="editText"
+                  placeholder="Edit your message"
                   autocomplete="off"
+                  @keydown.enter="editMessage(message.id)"
                 />
                 <custom-message
                   v-show="editing !== message.id"
                   :message="message"
-                  :handleClick="handleClick"
+                  :handle-click="handleClick"
                   :scroll="scrollDown"
-                  :findUser="findUser"
+                  :find-user="findUser"
                   @embed="embed = $event"
                 />
               </div>
-              <div class="message-icons" v-show="editing !== message.id">
+              <div v-show="editing !== message.id" class="message-icons">
                 <icons
                   v-show="message.user?.id === store.userData?.id"
                   style="cursor: pointer"
@@ -488,7 +488,7 @@
                   @click="
                     ;(editing = message.id),
                       (editText = message.messageContents),
-                      scrollDown(message)
+                      scrollDown(true)
                   "
                 />
                 <icons
@@ -517,6 +517,7 @@
           <div v-if="replyTo || scrolledUp">
             <transition>
               <div
+                v-if="scrolledUp"
                 :style="{
                   height: replyTo ? '36px' : '',
                   marginRight:
@@ -527,7 +528,6 @@
                       : '',
                   marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
                 }"
-                v-if="scrolledUp"
                 style="
                   position: fixed;
                   z-index: 1;
@@ -544,13 +544,13 @@
             <div
               v-if="replyTo"
               class="scroll-button"
-              @click="scroll"
               style="
                 display: flex;
                 overflow-wrap: break-word;
                 z-index: 2;
                 position: relative;
               "
+              @click="scroll"
             >
               <icons size="12" icon="reply" style="margin-right: 4px" />
               <profile-picture
@@ -566,13 +566,13 @@
               />
               <b
                 class="message-text-medium"
+                style="margin: 0 4px 0 4px"
                 @click="
                   openUser(
                     findMessage(replyTo).user.id,
                     findMessage(replyTo).user
                   )
                 "
-                style="margin: 0 4px 0 4px"
               >
                 {{
                   findMessage(replyTo).user?.username
@@ -582,8 +582,8 @@
               </b>
               <p
                 class="message-text-medium-gray"
-                @click="goToMessage(findMessage(replyTo))"
                 style="margin: 0"
+                @click="goToMessage(findMessage(replyTo))"
               >
                 {{ findMessage(replyTo).messageContents }}
               </p>
@@ -592,16 +592,16 @@
         </transition>
         <div class="message-send">
           <input
+            id="input"
+            v-model="inputText"
             placeholder="Send a message"
             autofocus
+            class="message-input"
+            autocomplete="off"
             @keydown.enter="sendMessage"
             @keydown.up.prevent="editLast(), scrollDown(true)"
-            class="message-input"
-            v-model="inputText"
-            id="input"
-            autocomplete="off"
           />
-          <button @click="sendMessage" style="cursor: pointer">Send</button>
+          <button style="cursor: pointer" @click="sendMessage">Send</button>
         </div>
       </div>
     </div>
@@ -632,14 +632,14 @@
           "
         >
           <p style="padding-right: 4px" class="message-text-small">Online</p>
-          <div style="border-bottom: 1px solid #212425; width: 100%"></div>
+          <div style="border-bottom: 1px solid #212425; width: 100%" />
         </div>
         <div
           v-for="user in onlineUsers"
           :key="user"
-          @contextmenu.prevent="showContextMenu($event, user)"
           style="cursor: pointer; margin: 0 0 4px"
           class="message-grid"
+          @contextmenu.prevent="showContextMenu($event, user)"
           @click="openUser(user.id, user)"
         >
           <div class="profile-picture">
@@ -691,14 +691,14 @@
           "
         >
           <p style="padding-right: 4px" class="message-text-small">Offline</p>
-          <div style="border-bottom: 1px solid #212425; width: 100%"></div>
+          <div style="border-bottom: 1px solid #212425; width: 100%" />
         </div>
         <div
           v-for="user in offlineUsers"
           :key="user"
-          @contextmenu.prevent="showContextMenu($event, user)"
           style="cursor: pointer; margin: 0 0 4px"
           class="message-grid"
+          @contextmenu.prevent="showContextMenu($event, user)"
           @click="openUser(user.id, user)"
         >
           <div class="profile-picture">
@@ -745,60 +745,60 @@
             Profile
           </div>
           <div
-            class="context-menu-item"
             v-if="contextMenuItemUser.id !== store.userData.id"
+            class="context-menu-item"
             @click="sendDm(contextMenuItemUser.id)"
           >
             Message {{ contextMenuItemUser.username }}
           </div>
           <div
-            class="context-menu-item"
             v-if="
               contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friendRequests &&
               !contextMenuItemUser.friend[0]?.status
             "
+            class="context-menu-item"
             @click="addFriend(contextMenuItemUser.id, true)"
           >
             Friend {{ contextMenuItemUser.username }}
           </div>
           <div
-            class="context-menu-item"
             v-else-if="
               contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friend[0]?.status === 'accepted'
             "
+            class="context-menu-item"
             @click="addFriend(contextMenuItemUser.id, true)"
           >
             Unfriend {{ contextMenuItemUser.username }}
           </div>
           <div
-            class="context-menu-item"
             v-else-if="
               contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friend[0]?.status === 'pending'
             "
+            class="context-menu-item"
             @click="addFriend(contextMenuItemUser.id, true)"
           >
             Cancel {{ contextMenuItemUser.username }}
           </div>
           <div
-            class="context-menu-item"
             v-else-if="
               contextMenuItemUser.id !== store.userData.id &&
               contextMenuItemUser.friend[0]?.status === 'incoming'
             "
+            class="context-menu-item"
             @click="addFriend(contextMenuItemUser.id, true)"
           >
             Accept {{ contextMenuItemUser.username }}
           </div>
           <div
-            class="context-menu-item"
             v-if="
               currentChat.owner === store.userData.id &&
               contextMenuItemUser.id !== store.userData.id &&
               currentChat.type === 0
             "
+            class="context-menu-item"
             @click="removeUser(contextMenuItemUser.id)"
           >
             Remove {{ contextMenuItemUser.username }}
@@ -807,38 +807,38 @@
       </div>
       <div v-else-if="store.search">
         <input
+          v-model="searchText"
           style="margin: 0"
           placeholder="Search this chat"
-          @keydown.enter="searchChat"
-          v-model="searchText"
           autocomplete="off"
+          @keydown.enter="searchChat"
         />
         <div
           v-for="(message, index) in searchMessages"
-          :key="message"
           :id="'message-' + index"
+          :key="message"
           style="padding: 4px"
         >
           <div
+            v-if="
+              store.dayjsDate(message.createdAt) !==
+              store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
+            "
             style="
               padding-bottom: 8px;
               height: 16px;
               display: flex;
               align-items: center;
             "
-            v-if="
-              store.dayjsDate(message.createdAt) !==
-              store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
-            "
           >
-            <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+            <div style="border-bottom: 1px solid #212425; width: 50%" />
             <p
               style="padding: 0 4px; white-space: nowrap"
               class="message-text-small"
             >
               {{ store.dayjsDate(message.createdAt) }}
             </p>
-            <div style="border-bottom: 1px solid #212425; width: 50%"></div>
+            <div style="border-bottom: 1px solid #212425; width: 50%" />
           </div>
           <div
             v-if="message.reply && findMessage(message.reply)"
@@ -862,13 +862,13 @@
             />
             <b
               class="message-text-medium"
+              style="margin: 4px 4px 0 4px"
               @click="
                 openUser(
                   findMessage(message.reply)?.user?.id,
                   findMessage(message.reply)?.user
                 )
               "
-              style="margin: 4px 4px 0 4px"
             >
               {{
                 findMessage(message.reply)?.user?.username
@@ -878,8 +878,8 @@
             </b>
             <p
               class="message-text-medium-gray-hover"
-              @click="goToMessage(findMessage(message.reply))"
               style="margin-top: 4px; margin-bottom: 0"
+              @click="goToMessage(findMessage(message.reply))"
             >
               {{ findMessage(message.reply)?.messageContents }}
             </p>
@@ -893,12 +893,12 @@
             "
           >
             <icons
-              color="darkgrey"
+              colour="darkgrey"
               size="16"
               icon="reply"
               style="margin-right: 4px"
             />
-            <icons color="darkgrey" size="16" icon="account" />
+            <icons colour="darkgrey" size="16" icon="account" />
             <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
               Message has been deleted
             </b>
@@ -910,9 +910,9 @@
           >
             <div
               v-if="!merge(message, index)"
-              @click="openUser(message.user?.id, message?.user)"
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
+              @click="openUser(message.user?.id, message?.user)"
             >
               <profile-picture size="32" :avatar="message.user?.avatar" />
             </div>
@@ -925,7 +925,7 @@
               class="message-item"
               style="width: calc(100% - 48px); overflow-wrap: break-word"
             >
-              <div style="line-height: 11.5px" v-if="!merge(message, index)">
+              <div v-if="!merge(message, index)" style="line-height: 11.5px">
                 <b
                   class="message-text-medium"
                   @click="openUser(message.user?.id, message?.user)"
@@ -938,16 +938,16 @@
               </div>
               <custom-message
                 :message="message"
-                :handleClick="handleClick"
-                :findUser="findUser"
+                :handle-click="handleClick"
+                :find-user="findUser"
                 :scroll="scrollDown"
               />
             </div>
           </div>
         </div>
       </div>
-      <div class="center" v-else>
-        <div style="text-align: center" class="loader"></div>
+      <div v-else class="center">
+        <div style="text-align: center" class="loader" />
       </div>
     </sidebar>
   </div>
@@ -989,8 +989,8 @@ const chatEdit = ref(false)
 const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
+const inputText = ref("")
 
-let inputText
 let editText
 let searchText
 let chatNameInput
@@ -998,6 +998,33 @@ let chatDescriptionInput
 let chatIconInput
 let chatUserInput
 let chatUsers
+
+const ws = new WebSocket(
+  process.env.NODE_ENV === "production"
+    ? "wss://electrics01.com/ws"
+    : "ws://localhost:24554/ws"
+)
+
+ws.onopen = function (event) {
+  console.log(event)
+  ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
+  console.log("Socket connected")
+}
+
+ws.onmessage = function (event) {
+  console.log(event)
+  const socketMessage = JSON.parse(event.data)
+  if (socketMessage.authFail) {
+    store.error = "Error 401, " + socketMessage.authFail
+    router.push("/login")
+  } else if (socketMessage.newMessage) {
+    socketMessage.newMessage.focus = false
+    currentChat.value.messages.push(socketMessage.newMessage)
+    scrollDown()
+    console.log(socketMessage.newMessage)
+  }
+  console.log("Data received from websocket ")
+}
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 
@@ -1052,24 +1079,24 @@ const userSortPress = () => {
   userSort(store.sortUsers)
 }
 const sendMessage = () => {
-  if (inputText?.trim()) {
+  if (inputText.value?.trim()) {
     axios
       .post("/api/message", {
-        messageContents: inputText.trim(),
+        messageContents: inputText.value.trim(),
         reply: replyTo.value,
         chatId: currentChat.value.id
       })
       .then((res) => {
         store.chatsList = res.data.chats
         store.chatSort()
-        currentChat.value = res.data.chat
-        inputText = ""
+        inputText.value = ""
         replyTo.value = null
-        currentChat.value.messages.focus = false
+        res.data.lastMessage.focus = false
+        currentChat.value.messages.push(res.data.lastMessage)
         scrollDown()
       })
       .catch((e) => {
-        store.error = e.response.data.message
+        store.error = e
         setTimeout(store.errorFalse, 5000)
       })
   }
@@ -1338,7 +1365,7 @@ const merge = (message, index) => {
   if (currentChat.value.messages[index - 1]) {
     const previousMessage = currentChat.value.messages[index - 1]
     return (
-      previousMessage.userName === message.userName &&
+      previousMessage.userId === message.userId &&
       !message.reply &&
       !dayjs(previousMessage.createdAt).isBefore(
         dayjs(message.createdAt).subtract(15, "minutes")
@@ -1370,7 +1397,7 @@ const goToMessage = (messageId) => {
 }
 const editLast = () => {
   const messageEdit = currentChat.value.messages.filter(
-    (message) => Number(message.userName) === store.userData.id
+    (message) => message.userId === store.userData.id
   )
   if (messageEdit.length > 0) {
     editText = messageEdit.slice(-1)[0].messageContents
@@ -1402,9 +1429,7 @@ const sendDm = (id) => {
       editing.value = false
       store.chatsList = res.data.chats
       store.chatSort()
-      currentChat.value = res.data.chat
-      inputText = ""
-      replyTo.value = null
+      inputText.value = ""
       currentChat.value.messages.focus = false
       scrollDown()
     })
@@ -1421,10 +1446,7 @@ const showContextMenu = (event, user) => {
 }
 const escPressed = ({ key }) => {
   if (key === "Escape") {
-    if (currentChat.value.lastRead !== currentChat.value.messages.length) {
-      currentChat.value.lastRead = currentChat.value.messages.length
-      axios.post(`/api/read-new/${currentChat.value.id}`)
-    } else if (contextMenuVisible.value) {
+    if (contextMenuVisible.value) {
       contextMenuVisible.value = false
     } else if (editing.value === "status") {
       editing.value = false
@@ -1440,6 +1462,11 @@ const escPressed = ({ key }) => {
       replyTo.value = null
     } else if (!showUser.value) {
       scrollDown(true)
+    } else if (
+      currentChat.value.lastRead !== currentChat.value.messages.length
+    ) {
+      currentChat.value.lastRead = currentChat.value.messages.length
+      axios.post(`/api/read-new/${currentChat.value.id}`)
     }
   }
 }

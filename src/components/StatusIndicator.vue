@@ -30,5 +30,5 @@
 </template>
 
 <script setup>
-defineProps(["size", "status"])
+defineProps({ size: String, status: String })
 </script>

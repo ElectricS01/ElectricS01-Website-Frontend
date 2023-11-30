@@ -10,7 +10,7 @@
             style="padding: 4px; cursor: pointer"
           />
         </button>
-        <slot></slot>
+        <slot />
       </div>
     </div>
   </div>
@@ -21,6 +21,7 @@ import Icons from "@/components/core/Icons.vue"
 
 defineProps({
   isActive: {
+    type: Boolean,
     default: false
   }
 })

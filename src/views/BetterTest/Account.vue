@@ -4,12 +4,12 @@
       <div class="settings-modal">
         <p class="settings-text">Submit feedback</p>
         <input
-          placeholder="Feedback"
-          @keydown.enter="submitFeedback"
-          class="settings-input"
-          v-model="feedbackText"
           id="feedback"
+          v-model="feedbackText"
+          placeholder="Feedback"
+          class="settings-input"
           autocomplete="off"
+          @keydown.enter="submitFeedback"
         />
         <button @click="submitFeedback">Enter</button>
         <p class="message-text-medium-gray">
@@ -27,11 +27,11 @@
       <div class="settings-modal">
         <p class="settings-text">Logout everywhere</p>
         <input
-          placeholder="Password"
-          @keydown.enter="logoutAllSubmit"
-          class="settings-input"
           v-model="password"
+          placeholder="Password"
+          class="settings-input"
           autocomplete="off"
+          @keydown.enter="logoutAllSubmit"
         />
         <button @click="logoutAllSubmit">Enter</button>
       </div>
@@ -41,33 +41,33 @@
     <div class="grid-menu">
       <div class="settings-menu">
         <div class="settings-sidebar scroll-bar">
-          <div @click="changePage('account')" class="settings-item">
+          <div class="settings-item" @click="changePage('account')">
             Account
           </div>
-          <div @click="changePage('privacy')" class="settings-item">
+          <div class="settings-item" @click="changePage('privacy')">
             Privacy
           </div>
-          <div @click="changePage('security')" class="settings-item">
+          <div class="settings-item" @click="changePage('security')">
             Security
           </div>
-          <div @click="changePage('appearance')" class="settings-item">
+          <div class="settings-item" @click="changePage('appearance')">
             Appearance
           </div>
-          <div @click="changePage('profile')" class="settings-item">
+          <div class="settings-item" @click="changePage('profile')">
             Profile
           </div>
           <div
             v-if="store.userData?.admin"
-            @click="changePage('admin')"
             class="settings-item"
+            @click="changePage('admin')"
           >
             Admin
           </div>
-          <div @click="changePage('about')" class="settings-item">About</div>
-          <div @click="changePage('changelog')" class="settings-item">
+          <div class="settings-item" @click="changePage('about')">About</div>
+          <div class="settings-item" @click="changePage('changelog')">
             Changelog
           </div>
-          <div @click="modalOpen = true" class="settings-item">
+          <div class="settings-item" @click="modalOpen = true">
             Any feedback?
           </div>
         </div>
@@ -75,52 +75,52 @@
           <div v-if="page === 'account'" class="settings-page-container">
             <h2 class="settings-text">Account</h2>
             Change your account settings
-            <div class="settings-spacer"></div>
-            <div @click="logout" class="settings-button-red">Logout</div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
+            <div class="settings-button-red" @click="logout">Logout</div>
+            <div class="settings-spacer" />
             Username: {{ store.userData?.username }}
-            <div @click="changeUsername()" class="settings-button">
+            <div class="settings-button" @click="changeUsername()">
               Change Username
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Email: {{ store.userData?.email }}
-            <div @click="changeUsername()" class="settings-button">
+            <div class="settings-button" @click="changeUsername()">
               Change Email
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Email verified: {{ store.userData?.emailVerified }}
             <div
               v-if="!store.userData?.emailVerified"
-              @click="resendVerification()"
               class="settings-button"
+              @click="resendVerification()"
             >
               Resend email
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Password: {{ store.userData?.password }}
-            <div @click="changeUsername()" class="settings-button">
+            <div class="settings-button" @click="changeUsername()">
               Change Password
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Creation date: {{ store.dayjsLong(store.userData?.createdAt) }}
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Account ID: {{ store.userData?.id }}
-            <div class="settings-spacer"></div>
-            <div @click="changeUsername()" class="settings-button-red">
+            <div class="settings-spacer" />
+            <div class="settings-button-red" @click="changeUsername()">
               Close account
             </div>
           </div>
           <div v-else-if="page === 'privacy'" class="settings-page-container">
             <h2 class="settings-text">Privacy</h2>
             Change your privacy settings
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Allow direct messages from
             <div>
               <div class="dropdown">
                 <div class="dropdown-toggle" @click="isOpen = !isOpen">
                   {{ store.userData?.directMessages }}
                 </div>
-                <ul class="dropdown-menu" v-if="isOpen">
+                <ul v-if="isOpen" class="dropdown-menu">
                   <li
                     v-for="option in options"
                     :key="option"
@@ -131,7 +131,7 @@
                 </ul>
               </div>
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Allow friend requests from new people
             <label class="switch">
               <input
@@ -139,9 +139,9 @@
                 :checked="store.userData?.friendRequests"
                 @click="toggle('friendRequests')"
               />
-              <span class="slider"></span>
+              <span class="slider" />
             </label>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Show the date of your accounts creation on your profile
             <label class="switch">
               <input
@@ -149,9 +149,9 @@
                 :checked="store.userData?.showCreated"
                 @click="toggle('showCreated')"
               />
-              <span class="slider"></span>
+              <span class="slider" />
             </label>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Save Quick Switcher history online
             <label class="switch">
               <input
@@ -159,29 +159,29 @@
                 :checked="store.userData?.saveSwitcher"
                 @click="toggle('saveSwitcher')"
               />
-              <span class="slider"></span>
+              <span class="slider" />
             </label>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Clear your Quick Switcher history
-            <div @click="clearHistory()" class="settings-button">
+            <div class="settings-button" @click="clearHistory()">
               Clear history
             </div>
           </div>
           <div v-else-if="page === 'security'" class="settings-page-container">
             <h2 class="settings-text">Security</h2>
             Change your security settings
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Log you out on every device
-            <div @click="logoutAll" class="settings-button-red">
+            <div class="settings-button-red" @click="logoutAll">
               Logout everywhere
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Sessions
             <div class="grid-sessions">
               <div
                 v-for="session in sessions"
-                class="grid-sessions-item"
                 :key="session.id"
+                class="grid-sessions-item"
               >
                 <p>Id: {{ session.id }}</p>
                 <p>Date created: {{ store.dayjsLong(session.createdAt) }}</p>
@@ -195,13 +195,13 @@
           >
             <h2 class="settings-text">Appearance</h2>
             Change your appearance settings
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Coming soon™
           </div>
           <div v-else-if="page === 'profile'" class="settings-page-container">
             <h2 class="settings-text">Profile</h2>
             Change your profile settings
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <div style="display: flex">
               <div style="width: min(500px, 100%)">
                 <img
@@ -215,16 +215,16 @@
                   class="profile-banner"
                 />
                 <input
-                  placeholder="Edit your profile picture"
-                  @keydown.enter="toggle('banner', editBanner)"
+                  id="banner"
                   v-model="editBanner"
+                  placeholder="Edit your profile picture"
                   style="
                     margin: 1px;
                     height: fit-content;
                     width: calc(100% - 2px);
                   "
-                  id="banner"
                   autocomplete="off"
+                  @keydown.enter="toggle('banner', editBanner)"
                 />
                 <div class="profile-page">
                   <div class="profile-grid">
@@ -271,24 +271,24 @@
                       </p>
                       <input
                         v-else
-                        placeholder="Edit your status"
-                        @keydown.enter="editStatusMessage()"
-                        v-model="editStatus"
-                        style="margin: 1px; width: calc(100% - 2px)"
                         id="status"
+                        v-model="editStatus"
+                        placeholder="Edit your status"
+                        style="margin: 1px; width: calc(100% - 2px)"
                         autocomplete="off"
+                        @keydown.enter="editStatusMessage()"
                       />
                     </div>
                   </div>
                   <input
-                    placeholder="Edit your profile picture"
-                    @keydown.enter="toggle('avatar', editAvatar)"
-                    v-model="editAvatar"
-                    style="margin: 1px; height: fit-content"
                     id="avatar"
+                    v-model="editAvatar"
+                    placeholder="Edit your profile picture"
+                    style="margin: 1px; height: fit-content"
                     autocomplete="off"
+                    @keydown.enter="toggle('avatar', editAvatar)"
                   />
-                  <div class="profile-spacer"></div>
+                  <div class="profile-spacer" />
                   <div
                     style="height: 332px; overflow-y: auto"
                     class="scroll-bar"
@@ -298,7 +298,7 @@
                       <p class="message-text-large">
                         {{ store.dayjsDate(store.userData?.createdAt) }}
                       </p>
-                      <div class="profile-spacer"></div>
+                      <div class="profile-spacer" />
                     </div>
                     <div>
                       <p>
@@ -326,16 +326,16 @@
                       </p>
                       <input
                         v-else
-                        placeholder="Edit your description"
-                        @keydown.enter="toggle('description', editDescription)"
-                        v-model="editDescription"
-                        style="margin: 1px; width: calc(100% - 2px)"
                         id="description"
+                        v-model="editDescription"
+                        placeholder="Edit your description"
+                        style="margin: 1px; width: calc(100% - 2px)"
                         autocomplete="off"
+                        @keydown.enter="toggle('description', editDescription)"
                       />
                     </div>
                     <div v-if="store.userData?.tetris">
-                      <div class="profile-spacer"></div>
+                      <div class="profile-spacer" />
                       <p>Tetris Scores</p>
                       <p>
                         Easy mode:
@@ -365,20 +365,35 @@
               Better Communications is free and open-source chatting platform
               available to all
             </div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <div>
               Made by
               <router-link to="/">ElectricS01</router-link>
             </div>
-            <div class="settings-spacer"></div>
-            <div>Version: 1.191.2</div>
+            <div class="settings-spacer" />
+            <div>Version: 1.192</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
+            <h2 class="settings-text">1.192 WebSockets</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Added websockets so you don't need to refresh the page to see
+                new messages
+              </li>
+              <li>Update ESLint to be more strict</li>
+              <li>Fix ESLint (1.191.1)</li>
+              <li>Update to work with backend 1.89</li>
+              <li>Bug fixes</li>
+              <li>Refactoring</li>
+              <li>Updated dependencies</li>
+            </ul>
+            <div class="settings-spacer" />
             <h2 class="settings-text">1.191 Logout everywhere</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>
                 Added
@@ -396,7 +411,7 @@
               <li>Updated dependencies</li>
             </ul>
             <h2 class="settings-text">1.190 Sessions</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>
                 Quick Switcher now works offline or without being logged in
@@ -417,7 +432,7 @@
               <li>Bug fixes</li>
             </ul>
             <h2 class="settings-text">1.189 Logout button</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>
                 Added a logout button in
@@ -435,7 +450,7 @@
               <li>Updated dependencies</li>
             </ul>
             <h2 class="settings-text">1.188 Quick Switcher updates</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>You can now press on Quick Switcher items</li>
               <li>Updates to "New Messages" status indicator</li>
@@ -444,14 +459,14 @@
             <h2 class="settings-text">
               1.187 Quick Switcher communications updates
             </h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>Your chats are now shown in the Quick Switcher</li>
               <li>Bug fixes</li>
               <li>Updated dependencies</li>
             </ul>
             <h2 class="settings-text">1.186 Quick Switcher History</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>
                 Your most switched pages will be sorted to the top of the quick
@@ -461,7 +476,7 @@
               <li v-markdown>Finish switch to `script setup`</li>
             </ul>
             <h2 class="settings-text">1.185 Quick Switcher updates</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>Quick Switcher history will now be saved</li>
               <li>Experimental fix for context menus</li>
@@ -470,7 +485,7 @@
               <li v-markdown>Switched more code to `script setup`</li>
             </ul>
             <h2 class="settings-text">1.184 Quick Switcher Added</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>Added Quick Switcher</li>
               <li>
@@ -490,25 +505,25 @@
               <li>Updated dependencies</li>
             </ul>
             <h2 class="settings-text">1.183 Changelog Added</h2>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <ul>
               <li>Added changelog</li>
               <li>Added "New Messages" status indicator</li>
               <li>Fixed issue with search</li>
               <li>Fixed issue with changing status message</li>
-              <li>Support for TypeScript backend</li>
+              <li>Support for TypeScript backend 1.83</li>
               <li v-markdown>Switched more code to `script setup`</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
             </ul>
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
             Admin info
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             Feedback
-            <div class="settings-spacer"></div>
+            <div class="settings-spacer" />
             <table>
               <tr v-for="(feedback, index) in adminData" :key="feedback">
                 <th>{{ feedback.id }}</th>

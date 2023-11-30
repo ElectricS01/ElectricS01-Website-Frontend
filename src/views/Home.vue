@@ -15,7 +15,7 @@
           />
           <div class="small-container">
             <p class="text-medium">TonkGame (WIP)</p>
-            <div class="spacer"></div>
+            <div class="spacer" />
             <p class="message-text-medium-gray">
               My first ever coding project, a simple 2D Top Down Shooter made
               with GameMaker Studio
@@ -32,7 +32,7 @@
           />
           <div class="small-container">
             <p class="text-medium">Tetris By ElectricS01</p>
-            <div class="spacer"></div>
+            <div class="spacer" />
             <p class="message-text-medium-gray">
               My own rendition of the popular game Tetris made with GameMaker
               Studio
@@ -49,7 +49,7 @@
           />
           <div class="small-container">
             <p class="text-medium">Mapit (Demo)</p>
-            <div class="spacer"></div>
+            <div class="spacer" />
             <p class="message-text-medium-gray">
               Mapit is an interactive school map program to make it easier for
               all people to navigate school
@@ -66,7 +66,7 @@
           />
           <div class="small-container">
             <p class="text-medium">BetterCompass Club</p>
-            <div class="spacer"></div>
+            <div class="spacer" />
             <p class="message-text-medium-gray">
               A Club/Tutorial page for BetterCompass made with HTML (No longer
               available)
@@ -83,7 +83,7 @@
           />
           <div class="small-container">
             <p class="text-medium">BetterCompass By ElectricS01</p>
-            <div class="spacer"></div>
+            <div class="spacer" />
             <p class="message-text-medium-gray">
               BetterCompass maintained by me (No longer available)
             </p>

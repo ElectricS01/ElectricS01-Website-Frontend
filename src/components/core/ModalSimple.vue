@@ -2,7 +2,7 @@
   <div class="background">
     <div class="modal" :class="{ 'is-active': isActive }" @click="closeModal">
       <div @click.stop>
-        <slot></slot>
+        <slot />
       </div>
     </div>
   </div>
@@ -11,6 +11,7 @@
 <script setup>
 defineProps({
   isActive: {
+    type: Boolean,
     default: false
   }
 })

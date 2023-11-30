@@ -1,7 +1,7 @@
 <template>
   <div class="parent" :style="menuStyle">
     <div popover class="context-menu">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -9,7 +9,9 @@
 <script setup>
 import { computed } from "vue"
 
-const props = defineProps(["position"])
+const props = defineProps({
+  position: Object
+})
 
 const menuStyle = computed(() => {
   const adjustedX = props.position.x + window.scrollX

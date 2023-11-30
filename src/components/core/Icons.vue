@@ -1,6 +1,6 @@
 <template>
   <svg
-    :fill="color || 'white'"
+    :fill="colour || 'white'"
     :width="size"
     :height="size"
     xmlns="http://www.w3.org/2000/svg"
@@ -59,5 +59,5 @@
 </template>
 
 <script setup>
-defineProps(["color", "size", "icon"])
+defineProps({ colour: String, size: String, icon: String })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="navbar" id="mobile-navbar" v-if="navbarShown">
+    <div v-if="navbarShown" id="mobile-navbar" class="navbar">
       <router-link class="main" to="/" @click="mobileNav">
         ElectricS01.com
       </router-link>
@@ -43,7 +43,7 @@
       </router-link>
       <div class="icon-mobile" @click="mobileNav">☰</div>
     </div>
-    <div class="chat-navbar" v-else>
+    <div v-else class="chat-navbar">
       <router-link
         class="chat-button"
         :class="{ 'responsive-chat': route.path.startsWith('/chat') }"
@@ -51,7 +51,7 @@
       >
         Better Communications
       </router-link>
-      <div v-if="active('/chat')" @click="toggleChatBar" class="left chat-icon">
+      <div v-if="active('/chat')" class="left chat-icon" @click="toggleChatBar">
         <Icons size="28" icon="chats" />
       </div>
       <router-link
@@ -67,15 +67,15 @@
       <router-link class="right chat-button" to="/">Home</router-link>
       <div
         v-if="active('/chat')"
-        @click="toggleSidebar"
         class="right chat-icon"
+        @click="toggleSidebar"
       >
         <Icons size="28" icon="account" />
       </div>
       <div
         v-if="active('/chat')"
-        @click="store.search = !store.search"
         class="right chat-icon"
+        @click="store.search = !store.search"
       >
         <Icons size="28" icon="search" />
       </div>
@@ -95,13 +95,13 @@
       >
         <div class="switcher-modal">
           <input
+            id="quick-switcher"
+            v-model="switcherInput"
             placeholder="Quick switcher"
+            class="switcher-input"
             @keydown.enter="activateItem(highlightedIndex)"
             @keydown.down.prevent="moveHighlight(1)"
             @keydown.up.prevent="moveHighlight(-1)"
-            class="switcher-input"
-            v-model="switcherInput"
-            id="quick-switcher"
           />
           <div class="switch-container scroll-bar">
             <div

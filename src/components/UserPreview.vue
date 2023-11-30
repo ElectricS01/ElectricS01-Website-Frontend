@@ -20,7 +20,9 @@
             </svg>
           </div>
           <div class="profile-user">
-            <h4 style="word-wrap: break-word">{{ showUser.username }}</h4>
+            <h4 style="word-wrap: break-word">
+              {{ showUser.username }}
+            </h4>
             <div v-if="editing !== 'status'">
               <p class="message-text-large" style="word-wrap: break-word">
                 {{ showUser.statusMessage }}
@@ -35,12 +37,12 @@
             </div>
             <input
               v-else
-              placeholder="Edit your status"
-              @keydown.enter="editStatusMessage()"
-              v-model="editStatus"
-              class="profile-input"
               id="status"
+              v-model="editStatus"
+              placeholder="Edit your status"
+              class="profile-input"
               autocomplete="off"
+              @keydown.enter="editStatusMessage()"
             />
           </div>
           <div class="profile-buttons">
@@ -56,7 +58,7 @@
             >
               <icons
                 style="padding-right: 4px"
-                color="#1e90ff"
+                colour="#1e90ff"
                 size="16"
                 icon="message"
               />
@@ -74,7 +76,7 @@
             >
               <icons
                 style="padding-right: 4px"
-                color="#47bf4c"
+                colour="#47bf4c"
                 size="16"
                 icon="add-user"
               />
@@ -91,7 +93,7 @@
             >
               <icons
                 style="padding-right: 4px"
-                color="#FF2F2F"
+                colour="#FF2F2F"
                 size="16"
                 icon="remove-user"
               />
@@ -108,7 +110,7 @@
             >
               <icons
                 style="padding-right: 4px"
-                color="#808080"
+                colour="#808080"
                 size="16"
                 icon="remove-user"
               />
@@ -125,7 +127,7 @@
             >
               <icons
                 style="padding-right: 4px"
-                color="#47bf4c"
+                colour="#47bf4c"
                 size="16"
                 icon="add-user"
               />
@@ -133,14 +135,14 @@
             </button>
           </div>
         </div>
-        <div class="profile-spacer"></div>
+        <div class="profile-spacer" />
         <div class="profile-info scroll-bar">
           <div v-if="showUser.createdAt">
             <p>Date Created</p>
             <p class="message-text-large">
               {{ store.dayjsDate(showUser.createdAt) }}
             </p>
-            <div class="profile-spacer"></div>
+            <div class="profile-spacer" />
           </div>
           <div>
             <p>Description</p>
@@ -149,7 +151,7 @@
             </p>
           </div>
           <div v-if="showUser.tetris">
-            <div class="profile-spacer"></div>
+            <div class="profile-spacer" />
             <p>Tetris Scores</p>
             <p>Easy mode: {{ showUser.tetris[0].highscore_easy }} lines</p>
             <p>Medium mode: {{ showUser.tetris[1].highscore_medium }} lines</p>
@@ -170,7 +172,12 @@ import { useDataStore } from "@/stores/main"
 import axios from "axios"
 
 const store = useDataStore()
-const props = defineProps(["showUser", "editing", "sendDm", "addFriend"])
+const props = defineProps({
+  showUser: [Boolean, Object],
+  editing: [Number, Boolean],
+  sendDm: Function,
+  addFriend: Function
+})
 const emits = defineEmits([
   "showUser",
   "editing",

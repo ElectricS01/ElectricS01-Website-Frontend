@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-border scroll-bar">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

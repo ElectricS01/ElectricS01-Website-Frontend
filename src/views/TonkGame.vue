@@ -1,11 +1,11 @@
 <template>
   <div class="container scroll-bar">
     <iframe
+      id="game_drop"
       title="TonkGame"
       allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
       src="/game.html"
       allowtransparency="true"
-      id="game_drop"
       height="540"
       width="960"
     />

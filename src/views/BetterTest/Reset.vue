@@ -10,12 +10,12 @@
               <label for="email">Email</label>
             </div>
             <input
-              placeholder="Email"
-              @keydown.enter="submit"
-              class="modal-input"
               id="email"
               v-model="email"
+              placeholder="Email"
+              class="modal-input"
               type="email"
+              @keydown.enter="submit"
             />
             <div class="text-small">
               <router-link class="text-small" to="/login">

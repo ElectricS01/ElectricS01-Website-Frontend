@@ -5,15 +5,15 @@
       :key="index"
       @click="handleClick(part)"
     >
-      <span v-if="check(index)" v-html="part"></span>
-      <span v-markdown v-if="!check(index)">{{ part }}</span>
+      <span v-if="check(index)" v-html="part" />
+      <span v-if="!check(index)" v-markdown>{{ part }}</span>
     </span>
     <b
-      @mouseover="showEdited()"
-      @mouseleave=";(editShown = false), (editHover = false)"
-      class="message-text-small"
       v-if="message.edited"
       :id="'edit-' + message.id"
+      class="message-text-small"
+      @mouseover="showEdited()"
+      @mouseleave=";(editShown = false), (editHover = false)"
     >
       (edited)
     </b>
@@ -27,9 +27,9 @@
     <embeds
       v-for="(embed, index) in message.embeds"
       :key="index"
-      @embed="emits('embed', embed.mediaProxyLink)"
       :embed="embed"
       :scroll="scroll"
+      @embed="emit('embed', embed.mediaProxyLink)"
     />
   </div>
 </template>
@@ -41,8 +41,13 @@ import { useDataStore } from "@/stores/main.js"
 import TextContext from "@/components/core/TextContext.vue"
 
 const store = useDataStore()
-const props = defineProps(["message", "handleClick", "scroll", "findUser"])
-const emits = defineEmits(["embed"])
+const props = defineProps({
+  message: Object,
+  handleClick: Function,
+  scroll: Function,
+  findUser: Function
+})
+const emit = defineEmits(["embed"])
 const editShown = ref(false)
 let editHover = false
 let editShownPosition = { x: 0, y: 0 }
