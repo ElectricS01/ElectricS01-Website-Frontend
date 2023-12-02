@@ -22,7 +22,6 @@ export const useDataStore = defineStore("store", () => {
   const error = ref("")
   const userData = ref({})
   const quickSwitcherShown = ref(false)
-  const chatsList = ref([])
   const loadingChats = ref(true)
   const switcherItems = ref(switcherPages)
 
@@ -68,13 +67,25 @@ export const useDataStore = defineStore("store", () => {
   const getUser = () => {
     axios
       .get("/api/user")
-      .then((res) => {
+      .then(async (res) => {
         if (typeof res.data === "object") userData.value = res.data
         if (!userData.value.saveSwitcher) {
           userData.value.switcherHistory =
             JSON.parse(localStorage.getItem("switcherHistory")) || []
         }
         sortSwitcher()
+        switcherItems.value.push(
+          ...userData.value.chatsList.map((obj) => [obj.name, obj.id])
+        )
+        loadingChats.value = false
+        chatSort()
+        if (
+          route.path.startsWith("/chat") &&
+          !userData.value.chatsList.find(
+            (chat) => chat?.id === parseInt(route.params.chatId)
+          )
+        )
+          await router.push("/chat/1")
       })
       .catch((e) => {
         error.value = "Error 503, Cannot Connect to Server " + e
@@ -82,7 +93,7 @@ export const useDataStore = defineStore("store", () => {
       })
   }
   const chatSort = () => {
-    chatsList.value.sort((a, b) => {
+    userData.value.chatsList.sort((a, b) => {
       if (a?.latest && b?.latest) {
         return new Date(b.latest) - new Date(a.latest)
       } else if (a?.latest) {
@@ -92,33 +103,6 @@ export const useDataStore = defineStore("store", () => {
       }
       return 0
     })
-  }
-  async function getChats() {
-    await axios
-      .get("/api/chats")
-      .then(async (res) => {
-        chatsList.value = res.data
-        switcherItems.value.push(
-          ...chatsList.value.map((obj) => [obj.name, obj.id])
-        )
-        loadingChats.value = false
-        chatSort()
-        if (
-          route.path.startsWith("/chat") &&
-          !chatsList.value.find(
-            (chat) => chat?.id === parseInt(route.params.chatId)
-          )
-        )
-          await router.push("/chat/1")
-      })
-      .catch((e) => {
-        if (e.message === "Request failed with status code 401") {
-          error.value = "Error 401, You are not logged in"
-          router.push("/login")
-        } else {
-          error.value = "Error 503, Cannot Connect to Server " + e
-        }
-      })
   }
   async function editFocus() {
     await nextTick(() => {
@@ -138,7 +122,6 @@ export const useDataStore = defineStore("store", () => {
     error,
     userData,
     quickSwitcherShown,
-    chatsList,
     loadingChats,
     switcherItems,
     errorFalse,
@@ -147,7 +130,6 @@ export const useDataStore = defineStore("store", () => {
     sortSwitcher,
     getUser,
     chatSort,
-    getChats,
     editFocus
   }
 })

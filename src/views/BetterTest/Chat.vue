@@ -171,7 +171,7 @@
           Create chat
         </div>
         <div
-          v-for="chat in store.chatsList"
+          v-for="chat in store.userData.chatsList"
           :key="chat"
           style="display: flex; margin: 0 0 4px; align-items: center"
         >
@@ -1006,7 +1006,6 @@ const ws = new WebSocket(
 )
 
 ws.onopen = function (event) {
-  console.log(event)
   ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
   console.log("Socket connected")
 }
@@ -1021,9 +1020,17 @@ ws.onmessage = function (event) {
     socketMessage.newMessage.focus = false
     currentChat.value.messages.push(socketMessage.newMessage)
     scrollDown()
-    console.log(socketMessage.newMessage)
+  } else if (socketMessage.changeUser) {
+    const userToUpdate = currentChat.value.users.find(
+      (user) => user.id === socketMessage.changeUser.id
+    )
+    if (userToUpdate) {
+      userToUpdate.status = socketMessage.changeUser.status
+    } else {
+      // currentChat.value.users.push(socketMessage.changeUser)
+    }
   }
-  console.log("Data received from websocket ")
+  console.log("Data received from websocket")
 }
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
@@ -1087,7 +1094,7 @@ const sendMessage = () => {
         chatId: currentChat.value.id
       })
       .then((res) => {
-        store.chatsList = res.data.chats
+        store.userData.chatsList = res.data.chats
         store.chatSort()
         inputText.value = ""
         replyTo.value = null
@@ -1131,7 +1138,7 @@ const deleteChat = (chatId) => {
       chatDescriptionInput = ""
       chatIconInput = ""
       requireVerification.value = true
-      store.chatsList = res.data.chats
+      store.userData.chatsList = res.data.chats
       store.chatSort()
       currentChat.value = res.data.chat
       replyTo.value = null
@@ -1202,7 +1209,7 @@ const createChat = () => {
         chatDescriptionInput = ""
         chatIconInput = ""
         requireVerification.value = true
-        store.chatsList = res.data.chats
+        store.userData.chatsList = res.data.chats
         store.chatSort()
         currentChat.value = res.data.chat
         replyTo.value = null
@@ -1242,7 +1249,7 @@ const saveChat = () => {
         chatDescriptionInput = ""
         chatIconInput = ""
         requireVerification.value = true
-        store.chatsList = res.data.chats
+        store.userData.chatsList = res.data.chats
         store.chatSort()
         currentChat.value = res.data.chat
         replyTo.value = null
@@ -1327,7 +1334,7 @@ const removeUser = (userId) => {
   axios
     .post(`/api/remove/${currentChat.value.id}/${userId}`)
     .then((res) => {
-      store.chatsList = res.data.chats
+      store.userData.chatsList = res.data.chats
       store.chatSort()
       currentChat.value = res.data.chat
       if (currentChat.value.messages) {
@@ -1427,7 +1434,7 @@ const sendDm = (id) => {
     .then((res) => {
       showUser.value = false
       editing.value = false
-      store.chatsList = res.data.chats
+      store.userData.chatsList = res.data.chats
       store.chatSort()
       inputText.value = ""
       currentChat.value.messages.focus = false
@@ -1512,7 +1519,6 @@ onMounted(async () => {
   if (route.path.startsWith("/user")) {
     openUser(route.params.chatId)
   }
-  await store.getChats()
   await getChat(route.params.chatId)
 })
 onBeforeRouteLeave(() => {

@@ -371,12 +371,28 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.192</div>
+            <div>Version: 1.193</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.193 Offline users</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Users are now sent offline when they close BetterCommunications
+              </li>
+              <li>
+                Offline users now become online when they open
+                BetterCommunications
+              </li>
+              <li>Online and offline users now update on the users sidebar</li>
+              <li>BetterCommunications should load faster now</li>
+              <li>Update to work with backend 1.90</li>
+              <li>Refactoring</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.192 WebSockets</h2>
             <div class="settings-spacer" />
             <ul>
@@ -391,7 +407,6 @@
               <li>Refactoring</li>
               <li>Updated dependencies</li>
             </ul>
-            <div class="settings-spacer" />
             <h2 class="settings-text">1.191 Logout everywhere</h2>
             <div class="settings-spacer" />
             <ul>
@@ -532,7 +547,7 @@
                 <th>{{ feedback.feedback }}</th>
                 <th>{{ store.dayjsLong(feedback.createdAt) }}</th>
                 <th>
-                  <Icons
+                  <icons
                     size="16"
                     icon="delete"
                     style="cursor: pointer"

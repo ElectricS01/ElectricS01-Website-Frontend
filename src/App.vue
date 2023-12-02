@@ -51,33 +51,52 @@
       >
         Better Communications
       </router-link>
-      <div v-if="active('/chat')" class="left chat-icon" @click="toggleChatBar">
-        <Icons size="28" icon="chats" />
+      <div
+        v-if="active('/chat')"
+        class="left chat-icon"
+        @click="toggleChatBar"
+        title="Show chats"
+      >
+        <icons size="28" icon="chats" />
       </div>
       <router-link
         v-if="store.userData.id"
         class="right chat-icon"
         to="/account/account"
+        title="Settings"
       >
-        <Icons size="28" icon="settings" />
+        <icons size="28" icon="settings" />
       </router-link>
-      <router-link v-else class="right chat-button" to="/login">
+      <router-link
+        v-else
+        class="right chat-button"
+        to="/login"
+        title="Login to BetterCommunications"
+      >
         Login
       </router-link>
-      <router-link class="right chat-button" to="/">Home</router-link>
+      <router-link
+        class="right chat-button"
+        to="/"
+        title="Got to ElectricS01.com home"
+      >
+        Home
+      </router-link>
       <div
         v-if="active('/chat')"
         class="right chat-icon"
         @click="toggleSidebar"
+        title="Show users"
       >
-        <Icons size="28" icon="account" />
+        <icons size="28" icon="account" />
       </div>
       <div
         v-if="active('/chat')"
         class="right chat-icon"
         @click="store.search = !store.search"
+        title="Search this chat"
       >
-        <Icons size="28" icon="search" />
+        <icons size="28" icon="search" />
       </div>
     </div>
     <transition>
@@ -125,7 +144,7 @@
 import Icons from "@/components/core/Icons.vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDataStore } from "@/stores/main"
-import { computed, nextTick, onMounted, ref, watch } from "vue"
+import { computed, nextTick, ref, watch } from "vue"
 import axios from "axios"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 
@@ -319,10 +338,6 @@ const navbarShown = computed(() => {
     !route.path.startsWith("/account") &&
     !route.path.startsWith("/reset")
   )
-})
-
-onMounted(async () => {
-  if (store.userData.length) await store.getChats()
 })
 
 watch(switcherInput, () => {
