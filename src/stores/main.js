@@ -74,18 +74,25 @@ export const useDataStore = defineStore("store", () => {
             JSON.parse(localStorage.getItem("switcherHistory")) || []
         }
         sortSwitcher()
-        switcherItems.value.push(
-          ...userData.value.chatsList.map((obj) => [obj.name, obj.id])
-        )
-        loadingChats.value = false
-        chatSort()
-        if (
-          route.path.startsWith("/chat") &&
-          !userData.value.chatsList.find(
-            (chat) => chat?.id === parseInt(route.params.chatId)
+        if (userData.value.chatsList) {
+          switcherItems.value.push(
+            ...userData.value.chatsList.map((obj) => [
+              obj.type === 1 && obj.ownerDetails.id !== userData.value.id
+                ? obj.ownerDetails.username
+                : obj.name,
+              obj.id
+            ])
           )
-        )
-          await router.push("/chat/1")
+          loadingChats.value = false
+          chatSort()
+          if (
+            route.path.startsWith("/chat") &&
+            !userData.value.chatsList.find(
+              (chat) => chat?.id === parseInt(route.params.chatId)
+            )
+          )
+            await router.push("/chat/1")
+        }
       })
       .catch((e) => {
         error.value = "Error 503, Cannot Connect to Server " + e
