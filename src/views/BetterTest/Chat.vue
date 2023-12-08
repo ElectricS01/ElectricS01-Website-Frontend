@@ -1201,7 +1201,7 @@ const createChat = () => {
         name: chatNameInput,
         description: chatDescriptionInput,
         icon: chatIconInput,
-        requireVerification: requireVerification
+        requireVerification: requireVerification.value
       })
       .then((res) => {
         createChatShown.value = false
