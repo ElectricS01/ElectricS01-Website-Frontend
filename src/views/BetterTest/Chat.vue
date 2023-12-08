@@ -1237,7 +1237,7 @@ const saveChat = () => {
         name: chatNameInput,
         description: chatDescriptionInput,
         icon: chatIconInput,
-        requireVerification: requireVerification,
+        requireVerification: requireVerification.value,
         users: chatUsers.filter(
           (user) =>
             !currentChat.value.users.map((user) => user.id).includes(user)
