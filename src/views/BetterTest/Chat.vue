@@ -32,52 +32,81 @@
       "
     >
       <div class="chanel-menu">
-        <p class="message-text-large">Create New Chat</p>
-        <div class="text-small">
-          <label class="text-small" for="chat-name">Chat name</label>
-        </div>
-        <input
-          id="chat-name"
-          v-model="chatNameInput"
-          placeholder="Chat name"
-          class="modal-input"
-          @keydown.enter="createChat"
-        />
-        <div class="text-small">
-          <label for="chat-description">Chat description</label>
-        </div>
-        <input
-          id="chat-description"
-          v-model="chatDescriptionInput"
-          placeholder="Chat description"
-          class="modal-input"
-          @keydown.enter="createChat"
-        />
-        <div class="text-small">
-          <label for="chat-icon">Chat icon</label>
-        </div>
-        <input
-          id="chat-icon"
-          v-model="chatIconInput"
-          placeholder="Chat icon"
-          class="modal-input"
-          @keydown.enter="createChat"
-        />
-        <div v-if="store.userData.emailVerified">
-          <div class="text-small">
-            <label for="requireVerification">Require verification</label>
-          </div>
-          <div
-            class="switch"
-            @click="requireVerification = !requireVerification"
+        <div class="selector">
+          <p
+            class="message-text-large"
+            :class="{ active: createChatType }"
+            @click="createChatType = true"
           >
-            <input
-              id="requireVerification"
-              type="checkbox"
-              :checked="requireVerification"
-            />
-            <span class="slider" />
+            Create New Chat
+          </p>
+          <p
+            class="message-text-large"
+            :class="{ active: !createChatType }"
+            @click="createChatType = false"
+          >
+            Create Direct Message
+          </p>
+        </div>
+        <div v-if="createChatType">
+          <div class="text-small">
+            <label class="text-small" for="chat-name">Chat name</label>
           </div>
+          <input
+            id="chat-name"
+            v-model="chatNameInput"
+            placeholder="Chat name"
+            class="modal-input"
+            @keydown.enter="createChat"
+          />
+          <div class="text-small">
+            <label for="chat-description">Chat description</label>
+          </div>
+          <input
+            id="chat-description"
+            v-model="chatDescriptionInput"
+            placeholder="Chat description"
+            class="modal-input"
+            @keydown.enter="createChat"
+          />
+          <div class="text-small">
+            <label for="chat-icon">Chat icon</label>
+          </div>
+          <input
+            id="chat-icon"
+            v-model="chatIconInput"
+            placeholder="Chat icon"
+            class="modal-input"
+            @keydown.enter="createChat"
+          />
+          <div v-if="store.userData.emailVerified">
+            <div class="text-small">
+              <label for="requireVerification">Require verification</label>
+            </div>
+            <div
+              class="switch"
+              @click="requireVerification = !requireVerification"
+            >
+              <input
+                id="requireVerification"
+                type="checkbox"
+                :checked="requireVerification"
+              />
+              <span class="slider" />
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="text-small">
+            <label for="username">Username</label>
+          </div>
+          <input
+            id="username"
+            v-model="chatUsernameInput"
+            placeholder="Username"
+            class="modal-input"
+            @keydown.enter="chatUsernameEnter"
+          />
         </div>
         <button @click="createChat">Create</button>
       </div>
@@ -92,6 +121,7 @@
           (chatNameInput = ''),
           (chatDescriptionInput = ''),
           (chatIconInput = ''),
+          (chatUserInput = ''),
           (requireVerification = true)
       "
     >
@@ -168,7 +198,7 @@
     <sidebar-left v-if="store.chatBarOpen === 'true'">
       <div v-if="!store.loadingChats">
         <div class="filter-button" @click="createChatShown = true">
-          Create chat
+          Create Chat
         </div>
         <div
           v-for="chat in store.userData.chatsList"
@@ -193,7 +223,7 @@
                 size="32"
                 :avatar="
                   chat.type === 1 && chat.ownerDetails.id !== store.userData.id
-                    ? chat.ownerDetails?.avatar
+                    ? chat.ownerDetails.avatar
                     : chat.icon
                 "
                 :small="true"
@@ -430,7 +460,7 @@
                 v-if="!merge(message, index)"
                 style="margin: 0 4px; cursor: pointer; border-radius: 16px"
                 class="message-item"
-                @click="openUser(message.user?.id, message?.user)"
+                @click="openUser(message.user.id, message.user)"
               >
                 <profile-picture
                   style="margin: 4px"
@@ -450,7 +480,7 @@
                 <div v-if="!merge(message, index)" style="line-height: 11.5px">
                   <b
                     class="message-text-medium"
-                    @click="openUser(message.user?.id, message?.user)"
+                    @click="openUser(message.user.id, message.user)"
                   >
                     {{
                       message.user?.username
@@ -928,7 +958,7 @@
               <div v-if="!merge(message, index)" style="line-height: 11.5px">
                 <b
                   class="message-text-medium"
-                  @click="openUser(message.user?.id, message?.user)"
+                  @click="openUser(message.user.id, message.user)"
                 >
                   {{ message.user?.username }}
                 </b>
@@ -982,6 +1012,7 @@ const replyTo = ref()
 const editing = ref()
 const requireVerification = ref(true)
 const createChatShown = ref(false)
+const createChatType = ref(true)
 const loadingMessages = ref(true)
 const scrolledUp = ref(false)
 const showUser = ref(false)
@@ -992,11 +1023,12 @@ const contextMenuPosition = ref({ x: 0, y: 0 })
 const inputText = ref("")
 
 let editText
-let searchText
+let searchText = ""
 let chatNameInput
 let chatDescriptionInput
 let chatIconInput
 let chatUserInput
+let chatUsernameInput
 let chatUsers
 
 const ws = new WebSocket(
@@ -1005,7 +1037,7 @@ const ws = new WebSocket(
     : "ws://localhost:24554/ws"
 )
 
-ws.onopen = function (event) {
+ws.onopen = function () {
   ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
   console.log("Socket connected")
 }
@@ -1034,6 +1066,9 @@ ws.onmessage = function (event) {
 }
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
+if (!localStorage.getItem("token")) {
+  router.push("/login")
+}
 
 const userSort = (property) => {
   if (property !== "id") {
@@ -1280,7 +1315,9 @@ const openUser = (userId, user) => {
   if (user !== null) {
     contextMenuVisible.value = false
     axios
-      .get("/api/user/" + userId)
+      .post("/api/get-user", {
+        userId: userId
+      })
       .then((res) => {
         showUser.value = res.data
         if (showUser.value.tetris) {
@@ -1292,6 +1329,23 @@ const openUser = (userId, user) => {
         setTimeout(store.errorFalse, 5000)
       })
   }
+}
+const getUserByName = async (username) => {
+  try {
+    const response = await axios.post("/api/get-user", {
+      username: username
+    })
+    return response.data
+  } catch (error) {
+    store.error = error.response.data.message
+    setTimeout(store.errorFalse, 5000)
+  }
+}
+const chatUsernameEnter = async () => {
+  createChatType.value = false
+  createChatShown.value = false
+  const userData = await getUserByName(chatUsernameInput)
+  sendDm(userData.id)
 }
 const formatINI = (ini) => {
   const lines = ini.split("\r\n")
@@ -1437,7 +1491,9 @@ const sendDm = (id) => {
       store.userData.chatsList = res.data.chats
       store.chatSort()
       inputText.value = ""
+      currentChat.value = res.data.chat
       currentChat.value.messages.focus = false
+      router.push(`/chat/${currentChat.value.id}`)
       scrollDown()
     })
     .catch((e) => {
@@ -1467,7 +1523,10 @@ const escPressed = ({ key }) => {
       editing.value = false
     } else if (replyTo.value) {
       replyTo.value = null
-    } else if (!showUser.value) {
+    } else if (
+      !showUser.value &&
+      currentChat.value.lastRead === currentChat.value.messages.length
+    ) {
       scrollDown(true)
     } else if (
       currentChat.value.lastRead !== currentChat.value.messages.length
@@ -1495,7 +1554,7 @@ const offlineUsers = computed(() => {
 async function getChat(id) {
   if (id) {
     await axios
-      .get(`/api/chat/${id || 1}`)
+      .get(`/api/chat/${id}`)
       .then((res) => {
         currentChat.value = res.data
         router.push(`/chat/${currentChat.value.id}`)

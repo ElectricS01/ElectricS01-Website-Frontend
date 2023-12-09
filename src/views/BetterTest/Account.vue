@@ -371,12 +371,25 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.193.3</div>
+            <div>Version: 1.194</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.194 Create DMs with anyone</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                You can now create a Direct Message with anyone using the
+                "Create Chat" menu
+              </li>
+              <li>Update to work with backend 1.92</li>
+              <li>Fix Chat Creation (1.193.2 and 1.193.3)</li>
+              <li>Bug fixes (1.193.1)</li>
+              <li>Bug fixes</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.193 Offline users</h2>
             <div class="settings-spacer" />
             <ul>
@@ -764,9 +777,7 @@ const logoutAllSubmit = () => {
   }
 }
 const changeUsername = () => {
-  while (true) {
-    console.log("Get Better™")
-  }
+  console.log("Coming Soon™")
 }
 const clearHistory = () => {
   localStorage.removeItem("switcherHistory")
@@ -785,32 +796,34 @@ const resendVerification = () => {
   }
 }
 const platform = (userAgent) => {
-  let total = ""
-  if (userAgent.toLowerCase().includes("windows")) {
-    total += "Windows"
-  } else if (userAgent.toLowerCase().includes("mac")) {
-    total += "macOS"
-  } else if (userAgent.toLowerCase().includes("iphone")) {
-    total += "iOS"
-  } else if (userAgent.toLowerCase().includes("android")) {
-    total += "Android"
-  } else if (userAgent.toLowerCase().includes("linux")) {
-    total += "Linux"
-  } else {
-    total += "Unknown OS"
-  }
-  if (userAgent.toLowerCase().includes("chrome")) {
-    total += " Chrome"
-  } else if (userAgent.toLowerCase().includes("firefox")) {
-    total += " Firefox"
-  } else if (userAgent.toLowerCase().includes("safari")) {
-    total += " Safari"
-  } else if (userAgent.toLowerCase().includes("chromium")) {
-    total += " Chromium"
-  } else {
-    total += " Unknown Browser"
-  }
-  return total
+  if (userAgent) {
+    let total = ""
+    if (userAgent.toLowerCase().includes("windows")) {
+      total += "Windows"
+    } else if (userAgent.toLowerCase().includes("mac")) {
+      total += "macOS"
+    } else if (userAgent.toLowerCase().includes("iphone")) {
+      total += "iOS"
+    } else if (userAgent.toLowerCase().includes("android")) {
+      total += "Android"
+    } else if (userAgent.toLowerCase().includes("linux")) {
+      total += "Linux"
+    } else {
+      total += "Unknown OS"
+    }
+    if (userAgent.toLowerCase().includes("chrome")) {
+      total += " Chrome"
+    } else if (userAgent.toLowerCase().includes("firefox")) {
+      total += " Firefox"
+    } else if (userAgent.toLowerCase().includes("safari")) {
+      total += " Safari"
+    } else if (userAgent.toLowerCase().includes("chromium")) {
+      total += " Chromium"
+    } else {
+      total += " Unknown Browser"
+    }
+    return total
+  } else return "Unknown OS Unknown Browser"
 }
 
 async function toggle(property, value) {

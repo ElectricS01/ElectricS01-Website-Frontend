@@ -4,6 +4,13 @@ body {
   color: white;
   /*background-image: linear-gradient(rgb(255, 204, 0),rgb(255, 102, 0));*/ /*debug*/
   background-color: #181a1b;
+  /*
+  light grey 3d4244
+  grey 282a2b
+  grey hover 313435
+  dark 212425
+  dark hover 313435
+   */
 }
 
 .scroll-bar-dark::-webkit-scrollbar,
@@ -190,6 +197,27 @@ button {
 .chanel-menu {
   text-align: center;
   margin: 32px 32px 18px 32px;
+}
+
+.selector {
+  display: flex;
+  justify-content: center;
+  margin: 4px;
+
+  .message-text-large {
+    cursor: pointer;
+    padding: 6px;
+    background-color: #212425;
+    width: 40%;
+
+    &.active {
+      background-color: #313435;
+    }
+
+    &:hover {
+      background-color: #3d4244;
+    }
+  }
 }
 
 .online-indicator {
@@ -552,11 +580,11 @@ h4 {
 
 .message-text-medium {
   font-size: 12px;
-}
 
-.message-text-medium:hover {
-  text-decoration: underline;
-  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .message-text-medium-gray-hover,

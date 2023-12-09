@@ -54,8 +54,8 @@
       <div
         v-if="active('/chat')"
         class="left chat-icon"
-        @click="toggleChatBar"
         title="Show chats"
+        @click="toggleChatBar"
       >
         <icons size="28" icon="chats" />
       </div>
@@ -85,16 +85,16 @@
       <div
         v-if="active('/chat')"
         class="right chat-icon"
-        @click="toggleSidebar"
         title="Show users"
+        @click="toggleSidebar"
       >
         <icons size="28" icon="account" />
       </div>
       <div
         v-if="active('/chat')"
         class="right chat-icon"
-        @click="store.search = !store.search"
         title="Search this chat"
+        @click="store.search = !store.search"
       >
         <icons size="28" icon="search" />
       </div>
@@ -166,6 +166,7 @@ if (localStorage.getItem("token")) {
   store.userData.switcherHistory =
     JSON.parse(localStorage.getItem("switcherHistory")) || []
   store.sortSwitcher()
+  router.push("/login")
 }
 if (localStorage.getItem("sidebarOpen")) {
   store.sidebarOpen = localStorage.getItem("sidebarOpen")

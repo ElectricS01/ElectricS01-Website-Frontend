@@ -162,8 +162,8 @@ const calculateResult = () => {
       }
     }
     resultant = evaluateExpression(result)
-  } catch (error) {
-    resultant = error.message
+  } catch (e) {
+    resultant = e.message
   }
 }
 watch(equation, () => {
