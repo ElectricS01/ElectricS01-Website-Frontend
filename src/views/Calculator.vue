@@ -31,7 +31,7 @@ const calculate = (operator, operand1, operand2) => {
     case "/":
       return operand1 / operand2
     case "^":
-      return Math.pow(operand1, operand2)
+      return operand1 ** operand2
     default:
       throw new Error("Invalid operator")
   }
@@ -92,7 +92,7 @@ const evaluateExpression = (tokens) => {
       }
       operators.pop()
     } else {
-      throw new Error("Invalid token: " + token)
+      throw new Error(`Invalid token: ${token}`)
     }
   }
   while (operators.length > 0) {

@@ -184,9 +184,7 @@ if (localStorage.getItem("sortUsers")) {
   store.sortUsers = "id"
 }
 
-const active = (routePattern) => {
-  return route.path.startsWith(routePattern)
-}
+const active = (routePattern) => route.path.startsWith(routePattern)
 const mobileNav = () => {
   const nav = document.getElementById("mobile-navbar")
   if (nav.className === "navbar") {
@@ -229,11 +227,11 @@ const toggleQuickSwitcher = ({ repeat, metaKey, ctrlKey, key }) => {
 const searchItems = () => {
   if (store.quickSwitcherShown) {
     const lastSearchedItems = searchedItems
-    searchedItems = store.switcherItems.filter((item) => {
-      return typeof item === "string"
+    searchedItems = store.switcherItems.filter((item) =>
+      typeof item === "string"
         ? item.toLowerCase().includes(switcherInput.value.toLowerCase())
         : item[0].toLowerCase().includes(switcherInput.value.toLowerCase())
-    })
+    )
     searchedItems.sort((a, b) => {
       const aStartsWithSearch =
         typeof a === "string"
@@ -291,7 +289,8 @@ const activateItem = (id) => {
     const existingPage = store.userData.switcherHistory.find((page) => {
       if (typeof page.page === "string") {
         return page.page === searchedItems[id]
-      } else return page.page[1] === searchedItems[id][1]
+      }
+      return page.page[1] === searchedItems[id][1]
     })
     if (existingPage) {
       existingPage.searches++
@@ -331,15 +330,14 @@ const escPressed = ({ key }) => {
 document.addEventListener("keydown", toggleQuickSwitcher)
 document.addEventListener("keydown", escPressed)
 
-const navbarShown = computed(() => {
-  return (
+const navbarShown = computed(
+  () =>
     !route.path.startsWith("/chat") &&
     !route.path.startsWith("/login") &&
     !route.path.startsWith("/register") &&
     !route.path.startsWith("/account") &&
     !route.path.startsWith("/reset")
-  )
-})
+)
 
 watch(switcherInput, () => {
   searchItems()

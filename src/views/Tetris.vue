@@ -44,7 +44,7 @@ const leaving = () => {
       data: searchLocalStorageItems("userdata.ini")[0].value
     })
     .catch((e) => {
-      console.log("Error 503, Cannot Connect to Server " + e)
+      console.log(`Error 503, Cannot Connect to Server ${e}`)
     })
 }
 const updateDimensions = () => {
@@ -55,8 +55,8 @@ const updateDimensions = () => {
 const minDimension = computed(() => {
   const minWidthHeight = Math.min(viewportWidth, viewportHeight)
   return {
-    width: minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px",
-    height: minWidthHeight <= 600 ? minWidthHeight + "px" : 600 + "px"
+    width: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`,
+    height: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`
   }
 })
 
@@ -69,7 +69,7 @@ onUnmounted(() => {
       data: searchLocalStorageItems("userdata.ini")[0].value
     })
     .catch((e) => {
-      console.log("Error 503, Cannot Connect to Server " + e)
+      console.log(`Error 503, Cannot Connect to Server ${e}`)
     })
   window.removeEventListener("beforeunload", leaving)
   document.removeEventListener("resize", updateDimensions)

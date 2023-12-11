@@ -28,12 +28,8 @@ export const useDataStore = defineStore("store", () => {
   const errorFalse = () => {
     error.value = ""
   }
-  const dayjsLong = (date) => {
-    return dayjs(date).format("DD/MM/YYYY HH:mm:ss")
-  }
-  const dayjsDate = (date) => {
-    return dayjs(date).format("D MMMM YYYY")
-  }
+  const dayjsLong = (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss")
+  const dayjsDate = (date) => dayjs(date).format("D MMMM YYYY")
   const getItemSearches = (item) => {
     if (Array.isArray(item)) {
       const id = item[0]
@@ -45,16 +41,15 @@ export const useDataStore = defineStore("store", () => {
           return historyItem.page === id
         })?.searches || 0
       )
-    } else {
-      return (
-        userData.value.switcherHistory.find((historyItem) => {
-          if (Array.isArray(historyItem.page)) {
-            return historyItem.page[0] === item
-          }
-          return historyItem.page === item
-        })?.searches || 0
-      )
     }
+    return (
+      userData.value.switcherHistory.find((historyItem) => {
+        if (Array.isArray(historyItem.page)) {
+          return historyItem.page[0] === item
+        }
+        return historyItem.page === item
+      })?.searches || 0
+    )
   }
   const sortSwitcher = () => {
     switcherItems.value.sort((a, b) => {
@@ -95,7 +90,7 @@ export const useDataStore = defineStore("store", () => {
         }
       })
       .catch((e) => {
-        error.value = "Error 503, Cannot Connect to Server " + e
+        error.value = `Error 503, Cannot Connect to Server ${e}`
         setTimeout(errorFalse.value, 5000)
       })
   }

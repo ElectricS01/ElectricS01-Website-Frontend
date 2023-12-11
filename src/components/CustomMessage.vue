@@ -65,7 +65,7 @@ const showEdited = () => {
   setTimeout(() => {
     if (editHover) {
       const editMessage = document
-        .getElementById("edit-" + props.message.id)
+        .getElementById(`edit-${props.message.id}`)
         .getBoundingClientRect()
       editShownPosition = {
         x: editMessage.x + editMessage.width / 2,

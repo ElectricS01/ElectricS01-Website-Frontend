@@ -371,12 +371,21 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.194</div>
+            <div>Version: 1.195</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.195 Add users to chats</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>You can now add users to a chat using their username</li>
+              <li>Update to work with backend 1.93</li>
+              <li>Bug fixes</li>
+              <li>Refactoring</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.194 Create DMs with anyone</h2>
             <div class="settings-spacer" />
             <ul>
@@ -456,8 +465,8 @@
                 hovering over the "(edited)" text next to the message
               </li>
               <li>Fixed context menus going off the screen</li>
-              <li>Refactoring</li>
               <li>Bug fixes</li>
+              <li>Refactoring</li>
             </ul>
             <h2 class="settings-text">1.189 Logout button</h2>
             <div class="settings-spacer" />
@@ -644,7 +653,7 @@ const getAdmin = () => {
         adminData.value = res.data
       })
       .catch((e) => {
-        store.error = "Error 503, Cannot Connect to Server " + e
+        store.error = `Error 503, Cannot Connect to Server ${e}`
         setTimeout(store.errorFalse, 5000)
       })
   }
@@ -657,7 +666,7 @@ const getSessions = () => {
         sessions.value = res.data
       })
       .catch((e) => {
-        store.error = "Error 503, Cannot Connect to Server " + e
+        store.error = `Error 503, Cannot Connect to Server ${e}`
         setTimeout(store.errorFalse, 5000)
       })
   }
@@ -683,7 +692,7 @@ const submitFeedback = () => {
     })
     .catch((e) => {
       if (e.response.data.message) {
-        store.error = e.message + ": " + e.response.data.message
+        store.error = `${e.message}: ${e.response.data.message}`
       } else store.error = e.message
       setTimeout(store.errorFalse, 5000)
     })
@@ -697,7 +706,7 @@ const deleteFeedback = (id) => {
       getAdmin()
     })
     .catch((e) => {
-      store.error = "Error 503, Cannot Connect to Server " + e
+      store.error = `Error 503, Cannot Connect to Server ${e}`
       setTimeout(store.errorFalse, 5000)
     })
 }
@@ -744,7 +753,7 @@ const logout = () => {
       router.push("/login")
     })
     .catch((e) => {
-      store.error = "Error 503, Cannot Connect to Server " + e
+      store.error = `Error 503, Cannot Connect to Server ${e}`
       setTimeout(store.errorFalse, 5000)
     })
 }
@@ -756,7 +765,7 @@ const logoutAllSubmit = () => {
   if (password) {
     axios
       .post("/api/logout-all", {
-        password: password
+        password
       })
       .then(() => {
         Object.assign(axios.defaults, {
@@ -767,11 +776,9 @@ const logoutAllSubmit = () => {
       })
       .catch((e) => {
         console.log(e)
-        store.error =
-          "Error " +
-          e.request.status +
-          ", " +
-          (e.response.data.message || e.request.statusMessage)
+        store.error = `Error ${e.request.status}, ${
+          e.response.data.message || e.request.statusMessage
+        }`
         setTimeout(store.errorFalse, 5000)
       })
   }
@@ -782,13 +789,13 @@ const changeUsername = () => {
 const clearHistory = () => {
   localStorage.removeItem("switcherHistory")
   axios.delete("/api/clear-history").catch((e) => {
-    store.error = "Error 503, Cannot Connect to Server " + e
+    store.error = `Error 503, Cannot Connect to Server ${e}`
     setTimeout(store.errorFalse, 5000)
   })
 }
 const resendVerification = () => {
   axios.post("/api/resend-verification").catch((e) => {
-    store.error = "Error 503, Cannot Connect to Server " + e
+    store.error = `Error 503, Cannot Connect to Server ${e}`
     setTimeout(store.errorFalse, 5000)
   })
   if (localStorage.getItem("token")) {
@@ -823,7 +830,8 @@ const platform = (userAgent) => {
       total += " Unknown Browser"
     }
     return total
-  } else return "Unknown OS Unknown Browser"
+  }
+  return "Unknown OS Unknown Browser"
 }
 
 async function toggle(property, value) {
@@ -844,7 +852,7 @@ async function toggle(property, value) {
       }
       axios
         .post("/api/user-prop", {
-          property: property,
+          property,
           val: value
         })
         .then(() => {
@@ -853,7 +861,7 @@ async function toggle(property, value) {
           }
         })
         .catch((e) => {
-          store.error = "Error 503, Cannot Connect to Server " + e
+          store.error = `Error 503, Cannot Connect to Server ${e}`
           setTimeout(store.errorFalse, 5000)
         })
     }

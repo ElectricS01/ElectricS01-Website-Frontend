@@ -1021,13 +1021,13 @@ const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
 const inputText = ref("")
+const chatUserInput = ref("")
 
 let editText
 let searchText = ""
 let chatNameInput
 let chatDescriptionInput
 let chatIconInput
-let chatUserInput
 let chatUsernameInput
 let chatUsers
 
@@ -1046,7 +1046,7 @@ ws.onmessage = function (event) {
   console.log(event)
   const socketMessage = JSON.parse(event.data)
   if (socketMessage.authFail) {
-    store.error = "Error 401, " + socketMessage.authFail
+    store.error = `Error 401, ${socketMessage.authFail}`
     router.push("/login")
   } else if (socketMessage.newMessage) {
     socketMessage.newMessage.focus = false
@@ -1073,7 +1073,7 @@ if (!localStorage.getItem("token")) {
 const userSort = (property) => {
   if (property !== "id") {
     currentChat.value.users
-      .sort(function (a, b) {
+      .sort((a, b) => {
         if (a && b) {
           if (a.username === null && b.username === null) {
             return 0
@@ -1081,12 +1081,11 @@ const userSort = (property) => {
             return 1
           } else if (b.username === null) {
             return -1
-          } else {
-            return a.username.localeCompare(b.username)
           }
+          return a.username.localeCompare(b.username)
         }
       })
-      .sort(function (a, b) {
+      .sort((a, b) => {
         if (a && b) {
           if (a[property] === null && b[property] === null) {
             return 0
@@ -1094,15 +1093,12 @@ const userSort = (property) => {
             return 1
           } else if (b[property] === null) {
             return -1
-          } else {
-            return a[property].localeCompare(b[property])
           }
+          return a[property].localeCompare(b[property])
         }
       })
   } else {
-    currentChat.value.users.sort(function (a, b) {
-      return a?.id - b?.id
-    })
+    currentChat.value.users.sort((a, b) => a?.id - b?.id)
   }
 }
 const userSortPress = () => {
@@ -1135,6 +1131,7 @@ const sendMessage = () => {
         replyTo.value = null
         res.data.lastMessage.focus = false
         currentChat.value.messages.push(res.data.lastMessage)
+        currentChat.value.lastRead = currentChat.value.messages.length
         scrollDown()
       })
       .catch((e) => {
@@ -1146,9 +1143,10 @@ const sendMessage = () => {
 const deleteMessage = (messageId) => {
   axios
     .delete(`/api/delete/${messageId}`)
-    .then((res) => {
-      currentChat.value.messages = res.data
-      currentChat.value.messages.focus = false
+    .then(() => {
+      currentChat.value.messages = currentChat.value.messages.filter(
+        (message) => message.id !== messageId
+      )
       scrollDown()
     })
     .catch((e) => {
@@ -1210,11 +1208,11 @@ const searchChat = () => {
   if (searchText) {
     const keywords = searchText.toLowerCase().split(" ")
 
-    searchMessages.value = currentChat.value.messages.filter((message) => {
-      return keywords.some((keyword) => {
-        return message.messageContents.toLowerCase().includes(keyword)
-      })
-    })
+    searchMessages.value = currentChat.value.messages.filter((message) =>
+      keywords.some((keyword) =>
+        message.messageContents.toLowerCase().includes(keyword)
+      )
+    )
   }
 }
 const replyToMessage = (messageId) => {
@@ -1247,6 +1245,7 @@ const createChat = () => {
         store.userData.chatsList = res.data.chats
         store.chatSort()
         currentChat.value = res.data.chat
+        router.push(`/chat/${currentChat.value.id}`)
         replyTo.value = null
         if (currentChat.value.messages) {
           currentChat.value.messages.focus = false
@@ -1298,25 +1297,23 @@ const saveChat = () => {
         setTimeout(store.errorFalse, 5000)
       })
 }
-const chatUserEnter = () => {
-  const userId = parseInt(chatUserInput)
-  chatUserInput = ""
-  if (chatUsers.indexOf(userId) === -1 && Number.isInteger(userId)) {
-    chatUsers.push(userId)
+const chatUserEnter = async () => {
+  const userId = await getUserByName(chatUserInput.value)
+  chatUserInput.value = ""
+  if (chatUsers.indexOf(userId.id) === -1) {
+    chatUsers.push(userId.id)
   } else {
     store.error = "This user is already apart of this group"
     setTimeout(store.errorFalse, 2500)
   }
 }
-const dayjsShort = (date) => {
-  return dayjs(date).format("HH:mm:ss")
-}
+const dayjsShort = (date) => dayjs(date).format("HH:mm:ss")
 const openUser = (userId, user) => {
   if (user !== null) {
     contextMenuVisible.value = false
     axios
       .post("/api/get-user", {
-        userId: userId
+        userId
       })
       .then((res) => {
         showUser.value = res.data
@@ -1333,7 +1330,7 @@ const openUser = (userId, user) => {
 const getUserByName = async (username) => {
   try {
     const response = await axios.post("/api/get-user", {
-      username: username
+      username
     })
     return response.data
   } catch (error) {
@@ -1381,7 +1378,8 @@ const findUser = (userId) => {
   )
   if (user) {
     return user
-  } else return { username: userId }
+  }
+  return { username: userId }
 }
 const removeUser = (userId) => {
   contextMenuVisible.value = false
@@ -1434,13 +1432,12 @@ const merge = (message, index) => {
     )
   }
 }
-const findMessage = (messageId) => {
-  return currentChat.value.messages.find((message) => message.id === messageId)
-}
+const findMessage = (messageId) =>
+  currentChat.value.messages.find((message) => message.id === messageId)
 const goToMessage = (messageId) => {
   const div = document.getElementById("div")
   const element = document.getElementById(
-    "message-" + currentChat.value.messages.indexOf(messageId)
+    `message-${currentChat.value.messages.indexOf(messageId)}`
   )
   const elementRect = element.getBoundingClientRect()
   const absoluteElementTop = elementRect.top + div.scrollTop
@@ -1538,19 +1535,19 @@ const escPressed = ({ key }) => {
 }
 const scrollEvent = () => {
   const div = document.getElementById("div")
-  const scrollHeight = div.scrollHeight
-  const scrollTop = div.scrollTop
-  const clientHeight = div.clientHeight
+  const { scrollHeight } = div
+  const { scrollTop } = div
+  const { clientHeight } = div
   scrolledUp.value =
     scrollTop + clientHeight <=
     scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
 }
-const onlineUsers = computed(() => {
-  return currentChat.value.users.filter((user) => user?.status === "online")
-})
-const offlineUsers = computed(() => {
-  return currentChat.value.users.filter((user) => user?.status === "offline")
-})
+const onlineUsers = computed(() =>
+  currentChat.value.users.filter((user) => user?.status === "online")
+)
+const offlineUsers = computed(() =>
+  currentChat.value.users.filter((user) => user?.status === "offline")
+)
 async function getChat(id) {
   if (id) {
     await axios
@@ -1565,7 +1562,7 @@ async function getChat(id) {
         scrollDown(true)
       })
       .catch((e) => {
-        store.error = "Error 503, Cannot Connect to Server " + e
+        store.error = `Error 503, Cannot Connect to Server ${e}`
         setTimeout(store.errorFalse, 5000)
       })
   }
