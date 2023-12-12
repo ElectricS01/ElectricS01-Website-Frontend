@@ -3,7 +3,7 @@
     <modal
       v-if="showUser && !store.quickSwitcherShown"
       :is-active="typeof showUser === 'object' && !store.quickSwitcherShown"
-      @close="emits('showUser'), emits('editing', false)"
+      @close="emits('showUser'), emits('editing', '')"
     >
       <img
         :src="showUser.banner || 'https://i.electrics01.com/i/d81dabf74c88.png'"
@@ -173,10 +173,10 @@ import axios from "axios"
 
 const store = useDataStore()
 const props = defineProps({
-  showUser: [Boolean, Object],
-  editing: [Number, Boolean],
+  addFriend: Function,
+  editing: [Number, String],
   sendDm: Function,
-  addFriend: Function
+  showUser: [Boolean, Object]
 })
 const emits = defineEmits([
   "showUser",
@@ -198,7 +198,7 @@ const editStatusMessage = () => {
     editStatus.trim() === props.showUser.statusMessage ||
     editStatus.trim().length > 50
   ) {
-    return emits("editing", false)
+    return emits("editing", "")
   }
   axios
     .patch("/api/edit-status-message", {
@@ -206,7 +206,7 @@ const editStatusMessage = () => {
     })
     .then((res) => {
       emits("statusMessage", res.data.statusMessage)
-      emits("editing", false)
+      emits("editing", "")
       emits("users", res.data.users)
       emits("userSort")
     })

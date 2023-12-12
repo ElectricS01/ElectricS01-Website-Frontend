@@ -11,8 +11,8 @@
 <script setup>
 defineProps({
   isActive: {
-    type: Boolean,
-    default: false
+    default: false,
+    type: Boolean
   }
 })
 const emit = defineEmits(["close"])

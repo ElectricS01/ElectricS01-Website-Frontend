@@ -66,10 +66,10 @@ const submit = () => {
   store.error = ""
   axios
     .post("/api/register", {
-      username: username.trim(),
       email: email.toLowerCase().trim(),
       password: password.trim(),
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
+      username: username.trim()
     })
     .then((res) => {
       localStorage.setItem("token", res.data.token)

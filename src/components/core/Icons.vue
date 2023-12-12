@@ -59,5 +59,5 @@
 </template>
 
 <script setup>
-defineProps({ colour: String, size: String, icon: String })
+defineProps({ colour: String, icon: String, size: String })
 </script>

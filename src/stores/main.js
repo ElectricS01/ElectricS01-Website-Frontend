@@ -121,17 +121,17 @@ export const useDataStore = defineStore("store", () => {
     })
   }
   return {
-    error,
-    userData,
-    quickSwitcherShown,
-    loadingChats,
-    switcherItems,
-    errorFalse,
-    dayjsLong,
-    dayjsDate,
-    sortSwitcher,
-    getUser,
     chatSort,
-    editFocus
+    dayjsDate,
+    dayjsLong,
+    editFocus,
+    error,
+    errorFalse,
+    getUser,
+    loadingChats,
+    quickSwitcherShown,
+    sortSwitcher,
+    switcherItems,
+    userData
   }
 })

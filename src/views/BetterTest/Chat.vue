@@ -114,10 +114,10 @@
   </transition>
   <transition>
     <modal
-      v-if="chatEdit && !store.quickSwitcherShown"
-      :is-active="chatEdit && !store.quickSwitcherShown"
+      v-if="chatEdit !== -1 && !store.quickSwitcherShown"
+      :is-active="chatEdit !== -1 && !store.quickSwitcherShown"
       @close="
-        ;(chatEdit = false),
+        ;(chatEdit = -1),
           (chatNameInput = ''),
           (chatDescriptionInput = ''),
           (chatIconInput = ''),
@@ -942,7 +942,7 @@
               v-if="!merge(message, index)"
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
-              @click="openUser(message.user?.id, message?.user)"
+              @click="openUser(message.user?.id, message.user)"
             >
               <profile-picture size="32" :avatar="message.user?.avatar" />
             </div>
@@ -1009,14 +1009,14 @@ const searchMessages = ref([])
 const embed = ref()
 const currentChat = ref({})
 const replyTo = ref()
-const editing = ref()
+const editing = ref("")
 const requireVerification = ref(true)
 const createChatShown = ref(false)
 const createChatType = ref(true)
 const loadingMessages = ref(true)
 const scrolledUp = ref(false)
 const showUser = ref(false)
-const chatEdit = ref(false)
+const chatEdit = ref(-1)
 const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
@@ -1037,12 +1037,12 @@ const ws = new WebSocket(
     : "ws://localhost:24554/ws"
 )
 
-ws.onopen = function () {
+ws.onopen = () => {
   ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
   console.log("Socket connected")
 }
 
-ws.onmessage = function (event) {
+ws.onmessage = (event) => {
   console.log(event)
   const socketMessage = JSON.parse(event.data)
   if (socketMessage.authFail) {
@@ -1120,9 +1120,9 @@ const sendMessage = () => {
   if (inputText.value?.trim()) {
     axios
       .post("/api/message", {
+        chatId: currentChat.value.id,
         messageContents: inputText.value.trim(),
-        reply: replyTo.value,
-        chatId: currentChat.value.id
+        reply: replyTo.value
       })
       .then((res) => {
         store.userData.chatsList = res.data.chats
@@ -1187,14 +1187,14 @@ const deleteChat = (chatId) => {
 }
 const editMessage = (messageId) => {
   if (editText.trim() === findMessage(messageId).messageContents) {
-    return (editing.value = false)
+    editing.value = ""
   }
   axios
     .patch(`/api/edit/${messageId}`, {
       messageContents: editText.trim()
     })
     .then((res) => {
-      editing.value = false
+      editing.value = ""
       currentChat.value.messages = res.data
       currentChat.value.messages.focus = false
       scrollDown()
@@ -1231,9 +1231,9 @@ const createChat = () => {
   )
     axios
       .post("/api/create-chat", {
-        name: chatNameInput,
         description: chatDescriptionInput,
         icon: chatIconInput,
+        name: chatNameInput,
         requireVerification: requireVerification.value
       })
       .then((res) => {
@@ -1268,9 +1268,9 @@ const saveChat = () => {
   )
     axios
       .patch(`/api/edit-chat/${chatEdit.value}`, {
-        name: chatNameInput,
         description: chatDescriptionInput,
         icon: chatIconInput,
+        name: chatNameInput,
         requireVerification: requireVerification.value,
         users: chatUsers.filter(
           (user) =>
@@ -1445,8 +1445,8 @@ const goToMessage = (messageId) => {
   const scrollTo = absoluteElementTop - middleOfScreen
 
   div.scrollTo({
-    top: scrollTo,
-    behavior: "smooth"
+    behavior: "smooth",
+    top: scrollTo
   })
   element.classList.add("highlight")
   setTimeout(() => {
@@ -1484,7 +1484,7 @@ const sendDm = (id) => {
     .post(`/api/direct-message/${id}`)
     .then((res) => {
       showUser.value = false
-      editing.value = false
+      editing.value = ""
       store.userData.chatsList = res.data.chats
       store.chatSort()
       inputText.value = ""
@@ -1509,15 +1509,15 @@ const escPressed = ({ key }) => {
     if (contextMenuVisible.value) {
       contextMenuVisible.value = false
     } else if (editing.value === "status") {
-      editing.value = false
+      editing.value = ""
     } else if (showUser.value) {
       showUser.value = false
     } else if (embed.value) {
       embed.value = false
     } else if (chatEdit.value) {
-      chatEdit.value = false
+      chatEdit.value = -1
     } else if (editing.value) {
-      editing.value = false
+      editing.value = ""
     } else if (replyTo.value) {
       replyTo.value = null
     } else if (

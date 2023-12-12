@@ -4,6 +4,7 @@ module.exports = {
     node: true
   },
   extends: ["plugin:vue/vue3-recommended", "eslint:recommended", "prettier"],
+  plugins: ["sort-keys-fix"],
   rules: {
     "vue/multi-word-component-names": "off",
     "vue/require-default-prop": "off",

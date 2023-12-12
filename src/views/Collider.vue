@@ -56,8 +56,8 @@ const updateDimensions = () => {
 const minDimension = computed(() => {
   const minWidthHeight = Math.min(viewportWidth, viewportHeight)
   return {
-    width: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`,
-    height: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`
+    height: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`,
+    width: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`
   }
 })
 

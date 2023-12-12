@@ -12,9 +12,7 @@ const pinia = createPinia()
 const app = createApp(App).use(router)
 
 // Modify the 'p' rule to return an empty string
-md.renderer.rules.paragraph_open = function () {
-  return ""
-}
+md.renderer.rules.paragraph_open = () => ""
 
 app.directive("markdown", {
   mounted(el) {

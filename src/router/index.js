@@ -2,85 +2,85 @@ import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
   {
-    path: "/",
+    component: () => import("../views/Home.vue"),
     name: "home",
-    component: () => import("../views/Home.vue")
+    path: "/"
   },
   {
     path: "/home",
     redirect: "/"
   },
   {
-    path: "/tonkgame",
+    component: () => import("../views/TonkGame.vue"),
     name: "tonkgame",
-    component: () => import("../views/TonkGame.vue")
+    path: "/tonkgame"
   },
   {
-    path: "/calculator",
+    component: () => import("../views/Calculator.vue"),
     name: "calculator",
-    component: () => import("../views/Calculator.vue")
+    path: "/calculator"
   },
   {
-    path: "/tetris",
+    component: () => import("../views/Tetris.vue"),
     name: "tetris",
-    component: () => import("../views/Tetris.vue")
+    path: "/tetris"
   },
   {
-    path: "/collider",
+    component: () => import("../views/Collider.vue"),
     name: "collider",
-    component: () => import("../views/Collider.vue")
+    path: "/collider"
   },
   {
     path: "/user",
     redirect: "/chat/1"
   },
   {
-    path: "/user/:id",
+    component: () => import("../views/BetterTest/Chat.vue"),
     name: "user",
-    component: () => import("../views/BetterTest/Chat.vue")
+    path: "/user/:id"
   },
   {
     path: "/chat",
     redirect: "/chat/1"
   },
   {
-    path: "/chat/:chatId",
+    component: () => import("../views/BetterTest/Chat.vue"),
     name: "chat",
-    component: () => import("../views/BetterTest/Chat.vue")
+    path: "/chat/:chatId"
   },
   {
-    path: "/account/:id",
+    component: () => import("../views/BetterTest/Account.vue"),
     name: "account",
-    component: () => import("../views/BetterTest/Account.vue")
+    path: "/account/:id"
   },
   {
     path: "/account",
     redirect: "/account/account"
   },
   {
-    path: "/login",
+    component: () => import("../views/BetterTest/Login.vue"),
     name: "login",
-    component: () => import("../views/BetterTest/Login.vue")
+    path: "/login"
   },
   {
-    path: "/register",
+    component: () => import("../views/BetterTest/Register.vue"),
     name: "register",
-    component: () => import("../views/BetterTest/Register.vue")
+    path: "/register"
   },
   {
-    path: "/reset",
+    component: () => import("../views/BetterTest/Reset.vue"),
     name: "reset",
-    component: () => import("../views/BetterTest/Reset.vue")
+    path: "/reset"
   },
   {
-    path: "/verify",
+    component: () => import("../views/BetterTest/Verify.vue"),
     name: "verify",
-    component: () => import("../views/BetterTest/Verify.vue")
+    path: "/verify"
   },
   {
-    path: "/:a",
+    component: () => import("../views/404.vue"),
     name: "404",
-    component: () => import("../views/404.vue")
+    path: "/:a"
   }
 ]
 

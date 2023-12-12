@@ -119,7 +119,6 @@ const calculateResult = () => {
       return
     }
     let result = []
-    let addMultiplication = false
     for (let i = 0; i < tokens.length; i++) {
       if (tokens[i] === "-" && i > 0 && tokens[i - 1] === "^") {
         let merged = tokens[i] + tokens[i + 1]
@@ -128,9 +127,8 @@ const calculateResult = () => {
         i++
       } else if (tokens[i] === "(" && i > 0) {
         if (!isNaN(tokens[i - 1]) || tokens[i - 1] === ")") {
-          if (!addMultiplication && result[result.length - 1] !== "*") {
+          if (result[result.length - 1] !== "*") {
             result.push("*", tokens[i])
-            addMultiplication = false
           } else {
             result.push(tokens[i])
           }
@@ -139,9 +137,8 @@ const calculateResult = () => {
         }
       } else if (tokens[i] === ")" && i < tokens.length - 1) {
         if (!isNaN(tokens[i + 1]) || tokens[i + 1] === "(") {
-          if (!addMultiplication && result[result.length - 1] !== "*") {
+          if (result[result.length - 1] !== "*") {
             result.push(tokens[i], "*")
-            addMultiplication = false
           } else {
             result.push(tokens[i])
           }

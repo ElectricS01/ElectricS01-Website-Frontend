@@ -42,10 +42,10 @@ import TextContext from "@/components/core/TextContext.vue"
 
 const store = useDataStore()
 const props = defineProps({
-  message: Object,
+  findUser: Function,
   handleClick: Function,
-  scroll: Function,
-  findUser: Function
+  message: Object,
+  scroll: Function
 })
 const emit = defineEmits(["embed"])
 const editShown = ref(false)

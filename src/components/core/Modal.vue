@@ -21,8 +21,8 @@ import Icons from "@/components/core/Icons.vue"
 
 defineProps({
   isActive: {
-    type: Boolean,
-    default: false
+    default: false,
+    type: Boolean
   }
 })
 const emit = defineEmits(["close"])

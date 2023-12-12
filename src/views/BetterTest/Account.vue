@@ -371,7 +371,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.195</div>
+            <div>Version: 1.195.1</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
@@ -625,9 +625,9 @@ const passwordModalOpen = ref(false)
 const isOpen = ref(false)
 const sessions = ref([])
 const adminData = ref([])
+const editing = ref("")
 let page = "account"
 let feedbackText = ""
-let editing = false
 let editStatus = ""
 let editDescription = ""
 let password = ""
@@ -727,7 +727,7 @@ const editStatusMessage = () => {
     editStatus.trim() === store.userData.statusMessage ||
     editStatus.trim().length > 50
   ) {
-    return (editing = false)
+    editing.value = ""
   }
   axios
     .patch("/api/edit-status-message", {
@@ -735,7 +735,7 @@ const editStatusMessage = () => {
     })
     .then((res) => {
       store.userData.statusMessage = res.data.statusMessage
-      editing = false
+      editing.value = ""
     })
     .catch((e) => {
       store.error = e.response.data.message
@@ -836,8 +836,8 @@ const platform = (userAgent) => {
 
 async function toggle(property, value) {
   if (properties.includes(property)) {
-    if (editing === "description") {
-      editing = false
+    if (editing.value === "description") {
+      editing.value = ""
     }
     if (
       ((property === "avatar" || property === "banner") &&
