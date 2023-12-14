@@ -767,7 +767,11 @@
             </p>
           </div>
         </div>
-        <context-menu v-if="contextMenuVisible" :position="contextMenuPosition">
+        <context-menu
+          @close="contextMenuVisible = false"
+          v-if="contextMenuVisible"
+          :position="contextMenuPosition"
+        >
           <div
             class="context-menu-item"
             @click="openUser(contextMenuItemUser.id, true)"

@@ -1,17 +1,18 @@
 <template>
   <div class="parent" :style="menuStyle">
-    <div popover class="context-menu">
+    <div popover id="popover" class="context-menu">
       <slot />
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue"
+import { computed, onMounted } from "vue"
 
 const props = defineProps({
   position: Object
 })
+const emit = defineEmits(["close"])
 
 const menuStyle = computed(() => {
   const adjustedX = props.position.x + window.scrollX
@@ -20,6 +21,19 @@ const menuStyle = computed(() => {
     left: `${adjustedX}px`,
     top: `${adjustedY - 48}px`
   }
+})
+const toggle = (event) => {
+  console.log(event.newState)
+  if (event.newState === "closed") {
+    const popover = document.getElementById("popover")
+    popover.removeEventListener("beforetoggle", () => toggle())
+    emit("close")
+  }
+}
+onMounted(() => {
+  const popover = document.getElementById("popover")
+  popover.showPopover()
+  popover.addEventListener("beforetoggle", (event) => toggle(event))
 })
 </script>
 
@@ -33,7 +47,6 @@ const menuStyle = computed(() => {
   inset: unset;
   anchor-default: --i-btn;
   position-fallback: --right-to-left;
-  display: block;
   color: white;
   border-radius: 2px;
   background-color: #181a1b;
@@ -44,20 +57,20 @@ const menuStyle = computed(() => {
 }
 @position-fallback --right-to-left {
   @try {
-    left: anchor(left);
-    top: anchor(top);
+    left: calc(anchor(left) - 2px);
+    top: calc(anchor(top) - 2px);
   }
   @try {
-    right: anchor(right);
-    top: anchor(top);
+    right: calc(anchor(right) - 2px);
+    top: calc(anchor(top) - 2px);
   }
   @try {
-    left: anchor(left);
-    bottom: anchor(bottom);
+    left: calc(anchor(left) - 2px);
+    bottom: calc(anchor(bottom) - 2px);
   }
   @try {
-    right: anchor(right);
-    bottom: anchor(bottom);
+    right: calc(anchor(right) - 2px);
+    bottom: calc(anchor(bottom) - 2px);
   }
 }
 </style>

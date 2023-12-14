@@ -371,12 +371,23 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.195.1</div>
+            <div>Version: 1.196</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.196 Admin updates</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Updated admin analytics</li>
+              <li>Context menus now close when you click off them</li>
+              <li>Update to work with backend 1.94</li>
+              <li>Fix ESLint (1.195.1)</li>
+              <li>Bug fixes (1.195.1)</li>
+              <li>Bug fixes</li>
+              <li>Refactoring (1.195.1)</li>
+            </ul>
             <h2 class="settings-text">1.195 Add users to chats</h2>
             <div class="settings-spacer" />
             <ul>
@@ -562,9 +573,8 @@
             Feedback
             <div class="settings-spacer" />
             <table>
-              <tr v-for="(feedback, index) in adminData" :key="feedback">
+              <tr v-for="feedback in adminData.feedback" :key="feedback.id">
                 <th>{{ feedback.id }}</th>
-                <th>{{ index }}</th>
                 <th>{{ feedback.userId }}</th>
                 <th>{{ feedback.feedback }}</th>
                 <th>{{ store.dayjsLong(feedback.createdAt) }}</th>
@@ -574,6 +584,25 @@
                     icon="delete"
                     style="cursor: pointer"
                     @click="deleteFeedback(feedback.id)"
+                  />
+                </th>
+              </tr>
+            </table>
+            <div class="settings-spacer" />
+            Users
+            <div class="settings-spacer" />
+            <table>
+              <tr v-for="user in adminData.users" :key="user.id">
+                <th>{{ user.id }}</th>
+                <th>{{ user.username }}</th>
+                <th>{{ user.admin }}</th>
+                <th>{{ store.dayjsLong(user.createdAt) }}</th>
+                <th>
+                  <icons
+                    size="16"
+                    icon="delete"
+                    style="cursor: pointer"
+                    @click="deleteFeedback(user.id)"
                   />
                 </th>
               </tr>
