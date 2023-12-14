@@ -69,7 +69,6 @@ export const useDataStore = defineStore("store", () => {
             JSON.parse(localStorage.getItem("switcherHistory")) || []
         }
         sortSwitcher()
-        console.log(userData.value.chatsList)
         if (userData.value.chatsList) {
           switcherItems.value.push(
             ...userData.value.chatsList.map((obj) => [

@@ -166,7 +166,6 @@ if (localStorage.getItem("token")) {
   store.userData.switcherHistory =
     JSON.parse(localStorage.getItem("switcherHistory")) || []
   store.sortSwitcher()
-  router.push("/login")
 }
 if (localStorage.getItem("sidebarOpen")) {
   store.sidebarOpen = localStorage.getItem("sidebarOpen")
