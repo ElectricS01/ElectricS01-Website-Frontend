@@ -371,12 +371,24 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.196.1</div>
+            <div>Version: 1.197</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.197 Pinned Messages</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>You can now pin your own messages</li>
+              <li>Icon updates</li>
+              <li>Update to use bun</li>
+              <li>Update to work with backend 1.97</li>
+              <li>Bug fixes (1.196.1)</li>
+              <li>Bug fixes</li>
+              <li>Updated dependencies</li>
+              <li>Refactoring</li>
+            </ul>
             <h2 class="settings-text">1.196 Admin updates</h2>
             <div class="settings-spacer" />
             <ul>
@@ -912,7 +924,7 @@ if (page === "security") {
   getAdmin()
 }
 watch(modalOpen, (newValue, oldValue) => {
-  if (newValue === true && oldValue === false) {
+  if (newValue && !oldValue) {
     editFocus()
   }
 })

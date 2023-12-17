@@ -1,6 +1,6 @@
 <template>
   <div class="parent" :style="menuStyle">
-    <div popover id="popover" class="context-menu">
+    <div id="popover" popover class="context-menu">
       <slot />
     </div>
   </div>
@@ -23,17 +23,16 @@ const menuStyle = computed(() => {
   }
 })
 const toggle = (event) => {
-  console.log(event.newState)
   if (event.newState === "closed") {
     const popover = document.getElementById("popover")
-    popover.removeEventListener("beforetoggle", () => toggle())
+    popover.removeEventListener("beforetoggle", toggle)
     emit("close")
   }
 }
 onMounted(() => {
   const popover = document.getElementById("popover")
   popover.showPopover()
-  popover.addEventListener("beforetoggle", (event) => toggle(event))
+  popover.addEventListener("beforetoggle", toggle)
 })
 </script>
 

@@ -444,7 +444,7 @@
                 icon="reply"
                 style="margin-right: 4px"
               />
-              <icons colour="darkgrey" size="16" icon="account" />
+              <icons colour="darkgrey" size="16" icon="user" />
               <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
                 Message has been deleted
               </b>
@@ -457,7 +457,7 @@
               }"
             >
               <div
-                v-if="!merge(message, index)"
+                v-if="!merge(message, currentChat.messages[index - 1])"
                 style="margin: 0 4px; cursor: pointer; border-radius: 16px"
                 class="message-item"
                 @click="openUser(message.user.id, message.user)"
@@ -477,7 +477,10 @@
                 class="message-item"
                 style="width: calc(100% - 96px); overflow-wrap: break-word"
               >
-                <div v-if="!merge(message, index)" style="line-height: 11.5px">
+                <div
+                  v-if="!merge(message, currentChat.messages[index - 1])"
+                  class="message-header"
+                >
                   <b
                     class="message-text-medium"
                     @click="openUser(message.user.id, message.user)"
@@ -510,6 +513,16 @@
                 />
               </div>
               <div v-show="editing !== message.id" class="message-icons">
+                <icons
+                  v-show="
+                    store.userData?.admin ||
+                    message.user?.id === store.userData?.id
+                  "
+                  style="cursor: pointer"
+                  size="20"
+                  :icon="message.pinned ? 'unpin' : 'pin'"
+                  @click="pinMessage(message.id, message.pinned)"
+                />
                 <icons
                   v-show="message.user?.id === store.userData?.id"
                   style="cursor: pointer"
@@ -636,10 +649,10 @@
       </div>
     </div>
     <sidebar
-      v-if="store.sidebarOpen === 'true' || store.search"
-      :style="{ width: store.search ? '342px' : '' }"
+      v-if="store.sidebarOpen === 'true' || store.search || store.pins"
+      :style="{ width: store.search || store.pins ? '342px' : '' }"
     >
-      <div v-if="!loadingMessages && !store.search">
+      <div v-if="!loadingMessages && !store.search && !store.pins">
         <div class="filter-button" @click="userSortPress()">
           <p v-if="store.sortUsers === 'id'">Sort: Id</p>
           <p v-else-if="store.sortUsers === 'username'">Sort: Username</p>
@@ -768,9 +781,9 @@
           </div>
         </div>
         <context-menu
-          @close="contextMenuVisible = false"
           v-if="contextMenuVisible"
           :position="contextMenuPosition"
+          @close="contextMenuVisible = false"
         >
           <div
             class="context-menu-item"
@@ -856,7 +869,7 @@
           <div
             v-if="
               store.dayjsDate(message.createdAt) !==
-              store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
+              store.dayjsDate(searchMessages[index - 1]?.createdAt)
             "
             style="
               padding-bottom: 8px;
@@ -932,7 +945,7 @@
               icon="reply"
               style="margin-right: 4px"
             />
-            <icons colour="darkgrey" size="16" icon="account" />
+            <icons colour="darkgrey" size="16" icon="user" />
             <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
               Message has been deleted
             </b>
@@ -943,7 +956,7 @@
             @click="goToMessage(findMessage(message.id))"
           >
             <div
-              v-if="!merge(message, index)"
+              v-if="!merge(message, searchMessages[index - 1])"
               style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
               class="message-item"
               @click="openUser(message.user?.id, message.user)"
@@ -959,7 +972,147 @@
               class="message-item"
               style="width: calc(100% - 48px); overflow-wrap: break-word"
             >
-              <div v-if="!merge(message, index)" style="line-height: 11.5px">
+              <div
+                v-if="!merge(message, searchMessages[index - 1])"
+                class="message-header"
+              >
+                <b
+                  class="message-text-medium"
+                  @click="openUser(message.user.id, message.user)"
+                >
+                  {{ message.user?.username }}
+                </b>
+                <b class="message-text-small">
+                  {{ " " + store.dayjsLong(message.createdAt) }}
+                </b>
+              </div>
+              <custom-message
+                :message="message"
+                :handle-click="handleClick"
+                :find-user="findUser"
+                :scroll="scrollDown"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="store.pins">
+        <div
+          v-for="(message, index) in currentChat.pins"
+          :id="'message-' + index"
+          :key="message.id"
+          style="padding: 4px"
+        >
+          <div
+            v-if="
+              store.dayjsDate(message.createdAt) !==
+              store.dayjsDate(currentChat.pins[index - 1]?.createdAt)
+            "
+            style="
+              padding-bottom: 8px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+            "
+          >
+            <div style="border-bottom: 1px solid #212425; width: 50%" />
+            <p
+              style="padding: 0 4px; white-space: nowrap"
+              class="message-text-small"
+            >
+              {{ store.dayjsDate(message.createdAt) }}
+            </p>
+            <div style="border-bottom: 1px solid #212425; width: 50%" />
+          </div>
+          <div
+            v-if="message.reply && findMessage(message.reply)"
+            style="
+              display: flex;
+              overflow-wrap: break-word;
+              margin: 0 0 8px 28px;
+            "
+          >
+            <icons size="16" icon="reply" style="margin-right: 4px" />
+            <profile-picture
+              size="16"
+              :avatar="findMessage(message.reply)?.user?.avatar"
+              :small="true"
+              @click="
+                openUser(
+                  findMessage(message.reply)?.user?.id,
+                  findMessage(message.reply)?.user
+                )
+              "
+            />
+            <b
+              class="message-text-medium"
+              style="margin: 4px 4px 0 4px"
+              @click="
+                openUser(
+                  findMessage(message.reply)?.user?.id,
+                  findMessage(message.reply)?.user
+                )
+              "
+            >
+              {{
+                findMessage(message.reply)?.user?.username
+                  ? "@" + findMessage(message.reply)?.user?.username
+                  : "@Deleted user"
+              }}
+            </b>
+            <p
+              class="message-text-medium-gray-hover"
+              style="margin-top: 4px; margin-bottom: 0"
+              @click="goToMessage(findMessage(message.reply))"
+            >
+              {{ findMessage(message.reply)?.messageContents }}
+            </p>
+          </div>
+          <div
+            v-else-if="message.reply"
+            style="
+              overflow-wrap: break-word;
+              margin: 0 0 8px 28px;
+              display: flex;
+            "
+          >
+            <icons
+              colour="darkgrey"
+              size="16"
+              icon="reply"
+              style="margin-right: 4px"
+            />
+            <icons colour="darkgrey" size="16" icon="user" />
+            <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
+              Message has been deleted
+            </b>
+          </div>
+          <div
+            class="message-grid"
+            style="position: relative; width: 100%"
+            @click="goToMessage(findMessage(message.id))"
+          >
+            <div
+              v-if="!merge(message, currentChat.pins[index - 1])"
+              style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
+              class="message-item"
+              @click="openUser(message.user?.id, message.user)"
+            >
+              <profile-picture size="32" :avatar="message.user?.avatar" />
+            </div>
+            <div v-else class="message-time">
+              <b class="message-text-small">
+                {{ dayjsShort(message.createdAt) }}
+              </b>
+            </div>
+            <div
+              class="message-item"
+              style="width: calc(100% - 48px); overflow-wrap: break-word"
+            >
+              <div
+                v-if="!merge(message, currentChat.pins[index - 1])"
+                class="message-header"
+              >
                 <b
                   class="message-text-medium"
                   @click="openUser(message.user.id, message.user)"
@@ -1158,6 +1311,42 @@ const deleteMessage = (messageId) => {
       setTimeout(store.errorFalse, 5000)
     })
 }
+const pinMessage = (messageId, pinned) => {
+  axios
+    .patch(`/api/pin/${messageId}`)
+    .then(() => {
+      currentChat.value.messages = currentChat.value.messages.map((message) => {
+        if (message.id === messageId) {
+          return {
+            ...message,
+            pinned: !message.pinned
+          }
+        } else {
+          return message
+        }
+      })
+      if (!pinned) {
+        currentChat.value.pins.push(
+          currentChat.value.messages.find((message) => message.id === messageId)
+        )
+        currentChat.value.pins.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        )
+      } else {
+        currentChat.value.pins.splice(
+          currentChat.value.pins.indexOf(
+            currentChat.value.pins.find((message) => message.id === messageId)
+          ),
+          1
+        )
+      }
+      scrollDown()
+    })
+    .catch((e) => {
+      store.error = e.response.data.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
 const editChat = (chat) => {
   chatEdit.value = chat.id
   chatNameInput = chat.name
@@ -1170,7 +1359,7 @@ const deleteChat = (chatId) => {
   axios
     .delete(`/api/delete-chat/${chatId}`)
     .then((res) => {
-      chatEdit.value = false
+      chatEdit.value = -1
       chatNameInput = ""
       chatDescriptionInput = ""
       chatIconInput = ""
@@ -1211,7 +1400,6 @@ const editMessage = (messageId) => {
 const searchChat = () => {
   if (searchText) {
     const keywords = searchText.toLowerCase().split(" ")
-
     searchMessages.value = currentChat.value.messages.filter((message) =>
       keywords.some((keyword) =>
         message.messageContents.toLowerCase().includes(keyword)
@@ -1225,7 +1413,7 @@ const replyToMessage = (messageId) => {
   input?.focus()
 }
 const createChat = () => {
-  if (store.userData.emailVerified === false) {
+  if (!store.userData.emailVerified) {
     requireVerification.value = false
   }
   if (
@@ -1262,7 +1450,7 @@ const createChat = () => {
       })
 }
 const saveChat = () => {
-  if (store.userData.emailVerified === false) {
+  if (!store.userData.emailVerified) {
     requireVerification.value = false
   }
   if (
@@ -1282,7 +1470,7 @@ const saveChat = () => {
         )
       })
       .then((res) => {
-        chatEdit.value = false
+        chatEdit.value = -1
         chatNameInput = ""
         chatDescriptionInput = ""
         chatIconInput = ""
@@ -1424,9 +1612,8 @@ const scrollDown = (override) => {
     }
   })
 }
-const merge = (message, index) => {
-  if (currentChat.value.messages[index - 1]) {
-    const previousMessage = currentChat.value.messages[index - 1]
+const merge = (message, previousMessage) => {
+  if (previousMessage) {
     return (
       previousMessage.userId === message.userId &&
       !message.reply &&
@@ -1518,7 +1705,7 @@ const escPressed = ({ key }) => {
       showUser.value = false
     } else if (embed.value) {
       embed.value = false
-    } else if (chatEdit.value) {
+    } else if (chatEdit.value !== -1) {
       chatEdit.value = -1
     } else if (editing.value) {
       editing.value = ""

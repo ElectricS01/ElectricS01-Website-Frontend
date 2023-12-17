@@ -463,6 +463,11 @@ button:hover,
   align-self: flex-start;
 }
 
+.message-header {
+  line-height: 11.5px;
+  height: 20px;
+}
+
 .message-embed {
   max-width: 80vw;
   max-height: 80vh;

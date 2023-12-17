@@ -51,14 +51,14 @@
       >
         Better Communications
       </router-link>
-      <div
+      <icons
         v-if="active('/chat')"
+        size="28"
+        icon="chats"
         class="left chat-icon"
         title="Show chats"
         @click="toggleChatBar"
-      >
-        <icons size="28" icon="chats" />
-      </div>
+      />
       <router-link
         v-if="store.userData.id"
         class="right chat-icon"
@@ -82,22 +82,30 @@
       >
         Home
       </router-link>
-      <div
+      <icons
         v-if="active('/chat')"
         class="right chat-icon"
         title="Show users"
+        size="28"
+        icon="users"
         @click="toggleSidebar"
-      >
-        <icons size="28" icon="account" />
-      </div>
-      <div
+      />
+      <icons
         v-if="active('/chat')"
         class="right chat-icon"
         title="Search this chat"
-        @click="store.search = !store.search"
-      >
-        <icons size="28" icon="search" />
-      </div>
+        size="28"
+        icon="search"
+        @click=";(store.search = !store.search), (store.pins = false)"
+      />
+      <icons
+        v-if="active('/chat')"
+        class="right chat-icon"
+        title="View this chat's pins"
+        size="28"
+        icon="pin"
+        @click=";(store.pins = !store.pins), (store.search = false)"
+      />
     </div>
     <transition>
       <p v-if="store.error" class="error-banner">
@@ -193,12 +201,18 @@ const mobileNav = () => {
   }
 }
 const toggleSidebar = () => {
-  if (localStorage.getItem("sidebarOpen") !== "true" || store.search === true) {
+  if (
+    localStorage.getItem("sidebarOpen") !== "true" ||
+    store.search === true ||
+    store.pins === true
+  ) {
     localStorage.setItem("sidebarOpen", "true")
     store.search = false
+    store.pins = false
   } else {
     localStorage.setItem("sidebarOpen", "false")
     store.search = false
+    store.pins = false
   }
   store.sidebarOpen = localStorage.getItem("sidebarOpen")
 }

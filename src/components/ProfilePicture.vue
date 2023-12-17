@@ -10,7 +10,7 @@
     :src="avatar"
     alt="Profile icon"
   />
-  <icons v-else style="cursor: pointer" :size="size" icon="account" />
+  <icons v-else style="cursor: pointer" :size="size" icon="user" />
 </template>
 
 <script setup>
