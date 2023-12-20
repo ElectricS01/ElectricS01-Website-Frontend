@@ -653,14 +653,14 @@ h4 {
 }
 
 .settings-menu {
-  width: max(700px, calc(100% - calc(40% - 64px)));
+  width: max(800px, calc(100% - calc(40% - 64px)));
   background-color: #282a2b;
   display: flex;
   border-radius: 16px;
   height: min(calc(100% - 32px), max(40%, 600px));
 
   @media (max-width: 932px) {
-    width: min(100% - 16px, 700px);
+    width: max(min(100% - 16px, 800px), 400px);
   }
 }
 
@@ -818,7 +818,6 @@ input:checked + .slider:before {
 .settings-button {
   background-color: #212425;
   padding: 8px;
-  margin: 8px;
   cursor: pointer;
   font-size: 16px;
   display: table;
@@ -828,7 +827,6 @@ input:checked + .slider:before {
 .settings-button-red {
   background-color: #212425;
   padding: 8px;
-  margin: 8px;
   cursor: pointer;
   font-size: 16px;
   display: table;
@@ -862,7 +860,6 @@ input:checked + .slider:before {
 .dropdown-toggle {
   cursor: pointer;
   padding: 8px;
-  border: 1px solid #282a2b;
   border-radius: 4px;
   text-transform: capitalize;
   background-color: #212425;

@@ -120,6 +120,61 @@ export const useDataStore = defineStore("store", () => {
       }
     })
   }
+  async function savePrivateKey(privateKey) {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open("MyKeyDatabase", 1)
+      request.onupgradeneeded = (event) => {
+        event.target.result.createObjectStore("keys", { keyPath: "id" })
+      }
+      request.onsuccess = () => resolve(request.result)
+      request.onerror = () => reject(request.error)
+    })
+    const exportedKey = await crypto.subtle.exportKey("jwk", privateKey)
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction(["keys"], "readwrite")
+      const objectStore = transaction.objectStore("keys")
+      const request = objectStore.put({ id: "privateKey", key: exportedKey })
+      request.onsuccess = resolve
+      request.onerror = reject
+    })
+    userData.value.privateKey = privateKey
+  }
+  async function encryptPrivateKey(privateKey, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16))
+    const derivedKey = await crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt,
+        iterations: 10000,
+        hash: "SHA-256"
+      },
+      await crypto.subtle.importKey(
+        "raw",
+        new TextEncoder().encode(password),
+        "PBKDF2",
+        false,
+        ["deriveKey"]
+      ),
+      { name: "AES-GCM", length: 256 },
+      true,
+      ["encrypt", "decrypt"]
+    )
+    const exportedKey = await crypto.subtle.exportKey("jwk", privateKey)
+    const keyString = JSON.stringify(exportedKey)
+    const keyBuffer = new TextEncoder().encode(keyString)
+    const encryptedBuffer = await crypto.subtle.encrypt(
+      {
+        name: "AES-GCM",
+        iv: crypto.getRandomValues(new Uint8Array(12)) // Use a random IV
+      },
+      derivedKey,
+      keyBuffer
+    )
+    return JSON.stringify({
+      salt: Array.from(salt),
+      encryptedKey: Array.from(new Uint8Array(encryptedBuffer))
+    })
+  }
   return {
     chatSort,
     dayjsDate,
@@ -132,6 +187,8 @@ export const useDataStore = defineStore("store", () => {
     quickSwitcherShown,
     sortSwitcher,
     switcherItems,
-    userData
+    userData,
+    savePrivateKey,
+    encryptPrivateKey
   }
 })

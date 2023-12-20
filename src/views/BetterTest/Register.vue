@@ -62,12 +62,35 @@ const router = useRouter()
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 
-const submit = () => {
+const submit = async () => {
+  const keyPair = await window.crypto.subtle.generateKey(
+    {
+      hash: { name: "SHA-256" },
+      modulusLength: 2048,
+      name: "RSA-OAEP",
+      publicExponent: new Uint8Array([0x01, 0x00, 0x01])
+    },
+    true,
+    ["encrypt", "decrypt"]
+  )
+  const exportedKey = await window.crypto.subtle.exportKey(
+    "spki",
+    keyPair.publicKey
+  )
+  const keyString = btoa(String.fromCharCode(...new Uint8Array(exportedKey)))
+  await store.savePrivateKey(keyPair.privateKey)
+  const privateKey = await store.encryptPrivateKey(
+    keyPair.privateKey,
+    password.trim()
+  )
   store.error = ""
   axios
     .post("/api/register", {
       email: email.toLowerCase().trim(),
       password: password.trim(),
+      publicKey: keyString,
+      savePrivateKey: false,
+      privateKey,
       userAgent: navigator.userAgent,
       username: username.trim()
     })

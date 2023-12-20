@@ -117,14 +117,14 @@
             Allow direct messages from
             <div>
               <div class="dropdown">
-                <div class="dropdown-toggle" @click="isOpen = !isOpen">
+                <div class="dropdown-toggle" @click="dmOpen = !dmOpen">
                   {{ store.userData?.directMessages }}
                 </div>
-                <ul v-if="isOpen" class="dropdown-menu">
+                <ul v-if="dmOpen" class="dropdown-menu">
                   <li
-                    v-for="option in options"
+                    v-for="option in dmOptions"
                     :key="option"
-                    @click="selectOption(option)"
+                    @click="selectDm(option)"
                   >
                     {{ option }}
                   </li>
@@ -176,6 +176,45 @@
               Logout everywhere
             </div>
             <div class="settings-spacer" />
+            Allow Encrypted direct messages
+            <div>
+              <div class="dropdown">
+                <div
+                  class="dropdown-toggle"
+                  @click="encryptionOpen = !encryptionOpen"
+                >
+                  {{ store.userData?.encryption }}
+                </div>
+                <ul v-if="encryptionOpen" class="dropdown-menu">
+                  <li
+                    v-for="option in encryptionOptions"
+                    :key="option"
+                    @click="selectEncryption(option)"
+                  >
+                    {{ option }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="settings-spacer" />
+            <div
+              :style="{
+                opacity: store.userData?.encryption === 'never' ? '0.5' : ''
+              }"
+            >
+              Save your Encryption Private Key to the server using your password
+              (Your Private Key will be deleted)
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  :checked="store.userData?.savePrivateKey"
+                  @click="toggle('savePrivateKey')"
+                  :disabled="store.userData?.encryption === 'never'"
+                />
+                <span class="slider" />
+              </label>
+            </div>
+            <div class="settings-spacer" />
             Sessions
             <div class="grid-sessions">
               <div
@@ -217,7 +256,7 @@
                 <input
                   id="banner"
                   v-model="editBanner"
-                  placeholder="Edit your profile picture"
+                  placeholder="Edit your banner"
                   style="
                     margin: 1px;
                     height: fit-content;
@@ -371,12 +410,36 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.197</div>
+            <div>Version: 1.198</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.198 Encryption</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                When you create an account, a public-private keypair will be
+                generated and saved to your account
+              </li>
+              <li>Your private key will be encrypted by your password</li>
+              <li>
+                Added Allow Encrypted direct messages in
+                <router-link to="/account/security">
+                  Security Settings
+                </router-link>
+              </li>
+              <li>
+                Added Save your Encryption Private Key in
+                <router-link to="/account/security">
+                  Security Settings
+                </router-link>
+              </li>
+              <li>Update to work with backend 1.98</li>
+              <li>Bug fixes</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.197 Pinned Messages</h2>
             <div class="settings-spacer" />
             <ul>
@@ -459,10 +522,12 @@
                 Added
                 <router-link to="/scheduler">/scheduler link</router-link>
               </li>
-              <li>Added Sign out everywhere in</li>
-              <router-link to="/account/security">
-                Security Settings
-              </router-link>
+              <li>
+                Added Sign out everywhere in
+                <router-link to="/account/security">
+                  Security Settings
+                </router-link>
+              </li>
               <li>Logging out will now delete your session</li>
               <li>Sessions updates</li>
               <li>Upgrade to Vite 5</li>
@@ -657,13 +722,17 @@ const properties = [
   "saveSwitcher",
   "avatar",
   "banner",
-  "description"
+  "description",
+  "encryption",
+  "savePrivateKey"
 ]
-const options = ["no one", "friends", "everyone"]
+const dmOptions = ["no one", "friends", "everyone"]
+const encryptionOptions = ["never", "off", "on", "always"]
 
 const modalOpen = ref(false)
 const passwordModalOpen = ref(false)
-const isOpen = ref(false)
+const dmOpen = ref(false)
+const encryptionOpen = ref(false)
 const sessions = ref([])
 const adminData = ref([])
 const editing = ref("")
@@ -751,9 +820,13 @@ const deleteFeedback = (id) => {
       setTimeout(store.errorFalse, 5000)
     })
 }
-const selectOption = (option) => {
+const selectDm = (option) => {
   toggle("directMessages", option)
-  isOpen.value = false
+  dmOpen.value = false
+}
+const selectEncryption = (option) => {
+  toggle("encryption", option)
+  encryptionOpen.value = false
 }
 const editFocus = () => {
   nextTick(() => {
