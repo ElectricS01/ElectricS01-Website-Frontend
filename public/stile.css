@@ -275,7 +275,7 @@ button {
 
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .v-enter-from,
@@ -818,6 +818,7 @@ input:checked + .slider:before {
 .settings-button {
   background-color: #212425;
   padding: 8px;
+  margin: 4px 0;
   cursor: pointer;
   font-size: 16px;
   display: table;
@@ -827,6 +828,7 @@ input:checked + .slider:before {
 .settings-button-red {
   background-color: #212425;
   padding: 8px;
+  margin: 4px 0;
   cursor: pointer;
   font-size: 16px;
   display: table;
@@ -860,6 +862,7 @@ input:checked + .slider:before {
 .dropdown-toggle {
   cursor: pointer;
   padding: 8px;
+  margin: 4px 0;
   border-radius: 4px;
   text-transform: capitalize;
   background-color: #212425;

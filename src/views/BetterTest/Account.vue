@@ -196,14 +196,33 @@
                 </ul>
               </div>
             </div>
+            <div class="message-text-small">
+              <b>Never</b>
+              - Messages sent to you will ever be encrypted so you cannot
+              message those using "Always"
+            </div>
+            <div class="message-text-small">
+              <b>Off</b>
+              - Only messages sent to you by someone using "Always" will be
+              encrypted
+            </div>
+            <div class="message-text-small">
+              <b>On</b>
+              - Any messages you send will be encrypted unless the other user
+              has selected "Never" or "Off"
+            </div>
+            <div class="message-text-small">
+              <b>Always</b>
+              - You won't be able to send messages to those who have selected
+              "Never"
+            </div>
             <div class="settings-spacer" />
             <div
               :style="{
                 opacity: store.userData?.encryption === 'never' ? '0.5' : ''
               }"
             >
-              Save your Encryption Private Key to the server using your password
-              (Your Private Key will be deleted)
+              Save your Encryption Private Key
               <label class="switch">
                 <input
                   type="checkbox"
@@ -213,6 +232,14 @@
                 />
                 <span class="slider" />
               </label>
+            </div>
+            <div class="message-text-small">
+              If enabled, your private key will be encrypted using your password
+              and saved to the server
+            </div>
+            <div class="message-text-small">
+              Disabling this option will delete your private key from the server
+              so please back it up
             </div>
             <div class="settings-spacer" />
             Sessions
@@ -410,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.198</div>
+            <div>Version: 1.198.1</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>

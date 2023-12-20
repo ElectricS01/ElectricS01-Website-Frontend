@@ -321,7 +321,7 @@
             </h1>
             <h1 v-else-if="currentChat.owner !== store.userData.id">
               Welcome to your Direct Message with
-              {{ currentChat?.users[0].username }}
+              {{ currentChat?.ownerDetails.username }}
             </h1>
             <h1 v-else>
               Welcome to your Direct Message with {{ currentChat.name }}
@@ -1741,15 +1741,18 @@ const offlineUsers = computed(() =>
 )
 async function getChat(id) {
   if (id) {
+    if (id !== currentChat.value.id) {
+      loadingMessages.value = true
+    }
     await axios
       .get(`/api/chat/${id}`)
       .then((res) => {
         currentChat.value = res.data
+        currentChat.value.messages.focus = false
         router.push(`/chat/${currentChat.value.id}`)
         userSort(store.sortUsers)
         replyTo.value = null
         loadingMessages.value = false
-        currentChat.value.messages.focus = false
         scrollDown(true)
       })
       .catch((e) => {
