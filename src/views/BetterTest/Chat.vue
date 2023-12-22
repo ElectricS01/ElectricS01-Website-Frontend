@@ -217,20 +217,18 @@
             }"
             @click="getChat(chat.id)"
           >
-            <div class="profile-picture">
-              <profile-picture
-                style="margin: 4px"
-                size="32"
-                :avatar="
-                  chat.type === 1 && chat.ownerDetails.id !== store.userData.id
-                    ? chat.ownerDetails.avatar
-                    : chat.icon
-                "
-                :small="true"
-              />
-            </div>
+            <profile-picture
+              style="margin: 4px 12px 4px 4px"
+              size="32"
+              :avatar="
+                chat.type === 1 && chat.ownerDetails.id !== store.userData.id
+                  ? chat.ownerDetails.avatar
+                  : chat.icon
+              "
+              :small="true"
+            />
             <div
-              style="flex-grow: 1; width: calc(100% - 48px)"
+              style="flex-grow: 1; width: calc(100% - 88px)"
               class="message-item"
             >
               <b
@@ -284,10 +282,16 @@
                 {{ chat.description }}
               </p>
             </div>
+            <div
+              class="chat-notifications"
+              v-if="chat.type !== 2 && chat.associations[0].notifications"
+            >
+              {{ chat.associations[0].notifications }}
+            </div>
           </div>
           <div
             v-if="chat.owner === store.userData.id && chat.type !== 1"
-            class="chats-settings"
+            class="chat-settings"
             @click="editChat(chat)"
           >
             <icons size="20" icon="settings" />
@@ -1721,6 +1725,11 @@ const escPressed = ({ key }) => {
     ) {
       currentChat.value.lastRead = currentChat.value.messages.length
       axios.post(`/api/read-new/${currentChat.value.id}`)
+      store.userData.chatsList[
+        store.userData.chatsList.findIndex(
+          (chat) => chat.id === parseInt(route.params.chatId)
+        )
+      ].associations[0].notifications = 0
     }
   }
 }

@@ -437,12 +437,31 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.198.1</div>
+            <div>Version: 1.199</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.199 New Messages</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                You can now see the number of new messages in a chat in the
+                Chats List
+              </li>
+              <li>
+                Added descriptions to Allow Encrypted direct messages and Save
+                your Encryption Private Key in
+                <router-link to="/account/security">
+                  Security Settings
+                </router-link>
+                (198.1)
+              </li>
+              <li>Update to work with backend 1.99</li>
+              <li>Bug fixes (198.1)</li>
+              <li>Updated dependencies (198.1)</li>
+            </ul>
             <h2 class="settings-text">1.198 Encryption</h2>
             <div class="settings-spacer" />
             <ul>

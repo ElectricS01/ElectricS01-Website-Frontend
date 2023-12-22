@@ -372,7 +372,7 @@ button:hover,
 }
 
 .context-menu-item:hover,
-.chats-settings:hover,
+.chat-settings:hover,
 .message-grid:hover {
   background-color: #212425;
 }
@@ -511,7 +511,7 @@ input {
   }
 }
 
-.chats-settings {
+.chat-settings {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -519,6 +519,17 @@ input {
   height: 32px;
   margin-left: 4px;
   cursor: pointer;
+}
+
+.chat-notifications {
+  height: 24px;
+  width: 24px;
+  margin: 8px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  background-color: #ff2f2f;
 }
 
 .message-input {
