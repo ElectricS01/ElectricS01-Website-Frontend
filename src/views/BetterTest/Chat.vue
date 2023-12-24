@@ -311,7 +311,7 @@
       "
     >
       <div
-        id="div"
+        id="messages-div"
         style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
         class="scroll-bar"
       >
@@ -1159,8 +1159,8 @@ import ModalSimple from "@/components/core/ModalSimple.vue"
 import dayjs from "dayjs"
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
-import { computed, nextTick, onMounted, ref, watch } from "vue"
-import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
 const store = useDataStore()
 const route = useRoute()
@@ -1192,43 +1192,45 @@ let chatIconInput
 let chatUsernameInput
 let chatUsers
 
-const ws = new WebSocket(
-  process.env.NODE_ENV === "production"
-    ? "wss://electrics01.com/ws"
-    : "ws://localhost:24554/ws"
-)
-
-ws.onopen = () => {
-  ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
-  console.log("Socket connected")
-}
-
-ws.onmessage = (event) => {
-  console.log(event)
-  const socketMessage = JSON.parse(event.data)
-  if (socketMessage.authFail) {
-    store.error = `Error 401, ${socketMessage.authFail}`
-    router.push("/login")
-  } else if (socketMessage.newMessage) {
-    socketMessage.newMessage.focus = false
-    currentChat.value.messages.push(socketMessage.newMessage)
-    scrollDown()
-  } else if (socketMessage.changeUser) {
-    const userToUpdate = currentChat.value.users.find(
-      (user) => user.id === socketMessage.changeUser.id
-    )
-    if (userToUpdate) {
-      userToUpdate.status = socketMessage.changeUser.status
-    } else {
-      // currentChat.value.users.push(socketMessage.changeUser)
-    }
-  }
-  console.log("Data received from websocket")
-}
+let ws
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 if (!localStorage.getItem("token")) {
   router.push("/login")
+} else {
+  ws = new WebSocket(
+    process.env.NODE_ENV === "production"
+      ? "wss://electrics01.com/ws"
+      : "ws://localhost:24554/ws"
+  )
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
+    console.log("Socket connected")
+  }
+
+  ws.onmessage = (event) => {
+    console.log(event)
+    const socketMessage = JSON.parse(event.data)
+    if (socketMessage.authFail) {
+      store.error = `Error 401, ${socketMessage.authFail}`
+      router.push("/login")
+    } else if (socketMessage.newMessage) {
+      socketMessage.newMessage.focus = false
+      currentChat.value.messages.push(socketMessage.newMessage)
+      scrollDown()
+    } else if (socketMessage.changeUser) {
+      const userToUpdate = currentChat.value.users.find(
+        (user) => user.id === socketMessage.changeUser.id
+      )
+      if (userToUpdate) {
+        userToUpdate.status = socketMessage.changeUser.status
+        // } else {
+        // currentChat.value.users.push(socketMessage.changeUser)
+      }
+    }
+    console.log("Data received from websocket")
+  }
 }
 
 const userSort = (property) => {
@@ -1630,7 +1632,7 @@ const merge = (message, previousMessage) => {
 const findMessage = (messageId) =>
   currentChat.value.messages.find((message) => message.id === messageId)
 const goToMessage = (messageId) => {
-  const div = document.getElementById("div")
+  const div = document.getElementById("messages-div")
   const element = document.getElementById(
     `message-${currentChat.value.messages.indexOf(messageId)}`
   )
@@ -1734,7 +1736,7 @@ const escPressed = ({ key }) => {
   }
 }
 const scrollEvent = () => {
-  const div = document.getElementById("div")
+  const div = document.getElementById("messages-div")
   const { scrollHeight } = div
   const { scrollTop } = div
   const { clientHeight } = div
@@ -1772,17 +1774,20 @@ async function getChat(id) {
 }
 
 onMounted(async () => {
-  document.addEventListener("keydown", escPressed)
-  document.getElementById("div").addEventListener("scroll", scrollEvent)
 
+  document.addEventListener("keydown", escPressed)
+  const messagesDiv = document.getElementById("messages-div")
+  if (messagesDiv) messagesDiv.addEventListener("scroll", scrollEvent)
   if (route.path.startsWith("/user")) {
     openUser(route.params.chatId)
   }
   await getChat(route.params.chatId)
 })
-onBeforeRouteLeave(() => {
+onUnmounted(() => {
+  if (ws) ws.close()
   document.removeEventListener("keydown", escPressed)
-  document.getElementById("div").removeEventListener("scroll", scrollEvent)
+  const messagesDiv = document.getElementById("messages-div")
+  if (messagesDiv) messagesDiv.removeEventListener("scroll", scrollEvent)
 })
 watch(editing, () => {
   store.editFocus()

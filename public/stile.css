@@ -283,7 +283,7 @@ button {
   opacity: 0;
 }
 
-@media screen and (max-width: 478px) {
+@media screen and (max-width: 527px) {
   .responsive-chat {
     display: none;
   }
