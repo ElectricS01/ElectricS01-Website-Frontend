@@ -1333,7 +1333,9 @@ const pinMessage = (messageId, pinned) => {
       })
       if (!pinned) {
         currentChat.value.pins.push(
-          currentChat.value.messages.find((message) => message.id === messageId)
+          currentChat.value.messages.findLast(
+            (message) => message.id === messageId
+          )
         )
         currentChat.value.pins.sort(
           (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
@@ -1341,7 +1343,9 @@ const pinMessage = (messageId, pinned) => {
       } else {
         currentChat.value.pins.splice(
           currentChat.value.pins.indexOf(
-            currentChat.value.pins.find((message) => message.id === messageId)
+            currentChat.value.pins.findLast(
+              (message) => message.id === messageId
+            )
           ),
           1
         )
@@ -1630,7 +1634,7 @@ const merge = (message, previousMessage) => {
   }
 }
 const findMessage = (messageId) =>
-  currentChat.value.messages.find((message) => message.id === messageId)
+  currentChat.value.messages.findLast((message) => message.id === messageId)
 const goToMessage = (messageId) => {
   const div = document.getElementById("messages-div")
   const element = document.getElementById(

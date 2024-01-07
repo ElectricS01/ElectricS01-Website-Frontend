@@ -7,31 +7,31 @@ platform and account system currently in beta.
 ## Project setup
 
 ```
-yarn install
+bun i
 ```
 
 ### Compiles and hot-reloads for development
 
 ```
-yarn dev
+bun dev
 ```
 
 ### Compiles and minifies for production
 
 ```
-yarn build
+bun prod
 ```
 
 ### Lints and fixes files
 
 ```
-yarn lint
+bun lint
 ```
 
 ### Updates dependencies
 
 ```
-yarn upgrade
+bun update
 ```
 
 ### Customize configuration

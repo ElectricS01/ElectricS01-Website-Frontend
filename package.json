@@ -5,29 +5,28 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build",
-    "serve": "bunx --bun  vite",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
+    "prod": "bunx --bun vite build",
+    "lint": "eslint --ext .js,.vue --fix src"
   },
   "repository": "https://github.com/ElectricS01/ElectricS01-Website-Frontend.git",
   "author": "ElectricS01 <103579308+ElectricS01@users.noreply.github.com>",
   "dependencies": {
-    "@vitejs/plugin-vue": "^4.5.0",
-    "axios": "^1.6.2",
+    "@vitejs/plugin-vue": "^5.0.2",
+    "axios": "^1.6.3",
     "dayjs": "^1.11.10",
     "markdown-it": "^13.0.2",
     "pinia": "^2.1.7",
     "register-service-worker": "^1.7.2",
-    "vite": "^5.0.0",
-    "vite-plugin-pwa": "^0.17.2",
-    "vue": "^3.3.12",
+    "vite": "^5.0.10",
+    "vite-plugin-pwa": "^0.17.4",
+    "vue": "^3.4.3",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
-    "eslint-plugin-vue": "^9.18.1"
+    "eslint-plugin-vue": "^9.19.2"
   },
   "overrides": {
     "@rollup/plugin-node-resolve": "^15.2.3"
