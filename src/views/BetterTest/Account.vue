@@ -437,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.200.1</div>
+            <div>Version: 1.200.2</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
@@ -726,11 +726,28 @@
               <li v-markdown>Switched more code to `script setup`</li>
               <li>Refactoring</li>
             </ul>
-            <h2 class="settings-text">1.179 Refactoring</h2>
+            <h2 class="settings-text">1.179 Refactoring and Bug fixes</h2>
             <div class="settings-spacer" />
             <ul>
+              <li>Bug fixes</li>
               <li v-markdown>Switched more code to `script setup`</li>
               <li>Refactoring</li>
+            </ul>
+            <h2 class="settings-text">1.178 Embed Previews</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>You can now click on an Embed to show a larger preview</li>
+              <li>Bug fixes</li>
+              <li v-markdown>Switched more code to `script setup`</li>
+              <li>Refactoring</li>
+            </ul>
+            <h2 class="settings-text">1.177 Refactoring</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Bug fixes</li>
+              <li v-markdown>Switched some code to `script setup`</li>
+              <li>Refactoring</li>
+              <li>Updated dependencies</li>
             </ul>
             <div class="settings-spacer" />
           </div>
