@@ -437,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.200</div>
+            <div>Version: 1.200.1</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
@@ -715,6 +715,20 @@
             <ul>
               <li>Updated Tetris to 0.24</li>
               <li>Bug fixes</li>
+              <li v-markdown>Switched more code to `script setup`</li>
+              <li>Refactoring</li>
+            </ul>
+            <h2 class="settings-text">1.180 PWA updates</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Set a theme colour for PWAs</li>
+              <li>Update PWA manifest</li>
+              <li v-markdown>Switched more code to `script setup`</li>
+              <li>Refactoring</li>
+            </ul>
+            <h2 class="settings-text">1.179 Refactoring</h2>
+            <div class="settings-spacer" />
+            <ul>
               <li v-markdown>Switched more code to `script setup`</li>
               <li>Refactoring</li>
             </ul>
