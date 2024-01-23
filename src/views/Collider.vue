@@ -40,13 +40,15 @@ document.getElementById("favicon").href = "/icons/favicon.ico"
 //   return matchingItems
 // }
 // const leaving = () => {
-//   axios
-//     .patch("/api/tetris", {
-//       data: searchLocalStorageItems("userdata.ini")[0].value
-//     })
-//     .catch((e) => {
-//       console.log("Error 503, Cannot Connect to Server " + e)
-//     })
+//   if (localStorage.getItem("token")) {
+//     axios
+//       .patch("/api/tetris", {
+//         data: searchLocalStorageItems("userdata.ini")[0].value
+//       })
+//       .catch((e) => {
+//         console.log("Error 503, Cannot Connect to Server " + e)
+//       })
+//   }
 // }
 const updateDimensions = () => {
   viewportWidth = window.innerWidth - 16
@@ -65,13 +67,15 @@ const minDimension = computed(() => {
 window.addEventListener("resize", updateDimensions)
 
 onUnmounted(() => {
-  // axios
-  //   .patch("/api/tetris", {
-  //     data: searchLocalStorageItems("userdata.ini")[0].value
-  //   })
-  //   .catch((e) => {
-  //     console.log("Error 503, Cannot Connect to Server " + e)
-  //   })
+  // if (localStorage.getItem("token")) {
+  //   axios
+  //     .patch("/api/tetris", {
+  //       data: searchLocalStorageItems("userdata.ini")[0].value
+  //     })
+  //     .catch((e) => {
+  //       console.log("Error 503, Cannot Connect to Server " + e)
+  //     })
+  // }
   // document.removeEventListener("beforeunload", leaving)
   window.removeEventListener("resize", updateDimensions)
 })

@@ -1,7 +1,7 @@
 import { createApp } from "vue"
 import { createPinia } from "pinia"
 import App from "./App.vue"
-import router from "./router"
+import router from "./router.js"
 import MarkdownIt from "markdown-it"
 
 const md = new MarkdownIt({
@@ -9,7 +9,7 @@ const md = new MarkdownIt({
 })
 
 const pinia = createPinia()
-const app = createApp(App).use(router)
+const app = createApp(App).use(router).use(pinia)
 
 // Modify the 'p' rule to return an empty string
 md.renderer.rules.paragraph_open = () => ""
@@ -50,5 +50,4 @@ app.directive("markdown", {
   }
 })
 
-app.use(pinia)
 app.mount("#app")

@@ -39,13 +39,15 @@ const searchLocalStorageItems = (searchString) => {
   return matchingItems
 }
 const leaving = () => {
-  axios
-    .patch("/api/tetris", {
-      data: searchLocalStorageItems("userdata.ini")[0].value
-    })
-    .catch((e) => {
-      console.log(`Error 503, Cannot Connect to Server ${e}`)
-    })
+  if (localStorage.getItem("token")) {
+    axios
+      .patch("/api/tetris", {
+        data: searchLocalStorageItems("userdata.ini")[0].value
+      })
+      .catch((e) => {
+        console.log(`Error 503, Cannot Connect to Server ${e}`)
+      })
+  }
 }
 const updateDimensions = () => {
   viewportWidth = window.innerWidth - 16
@@ -64,13 +66,15 @@ window.addEventListener("beforeunload", leaving)
 document.addEventListener("resize", updateDimensions)
 
 onUnmounted(() => {
-  axios
-    .patch("/api/tetris", {
-      data: searchLocalStorageItems("userdata.ini")[0].value
-    })
-    .catch((e) => {
-      console.log(`Error 503, Cannot Connect to Server ${e}`)
-    })
+  if (localStorage.getItem("token")) {
+    axios
+      .patch("/api/tetris", {
+        data: searchLocalStorageItems("userdata.ini")[0].value
+      })
+      .catch((e) => {
+        console.log(`Error 503, Cannot Connect to Server ${e}`)
+      })
+  }
   window.removeEventListener("beforeunload", leaving)
   document.removeEventListener("resize", updateDimensions)
 })

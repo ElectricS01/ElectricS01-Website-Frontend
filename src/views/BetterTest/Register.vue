@@ -88,9 +88,9 @@ const submit = async () => {
     .post("/api/register", {
       email: email.toLowerCase().trim(),
       password: password.trim(),
+      privateKey,
       publicKey: keyString,
       savePrivateKey: false,
-      privateKey,
       userAgent: navigator.userAgent,
       username: username.trim()
     })

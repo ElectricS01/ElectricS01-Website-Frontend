@@ -283,8 +283,8 @@
               </p>
             </div>
             <div
-              class="chat-notifications"
               v-if="chat.type !== 2 && chat.associations[0].notifications"
+              class="chat-notifications"
             >
               {{ chat.associations[0].notifications }}
             </div>

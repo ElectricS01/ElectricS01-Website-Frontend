@@ -227,8 +227,8 @@
                 <input
                   type="checkbox"
                   :checked="store.userData?.savePrivateKey"
-                  @click="toggle('savePrivateKey')"
                   :disabled="store.userData?.encryption === 'never'"
+                  @click="toggle('savePrivateKey')"
                 />
                 <span class="slider" />
               </label>
@@ -437,12 +437,30 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.199.2</div>
+            <div>Version: 1.200</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.200 Blog</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Created
+                <router-link to="/blog">Blog</router-link>
+              </li>
+              <li>
+                Created
+                <router-link to="/blog/first-post">First Blog Post</router-link>
+              </li>
+              <li>Refactoring</li>
+              <li>Update PWA manifest</li>
+              <li>Include more assets with PWA</li>
+              <li>Updated dependencies</li>
+              <li>Bug fixes (199.1 and 199.2)</li>
+              <li>Updated dependencies (199.2)</li>
+            </ul>
             <h2 class="settings-text">1.199 New Messages</h2>
             <div class="settings-spacer" />
             <ul>
@@ -686,6 +704,19 @@
               <li v-markdown>Switched more code to `script setup`</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
+            </ul>
+            <h2 class="settings-text">1.182 Tetris Update</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Updated Tetris to 0.25</li>
+            </ul>
+            <h2 class="settings-text">1.181 Tetris Update</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Updated Tetris to 0.24</li>
+              <li>Bug fixes</li>
+              <li v-markdown>Switched more code to `script setup`</li>
+              <li>Refactoring</li>
             </ul>
             <div class="settings-spacer" />
           </div>
