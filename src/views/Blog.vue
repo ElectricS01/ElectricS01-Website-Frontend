@@ -17,6 +17,17 @@
           </div>
         </router-link>
       </div>
+      <div class="box grid-item">
+        <router-link class="border" to="/blog/learning-rust">
+          <div class="small-container">
+            <p class="text-medium">Learning Rust</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              My first experiences learning Rust
+            </p>
+          </div>
+        </router-link>
+      </div>
     </div>
     <div class="icon-text">
       <a

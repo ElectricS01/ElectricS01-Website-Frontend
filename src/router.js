@@ -11,20 +11,31 @@ const routes = [
     redirect: "/"
   },
   {
-    component: () => import("./views/Blog.vue"),
     name: "blog",
     path: "/blog",
-    meta: {
-      title: "ElectricS01's Blog"
-    }
-  },
-  {
-    component: () => import("./views/Blog/Blog.vue"),
-    name: "first-post",
-    path: "/blog/first-post",
-    meta: {
-      title: "Making a blog"
-    }
+    children: [
+      {
+        path: "",
+        component: () => import("./views/Blog.vue"),
+        meta: {
+          title: "ElectricS01's Blog"
+        }
+      },
+      {
+        path: "first-post",
+        component: () => import("./views/Blog/MyFirstBlogPost.vue"),
+        meta: {
+          title: "Making a blog"
+        }
+      },
+      {
+        path: "learning-rust",
+        component: () => import("./views/Blog/LearningRust.vue"),
+        meta: {
+          title: "Learning Rust"
+        }
+      }
+    ]
   },
   {
     component: () => import("./views/TonkGame.vue"),

@@ -437,12 +437,35 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.200.2</div>
+            <div>Version: 1.201.0</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.201 New Blog Updates</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Updated the
+                <router-link to="/blog">Blog page</router-link>
+                and added it to the navbar
+              </li>
+              <li>
+                Created the
+                <router-link to="/blog/learning-rust">
+                  Second Blog Post
+                </router-link>
+              </li>
+              <li>
+                Added
+                <router-link to="/scheduler">BetterScheduler</router-link>
+                to the
+                <router-link to="/">Home page</router-link>
+              </li>
+              <li>Upgrade to Vite PWA to 0.18.0</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.200 Blog</h2>
             <div class="settings-spacer" />
             <ul>

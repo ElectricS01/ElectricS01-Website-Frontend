@@ -32,6 +32,14 @@
       >
         Collider
       </router-link>
+      <router-link
+        to="/blog"
+        :class="{ active: active('/blog') }"
+        v-if="active('/blog')"
+        @click="mobileNav"
+      >
+        Blog
+      </router-link>
       <a href="https://mapit.electrics01.com">Mapit (Demo)</a>
       <router-link
         v-if="store.userData.id"

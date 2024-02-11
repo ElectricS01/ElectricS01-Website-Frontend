@@ -58,6 +58,23 @@
         </a>
       </div>
       <div class="box grid-item">
+        <a class="border" href="https://scheduler.electrics01.com">
+          <img
+            src="../assets/scheduler.webp"
+            alt="BetterScheduler By ElectricS01"
+            class="grid-image"
+          />
+          <div class="small-container">
+            <p class="text-medium">BetterScheduler (Demo)</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              BetterScheduler is an interactive and simple tool to build
+              schedules for school, work, and home
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="box grid-item">
         <a class="border" href="https://bettercompassclub.netlify.app">
           <img
             src="../assets/bettercompassclub.webp"
