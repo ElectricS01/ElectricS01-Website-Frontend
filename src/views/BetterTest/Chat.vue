@@ -1778,12 +1778,11 @@ async function getChat(id) {
 }
 
 onMounted(async () => {
-
   document.addEventListener("keydown", escPressed)
   const messagesDiv = document.getElementById("messages-div")
   if (messagesDiv) messagesDiv.addEventListener("scroll", scrollEvent)
   if (route.path.startsWith("/user")) {
-    openUser(route.params.chatId)
+    openUser(route.params.id)
   }
   await getChat(route.params.chatId)
 })

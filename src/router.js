@@ -15,6 +15,7 @@ const routes = [
     path: "/blog",
     children: [
       {
+        name: "blog",
         path: "",
         component: () => import("./views/Blog.vue"),
         meta: {
@@ -22,6 +23,7 @@ const routes = [
         }
       },
       {
+        name: "first-post",
         path: "first-post",
         component: () => import("./views/Blog/MyFirstBlogPost.vue"),
         meta: {
@@ -29,6 +31,7 @@ const routes = [
         }
       },
       {
+        name: "learning-rust",
         path: "learning-rust",
         component: () => import("./views/Blog/LearningRust.vue"),
         meta: {
