@@ -202,7 +202,7 @@
         </div>
         <div
           v-for="chat in store.userData.chatsList"
-          :key="chat"
+          :key="chat.id"
           style="display: flex; margin: 0 0 4px; align-items: center"
         >
           <div
@@ -349,7 +349,7 @@
           <div
             v-for="(message, index) in currentChat.messages"
             :id="'message-' + index"
-            :key="message"
+            :key="message.id"
           >
             <div
               v-if="currentChat.lastRead === index"
@@ -683,7 +683,7 @@
         </div>
         <div
           v-for="user in onlineUsers"
-          :key="user"
+          :key="user.id"
           style="cursor: pointer; margin: 0 0 4px"
           class="message-grid"
           @contextmenu.prevent="showContextMenu($event, user)"
@@ -742,7 +742,7 @@
         </div>
         <div
           v-for="user in offlineUsers"
-          :key="user"
+          :key="user.id"
           style="cursor: pointer; margin: 0 0 4px"
           class="message-grid"
           @contextmenu.prevent="showContextMenu($event, user)"
@@ -867,7 +867,7 @@
         <div
           v-for="(message, index) in searchMessages"
           :id="'message-' + index"
-          :key="message"
+          :key="message.id"
           style="padding: 4px"
         >
           <div
