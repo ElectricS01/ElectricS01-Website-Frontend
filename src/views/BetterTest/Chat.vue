@@ -571,8 +571,8 @@
                     store.sidebarOpen === 'true' && !store.search
                       ? '250px'
                       : store.search
-                      ? '350px'
-                      : '',
+                        ? '350px'
+                        : '',
                   marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
                 }"
                 style="
@@ -1771,8 +1771,12 @@ async function getChat(id) {
         scrollDown(true)
       })
       .catch((e) => {
-        store.error = `Error 503, Cannot Connect to Server ${e}`
-        setTimeout(store.errorFalse, 5000)
+        if (e.response.status === 400) {
+          router.push("/chat/" + store.userData.chatsList[0].id)
+        } else {
+          store.error = `Error 503, Cannot Connect to Server ${e}`
+          setTimeout(store.errorFalse, 5000)
+        }
       })
   }
 }
