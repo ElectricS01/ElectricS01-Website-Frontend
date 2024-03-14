@@ -7,8 +7,6 @@
     @show-user="showUser = false"
     @editing="editing = $event"
     @status-message="showUser.statusMessage = $event"
-    @users="currentChat.users = $event"
-    @user-sort="userSort(store.sortUsers)"
   />
   <transition>
     <modal-simple
@@ -1220,11 +1218,11 @@ if (!localStorage.getItem("token")) {
       currentChat.value.messages.push(socketMessage.newMessage)
       scrollDown()
     } else if (socketMessage.changeUser) {
-      const userToUpdate = currentChat.value.users.find(
+      const userToUpdate = currentChat.value.users.findIndex(
         (user) => user.id === socketMessage.changeUser.id
       )
-      if (userToUpdate) {
-        userToUpdate.status = socketMessage.changeUser.status
+      if (userToUpdate != -1) {
+        currentChat.value.users[userToUpdate] = socketMessage.changeUser
         // } else {
         // currentChat.value.users.push(socketMessage.changeUser)
       }
@@ -1755,30 +1753,31 @@ const offlineUsers = computed(() =>
   currentChat.value.users.filter((user) => user?.status === "offline")
 )
 async function getChat(id) {
-  if (id) {
-    if (id !== currentChat.value.id) {
-      loadingMessages.value = true
-    }
-    await axios
-      .get(`/api/chat/${id}`)
-      .then((res) => {
-        currentChat.value = res.data
-        currentChat.value.messages.focus = false
-        router.push(`/chat/${currentChat.value.id}`)
-        userSort(store.sortUsers)
-        replyTo.value = null
-        loadingMessages.value = false
-        scrollDown(true)
-      })
-      .catch((e) => {
-        if (e.response.status === 400) {
-          router.push("/chat/" + store.userData.chatsList[0].id)
-        } else {
-          store.error = `Error 503, Cannot Connect to Server ${e}`
-          setTimeout(store.errorFalse, 5000)
-        }
-      })
+  if (!id) {
+    id = store.userData.chatsList[0].id
   }
+  if (id !== currentChat.value.id) {
+    loadingMessages.value = true
+  }
+  await axios
+    .get(`/api/chat/${id}`)
+    .then((res) => {
+      currentChat.value = res.data
+      currentChat.value.messages.focus = false
+      router.push(`/chat/${currentChat.value.id}`)
+      userSort(store.sortUsers)
+      replyTo.value = null
+      loadingMessages.value = false
+      scrollDown(true)
+    })
+    .catch((e) => {
+      if (e.response.status === 400) {
+        router.push("/chat/" + store.userData.chatsList[0].id)
+      } else {
+        store.error = `Error 503, Cannot Connect to Server ${e}`
+        setTimeout(store.errorFalse, 5000)
+      }
+    })
 }
 
 onMounted(async () => {

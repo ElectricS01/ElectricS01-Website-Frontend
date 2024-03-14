@@ -33,9 +33,9 @@
         Collider
       </router-link>
       <router-link
+        v-if="active('/blog')"
         to="/blog"
         :class="{ active: active('/blog') }"
-        v-if="active('/blog')"
         @click="mobileNav"
       >
         Blog

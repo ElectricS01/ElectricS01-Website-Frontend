@@ -178,13 +178,7 @@ const props = defineProps({
   sendDm: Function,
   showUser: [Boolean, Object]
 })
-const emits = defineEmits([
-  "showUser",
-  "editing",
-  "statusMessage",
-  "users",
-  "userSort"
-])
+const emits = defineEmits(["showUser", "editing", "statusMessage"])
 
 let editStatus
 
@@ -207,8 +201,6 @@ const editStatusMessage = () => {
     .then((res) => {
       emits("statusMessage", res.data.statusMessage)
       emits("editing", "")
-      emits("users", res.data.users)
-      emits("userSort")
     })
     .catch((e) => {
       store.error = e

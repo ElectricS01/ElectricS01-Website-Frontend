@@ -437,12 +437,19 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.201.4</div>
+            <div>Version: 1.202.0</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.202 Users list WebSockets</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Added WebSockets to the users list</li>
+              <li>Fixed bug with duplicated users in the users list</li>
+              <li>Updated dependencies</li>
+            </ul>
             <h2 class="settings-text">1.201 New Blog Updates</h2>
             <div class="settings-spacer" />
             <ul>
@@ -592,7 +599,7 @@
             <div class="settings-spacer" />
             <ul>
               <li>
-                Added websockets so you don't need to refresh the page to see
+                Added WebSockets so you don't need to refresh the page to see
                 new messages
               </li>
               <li>Update ESLint to be more strict</li>

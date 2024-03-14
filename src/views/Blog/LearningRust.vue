@@ -50,7 +50,7 @@
         file hosted on my GitHub.
       </p>
       <h3>What I made</h3>
-      <p class="text-main" v-markdown>
+      <p v-markdown class="text-main">
         So my first project in Rust was "Hello, world!" which is the most
         important project for anyone to do when programming, this was simple
         enough teaching me to use the main function and Rust macros.
@@ -76,7 +76,7 @@
         </a>
       </p>
       <h3>Before we go</h3>
-      <p class="text-main" v-markdown>
+      <p v-markdown class="text-main">
         So this is version 1.201.0 now of my website which is only 1 version
         higher
         <router-link to="/blog/first-post">than the last blog post</router-link>
