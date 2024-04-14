@@ -437,12 +437,17 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.202.1</div>
+            <div>Version: 1.203.0</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.203 TonkGame 0.4.3.0.0</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Update TonkGame to the latest version</li>
+            </ul>
             <h2 class="settings-text">1.202 Users list WebSockets</h2>
             <div class="settings-spacer" />
             <ul>
