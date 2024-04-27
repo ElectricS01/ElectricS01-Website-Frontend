@@ -125,7 +125,7 @@
     <div
       class="background"
       :style="{
-        backgroundImage: navbarShown ? 'url(\'src/assets/background.png\')' : ''
+        backgroundImage: navbarShown ? 'url(\'background.png\')' : ''
       }"
     />
     <transition>
