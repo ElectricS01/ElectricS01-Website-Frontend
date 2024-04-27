@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="grid-menu">
-      <div class="menu">
+      <div class="chat-menu">
         <div class="grid-card">
           <p class="message-text-large">Login</p>
           <div class="text-small">

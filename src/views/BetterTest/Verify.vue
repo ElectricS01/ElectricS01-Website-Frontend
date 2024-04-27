@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="grid-menu">
-      <div class="menu">
+      <div class="chat-menu">
         <div class="grid-card">
           <p>Verify your account</p>
           <button style="margin-top: 12px" @click="submit">Verify</button>

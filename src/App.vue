@@ -121,7 +121,15 @@
       </p>
     </transition>
   </header>
-  <main>
+  <main :class="isDarkMode === 'true' ? 'dark-mode' : 'light-mode'">
+    <div
+      class="background"
+      :style="{
+        backgroundImage: navbarShown
+          ? 'url(\'/src/assets/background.png\')'
+          : ''
+      }"
+    />
     <transition>
       <modal-simple
         v-if="store.quickSwitcherShown"
@@ -170,9 +178,19 @@ const store = useDataStore()
 
 const highlightedIndex = ref(0)
 const switcherInput = ref()
+const isDarkMode = ref("true")
 
 let searchedItems = store.switcherItems
 
+if (localStorage.getItem("isDarkMode")) {
+  isDarkMode.value = localStorage.getItem("isDarkMode")
+} else {
+  localStorage.setItem("isDarkMode", "true")
+  isDarkMode.value = "true"
+}
+if (localStorage.getItem("isDarkMode") !== "true") {
+  document.body.style.backgroundColor = "white"
+}
 Object.assign(axios.defaults, {
   headers: { Authorization: localStorage.getItem("token") }
 })
@@ -207,6 +225,16 @@ const mobileNav = () => {
   } else {
     nav.className = "navbar"
   }
+}
+let toggleMode = () => {
+  if (localStorage.getItem("isDarkMode") !== "true") {
+    localStorage.setItem("isDarkMode", "true")
+    document.body.style.backgroundColor = "#181a1b"
+  } else {
+    localStorage.setItem("isDarkMode", "false")
+    document.body.style.backgroundColor = "white"
+  }
+  isDarkMode.value = localStorage.getItem("isDarkMode")
 }
 const toggleSidebar = () => {
   if (

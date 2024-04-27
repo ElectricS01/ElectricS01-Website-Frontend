@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="grid-menu">
-      <div class="menu">
+      <div class="chat-menu">
         <div class="grid-card">
           <div v-if="success">An email has been sent to {{ email }}</div>
           <div v-else>

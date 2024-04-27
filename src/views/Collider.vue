@@ -1,21 +1,22 @@
 <template>
-  <div class="container scroll-bar">
-    <iframe
-      id="game_drop"
-      :style="minDimension"
-      title="Collider"
-      allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
-      src="/colliderGame.html"
-      allowtransparency="true"
-    />
-    <h3>Collider By ElectricS01</h3>
-    <p class="message-text-medium-gray">
-      Inspired by
-      <a href="https://github.com/KDE/kollision">Kollision</a>
-    </p>
-    <p class="message-text-medium-gray">
-      <a href="https://github.com/ElectricS01/Collider">source code</a>
-    </p>
+  <div class="container-flex scroll-bar">
+    <div class="menu">
+      <iframe
+        id="game_drop"
+        :style="minDimension"
+        title="Collider"
+        allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
+        src="/colliderGame.html"
+      />
+      <h3>Collider By ElectricS01</h3>
+      <p class="message-text-medium-gray">
+        Inspired by
+        <a href="https://github.com/KDE/kollision">Kollision</a>
+      </p>
+      <p class="message-text-medium-gray">
+        <a href="https://github.com/ElectricS01/Collider">source code</a>
+      </p>
+    </div>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="background">
+  <div class="model-background">
     <div class="modal" :class="{ 'is-active': isActive }" @click="closeModal">
       <div @click.stop>
         <slot />
@@ -21,7 +21,7 @@ const closeModal = () => emit("close")
 </script>
 
 <style scoped>
-.background {
+.model-background {
   position: fixed;
   top: 0;
   left: 0;
