@@ -122,12 +122,14 @@
     </transition>
   </header>
   <main :class="isDarkMode === 'true' ? 'dark-mode' : 'light-mode'">
-    <div
-      class="background"
-      :style="{
-        backgroundImage: navbarShown ? 'url(\'background.png\')' : ''
-      }"
-    />
+    <div class="background-container">
+      <div
+        class="background"
+        :style="{
+          backgroundImage: navbarShown ? 'url(\'background.png\')' : ''
+        }"
+      />
+    </div>
     <transition>
       <modal-simple
         v-if="store.quickSwitcherShown"
