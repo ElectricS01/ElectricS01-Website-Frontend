@@ -566,9 +566,10 @@
                 :style="{
                   height: replyTo ? '36px' : '',
                   marginRight:
-                    store.sidebarOpen === 'true' && !store.search
+                    store.sidebarOpen === 'true' &&
+                    !(store.search || store.pins)
                       ? '250px'
-                      : store.search
+                      : store.search || store.pins
                         ? '350px'
                         : '',
                   marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
@@ -1214,9 +1215,11 @@ if (!localStorage.getItem("token")) {
       store.error = `Error 401, ${socketMessage.authFail}`
       router.push("/login")
     } else if (socketMessage.newMessage) {
-      socketMessage.newMessage.focus = false
-      currentChat.value.messages.push(socketMessage.newMessage)
-      scrollDown()
+      if socketMessage.newMessage.chatId === currentChat.value.id {}
+        socketMessage.newMessage.focus = false
+        currentChat.value.messages.push(socketMessage.newMessage)
+        scrollDown()
+      }
     } else if (socketMessage.changeUser) {
       const userToUpdate = currentChat.value.users.findIndex(
         (user) => user.id === socketMessage.changeUser.id
