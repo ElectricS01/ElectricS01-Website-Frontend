@@ -1215,7 +1215,7 @@ if (!localStorage.getItem("token")) {
       store.error = `Error 401, ${socketMessage.authFail}`
       router.push("/login")
     } else if (socketMessage.newMessage) {
-      if socketMessage.newMessage.chatId === currentChat.value.id {}
+      if (socketMessage.newMessage.chatId === currentChat.value.id) {
         socketMessage.newMessage.focus = false
         currentChat.value.messages.push(socketMessage.newMessage)
         scrollDown()
