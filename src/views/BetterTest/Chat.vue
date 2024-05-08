@@ -1399,9 +1399,9 @@ const editMessage = (messageId) => {
     })
     .then((res) => {
       editing.value = ""
-      currentChat.value.messages = res.data
-      currentChat.value.messages.focus = false
-      scrollDown()
+      currentChat.value.messages[
+        currentChat.value.messages.findIndex((e) => e.id === messageId)
+      ] = res.data
     })
     .catch((e) => {
       store.error = e.response.data.message

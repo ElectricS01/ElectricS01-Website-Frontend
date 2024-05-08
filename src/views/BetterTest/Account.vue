@@ -437,12 +437,29 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.204.5</div>
+            <div>Version: 1.205.0</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>Better Communications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.205 Bug fixes</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Update context menus to work on Chromium 124+</li>
+              <li>Fix message contents not updating when edited</li>
+              <li>Update to work with backend 1.101.0</li>
+              <li>
+                Fix WebSocket adding new messages in the wrong chats (1.204.4
+                and 1.204.5)
+              </li>
+              <li>
+                Fix pinned messages sidebar breaking "Scroll to bottom"
+                (1.204.4)
+              </li>
+              <li>Fix new background image (1.204.1, 1.204.2, and 1.204.3)</li>
+              <li>Updated dependencies (1.204.2)</li>
+            </ul>
             <h2 class="settings-text">1.204 New UI</h2>
             <div class="settings-spacer" />
             <ul>
@@ -500,8 +517,8 @@
               <li>Update PWA manifest</li>
               <li>Include more assets with PWA</li>
               <li>Updated dependencies</li>
-              <li>Bug fixes (199.1 and 199.2)</li>
-              <li>Updated dependencies (199.2)</li>
+              <li>Bug fixes (1.199.1 and 1.199.2)</li>
+              <li>Updated dependencies (1.199.2)</li>
             </ul>
             <h2 class="settings-text">1.199 New Messages</h2>
             <div class="settings-spacer" />
@@ -516,11 +533,11 @@
                 <router-link to="/account/security">
                   Security Settings
                 </router-link>
-                (198.1)
+                (1.198.1)
               </li>
-              <li>Update to work with backend 1.99</li>
-              <li>Bug fixes (198.1)</li>
-              <li>Updated dependencies (198.1)</li>
+              <li>Update to work with backend 1.99.0</li>
+              <li>Bug fixes (1.198.1)</li>
+              <li>Updated dependencies (1.198.1)</li>
             </ul>
             <h2 class="settings-text">1.198 Encryption</h2>
             <div class="settings-spacer" />
@@ -542,7 +559,7 @@
                   Security Settings
                 </router-link>
               </li>
-              <li>Update to work with backend 1.98</li>
+              <li>Update to work with backend 1.98.0</li>
               <li>Bug fixes</li>
               <li>Updated dependencies</li>
             </ul>
@@ -552,7 +569,7 @@
               <li>You can now pin your own messages</li>
               <li>Icon updates</li>
               <li>Update to use bun</li>
-              <li>Update to work with backend 1.97</li>
+              <li>Update to work with backend 1.97.0</li>
               <li>Bug fixes (1.196.1)</li>
               <li>Bug fixes</li>
               <li>Updated dependencies</li>
@@ -563,7 +580,7 @@
             <ul>
               <li>Updated admin analytics</li>
               <li>Context menus now close when you click off them</li>
-              <li>Update to work with backend 1.94</li>
+              <li>Update to work with backend 1.94.0</li>
               <li>Fix ESLint (1.195.1)</li>
               <li>Bug fixes (1.195.1)</li>
               <li>Bug fixes</li>
@@ -573,7 +590,7 @@
             <div class="settings-spacer" />
             <ul>
               <li>You can now add users to a chat using their username</li>
-              <li>Update to work with backend 1.93</li>
+              <li>Update to work with backend 1.93.0</li>
               <li>Bug fixes</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
@@ -585,7 +602,7 @@
                 You can now create a Direct Message with anyone using the
                 "Create Chat" menu
               </li>
-              <li>Update to work with backend 1.92</li>
+              <li>Update to work with backend 1.92.0</li>
               <li>Fix Chat Creation (1.193.2 and 1.193.3)</li>
               <li>Bug fixes (1.193.1)</li>
               <li>Bug fixes</li>
@@ -603,7 +620,7 @@
               </li>
               <li>Online and offline users now update on the users sidebar</li>
               <li>BetterCommunications should load faster now</li>
-              <li>Update to work with backend 1.90</li>
+              <li>Update to work with backend 1.90.0</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
             </ul>
@@ -616,7 +633,7 @@
               </li>
               <li>Update ESLint to be more strict</li>
               <li>Fix ESLint (1.191.1)</li>
-              <li>Update to work with backend 1.89</li>
+              <li>Update to work with backend 1.89.0</li>
               <li>Bug fixes</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
@@ -742,7 +759,7 @@
               <li>Added "New Messages" status indicator</li>
               <li>Fixed issue with search</li>
               <li>Fixed issue with changing status message</li>
-              <li>Support for TypeScript backend 1.83</li>
+              <li>Support for TypeScript backend 1.83.0</li>
               <li v-markdown>Switched more code to `script setup`</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>

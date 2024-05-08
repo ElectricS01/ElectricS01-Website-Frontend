@@ -2,7 +2,7 @@
   <div>
     <span
       v-for="(part, index) in messageParts"
-      :key="index"
+      :key="part"
       @click="handleClick(part)"
     >
       <span v-if="check(index)" v-html="part" />

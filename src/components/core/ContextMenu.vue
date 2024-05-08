@@ -44,8 +44,10 @@ onMounted(() => {
 }
 .context-menu {
   inset: unset;
-  anchor-default: --i-btn;
-  position-fallback: --right-to-left;
+  position-anchor: --i-btn;
+  top: calc(anchor(top) - 2px);
+  left: calc(anchor(left) - 2px);
+  position-try-options: --right-top, --left-bottom, --right-bottom;
   color: white;
   border-radius: 2px;
   background-color: #181a1b;
@@ -54,22 +56,20 @@ onMounted(() => {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   width: max-content;
 }
-@position-fallback --right-to-left {
-  @try {
-    left: calc(anchor(left) - 2px);
-    top: calc(anchor(top) - 2px);
-  }
-  @try {
-    right: calc(anchor(right) - 2px);
-    top: calc(anchor(top) - 2px);
-  }
-  @try {
-    left: calc(anchor(left) - 2px);
-    bottom: calc(anchor(bottom) - 2px);
-  }
-  @try {
-    right: calc(anchor(right) - 2px);
-    bottom: calc(anchor(bottom) - 2px);
-  }
+@position-try --right-top {
+  right: calc(anchor(right) - 2px);
+  top: calc(anchor(top) - 2px);
+  left: unset;
+}
+@position-try --left-bottom {
+  left: calc(anchor(left) - 2px);
+  bottom: calc(anchor(bottom) - 2px);
+  top: unset;
+}
+@position-try --right-bottom {
+  right: calc(anchor(right) - 2px);
+  bottom: calc(anchor(bottom) - 2px);
+  left: unset;
+  top: unset;
 }
 </style>

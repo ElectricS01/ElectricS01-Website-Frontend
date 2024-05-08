@@ -23,15 +23,12 @@ const menuStyle = computed(() => {
 
 <style scoped>
 .parent {
-  anchor-name: --i-btn;
   position: fixed;
   z-index: 3;
 }
 .context-menu {
   translate: -50% -100%;
   inset: unset;
-  anchor-default: --i-btn;
-  position-fallback: --top-to-bottom;
   display: block;
   color: white;
   border-radius: 2px;
@@ -40,23 +37,5 @@ const menuStyle = computed(() => {
   padding: 2px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   width: max-content;
-}
-@position-fallback --top-to-bottom {
-  @try {
-    left: anchor(center);
-    bottom: anchor(top);
-  }
-  @try {
-    right: anchor(right);
-    top: anchor(top);
-  }
-  @try {
-    left: anchor(left);
-    bottom: anchor(bottom);
-  }
-  @try {
-    right: anchor(right);
-    bottom: anchor(bottom);
-  }
 }
 </style>
