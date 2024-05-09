@@ -570,8 +570,8 @@
                     !(store.search || store.pins)
                       ? '250px'
                       : store.search || store.pins
-                      ? '350px'
-                      : '',
+                        ? '350px'
+                        : '',
                   marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
                 }"
                 style="
@@ -712,7 +712,6 @@
               {{ user.username }}
             </b>
             <p
-              v-if="user.status !== 'offline'"
               class="message-text-medium-gray"
               style="
                 overflow: hidden;
@@ -771,17 +770,6 @@
             >
               {{ user.username }}
             </b>
-            <p
-              class="message-text-medium-gray"
-              style="
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                width: 178px;
-              "
-            >
-              {{ user.statusMessage }}
-            </p>
           </div>
         </div>
         <context-menu
