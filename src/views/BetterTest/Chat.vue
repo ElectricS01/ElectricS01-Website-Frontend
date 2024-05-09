@@ -712,6 +712,7 @@
               {{ user.username }}
             </b>
             <p
+              v-if="user.status != 'offline'"
               class="message-text-medium-gray"
               style="
                 overflow: hidden;
@@ -852,6 +853,12 @@
             @click="removeUser(contextMenuItemUser.id)"
           >
             Remove {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            class="context-menu-item"
+            @click="copyText(contextMenuItemUser.id)"
+          >
+            Copy User ID
           </div>
         </context-menu>
       </div>
@@ -1601,6 +1608,10 @@ const removeUser = (userId) => {
       store.error = e.response.data.message
       setTimeout(store.errorFalse, 5000)
     })
+}
+const copyText = (text) => {
+  contextMenuVisible.value = false
+  navigator.clipboard.writeText(text)
 }
 const scrollDown = (override) => {
   nextTick(() => {

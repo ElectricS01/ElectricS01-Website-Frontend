@@ -494,12 +494,13 @@ button:hover,
 }
 
 .mention {
+  padding: 1px;
   background-color: #1e90ff80;
   border-radius: 2px;
   cursor: pointer;
 
   &:hover {
-    background-color: rgb(30, 144, 255);
+    background-color: #1e90ffbf;
   }
 }
 

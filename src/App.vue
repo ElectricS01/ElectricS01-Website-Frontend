@@ -56,17 +56,19 @@
         class="chat-button"
         :class="{ 'responsive-chat': route.path.startsWith('/chat') }"
         to="/chat"
+        title="Go to BetterCommunications home"
       >
-        Better Communications
+        BetterCommunications
       </router-link>
       <icons
         v-if="active('/chat')"
         size="28"
         icon="chats"
         class="left chat-icon"
-        title="Show chats"
         @click="toggleChatBar"
-      />
+      >
+        <title>Show or hide chats</title>
+      </icons>
       <router-link
         v-if="store.userData.id"
         class="right chat-icon"
@@ -86,34 +88,37 @@
       <router-link
         class="right chat-button"
         to="/"
-        title="Got to ElectricS01.com home"
+        title="Go to ElectricS01.com home"
       >
         Home
       </router-link>
       <icons
         v-if="active('/chat')"
         class="right chat-icon"
-        title="Show users"
         size="28"
         icon="users"
         @click="toggleSidebar"
-      />
+      >
+        <title>Show users</title>
+      </icons>
       <icons
         v-if="active('/chat')"
         class="right chat-icon"
-        title="Search this chat"
         size="28"
         icon="search"
         @click=";(store.search = !store.search), (store.pins = false)"
-      />
+      >
+        <title>Search this chat</title>
+      </icons>
       <icons
         v-if="active('/chat')"
         class="right chat-icon"
-        title="View this chat's pins"
         size="28"
         icon="pin"
         @click=";(store.pins = !store.pins), (store.search = false)"
-      />
+      >
+        <title>View this chat's pins</title>
+      </icons>
     </div>
     <transition>
       <p v-if="store.error" class="error-banner">

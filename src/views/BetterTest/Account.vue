@@ -426,9 +426,9 @@
             </div>
           </div>
           <div v-else-if="page === 'about'" class="settings-page-container">
-            <h2 class="settings-text">About Better Communications</h2>
+            <h2 class="settings-text">About BetterCommunications</h2>
             <div>
-              Better Communications is free and open-source chatting platform
+              BetterCommunications is free and open-source chatting platform
               available to all
             </div>
             <div class="settings-spacer" />
@@ -437,12 +437,20 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.205.0</div>
+            <div>Version: 1.206.0</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
-            <div>Better Communications changelog</div>
+            <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.206 Bug fixes</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Add padding and change colour of mentions</li>
+              <li>Add tooltips to navbar items</li>
+              <li>Hide user status when they're offline</li>
+              <li>Add "Copy User ID" to user context menu</li>
+            </ul>
             <h2 class="settings-text">1.205 Bug fixes</h2>
             <div class="settings-spacer" />
             <ul>

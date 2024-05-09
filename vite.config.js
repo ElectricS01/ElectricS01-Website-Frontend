@@ -8,7 +8,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       manifest: {
-        name: "Better Communications",
+        name: "BetterCommunications",
         short_name: "BetterComms",
         description: "A Better Communications platform",
         icons: [
