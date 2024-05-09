@@ -570,8 +570,8 @@
                     !(store.search || store.pins)
                       ? '250px'
                       : store.search || store.pins
-                        ? '350px'
-                        : '',
+                      ? '350px'
+                      : '',
                   marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
                 }"
                 style="
@@ -712,7 +712,7 @@
               {{ user.username }}
             </b>
             <p
-              v-if="user.status != 'offline'"
+              v-if="user.status !== 'offline'"
               class="message-text-medium-gray"
               style="
                 overflow: hidden;
