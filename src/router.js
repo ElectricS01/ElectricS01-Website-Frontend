@@ -77,52 +77,76 @@ const routes = [
     redirect: "/chat/1"
   },
   {
-    component: () => import("./views/BetterTest/Chat.vue"),
+    component: () => import("./views/BetterComms/Chat.vue"),
     name: "user",
-    path: "/user/:id"
+    path: "/user/:id",
+    meta: {
+      title: "BetterComms"
+    }
   },
   {
     path: "/chat",
     redirect: "/chat/1"
   },
   {
-    component: () => import("./views/BetterTest/Chat.vue"),
+    component: () => import("./views/BetterComms/Chat.vue"),
     name: "chat",
-    path: "/chat/:chatId"
+    path: "/chat/:chatId",
+    meta: {
+      title: "BetterComms"
+    }
   },
   {
-    component: () => import("./views/BetterTest/Account.vue"),
+    component: () => import("./views/BetterComms/Account.vue"),
     name: "account",
-    path: "/account/:id"
+    path: "/account/:id",
+    meta: {
+      title: "Account Settings"
+    }
   },
   {
     path: "/account",
     redirect: "/account/account"
   },
   {
-    component: () => import("./views/BetterTest/Login.vue"),
+    component: () => import("./views/BetterComms/Login.vue"),
     name: "login",
-    path: "/login"
+    path: "/login",
+    meta: {
+      title: "Login To BetterComms"
+    }
   },
   {
-    component: () => import("./views/BetterTest/Register.vue"),
+    component: () => import("./views/BetterComms/Register.vue"),
     name: "register",
-    path: "/register"
+    path: "/register",
+    meta: {
+      title: "Register To BetterComms"
+    }
   },
   {
-    component: () => import("./views/BetterTest/Reset.vue"),
+    component: () => import("./views/BetterComms/Reset.vue"),
     name: "reset",
-    path: "/reset"
+    path: "/reset",
+    meta: {
+      title: "Reset Your password"
+    }
   },
   {
-    component: () => import("./views/BetterTest/Verify.vue"),
+    component: () => import("./views/BetterComms/Verify.vue"),
     name: "verify",
-    path: "/verify"
+    path: "/verify",
+    meta: {
+      title: "Verify Your Account"
+    }
   },
   {
     component: () => import("./views/404.vue"),
     name: "404",
-    path: "/:pathMatch(.*)*"
+    path: "/:pathMatch(.*)*",
+    meta: {
+      title: "404: Page Not Found"
+    }
   }
 ]
 

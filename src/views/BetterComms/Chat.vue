@@ -300,6 +300,7 @@
         <div style="text-align: center" class="loader" />
       </div>
     </sidebar-left>
+    <friends />
     <div
       style="
         flex-grow: 1;
@@ -1149,6 +1150,7 @@ import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
+import Friends from "@/views/BetterComms/Friends.vue"
 
 import dayjs from "dayjs"
 import { useDataStore } from "@/stores/main"

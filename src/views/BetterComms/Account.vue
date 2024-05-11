@@ -437,12 +437,24 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.206.2</div>
+            <div>Version: 1.207.0</div>
+            <div class="settings-spacer" />
+            <div>Backend name: {{ serverName }}</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.207 Backend Server Name</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Display Backend Server Name in the
+                <router-link to="/account/privacy">About Page</router-link>
+              </li>
+              <li>Add browser titles to all pages</li>
+              <li>Refactor file paths</li>
+            </ul>
             <h2 class="settings-text">1.206 Bug fixes</h2>
             <div class="settings-spacer" />
             <ul>
@@ -903,6 +915,7 @@ const properties = [
 ]
 const dmOptions = ["no one", "friends", "everyone"]
 const encryptionOptions = ["never", "off", "on", "always"]
+const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
 
 const modalOpen = ref(false)
 const passwordModalOpen = ref(false)
