@@ -83,7 +83,7 @@
               Add Friend
             </button>
             <button
-              v-if="
+              v-else-if="
                 showUser.id !== store.userData.id &&
                 showUser.friend[0]?.status === 'accepted'
               "
@@ -100,7 +100,7 @@
               Remove Friend
             </button>
             <button
-              v-if="
+              v-else-if="
                 showUser.friendRequests &&
                 showUser.friend[0]?.status === 'pending'
               "
@@ -117,7 +117,7 @@
               Pending
             </button>
             <button
-              v-if="
+              v-else-if="
                 showUser.id !== store.userData.id &&
                 showUser.friend[0]?.status === 'incoming'
               "

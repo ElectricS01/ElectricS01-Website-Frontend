@@ -93,7 +93,7 @@
         Home
       </router-link>
       <icons
-        v-if="active('/chat')"
+        v-if="active('/chat') && !store.showFriends"
         class="right chat-icon"
         size="28"
         icon="users"
@@ -102,7 +102,7 @@
         <title>Show users</title>
       </icons>
       <icons
-        v-if="active('/chat')"
+        v-if="active('/chat') && !store.showFriends"
         class="right chat-icon"
         size="28"
         icon="search"
@@ -111,7 +111,7 @@
         <title>Search this chat</title>
       </icons>
       <icons
-        v-if="active('/chat')"
+        v-if="active('/chat') && !store.showFriends"
         class="right chat-icon"
         size="28"
         icon="pin"

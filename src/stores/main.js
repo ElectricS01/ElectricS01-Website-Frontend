@@ -1,8 +1,12 @@
 import { defineStore } from "pinia"
 import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
+
 import { nextTick, ref } from "vue"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
+
+dayjs.extend(relativeTime)
 
 const switcherPages = [
   "Home",
@@ -24,12 +28,15 @@ export const useDataStore = defineStore("store", () => {
   const quickSwitcherShown = ref(false)
   const loadingChats = ref(true)
   const switcherItems = ref(switcherPages)
+  const showFriends = ref(false)
 
   const errorFalse = () => {
     error.value = ""
   }
   const dayjsLong = (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss")
   const dayjsDate = (date) => dayjs(date).format("D MMMM YYYY")
+  const dayjsSince = (date) => dayjs(date).fromNow()
+
   const getItemSearches = (item) => {
     if (Array.isArray(item)) {
       const id = item[0]
@@ -179,6 +186,7 @@ export const useDataStore = defineStore("store", () => {
     chatSort,
     dayjsDate,
     dayjsLong,
+    dayjsSince,
     editFocus,
     error,
     errorFalse,
@@ -189,6 +197,7 @@ export const useDataStore = defineStore("store", () => {
     switcherItems,
     userData,
     savePrivateKey,
-    encryptPrivateKey
+    encryptPrivateKey,
+    showFriends
   }
 })

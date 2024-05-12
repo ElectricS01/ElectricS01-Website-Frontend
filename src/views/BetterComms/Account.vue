@@ -437,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.207.0</div>
+            <div>Version: 1.208.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -445,6 +445,15 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.208 Friends List</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Added a friends list which shows all incoming, outgoing, and
+                accepted friends
+              </li>
+              <li>Update to work with backend 1.102.0</li>
+            </ul>
             <h2 class="settings-text">1.207 Backend Server Name</h2>
             <div class="settings-spacer" />
             <ul>
