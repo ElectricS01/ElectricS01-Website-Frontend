@@ -305,13 +305,14 @@
       </div>
     </sidebar-left>
     <friends v-if="store.showFriends" :add-friend="addFriend" />
-    <div v-else style="flex-grow: 1; display: flex">
+    <div v-else style="flex-grow: 1; display: flex; width: calc(100% - 700px)">
       <div
         style="
           flex-grow: 1;
           display: flex;
           flex-direction: column;
           height: 100%;
+          width: calc(100% - 700px);
         "
       >
         <div
