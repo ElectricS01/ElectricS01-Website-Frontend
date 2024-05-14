@@ -157,14 +157,21 @@ iframe {
   background-color: #ffffff1a;
 }
 
-.button a,
+.button,
 button {
-  background-color: #282a2b;
+  min-width: 14px;
+  background-color: #282a2bbf;
   color: #fff;
-  padding: 14px 16px;
+  padding: 8px;
+  border-radius: 4px;
+  margin: 4px;
   font-size: 17px;
   border: none;
   cursor: pointer;
+  animation: fadeIn 1s forwards;
+  transition:
+    background-color 1s ease,
+    color 1s ease;
 }
 
 .button-red {
@@ -419,22 +426,31 @@ button {
   background-color: #2d5431;
 }
 
+.button.active,
 .navbar a.active {
   background-color: rgba(255, 255, 255, 0.075);
 }
 
+.light-mode .button.active,
 .light-mode .navbar a.active {
   background-color: rgba(0, 0, 0, 0.075);
 }
 
+.button:hover,
 .navbar a:hover {
   background-color: rgba(255, 255, 255, 0.1);
   transition: background-color 0.25s ease;
 }
 
+.light-mode .button:hover,
 .light-mode .navbar a:hover {
   background-color: rgba(0, 0, 0, 0.1);
   transition: background-color 0.25s ease;
+}
+
+.light-mode .icon-mobile {
+  color: #000;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .filter-button:hover,
@@ -449,9 +465,7 @@ button {
 .scroll-bar::-webkit-scrollbar-thumb:hover,
 .left:hover,
 .right:hover,
-.button a:hover,
 button:hover,
-.icon-mobile:hover,
 .chat-navbar a:hover {
   background-color: #313435;
 }
@@ -460,6 +474,24 @@ button:hover,
 .chat-settings:hover,
 .message-grid:hover {
   background-color: #212425;
+}
+
+.light-mode .icon-mobile {
+  color: #000;
+}
+
+.icon-mobile:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition:
+    background-color 0.25s ease,
+    fill 1s ease;
+}
+
+.light-mode .icon-mobile:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  transition:
+    background-color 0.25s ease,
+    fill 1s ease;
 }
 
 .icon-mobile {
@@ -475,15 +507,19 @@ button:hover,
     line-height: 24px;
     width: 28px;
     height: 28px;
-    padding: 10px;
+    padding: 6px;
+    margin: 4px 4px 4px 0;
+    border-radius: 4px;
     position: absolute;
     right: 0;
     top: 0;
-    float: right;
     display: block;
     text-align: center;
     font-size: 17px;
     cursor: pointer;
+    transition:
+      background-color 1s ease,
+      color 1s ease;
   }
 
   .navbar.responsive a {
@@ -642,7 +678,6 @@ a {
 
 p {
   color: #fff;
-  margin: 0;
 }
 
 h1 {
@@ -658,6 +693,14 @@ h4 {
   font-size: 24px;
   margin-top: 16px;
   margin-bottom: 4px;
+}
+
+.title {
+  font-size: 36px;
+  margin-top: 12px;
+  animation:
+    slideIn 1s forwards,
+    fadeIn 1s forwards;
 }
 
 .message-text-large {

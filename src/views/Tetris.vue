@@ -9,6 +9,16 @@
         src="/tetrisGame.html"
       />
       <h3>Tetris By ElectricS01 0.25</h3>
+      {{
+        store.userData.id
+          ? "You are logged in"
+          : "You are not logged in, your scores will not save to your account"
+      }}
+      <div class="center">
+        <div v-if="store.userData.id" class="button" @click="leaving">
+          Save Scores
+        </div>
+      </div>
       <p class="message-text-medium-gray">
         My own rendition of the popular game Tetris made with GameMaker Studio
       </p>
@@ -22,6 +32,8 @@
 <script setup>
 import axios from "axios"
 import { computed, onUnmounted } from "vue"
+import { useDataStore } from "@/stores/main"
+const store = useDataStore()
 
 let viewportWidth = window.innerWidth - 16
 let viewportHeight = window.innerHeight - 48
