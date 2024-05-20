@@ -24,7 +24,7 @@
         </router-link>
       </div>
       <div class="box grid-item">
-        <router-link class="border" to="/tonkgame">
+        <router-link class="border" to="/chat">
           <img
             src="../assets/comms.webp"
             alt="BetterCommunications"
