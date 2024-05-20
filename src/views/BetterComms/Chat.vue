@@ -1796,7 +1796,7 @@ async function getChat(id) {
       scrollDown(true)
     })
     .catch((e) => {
-      if (e.response.status === 400) {
+      if (e.response?.status === 400) {
         router.push("/chat/" + store.userData.chatsList[0].id)
       } else {
         store.error = `Error 503, Cannot Connect to Server ${e}`
