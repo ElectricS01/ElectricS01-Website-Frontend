@@ -1798,7 +1798,7 @@ async function getChat(id) {
     .catch((e) => {
       if (e.response?.status === 400) {
         router.push("/chat/" + store.userData.chatsList[0].id)
-      } else {
+      } else if (e.response?.status !== 401) {
         store.error = `Error 503, Cannot Connect to Server ${e}`
         setTimeout(store.errorFalse, 5000)
       }
