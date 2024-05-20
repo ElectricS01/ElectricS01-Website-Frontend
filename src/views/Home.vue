@@ -24,6 +24,23 @@
         </router-link>
       </div>
       <div class="box grid-item">
+        <router-link class="border" to="/tonkgame">
+          <img
+            src="../assets/comms.webp"
+            alt="BetterCommunications"
+            class="grid-image"
+          />
+          <div class="small-container">
+            <p class="text-medium">BetterCommunications</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              BetterCommunications is free and open-source chatting platform
+              available to all
+            </p>
+          </div>
+        </router-link>
+      </div>
+      <div class="box grid-item">
         <router-link class="border" to="/tetris">
           <img
             src="../assets/tetris.webp"

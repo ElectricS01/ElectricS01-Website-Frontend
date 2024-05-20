@@ -41,6 +41,9 @@ iframe {
   overflow-y: auto;
   text-align: center;
   padding: 0 8px 8px;
+  animation:
+    slideIn-page 1s forwards,
+    fadeIn 1s forwards;
 }
 
 .container-flex {
@@ -555,7 +558,7 @@ button:hover,
   background-color: rgba(40, 42, 43, 0.75);
   border-radius: 15px;
   overflow: hidden;
-  width: 300px;
+  width: 404px;
 }
 
 .box {
@@ -709,9 +712,6 @@ h4 {
 .title {
   font-size: 36px;
   margin-top: 12px;
-  animation:
-    slideIn 1s forwards,
-    fadeIn 1s forwards;
 }
 
 .message-text-large {
@@ -825,6 +825,15 @@ h4 {
   align-content: center;
 }
 
+@keyframes slideIn-page {
+  0% {
+    margin-top: -16px;
+  }
+  100% {
+    margin-top: 0;
+  }
+}
+
 @keyframes slideIn-menu {
   0% {
     margin-top: 0;
@@ -919,8 +928,12 @@ h4 {
 }
 
 .grid-image {
-  width: 300px;
-  height: 300px;
+  width: 384px;
+  height: 216px;
+  object-fit: cover;
+  object-position: top;
+  margin: 10px 0 0;
+  border-radius: 10px;
 }
 
 .sidebar {
