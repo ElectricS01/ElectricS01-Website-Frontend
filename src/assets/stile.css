@@ -558,7 +558,7 @@ button:hover,
   background-color: rgba(40, 42, 43, 0.75);
   border-radius: 15px;
   overflow: hidden;
-  width: 404px;
+  width: 372px;
 }
 
 .box {
@@ -928,8 +928,8 @@ h4 {
 }
 
 .grid-image {
-  width: 384px;
-  height: 216px;
+  width: 352px;
+  height: 198px;
   object-fit: cover;
   object-position: top;
   margin: 10px 0 0;

@@ -97,8 +97,10 @@ export const useDataStore = defineStore("store", () => {
         }
       })
       .catch((e) => {
-        error.value = `Error 503, Cannot Connect to Server ${e}`
-        setTimeout(errorFalse.value, 5000)
+        if (e.response?.status !== 401) {
+          error.value = `Error 503, Cannot Connect to Server ${e}`
+          setTimeout(errorFalse, 5000)
+        }
       })
   }
   const chatSort = () => {

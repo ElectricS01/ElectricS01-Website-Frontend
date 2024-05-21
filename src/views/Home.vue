@@ -43,6 +43,7 @@
       <div class="box grid-item">
         <router-link class="border" to="/tetris">
           <img
+            style="object-fit: contain; background-color: #000"
             src="../assets/tetris.webp"
             alt="Tetris By ElectricS01"
             class="grid-image"
@@ -87,6 +88,35 @@
             <p class="message-text-medium-gray">
               BetterScheduler is an interactive and simple tool to build
               schedules for school, work, and home
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="box grid-item">
+        <a class="border" href="https://github.com/ElectricS01/TPU-Mac">
+          <img src="../assets/tpumac.webp" alt="TPU Mac" class="grid-image" />
+          <div class="small-container">
+            <p class="text-medium">TPU Mac</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              A native macOS App for Troplo's TPU file hoster made with SwiftUI
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="box grid-item">
+        <a class="border" href="https://flowinity.com">
+          <img
+            src="https://troplo.com/img/proj01.6533b57c.png"
+            alt="TPU"
+            class="grid-image"
+          />
+          <div class="small-container">
+            <p class="text-medium">TPU</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              I've contributed changes and bug fixes to the open source file
+              hoster TPU
             </p>
           </div>
         </a>

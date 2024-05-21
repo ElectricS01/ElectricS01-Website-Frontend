@@ -437,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.210.3</div>
+            <div>Version: 1.211.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -445,10 +445,16 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.211 Home Page updates and big fixes</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Added TPU and TPU Mac to the Home Page</li>
+              <li>Fixed error messages with BetterCommunications</li>
+            </ul>
             <h2 class="settings-text">1.210 UI Updates</h2>
             <div class="settings-spacer" />
             <ul>
-              <li>Updates to Home page</li>
+              <li>Added BetterCommunications to the Home Page</li>
               <li>Update to animations on all pages</li>
             </ul>
             <h2 class="settings-text">1.209 UI Updates</h2>
@@ -505,7 +511,7 @@
             <div class="settings-spacer" />
             <ul>
               <li>
-                Updated the UI of the home page to match the rest of my websites
+                Updated the UI of the Home Page to match the rest of my websites
               </li>
             </ul>
             <h2 class="settings-text">1.203 TonkGame 0.4.3.0.0</h2>
@@ -525,7 +531,7 @@
             <ul>
               <li>
                 Updated the
-                <router-link to="/blog">Blog page</router-link>
+                <router-link to="/blog">Blog Page</router-link>
                 and added it to the navbar
               </li>
               <li>
@@ -538,7 +544,7 @@
                 Added
                 <router-link to="/scheduler">BetterScheduler</router-link>
                 to the
-                <router-link to="/">Home page</router-link>
+                <router-link to="/">Home Page</router-link>
               </li>
               <li>Upgrade to Vite PWA to 0.18.0</li>
               <li>Updated dependencies</li>

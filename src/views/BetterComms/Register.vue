@@ -103,7 +103,9 @@ const submit = async () => {
       router.push("/chat")
     })
     .catch((e) => {
-      store.error = e.response.data.message
+      store.error = `Error ${e.request.status}, ${
+        e.response.data.message || e.request.statusMessage
+      }`
       setTimeout(store.errorFalse, 5000)
     })
 }
