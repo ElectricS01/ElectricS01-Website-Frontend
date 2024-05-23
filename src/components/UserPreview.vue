@@ -25,7 +25,7 @@
             </h4>
             <div v-if="editing !== 'status'">
               <p class="message-text-large" style="word-wrap: break-word">
-                {{ showUser.statusMessage }}
+                {{ showUser.gameStatus || showUser.statusMessage }}
                 <icons
                   v-if="showUser.id === store.userData.id"
                   style="cursor: pointer"

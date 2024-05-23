@@ -40,6 +40,10 @@ let viewportHeight = window.innerHeight - 48
 
 document.getElementById("favicon").href = "/icons/tetris.ico"
 
+setTimeout(() => {
+  store.ws.send(JSON.stringify({ page: "Tetris" }))
+}, 1000)
+
 const searchLocalStorageItems = (searchString) => {
   const matchingItems = []
   for (let i = 0; i < localStorage.length; i++) {
@@ -87,6 +91,9 @@ onUnmounted(() => {
       .catch((e) => {
         console.log(`Error 503, Cannot Connect to Server ${e}`)
       })
+    setTimeout(() => {
+      store.ws.send(JSON.stringify({ page: null }))
+    }, 1000)
   }
   window.removeEventListener("beforeunload", leaving)
   document.removeEventListener("resize", updateDimensions)

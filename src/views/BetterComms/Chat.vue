@@ -731,7 +731,7 @@
                   text-overflow: ellipsis;
                 "
               >
-                {{ user.statusMessage }}
+                {{ user.gameStatus || user.statusMessage }}
               </p>
             </div>
           </div>
@@ -1208,24 +1208,11 @@ let chatIconInput
 let chatUsernameInput
 let chatUsers
 
-let ws
-
 document.getElementById("favicon").href = "/icons/favicon.ico"
 if (!localStorage.getItem("token")) {
   router.push("/login")
 } else {
-  ws = new WebSocket(
-    process.env.NODE_ENV === "production"
-      ? "wss://electrics01.com/ws"
-      : "ws://localhost:24554/ws"
-  )
-
-  ws.onopen = () => {
-    ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
-    console.log("Socket connected")
-  }
-
-  ws.onmessage = (event) => {
+  store.ws.onmessage = (event) => {
     console.log(event)
     const socketMessage = JSON.parse(event.data)
     if (socketMessage.authFail) {
@@ -1817,7 +1804,6 @@ onMounted(async () => {
   await getChat(route.params.chatId)
 })
 onUnmounted(() => {
-  if (ws) ws.close()
   document.removeEventListener("keydown", escPressed)
   const messagesDiv = document.getElementById("messages-div")
   if (messagesDiv) messagesDiv.removeEventListener("scroll", scrollEvent)

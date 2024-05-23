@@ -30,12 +30,24 @@ export const useDataStore = defineStore("store", () => {
   const switcherItems = ref(switcherPages)
   const showFriends = ref(false)
 
+  let ws
+
   const errorFalse = () => {
     error.value = ""
   }
   const dayjsLong = (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss")
   const dayjsDate = (date) => dayjs(date).format("D MMMM YYYY")
   const dayjsSince = (date) => dayjs(date).fromNow()
+
+  ws = new WebSocket(
+    process.env.NODE_ENV === "production"
+      ? "wss://electrics01.com/ws"
+      : "ws://localhost:24554/ws"
+  )
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
+    console.log("Socket connected")
+  }
 
   const getItemSearches = (item) => {
     if (Array.isArray(item)) {
@@ -200,6 +212,7 @@ export const useDataStore = defineStore("store", () => {
     userData,
     savePrivateKey,
     encryptPrivateKey,
-    showFriends
+    showFriends,
+    ws
   }
 })
