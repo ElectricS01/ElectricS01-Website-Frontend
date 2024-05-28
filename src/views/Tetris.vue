@@ -40,9 +40,11 @@ let viewportHeight = window.innerHeight - 48
 
 document.getElementById("favicon").href = "/icons/tetris.ico"
 
-setTimeout(() => {
-  store.ws.send(JSON.stringify({ page: "Tetris" }))
-}, 1000)
+if (localStorage.getItem("token")) {
+  setTimeout(() => {
+    store.ws.send(JSON.stringify({ page: "Tetris" }))
+  }, 1000)
+}
 
 const searchLocalStorageItems = (searchString) => {
   const matchingItems = []

@@ -735,6 +735,7 @@ h4 {
 
 .message-text-medium {
   font-size: 12px;
+  margin: 0;
 
   &:hover {
     text-decoration: underline;

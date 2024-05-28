@@ -437,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.212.0</div>
+            <div>Version: 1.213.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -445,12 +445,21 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.213 More Game Status</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Your statis in BetterCommunications will now change when playing
+                all games on ElectricS01.com
+              </li>
+              <li>Update to work with backend 1.105.0</li>
+            </ul>
             <h2 class="settings-text">1.212 Game Status</h2>
             <div class="settings-spacer" />
             <ul>
               <li>
                 Your statis in BetterCommunications will now change when playing
-                games on ElectricS01.com
+                Tetris on ElectricS01.com
               </li>
               <li>Update to work with backend 1.104.0</li>
             </ul>

@@ -23,11 +23,19 @@
 <script setup>
 // import axios from "axios"
 import { computed, onUnmounted } from "vue"
+import { useDataStore } from "@/stores/main"
+const store = useDataStore()
 
 let viewportWidth = window.innerWidth - 16
 let viewportHeight = window.innerHeight - 48
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
+
+if (localStorage.getItem("token")) {
+  setTimeout(() => {
+    store.ws.send(JSON.stringify({ page: "Collider" }))
+  }, 1000)
+}
 
 // const searchLocalStorageItems = (searchString) => {
 //   const matchingItems = []
@@ -68,15 +76,18 @@ const minDimension = computed(() => {
 window.addEventListener("resize", updateDimensions)
 
 onUnmounted(() => {
-  // if (localStorage.getItem("token")) {
-  //   axios
-  //     .patch("/api/tetris", {
-  //       data: searchLocalStorageItems("userdata.ini")[0].value
-  //     })
-  //     .catch((e) => {
-  //       console.log("Error 503, Cannot Connect to Server " + e)
-  //     })
-  // }
+  if (localStorage.getItem("token")) {
+    //   axios
+    //     .patch("/api/tetris", {
+    //       data: searchLocalStorageItems("userdata.ini")[0].value
+    //     })
+    //     .catch((e) => {
+    //       console.log("Error 503, Cannot Connect to Server " + e)
+    //     })
+    setTimeout(() => {
+      store.ws.send(JSON.stringify({ page: null }))
+    }, 1000)
+  }
   // document.removeEventListener("beforeunload", leaving)
   window.removeEventListener("resize", updateDimensions)
 })
