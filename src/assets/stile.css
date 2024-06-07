@@ -19,7 +19,7 @@ body {
 }
 
 .scroll-bar::-webkit-scrollbar-thumb {
-  background: #282a2b;
+  background: #282a2b80;
   border-radius: 3px;
 }
 
@@ -102,16 +102,20 @@ iframe {
 }
 
 @keyframes moveImage {
+
   0%,
   100% {
     transform: scale(1.4) translate(0, -10%);
   }
+
   20% {
     transform: scale(1.35) translate(30%, -2%);
   }
+
   40% {
     transform: scale(1.4) translate(10%, -20%);
   }
+
   80% {
     transform: scale(1.35) translate(-30%, 0%);
   }
@@ -412,8 +416,7 @@ button {
 
 .navbar {
   overflow: hidden;
-  background-color: rgba(40, 42, 43, 0.75);
-  position: fixed;
+  background-color: #282a2bbf position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -442,29 +445,27 @@ button {
 
 .button.active,
 .navbar a.active {
-  background-color: rgba(255, 255, 255, 0.075);
+  background-color: #ffffff13;
 }
 
 .light-mode .button.active,
 .light-mode .navbar a.active {
-  background-color: rgba(0, 0, 0, 0.075);
+  background-color: #00000013;
 }
 
 .button:hover,
 .navbar a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transition: background-color 0.25s ease;
+  background-color: #ffffff1a transition: background-color 0.25s ease;
 }
 
 .light-mode .button:hover,
 .light-mode .navbar a:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  transition: background-color 0.25s ease;
+  background-color: #0000001a transition: background-color 0.25s ease;
 }
 
 .light-mode .icon-mobile {
   color: #000;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #ffffff1a
 }
 
 .filter-button:hover,
@@ -495,16 +496,12 @@ button:hover,
 }
 
 .icon-mobile:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transition:
-    background-color 0.25s ease,
+  background-color: #ffffff1a transition: background-color 0.25s ease,
     fill 1s ease;
 }
 
 .light-mode .icon-mobile:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  transition:
-    background-color 0.25s ease,
+  background-color: #0000001a transition: background-color 0.25s ease,
     fill 1s ease;
 }
 
@@ -555,8 +552,7 @@ button:hover,
 }
 
 .border {
-  background-color: rgba(40, 42, 43, 0.75);
-  border-radius: 15px;
+  background-color: #282a2bbf border-radius: 15px;
   overflow: hidden;
   width: 372px;
 }
@@ -641,6 +637,7 @@ input {
   0% {
     transform: rotate(0);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -814,8 +811,7 @@ h4 {
 
 .menu {
   width: fit-content;
-  background-color: rgba(40, 42, 43, 0.75);
-  margin: 16px;
+  background-color: #282a2bbf margin: 16px;
   z-index: 2;
   padding: 16px;
   border-radius: 8px;
@@ -830,6 +826,7 @@ h4 {
   0% {
     margin-top: -16px;
   }
+
   100% {
     margin-top: 0;
   }
@@ -839,6 +836,7 @@ h4 {
   0% {
     margin-top: 0;
   }
+
   100% {
     margin-top: 16px;
   }
@@ -848,6 +846,7 @@ h4 {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -982,15 +981,15 @@ h4 {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #3d3d3d;
 }
 
-input:focus + .slider {
+input:focus+.slider {
   box-shadow: 0 0 1px #3d3d3d;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   -ms-transform: translateX(16px);
   transform: translate(16px);
 }

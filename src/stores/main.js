@@ -164,10 +164,10 @@ export const useDataStore = defineStore("store", () => {
     const salt = crypto.getRandomValues(new Uint8Array(16))
     const derivedKey = await crypto.subtle.deriveKey(
       {
-        name: "PBKDF2",
-        salt,
+        hash: "SHA-256",
         iterations: 10000,
-        hash: "SHA-256"
+        name: "PBKDF2",
+        salt
       },
       await crypto.subtle.importKey(
         "raw",
@@ -176,7 +176,7 @@ export const useDataStore = defineStore("store", () => {
         false,
         ["deriveKey"]
       ),
-      { name: "AES-GCM", length: 256 },
+      { length: 256, name: "AES-GCM" },
       true,
       ["encrypt", "decrypt"]
     )
@@ -185,15 +185,15 @@ export const useDataStore = defineStore("store", () => {
     const keyBuffer = new TextEncoder().encode(keyString)
     const encryptedBuffer = await crypto.subtle.encrypt(
       {
-        name: "AES-GCM",
-        iv: crypto.getRandomValues(new Uint8Array(12)) // Use a random IV
+        iv: crypto.getRandomValues(new Uint8Array(12)),
+        name: "AES-GCM"
       },
       derivedKey,
       keyBuffer
     )
     return JSON.stringify({
-      salt: Array.from(salt),
-      encryptedKey: Array.from(new Uint8Array(encryptedBuffer))
+      encryptedKey: Array.from(new Uint8Array(encryptedBuffer)),
+      salt: Array.from(salt)
     })
   }
   return {
@@ -202,17 +202,17 @@ export const useDataStore = defineStore("store", () => {
     dayjsLong,
     dayjsSince,
     editFocus,
+    encryptPrivateKey,
     error,
     errorFalse,
     getUser,
     loadingChats,
     quickSwitcherShown,
+    savePrivateKey,
+    showFriends,
     sortSwitcher,
     switcherItems,
     userData,
-    savePrivateKey,
-    encryptPrivateKey,
-    showFriends,
     ws
   }
 })
