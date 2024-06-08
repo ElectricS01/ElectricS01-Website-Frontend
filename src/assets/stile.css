@@ -416,7 +416,8 @@ button {
 
 .navbar {
   overflow: hidden;
-  background-color: #282a2bbf position: fixed;
+  background-color: #282a2bbf;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
