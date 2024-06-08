@@ -102,7 +102,6 @@ iframe {
 }
 
 @keyframes moveImage {
-
   0%,
   100% {
     transform: scale(1.4) translate(0, -10%);
@@ -456,17 +455,19 @@ button {
 
 .button:hover,
 .navbar a:hover {
-  background-color: #ffffff1a transition: background-color 0.25s ease;
+  background-color: #ffffff1a;
+  transition: background-color 0.25s ease;
 }
 
 .light-mode .button:hover,
 .light-mode .navbar a:hover {
-  background-color: #0000001a transition: background-color 0.25s ease;
+  background-color: #0000001a;
+  transition: background-color 0.25s ease;
 }
 
 .light-mode .icon-mobile {
   color: #000;
-  background-color: #ffffff1a
+  background-color: #ffffff1a;
 }
 
 .filter-button:hover,
@@ -497,12 +498,16 @@ button:hover,
 }
 
 .icon-mobile:hover {
-  background-color: #ffffff1a transition: background-color 0.25s ease,
+  background-color: #ffffff1a;
+  transition:
+    background-color 0.25s ease,
     fill 1s ease;
 }
 
 .light-mode .icon-mobile:hover {
-  background-color: #0000001a transition: background-color 0.25s ease,
+  background-color: #0000001a;
+  transition:
+    background-color 0.25s ease,
     fill 1s ease;
 }
 
@@ -553,7 +558,8 @@ button:hover,
 }
 
 .border {
-  background-color: #282a2bbf border-radius: 15px;
+  background-color: #282a2bbf;
+  border-radius: 15px;
   overflow: hidden;
   width: 372px;
 }
@@ -812,7 +818,8 @@ h4 {
 
 .menu {
   width: fit-content;
-  background-color: #282a2bbf margin: 16px;
+  background-color: #282a2bbf;
+  margin: 16px;
   z-index: 2;
   padding: 16px;
   border-radius: 8px;
@@ -982,15 +989,15 @@ h4 {
   border-radius: 50%;
 }
 
-input:checked+.slider {
+input:checked + .slider {
   background-color: #3d3d3d;
 }
 
-input:focus+.slider {
+input:focus + .slider {
   box-shadow: 0 0 1px #3d3d3d;
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
   -ms-transform: translateX(16px);
   transform: translate(16px);
 }
