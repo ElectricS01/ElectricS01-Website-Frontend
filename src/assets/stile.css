@@ -792,12 +792,6 @@ h4 {
   padding: 6px;
 }
 
-.grid-card {
-  margin: 32px 32px 18px;
-  width: 100%;
-  height: 100%;
-}
-
 .blog-header {
   height: 160px;
   width: 100%;
@@ -861,9 +855,9 @@ h4 {
 }
 
 .chat-menu {
-  width: min(100% - 20px, 500px);
+  width: min(100% - 20px, 436px);
   background-color: #282a2b;
-  display: flex;
+  padding: 32px 32px 18px;
   border-radius: 16px;
   max-height: 100%;
   overflow-y: auto;

@@ -2,47 +2,45 @@
   <div class="container">
     <div class="grid-menu">
       <div class="chat-menu">
-        <div class="grid-card">
-          <p class="message-text-large">Register</p>
-          <div class="text-small">
-            <label for="username">Username</label>
-          </div>
-          <input
-            id="username"
-            v-model="username"
-            placeholder="Username"
-            class="modal-input"
-            @keydown.enter="submit"
-          />
-          <div class="text-small">
-            <label for="email">Email</label>
-          </div>
-          <input
-            id="email"
-            v-model="email"
-            placeholder="Email"
-            class="modal-input"
-            type="email"
-            @keydown.enter="submit"
-          />
-          <div class="text-small">
-            <label for="password">Password</label>
-          </div>
-          <input
-            id="password"
-            v-model="password"
-            placeholder="Password"
-            class="modal-input"
-            type="password"
-            @keydown.enter="submit"
-          />
-          <div class="text-small">
-            <router-link class="text-small" to="/login">
-              Back to Login
-            </router-link>
-          </div>
-          <button @click="submit">Enter</button>
+        <p class="message-text-large">Register</p>
+        <div class="text-small">
+          <label for="username">Username</label>
         </div>
+        <input
+          id="username"
+          v-model="username"
+          placeholder="Username"
+          class="modal-input"
+          @keydown.enter="submit"
+        />
+        <div class="text-small">
+          <label for="email">Email</label>
+        </div>
+        <input
+          id="email"
+          v-model="email"
+          placeholder="Email"
+          class="modal-input"
+          type="email"
+          @keydown.enter="submit"
+        />
+        <div class="text-small">
+          <label for="password">Password</label>
+        </div>
+        <input
+          id="password"
+          v-model="password"
+          placeholder="Password"
+          class="modal-input"
+          type="password"
+          @keydown.enter="submit"
+        />
+        <div class="text-small">
+          <router-link class="text-small" to="/login">
+            Back to Login
+          </router-link>
+        </div>
+        <button @click="submit">Enter</button>
       </div>
     </div>
   </div>
