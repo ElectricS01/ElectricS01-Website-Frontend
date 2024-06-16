@@ -8,7 +8,7 @@
         allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
         src="/tetrisGame.html"
       />
-      <h3>Tetris By ElectricS01 0.25</h3>
+      <h3>Tetris By ElectricS01 0.27</h3>
       {{
         store.userData.id
           ? "You are logged in"
@@ -76,8 +76,8 @@ const updateDimensions = () => {
 const minDimension = computed(() => {
   const minWidthHeight = Math.min(viewportWidth, viewportHeight)
   return {
-    height: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`,
-    width: minWidthHeight <= 600 ? `${minWidthHeight}px` : `${600}px`
+    height: minWidthHeight <= 720 ? `${minWidthHeight}px` : `${720}px`,
+    width: minWidthHeight <= 720 ? `${minWidthHeight}px` : `${720}px`
   }
 })
 
