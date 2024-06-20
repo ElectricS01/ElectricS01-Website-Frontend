@@ -1811,10 +1811,4 @@ onUnmounted(() => {
 watch(editing, () => {
   store.editFocus()
 })
-watch(
-  () => route.params.chatId,
-  async () => {
-    await getChat(route.params.chatId)
-  }
-)
 </script>

@@ -437,7 +437,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.214.0</div>
+            <div>Version: 1.214.1</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -877,6 +877,19 @@
               <li v-markdown>Switched some code to `script setup`</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
+            </ul>
+            <h2 class="settings-text">1.176 Add users to chats</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>You can now add users to chats</li>
+              <li>Bug fixes</li>
+              <li>Refactoring</li>
+              <li>Update to work with backend 1.81.0</li>
+            </ul>
+            <h2 class="settings-text">1.175 Collider Update</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Update Collider to latest version</li>
             </ul>
             <div class="settings-spacer" />
           </div>
