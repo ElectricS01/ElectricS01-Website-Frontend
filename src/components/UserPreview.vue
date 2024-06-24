@@ -150,13 +150,14 @@
               {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
             </p>
           </div>
-          <div v-if="showUser.tetris">
+          <div v-if="showUser.tetris.length">
             <div class="profile-spacer" />
             <p>Tetris Scores</p>
-            <p>Easy mode: {{ showUser.tetris[0].highscore_easy }} lines</p>
-            <p>Medium mode: {{ showUser.tetris[1].highscore_medium }} lines</p>
-            <p>Hard mode: {{ showUser.tetris[2].highscore_hard }} lines</p>
-            <p>God mode: {{ showUser.tetris[3].highscore_god }} lines</p>
+            <p>Easy mode: {{ showUser.tetris[0]?.value }} lines</p>
+            <p>Medium mode: {{ showUser.tetris[1]?.value }} lines</p>
+            <p>Hard mode: {{ showUser.tetris[2]?.value }} lines</p>
+            <p>God mode: {{ showUser.tetris[3]?.value }} lines</p>
+            <p>Ultra Nightmare mode: {{ showUser.tetris[4]?.value }} lines</p>
           </div>
         </div>
       </div>

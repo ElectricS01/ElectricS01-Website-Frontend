@@ -72,7 +72,7 @@
 <script setup>
 import Icons from "@/components/core/Icons.vue"
 
-import { defineProps, ref } from "vue"
+import { ref } from "vue"
 
 import { useDataStore } from "@/stores/main"
 import axios from "axios"

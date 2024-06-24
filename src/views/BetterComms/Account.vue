@@ -400,24 +400,25 @@
                         @keydown.enter="toggle('description', editDescription)"
                       />
                     </div>
-                    <div v-if="store.userData?.tetris">
+                    <div v-if="store.userData?.tetris.length">
                       <div class="profile-spacer" />
                       <p>Tetris Scores</p>
                       <p>
-                        Easy mode:
-                        {{ store.userData?.tetris[0].highscore_easy }} lines
+                        Easy mode: {{ store.userData?.tetris[0]?.value }} lines
                       </p>
                       <p>
                         Medium mode:
-                        {{ store.userData?.tetris[1].highscore_medium }} lines
+                        {{ store.userData?.tetris[1]?.value }} lines
                       </p>
                       <p>
-                        Hard mode:
-                        {{ store.userData?.tetris[2].highscore_hard }} lines
+                        Hard mode: {{ store.userData?.tetris[2]?.value }} lines
                       </p>
                       <p>
-                        God mode:
-                        {{ store.userData?.tetris[3].highscore_god }} lines
+                        God mode: {{ store.userData?.tetris[3]?.value }} lines
+                      </p>
+                      <p>
+                        Ultra Nightmare mode:
+                        {{ store.userData?.tetris[4]?.value }} lines
                       </p>
                     </div>
                   </div>
@@ -437,7 +438,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.214.1</div>
+            <div>Version: 1.215.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -445,6 +446,17 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.215 Tetris Scores</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Improved Tetris Score saving</li>
+              <li>Your Ultra Nightmare Score is now Displayed</li>
+              <li>
+                Fixed Tetris Scores showing incorrectly on your profile in
+                settings
+              </li>
+              <li>Update to work with backend 1.105.0</li>
+            </ul>
             <h2 class="settings-text">1.214 Tetris Update</h2>
             <div class="settings-spacer" />
             <ul>
@@ -454,19 +466,19 @@
             <div class="settings-spacer" />
             <ul>
               <li>
-                Your statis in BetterCommunications will now change when playing
+                Your status in BetterCommunications will now change when playing
                 all games on ElectricS01.com
               </li>
-              <li>Update to work with backend 1.105.0</li>
+              <li>Update to work with backend 1.104.0</li>
             </ul>
             <h2 class="settings-text">1.212 Game Status</h2>
             <div class="settings-spacer" />
             <ul>
               <li>
-                Your statis in BetterCommunications will now change when playing
+                Your status in BetterCommunications will now change when playing
                 Tetris on ElectricS01.com
               </li>
-              <li>Update to work with backend 1.104.0</li>
+              <li>Update to work with backend 1.103.0</li>
             </ul>
             <h2 class="settings-text">1.211 Home Page updates and big fixes</h2>
             <div class="settings-spacer" />

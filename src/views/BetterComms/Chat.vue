@@ -1524,9 +1524,6 @@ const openUser = (userId, user) => {
       })
       .then((res) => {
         showUser.value = res.data
-        if (showUser.value.tetris) {
-          showUser.value.tetris = formatINI(showUser.value.tetris)
-        }
       })
       .catch((e) => {
         store.error = e.response.data.message
@@ -1550,29 +1547,6 @@ const chatUsernameEnter = async () => {
   createChatShown.value = false
   const userData = await getUserByName(chatUsernameInput)
   sendDm(userData.id)
-}
-const formatINI = (ini) => {
-  const lines = ini.split("\r\n")
-
-  const nonEmptyLines = lines.filter(
-    (line) => line.trim() !== "" && line.includes("=")
-  )
-
-  const keyValuePairs = nonEmptyLines.map((line) => {
-    const separatorIndex = line.indexOf("=")
-    const key = line.slice(0, separatorIndex).trim()
-    let value = line.slice(separatorIndex + 1).trim()
-
-    if (value.startsWith('"') && value.endsWith('"')) {
-      value = value.slice(1, -1)
-    }
-
-    return { key, value }
-  })
-
-  return keyValuePairs.map((pair) => ({
-    [pair.key]: pair.value
-  }))
 }
 const handleClick = (part) => {
   if (part.startsWith('<span @click="handleUserMentionClick(')) {

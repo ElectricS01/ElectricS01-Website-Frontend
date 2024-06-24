@@ -59,13 +59,43 @@ const searchLocalStorageItems = (searchString) => {
 }
 const leaving = () => {
   if (localStorage.getItem("token")) {
-    axios
-      .patch("/api/tetris", {
-        data: searchLocalStorageItems("userdata.ini")[0].value
+    const lines =
+      searchLocalStorageItems("userdata.ini")[0]?.value.split("\r\n")
+    if (lines) {
+      const nonEmptyLines = lines.filter(
+        (line) => line.trim() !== "" && line.includes("=")
+      )
+
+      const keyValuePairs = nonEmptyLines.map((line) => {
+        const separatorIndex = line.indexOf("=")
+        const key = line.slice(0, separatorIndex).trim()
+        let value = line.slice(separatorIndex + 1).trim()
+
+        if (value.startsWith('"') && value.endsWith('"')) {
+          value = value.slice(1, -1)
+        }
+
+        return { key, value }
       })
-      .catch((e) => {
-        console.log(`Error 503, Cannot Connect to Server ${e}`)
-      })
+
+      const pairs = keyValuePairs.map((pair) => ({
+        [pair.key]: pair.value
+      }))
+      axios
+        .patch("/api/score", {
+          gameId: 1,
+          scores: [
+            { difficulty: 0, value: parseInt(pairs[0].highscore_easy) },
+            { difficulty: 1, value: parseInt(pairs[1].highscore_medium) },
+            { difficulty: 2, value: parseInt(pairs[2].highscore_hard) },
+            { difficulty: 3, value: parseInt(pairs[3].highscore_god) },
+            { difficulty: "e", value: parseInt(pairs[4].highscore_ultra) }
+          ]
+        })
+        .catch((e) => {
+          console.log(`Error 503, Cannot Connect to Server ${e}`)
+        })
+    }
   }
 }
 const updateDimensions = () => {
@@ -86,16 +116,43 @@ document.addEventListener("resize", updateDimensions)
 
 onUnmounted(() => {
   if (localStorage.getItem("token")) {
-    axios
-      .patch("/api/tetris", {
-        data: searchLocalStorageItems("userdata.ini")[0].value
+    const lines =
+      searchLocalStorageItems("userdata.ini")[0]?.value.split("\r\n")
+    if (lines) {
+      const nonEmptyLines = lines.filter(
+        (line) => line.trim() !== "" && line.includes("=")
+      )
+
+      const keyValuePairs = nonEmptyLines.map((line) => {
+        const separatorIndex = line.indexOf("=")
+        const key = line.slice(0, separatorIndex).trim()
+        let value = line.slice(separatorIndex + 1).trim()
+
+        if (value.startsWith('"') && value.endsWith('"')) {
+          value = value.slice(1, -1)
+        }
+
+        return { key, value }
       })
-      .catch((e) => {
-        console.log(`Error 503, Cannot Connect to Server ${e}`)
-      })
-    setTimeout(() => {
-      store.ws.send(JSON.stringify({ page: null }))
-    }, 1000)
+
+      const pairs = keyValuePairs.map((pair) => ({
+        [pair.key]: pair.value
+      }))
+      axios
+        .patch("/api/score", {
+          gameId: 1,
+          scores: [
+            { difficulty: 0, value: parseInt(pairs[0].highscore_easy) },
+            { difficulty: 1, value: parseInt(pairs[1].highscore_medium) },
+            { difficulty: 2, value: parseInt(pairs[2].highscore_hard) },
+            { difficulty: 3, value: parseInt(pairs[3].highscore_god) },
+            { difficulty: "e", value: parseInt(pairs[4].highscore_ultra) }
+          ]
+        })
+        .catch((e) => {
+          console.log(`Error 503, Cannot Connect to Server ${e}`)
+        })
+    }
   }
   window.removeEventListener("beforeunload", leaving)
   document.removeEventListener("resize", updateDimensions)
