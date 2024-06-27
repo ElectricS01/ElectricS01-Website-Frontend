@@ -383,21 +383,27 @@
                       <p
                         v-if="editing !== 'description'"
                         class="message-text-large"
-                        style="word-wrap: break-word"
+                        style="word-wrap: break-word; white-space: pre-wrap"
                       >
                         {{
                           store.userData?.description ||
                           `Hi, I'm ${store.userData?.username}!`
                         }}
                       </p>
-                      <input
+                      <textarea
                         v-else
                         id="description"
                         v-model="editDescription"
                         placeholder="Edit your description"
-                        style="margin: 1px; width: calc(100% - 2px)"
+                        style="
+                          margin: 1px;
+                          width: calc(100% - 2px);
+                          resize: none;
+                        "
                         autocomplete="off"
-                        @keydown.enter="toggle('description', editDescription)"
+                        @keydown.enter.exact.prevent="
+                          toggle('description', editDescription)
+                        "
                       />
                     </div>
                     <div v-if="store.userData?.tetris.length">
@@ -438,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.215.0</div>
+            <div>Version: 1.216.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -446,6 +452,13 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.216 Multi-line inputs</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Added multi-line inputs to user descriptions and messaging
+              </li>
+            </ul>
             <h2 class="settings-text">1.215 Tetris Scores</h2>
             <div class="settings-spacer" />
             <ul>

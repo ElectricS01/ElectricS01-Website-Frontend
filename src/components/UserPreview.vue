@@ -146,7 +146,10 @@
           </div>
           <div>
             <p>Description</p>
-            <p class="message-text-large" style="word-wrap: break-word">
+            <p
+              class="message-text-large"
+              style="word-wrap: break-word; white-space: pre-wrap"
+            >
               {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
             </p>
           </div>

@@ -311,6 +311,8 @@ button {
 }
 
 .message-send {
+  display: flex;
+  justify-content: center;
   height: 48px;
   background-color: #282a2b;
   text-align: center;
@@ -611,6 +613,7 @@ button:hover,
   max-height: 80vh;
 }
 
+textarea,
 input {
   color: #fff;
   font-size: 16px;
@@ -672,8 +675,11 @@ input {
 }
 
 .message-input {
+  height: 32px;
   width: calc(100% - 100px);
   margin: 8px;
+  padding: 6px;
+  resize: none;
 }
 
 .context-menu-item {

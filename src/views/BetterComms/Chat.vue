@@ -649,14 +649,14 @@
             </div>
           </transition>
           <div class="message-send">
-            <input
+            <textarea
               id="input"
               v-model="inputText"
               placeholder="Send a message"
               autofocus
               class="message-input"
               autocomplete="off"
-              @keydown.enter="sendMessage"
+              @keydown.enter.exact.prevent="sendMessage"
               @keydown.up.prevent="editLast(), scrollDown(true)"
             />
             <button style="cursor: pointer" @click="sendMessage">Send</button>
