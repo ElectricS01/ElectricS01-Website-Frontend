@@ -68,7 +68,24 @@ const submit = () => {
       Object.assign(axios.defaults, {
         headers: { Authorization: res.data.token }
       })
-      store.getUser()
+      store.userData.value = res.data
+      if (!store.userData.value.saveSwitcher) {
+        store.userData.value.switcherHistory =
+          JSON.parse(localStorage.getItem("switcherHistory")) || []
+      }
+      store.sortSwitcher()
+      if (store.userData.value.chatsList) {
+        store.switcherItems.value.push(
+          ...store.userData.value.chatsList.map((obj) => [
+            obj.type === 1 && obj.ownerDetails.id !== store.userData.value.id
+              ? obj.ownerDetails.username
+              : obj.name,
+            obj.id
+          ])
+        )
+        store.loadingChats.value = false
+        store.chatSort()
+      }
       router.push("/chat")
     })
     .catch((e) => {
