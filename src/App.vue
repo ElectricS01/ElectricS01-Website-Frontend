@@ -128,44 +128,46 @@
   </header>
   <main :class="isDarkMode === 'true' ? 'dark-mode' : 'light-mode'">
     <div class="background-container">
-      <div
+      <img
+        v-if="navbarShown"
         class="background"
-        :style="{
-          backgroundImage: navbarShown ? 'url(\'background.png\')' : ''
-        }"
+        :style="{ opacity: loaded ? 1 : 0 }"
+        alt="background"
+        src="/src/assets/background.png"
+        @load="loaded = true"
       />
-    </div>
-    <transition>
-      <modal-simple
-        v-if="store.quickSwitcherShown"
-        :is-active="store.quickSwitcherShown"
-        @close="store.quickSwitcherShown = false"
-      >
-        <div class="switcher-modal">
-          <input
-            id="quick-switcher"
-            v-model="switcherInput"
-            placeholder="Quick switcher"
-            class="switcher-input"
-            @keydown.enter="activateItem(highlightedIndex)"
-            @keydown.down.prevent="moveHighlight(1)"
-            @keydown.up.prevent="moveHighlight(-1)"
-          />
-          <div class="switch-container scroll-bar">
-            <div
-              v-for="(item, index) in searchedItems"
-              :key="item"
-              class="switcher-item"
-              :class="{ highlighted: index === highlightedIndex }"
-              @click="activateItem(index)"
-            >
-              {{ typeof item === "string" ? item : item[0] }}
+      <transition>
+        <modal-simple
+          v-if="store.quickSwitcherShown"
+          :is-active="store.quickSwitcherShown"
+          @close="store.quickSwitcherShown = false"
+        >
+          <div class="switcher-modal">
+            <input
+              id="quick-switcher"
+              v-model="switcherInput"
+              placeholder="Quick switcher"
+              class="switcher-input"
+              @keydown.enter="activateItem(highlightedIndex)"
+              @keydown.down.prevent="moveHighlight(1)"
+              @keydown.up.prevent="moveHighlight(-1)"
+            />
+            <div class="switch-container scroll-bar">
+              <div
+                v-for="(item, index) in searchedItems"
+                :key="item"
+                class="switcher-item"
+                :class="{ highlighted: index === highlightedIndex }"
+                @click="activateItem(index)"
+              >
+                {{ typeof item === "string" ? item : item[0] }}
+              </div>
             </div>
           </div>
-        </div>
-      </modal-simple>
-    </transition>
-    <router-view />
+        </modal-simple>
+      </transition>
+      <router-view />
+    </div>
   </main>
 </template>
 
@@ -184,6 +186,7 @@ const store = useDataStore()
 const highlightedIndex = ref(0)
 const switcherInput = ref()
 const isDarkMode = ref("true")
+const loaded = ref(false)
 
 let searchedItems = store.switcherItems
 
@@ -387,6 +390,7 @@ document.addEventListener("keydown", escPressed)
 const navbarShown = computed(
   () =>
     !route.path.startsWith("/chat") &&
+    !route.path.startsWith("/user") &&
     !route.path.startsWith("/login") &&
     !route.path.startsWith("/register") &&
     !route.path.startsWith("/account") &&
