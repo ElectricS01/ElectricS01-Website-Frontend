@@ -516,6 +516,10 @@ button:hover,
     fill 1s ease;
 }
 
+.navbar a:not(:first-child) {
+  margin: 4px 4px 4px 0;
+}
+
 .icon-mobile {
   display: none;
 }

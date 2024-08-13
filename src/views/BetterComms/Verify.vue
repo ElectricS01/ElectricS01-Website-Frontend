@@ -29,7 +29,6 @@ const submit = () => {
       token: route.query.token
     })
     .then(() => {
-      store.getUser()
       router.push("/chat")
     })
     .catch((e) => {

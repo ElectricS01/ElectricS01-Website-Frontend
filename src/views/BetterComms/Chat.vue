@@ -538,7 +538,7 @@
                     @click="pinMessage(message.id, message.pinned)"
                   />
                   <icons
-                    v-show="message.user?.id === store.userData?.id"
+                    v-if="message.user?.id === store.userData?.id"
                     style="cursor: pointer"
                     size="20"
                     icon="edit"
@@ -1507,8 +1507,8 @@ const saveChat = () => {
 const chatUserEnter = async () => {
   const userId = await getUserByName(chatUserInput.value)
   chatUserInput.value = ""
-  if (chatUsers.indexOf(userId.id) === -1) {
-    chatUsers.push(userId.id)
+  if (chatUsers.indexOf(userId) === -1) {
+    chatUsers.push(userId)
   } else {
     store.error = "This user is already apart of this group"
     setTimeout(store.errorFalse, 2500)
@@ -1546,7 +1546,7 @@ const chatUsernameEnter = async () => {
   createChatType.value = false
   createChatShown.value = false
   const userData = await getUserByName(chatUsernameInput)
-  sendDm(userData.id)
+  sendDm(userData)
 }
 const handleClick = (part) => {
   if (part.startsWith('<span @click="handleUserMentionClick(')) {
