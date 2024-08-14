@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.216.3</div>
+            <div>Version: 1.216.4</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
