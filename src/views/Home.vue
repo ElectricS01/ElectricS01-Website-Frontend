@@ -76,6 +76,23 @@
         </a>
       </div>
       <div class="box grid-item">
+        <a class="border" href="https://planit.electrics01.com">
+          <img
+            src="../assets/planit.png"
+            alt="Planit By ElectricS01"
+            class="grid-image"
+          />
+          <div class="small-container">
+            <p class="text-medium">Planit</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              Planit is a modern and advanced project management software
+              solution
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="box grid-item">
         <a class="border" href="https://scheduler.electrics01.com">
           <img
             src="../assets/scheduler.webp"
