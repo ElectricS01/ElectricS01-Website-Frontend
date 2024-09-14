@@ -124,7 +124,7 @@
       <div class="box grid-item">
         <a class="border" href="https://flowinity.com">
           <img
-            src="https://troplo.com/img/proj01.6533b57c.png"
+            src="https://troplo.com/images/proj01.png"
             alt="TPU"
             class="grid-image"
           />
