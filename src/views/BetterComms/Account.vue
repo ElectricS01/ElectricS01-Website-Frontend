@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.217.3</div>
+            <div>Version: 1.218.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -452,6 +452,11 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.218 Home Page updates</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Updated the home page</li>
+            </ul>
             <h2 class="settings-text">1.217 Planit on the Home Page</h2>
             <div class="settings-spacer" />
             <ul>

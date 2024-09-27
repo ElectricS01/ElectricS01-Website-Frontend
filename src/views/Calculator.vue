@@ -4,6 +4,10 @@
     style="padding: 0 16px; text-align: left; width: calc(100% - 32px)"
   >
     <h2>ElectricS01's Calculator</h2>
+    <p>
+      A simple calculator capable of order of operations and factorials using
+      JavaScript
+    </p>
     <label for="equation">Enter your equation:</label>
     <input id="equation" v-model="equation" autocomplete="off" />
     <p id="result" class="text-main">

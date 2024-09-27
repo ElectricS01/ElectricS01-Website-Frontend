@@ -2,9 +2,11 @@
   <div class="container scroll-bar">
     <h2>Welcome to ElectricS01's website</h2>
     <p class="text-main">
-      Hi, I'm ElectricS01, I make things in Vue, Javascript, Python and
-      GameMaker Studio
+      Hi, I'm ElectricS01, I'm a passionate programmer with experince in
+      Full-Stack Web Application, Desktop, and CLI development.
     </p>
+    I develop projects with Vue, Javascript, Python, C#/.NET, SwiftUI, Rust, and
+    GameMaker Studio.
     <div class="grid-home">
       <div class="box grid-item">
         <router-link class="border" to="/tonkgame">
@@ -39,6 +41,18 @@
             </p>
           </div>
         </router-link>
+      </div>
+      <div class="box grid-item">
+        <a class="border" href="https://github.com/ElectricS01/TPU-Mac">
+          <img src="../assets/tpumac.webp" alt="TPU Mac" class="grid-image" />
+          <div class="small-container">
+            <p class="text-medium">TPU Mac</p>
+            <div class="spacer" />
+            <p class="message-text-medium-gray">
+              A native macOS App for Troplo's TPU file hoster made with SwiftUI
+            </p>
+          </div>
+        </a>
       </div>
       <div class="box grid-item">
         <router-link class="border" to="/tetris">
@@ -110,18 +124,6 @@
         </a>
       </div>
       <div class="box grid-item">
-        <a class="border" href="https://github.com/ElectricS01/TPU-Mac">
-          <img src="../assets/tpumac.webp" alt="TPU Mac" class="grid-image" />
-          <div class="small-container">
-            <p class="text-medium">TPU Mac</p>
-            <div class="spacer" />
-            <p class="message-text-medium-gray">
-              A native macOS App for Troplo's TPU file hoster made with SwiftUI
-            </p>
-          </div>
-        </a>
-      </div>
-      <div class="box grid-item">
         <a class="border" href="https://flowinity.com">
           <img
             src="https://troplo.com/images/proj01.png"
@@ -172,51 +174,66 @@
         </a>
       </div>
     </div>
-    <div class="icon-text">
-      <a
-        class="message-text-large"
-        href="https://www.youtube.com/electrics01"
-        title="Go to My Youtube"
-      >
-        <img src="../assets/youtube.webp" alt="My Youtube" class="icon-image" />
-        Electric S01
-      </a>
-      <a
-        class="message-text-large"
-        href="https://twitter.com/S01Electric"
-        title="Go to My Discord"
-      >
-        <img src="../assets/twitter.webp" alt="My Discord" class="icon-image" />
-        Electric S01
-      </a>
-      <a
-        class="message-text-large"
-        href="https://electrics01.itch.io"
-        title="Go to My Itch.io"
-      >
-        <img src="../assets/itch-io.webp" alt="My Itch.io" class="icon-image" />
-        ElectricS01
-      </a>
-      <a
-        class="message-text-large"
-        href="https://github.com/ElectricS01"
-        title="Go to My GitHub"
-      >
-        <img src="../assets/github.webp" alt="My GitHub" class="icon-image" />
-        ElectricS01
-      </a>
-      <a
-        class="message-text-large"
-        href="https://discord.com/users/691540630907781171"
-        title="Go to My Discord"
-      >
-        <img src="../assets/discord.webp" alt="My Discord" class="icon-image" />
-        ElectricS01
-      </a>
+    <div style="display: flex; justify-content: center">
+      <div class="contact-menu">
+        <h2>Contact Me</h2>
+        <div class="contact-grid">
+          <router-link
+            class="message-text-large"
+            to="/user/1"
+            title="Go to My Youtube"
+          >
+            <icons size="32" style="padding-right: 6px" icon="message"></icons>
+            BetterCommunications
+          </router-link>
+          <a
+            class="message-text-large"
+            href="https://twitter.com/S01Electric"
+            title="Go to My Discord"
+          >
+            <icons size="32" style="padding-right: 6px" icon="twitter"></icons>
+            Xwitter
+          </a>
+          <a
+            class="message-text-large"
+            href="https://discord.com/users/691540630907781171"
+            title="Go to My Discord"
+          >
+            <icons size="32" style="padding-right: 6px" icon="discord"></icons>
+            Discord
+          </a>
+          <a
+            class="message-text-large"
+            href="mailto:electrics01@electrics01.com"
+            title="Go to My Discord"
+          >
+            <icons size="32" style="padding-right: 6px" icon="mail"></icons>
+            Email
+          </a>
+          <a
+            class="message-text-large"
+            href="https://electrics01.itch.io"
+            title="Go to My Itch.io"
+          >
+            <icons size="32" style="padding-right: 6px" icon="itchio"></icons>
+            Itch.io
+          </a>
+          <a
+            class="message-text-large"
+            href="https://github.com/ElectricS01"
+            title="Go to My GitHub"
+          >
+            <icons size="32" style="padding-right: 6px" icon="github"></icons>
+            Github
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import Icons from "@/components/core/Icons.vue"
+
 document.getElementById("favicon").href = "/icons/favicon.ico"
 </script>
