@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.218.0</div>
+            <div>Version: 1.219.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -452,6 +452,21 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.219 New Blog Post</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Updated the
+                <router-link to="/blog">Blog Page</router-link>
+                and made it publicly viewable
+              </li>
+              <li>
+                Created the
+                <router-link to="/blog/whats-been-happening">
+                  Third Blog Post
+                </router-link>
+              </li>
+            </ul>
             <h2 class="settings-text">1.218 Home Page updates</h2>
             <div class="settings-spacer" />
             <ul>

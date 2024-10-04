@@ -15,6 +15,7 @@ const switcherPages = [
   "Tetris",
   "Collider",
   "Mapit",
+  "Blog",
   "Account",
   "Chat"
 ]

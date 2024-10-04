@@ -37,6 +37,14 @@ const routes = [
         meta: {
           title: "Learning Rust"
         }
+      },
+      {
+        name: "whats-been-happening",
+        path: "whats-been-happening",
+        component: () => import("./views/Blog/WhatsBeenHappening.vue"),
+        meta: {
+          title: "What's Been Happening"
+        }
       }
     ]
   },
