@@ -1,10 +1,22 @@
 <template>
   <div style="flex-grow: 1; display: flex; flex-direction: column">
+    <h1 style="margin: 16px">Friends</h1>
     <div
       v-for="friend in friends"
       :key="friend.id"
-      style="display: flex; background-color: #282a2b; margin: 8px"
+      style="
+        display: flex;
+        background-color: #282a2b;
+        margin: 8px 16px;
+        align-items: center;
+      "
     >
+      <profile-picture
+        size="32"
+        :avatar="friend.user.avatar"
+        :small="true"
+        style="margin: 8px"
+      />
       <div style="padding: 8px">
         {{ friend.user.username }}
       </div>
@@ -70,6 +82,7 @@
 </template>
 
 <script setup>
+import ProfilePicture from "@/components/ProfilePicture.vue"
 import Icons from "@/components/core/Icons.vue"
 
 import { ref } from "vue"
