@@ -24,7 +24,7 @@
         v-if="!friend.status"
         class="profile-button-add"
         style="color: #47bf4c; width: fit-content"
-        @click="addFriend(friend.user.id)"
+        @click="add(friend.user.id)"
       >
         <icons
           style="padding-right: 4px"
@@ -38,7 +38,7 @@
         v-else-if="friend.status === 'accepted'"
         class="profile-button-remove"
         style="color: #ff2f2f; width: fit-content"
-        @click="addFriend(friend.user.id)"
+        @click="add(friend.user.id)"
       >
         <icons
           style="padding-right: 4px"
@@ -52,7 +52,7 @@
         v-else-if="friend.status === 'incoming'"
         class="profile-button-pending"
         style="color: #808080; width: fit-content"
-        @click="addFriend(friend.user.id)"
+        @click="add(friend.user.id)"
       >
         <icons
           style="padding-right: 4px"
@@ -66,7 +66,7 @@
         v-else-if="friend.status === 'pending'"
         class="profile-button-pending"
         style="color: #47bf4c; width: fit-content"
-        @click="addFriend(friend.user.id)"
+        @click="add(friend.user.id)"
       >
         <icons
           style="padding-right: 4px"
@@ -91,19 +91,28 @@ import { useDataStore } from "@/stores/main"
 import axios from "axios"
 
 const store = useDataStore()
-defineProps({
+const props = defineProps({
   addFriend: Function
 })
 
 const friends = ref({})
 
-axios
-  .get(`/api/friends`)
-  .then((res) => {
-    friends.value = res.data
+const getFriends = () => {
+  axios
+    .get(`/api/friends`)
+    .then((res) => {
+      friends.value = res.data
+    })
+    .catch((e) => {
+      store.error = `Error 503, Cannot Connect to Server ${e}`
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+async function add(id) {
+  await props.addFriend(id).then(() => {
+    getFriends()
   })
-  .catch((e) => {
-    store.error = `Error 503, Cannot Connect to Server ${e}`
-    setTimeout(store.errorFalse, 5000)
-  })
+}
+
+getFriends()
 </script>

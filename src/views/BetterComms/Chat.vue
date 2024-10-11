@@ -1646,13 +1646,13 @@ const editLast = () => {
     editing.value = messageEdit.slice(-1)[0].id
   }
 }
-const addFriend = (userId, notOpen) => {
-  axios
+async function addFriend(userId, notOpen) {
+  await axios
     .post(`/api/friend/${userId}`)
     .then(async () => {
-      if (!notOpen) {
+      if (notOpen == false) {
         openUser(userId)
-      } else {
+      } else if (notOpen) {
         await getChat(currentChat.value.id)
         contextMenuItemUser.value = await findUser(contextMenuItemUser.value.id)
       }

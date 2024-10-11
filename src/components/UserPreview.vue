@@ -72,7 +72,7 @@
               "
               class="profile-button-add"
               style="color: #47bf4c"
-              @click="addFriend(showUser.id)"
+              @click="addFriend(showUser.id, false)"
             >
               <icons
                 style="padding-right: 4px"
@@ -89,7 +89,7 @@
               "
               class="profile-button-remove"
               style="color: #ff2f2f"
-              @click="addFriend(showUser.id)"
+              @click="addFriend(showUser.id, false)"
             >
               <icons
                 style="padding-right: 4px"
@@ -106,7 +106,7 @@
               "
               class="profile-button-pending"
               style="color: #808080"
-              @click="addFriend(showUser.id)"
+              @click="addFriend(showUser.id, false)"
             >
               <icons
                 style="padding-right: 4px"
@@ -123,7 +123,7 @@
               "
               class="profile-button-pending"
               style="color: #47bf4c"
-              @click="addFriend(showUser.id)"
+              @click="addFriend(showUser.id, false)"
             >
               <icons
                 style="padding-right: 4px"
