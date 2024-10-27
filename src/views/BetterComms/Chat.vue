@@ -509,13 +509,13 @@
                       {{ " " + store.dayjsLong(message.createdAt) }}
                     </b>
                   </div>
-                  <input
+                  <textarea
                     v-if="editing === message.id"
                     id="edit"
                     v-model="editText"
                     placeholder="Edit your message"
                     autocomplete="off"
-                    @keydown.enter="editMessage(message.id)"
+                    @keydown.enter.exact.prevent="editMessage(message.id)"
                   />
                   <custom-message
                     v-show="editing !== message.id"
@@ -1609,6 +1609,7 @@ const merge = (message, previousMessage) => {
   if (previousMessage) {
     return (
       previousMessage.userId === message.userId &&
+      dayjs(previousMessage.createdAt).isSame(message.createdAt, "day") &&
       !message.reply &&
       !dayjs(previousMessage.createdAt).isBefore(
         dayjs(message.createdAt).subtract(15, "minutes")

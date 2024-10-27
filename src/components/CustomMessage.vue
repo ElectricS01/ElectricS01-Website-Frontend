@@ -6,7 +6,13 @@
       @click="handleClick(part)"
     >
       <span v-if="check(index)" v-html="part" />
-      <span v-if="!check(index)" v-markdown>{{ part }}</span>
+      <span
+        v-if="!check(index)"
+        v-markdown
+        style="word-wrap: break-word; white-space: pre-wrap"
+      >
+        {{ part }}
+      </span>
     </span>
     <b
       v-if="message.edited"
