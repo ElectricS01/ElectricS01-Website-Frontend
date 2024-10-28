@@ -6,11 +6,7 @@
       @click="handleClick(part)"
     >
       <span v-if="check(index)" v-html="part" />
-      <span
-        v-if="!check(index)"
-        v-markdown
-        style="word-wrap: break-word; white-space: pre-wrap"
-      >
+      <span v-if="!check(index)" v-markdown class="custom-message">
         {{ part }}
       </span>
     </span>
@@ -60,9 +56,9 @@ let editShownPosition = { x: 0, y: 0 }
 
 const check = (index) => {
   const parts = props.message.messageContents
-    .split(/(<@\d+>)/g)
+    .split(/(\n|<@\d+>)/g)
     .filter((part) => part !== "")
-  if (parts[index].startsWith("<@")) {
+  if (parts[index].startsWith("<@") || parts[index] === "\n") {
     return true
   }
 }
@@ -84,7 +80,7 @@ const showEdited = () => {
 
 const messageParts = computed(() => {
   const parts = props.message.messageContents
-    .split(/(<@\d+>)/g)
+    .split(/(\n|<@\d+>)/g)
     .filter((part) => part !== "")
   return parts.map((part) => {
     if (part.startsWith("<@")) {
@@ -92,8 +88,20 @@ const messageParts = computed(() => {
       return `<span @click="handleUserMentionClick(${userId})" class="mention">@${
         props.findUser(userId).username
       }</span>`
+    } else if (part === "\n") {
+      return "<br />"
     }
     return part
   })
 })
 </script>
+
+<style>
+.custom-message {
+  ul,
+  ol {
+    padding: 0;
+    margin: 4px 0 4px 16px;
+  }
+}
+</style>

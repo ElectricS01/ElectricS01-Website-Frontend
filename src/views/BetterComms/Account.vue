@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.220.2</div>
+            <div>Version: 1.220.3</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -953,6 +953,11 @@
               <li>Update Collider to latest version</li>
             </ul>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.174 User Profile Links</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li v-markdown>Users can now share their User Profile with the new `/user/:id` route</li>
+            </ul>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>

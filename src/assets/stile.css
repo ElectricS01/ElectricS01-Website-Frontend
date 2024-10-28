@@ -699,7 +699,8 @@ input {
   background-color: #2627dc80;
 }
 
-ul {
+ul,
+ol {
   margin: 0;
 }
 
