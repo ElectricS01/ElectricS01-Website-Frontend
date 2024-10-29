@@ -45,9 +45,10 @@
 <script setup>
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
-import { useRouter } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 
 const store = useDataStore()
+const route = useRoute()
 const router = useRouter()
 
 let username = ""
@@ -86,7 +87,7 @@ const submit = () => {
         store.loadingChats = false
         store.chatSort()
       }
-      router.push("/chat")
+      router.push(route.query.redirect || "/chat")
     })
     .catch((e) => {
       store.error = e.response.data.message

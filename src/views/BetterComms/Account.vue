@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.220.3</div>
+            <div>Version: 1.221.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -452,7 +452,24 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
-            <h2 class="settings-text">1.220 Friends list updates</h2>
+            <h2 class="settings-text">1.221 Login redirects</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                If a user requests a page but hasn't logged in, they will be
+                sent to that page after logging in
+              </li>
+              <li>
+                Fix chat not loading when accessing BetterCommunications through
+                a user's link
+              </li>
+              <li>
+                Support multi-line message editing and dissplaying correctly
+                (1.220.2 and 1.220.3)
+              </li>
+              <li>Fix Friends List buttons Not refreshing the UI (1.220.1)</li>
+            </ul>
+            <h2 class="settings-text">1.220 Friends List updates</h2>
             <div class="settings-spacer" />
             <ul>
               <li>Show user's profile pictures on the Friends UI</li>
@@ -952,11 +969,25 @@
             <ul>
               <li>Update Collider to latest version</li>
             </ul>
-            <div class="settings-spacer" />
             <h2 class="settings-text">1.174 User Profile Links</h2>
             <div class="settings-spacer" />
             <ul>
-              <li v-markdown>Users can now share their User Profile with the new `/user/:id` route</li>
+              <li v-markdown>
+                Users can now share their User Profile with the new `/user/:id`
+                route
+              </li>
+            </ul>
+            <h2 class="settings-text">1.173 Removing users from chats</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Owners may now remove users from their chats</li>
+              <li>Sort chat's users when the chat loads</li>
+              <li>Refactor messages</li>
+            </ul>
+            <h2 class="settings-text">1.172 Bug fix for Collider</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Collider will now resize to fit in your browser window</li>
             </ul>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">

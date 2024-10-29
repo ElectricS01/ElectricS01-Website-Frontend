@@ -1210,14 +1210,14 @@ let chatUsers
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 if (!localStorage.getItem("token")) {
-  router.push("/login")
+  router.push("/login?redirect=" + route.path)
 } else {
   store.ws.onmessage = (event) => {
     console.log(event)
     const socketMessage = JSON.parse(event.data)
     if (socketMessage.authFail) {
       store.error = `Error 401, ${socketMessage.authFail}`
-      router.push("/login")
+      router.push("/login?redirect=" + route.path)
     } else if (socketMessage.newMessage) {
       if (socketMessage.newMessage.chatId === currentChat.value.id) {
         socketMessage.newMessage.focus = false
@@ -1759,7 +1759,7 @@ async function getChat(id) {
     })
     .catch((e) => {
       if (e.response?.status === 400) {
-        router.push("/chat/" + store.userData.chatsList[0].id)
+        getChat(store.userData.chatsList[0].id)
       } else if (e.response?.status !== 401) {
         store.error = `Error ${e.request.status}, ${
           e.response.data.message || e.request.statusMessage
