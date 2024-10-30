@@ -1332,9 +1332,8 @@ const pinMessage = (messageId, pinned) => {
             ...message,
             pinned: !message.pinned
           }
-        } else {
-          return message
         }
+        return message
       })
       if (!pinned) {
         currentChat.value.pins.push(
@@ -1651,7 +1650,7 @@ async function addFriend(userId, notOpen) {
   await axios
     .post(`/api/friend/${userId}`)
     .then(async () => {
-      if (notOpen == false) {
+      if (notOpen === false) {
         openUser(userId)
       } else if (notOpen) {
         await getChat(currentChat.value.id)

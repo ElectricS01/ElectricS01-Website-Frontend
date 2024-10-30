@@ -99,7 +99,7 @@ const friends = ref({})
 
 const getFriends = () => {
   axios
-    .get(`/api/friends`)
+    .get("/api/friends")
     .then((res) => {
       friends.value = res.data
     })
