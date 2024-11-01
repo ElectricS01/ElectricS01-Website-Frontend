@@ -46,8 +46,10 @@ export const useDataStore = defineStore("store", () => {
       : "ws://localhost:24554/ws"
   )
   ws.onopen = () => {
-    ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
-    console.log("Socket connected")
+    if (localStorage.getItem("token")) {
+      ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
+      console.log("Socket connected")
+    }
   }
 
   const getItemSearches = (item) => {

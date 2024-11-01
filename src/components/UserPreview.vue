@@ -51,7 +51,7 @@
                 (showUser.id !== store.userData.id &&
                   showUser.directMessages !== 'no one') ||
                 (showUser.directMessages !== 'no one' &&
-                  showUser.friend[0]?.status)
+                  showUser.friend?.status)
               "
               class="profile-button-message"
               @click="sendDm(showUser.id)"
@@ -68,7 +68,7 @@
               v-if="
                 showUser.friendRequests &&
                 showUser.id !== store.userData.id &&
-                !showUser.friend[0]?.status
+                !showUser.friend?.status
               "
               class="profile-button-add"
               style="color: #47bf4c"
@@ -85,7 +85,7 @@
             <button
               v-else-if="
                 showUser.id !== store.userData.id &&
-                showUser.friend[0]?.status === 'accepted'
+                showUser.friend?.status === 'accepted'
               "
               class="profile-button-remove"
               style="color: #ff2f2f"
@@ -101,8 +101,7 @@
             </button>
             <button
               v-else-if="
-                showUser.friendRequests &&
-                showUser.friend[0]?.status === 'pending'
+                showUser.friendRequests && showUser.friend?.status === 'pending'
               "
               class="profile-button-pending"
               style="color: #808080"
@@ -119,7 +118,7 @@
             <button
               v-else-if="
                 showUser.id !== store.userData.id &&
-                showUser.friend[0]?.status === 'incoming'
+                showUser.friend?.status === 'incoming'
               "
               class="profile-button-pending"
               style="color: #47bf4c"

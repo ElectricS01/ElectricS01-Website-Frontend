@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.221.1</div>
+            <div>Version: 1.222.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -452,6 +452,17 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">
+              1.222 Update Notifications in the sidebar
+            </h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Update chat notifications in the</li>
+              <li>Fix WebSocket failong after loging in or registering</li>
+              <li>Refactor chat notifications</li>
+              <li>Update to work with backend 1.106.0</li>
+              <li>Fix context menus on Chrome 130 and Firefox (1.221.1)</li>
+            </ul>
             <h2 class="settings-text">1.221 Login redirects</h2>
             <div class="settings-spacer" />
             <ul>
@@ -988,6 +999,20 @@
             <div class="settings-spacer" />
             <ul>
               <li>Collider will now resize to fit in your browser window</li>
+            </ul>
+            <h2 class="settings-text">1.171 Bug fix for Tetris</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Tetris will now resize to fit in your browser window</li>
+            </ul>
+            <h2 class="settings-text">1.170 Add my new game, Collider</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Added Collider</li>
+              <li>
+                Added
+                <router-link to="/collider">/collider link</router-link>
+              </li>
             </ul>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">

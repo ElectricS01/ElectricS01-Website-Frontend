@@ -285,10 +285,10 @@
               </p>
             </div>
             <div
-              v-if="chat.type !== 2 && chat.associations[0].notifications"
+              v-if="chat.type !== 2 && chat.association.notifications"
               class="chat-notifications"
             >
-              {{ chat.associations[0].notifications }}
+              {{ chat.association.notifications }}
             </div>
           </div>
           <div
@@ -806,7 +806,7 @@
               v-if="
                 contextMenuItemUser.id !== store.userData.id &&
                 contextMenuItemUser.friendRequests &&
-                !contextMenuItemUser.friend[0]?.status
+                !contextMenuItemUser.friend.status
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -816,7 +816,7 @@
             <div
               v-else-if="
                 contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend[0]?.status === 'accepted'
+                contextMenuItemUser.friend.status === 'accepted'
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -826,7 +826,7 @@
             <div
               v-else-if="
                 contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend[0]?.status === 'pending'
+                contextMenuItemUser.friend.status === 'pending'
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -836,7 +836,7 @@
             <div
               v-else-if="
                 contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend[0]?.status === 'incoming'
+                contextMenuItemUser.friend.status === 'incoming'
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -1219,6 +1219,17 @@ if (!localStorage.getItem("token")) {
       store.error = `Error 401, ${socketMessage.authFail}`
       router.push("/login?redirect=" + route.path)
     } else if (socketMessage.newMessage) {
+      const chatIndex = store.userData.chatsList.findIndex(
+        (chat) => chat.id === socketMessage.newMessage.chatId
+      )
+
+      if (chatIndex !== -1) {
+        store.userData.chatsList[chatIndex].latest =
+          socketMessage.newMessage.createdAt
+        console.log(store.userData.chatsList[chatIndex])
+        store.userData.chatsList[chatIndex].association.notifications += 1
+      }
+      store.chatSort()
       if (socketMessage.newMessage.chatId === currentChat.value.id) {
         socketMessage.newMessage.focus = false
         currentChat.value.messages.push(socketMessage.newMessage)
@@ -1718,7 +1729,7 @@ const escPressed = ({ key }) => {
         store.userData.chatsList.findIndex(
           (chat) => chat.id === parseInt(route.params.chatId)
         )
-      ].associations[0].notifications = 0
+      ].association.notifications = 0
     }
   }
 }
