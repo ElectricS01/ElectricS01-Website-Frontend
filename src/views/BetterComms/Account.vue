@@ -444,7 +444,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.222.0</div>
+            <div>Version: 1.223.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -452,13 +452,18 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.223 Tetris Update</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Updated Tetris to 0.28</li>
+            </ul>
             <h2 class="settings-text">
               1.222 Update Notifications in the sidebar
             </h2>
             <div class="settings-spacer" />
             <ul>
               <li>Update chat notifications in the</li>
-              <li>Fix WebSocket failong after loging in or registering</li>
+              <li>Fix WebSocket failing after logging in or registering</li>
               <li>Refactor chat notifications</li>
               <li>Update to work with backend 1.106.0</li>
               <li>Fix context menus on Chrome 130 and Firefox (1.221.1)</li>
@@ -475,10 +480,10 @@
                 a user's link
               </li>
               <li>
-                Support multi-line message editing and dissplaying correctly
+                Support multi-line message editing and displaying correctly
                 (1.220.2 and 1.220.3)
               </li>
-              <li>Fix Friends List buttons Not refreshing the UI (1.220.1)</li>
+              <li>Fix Friends List buttons not refreshing the UI (1.220.1)</li>
             </ul>
             <h2 class="settings-text">1.220 Friends List updates</h2>
             <div class="settings-spacer" />
@@ -750,7 +755,8 @@
             <ul>
               <li>You can now add users to a chat using their username</li>
               <li>Update to work with backend 1.93.0</li>
-              <li>Bug fixes</li>
+              <li>Fix invalid mentions causing errors</li>
+              <li>Other bug fixes</li>
               <li>Refactoring</li>
               <li>Updated dependencies</li>
             </ul>
@@ -1003,7 +1009,9 @@
             <h2 class="settings-text">1.171 Bug fix for Tetris</h2>
             <div class="settings-spacer" />
             <ul>
-              <li>Tetris will now resize to fit in your browser window</li>
+              <li>
+                Tetris will now correctly resize to fit in your browser window
+              </li>
             </ul>
             <h2 class="settings-text">1.170 Add my new game, Collider</h2>
             <div class="settings-spacer" />
@@ -1013,6 +1021,21 @@
                 Added
                 <router-link to="/collider">/collider link</router-link>
               </li>
+            </ul>
+            <h2 class="settings-text">1.169 Tetris</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Tetris will now resize to fit in your browser window</li>
+            </ul>
+            <h2 class="settings-text">1.168 Users list Context Menu</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Added a context menu when you right-click on a user in the users
+                list
+              </li>
+              <li>Mentions now show the user's username</li>
+              <li>Refactor the users list</li>
             </ul>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">

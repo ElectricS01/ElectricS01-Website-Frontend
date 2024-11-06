@@ -806,7 +806,7 @@
               v-if="
                 contextMenuItemUser.id !== store.userData.id &&
                 contextMenuItemUser.friendRequests &&
-                !contextMenuItemUser.friend.status
+                !contextMenuItemUser.friend?.status
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -816,7 +816,7 @@
             <div
               v-else-if="
                 contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend.status === 'accepted'
+                contextMenuItemUser.friend?.status === 'accepted'
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -826,7 +826,7 @@
             <div
               v-else-if="
                 contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend.status === 'pending'
+                contextMenuItemUser.friend?.status === 'pending'
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -836,7 +836,7 @@
             <div
               v-else-if="
                 contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend.status === 'incoming'
+                contextMenuItemUser.friend?.status === 'incoming'
               "
               class="context-menu-item"
               @click="addFriend(contextMenuItemUser.id, true)"
@@ -1314,7 +1314,9 @@ const sendMessage = () => {
         scrollDown()
       })
       .catch((e) => {
-        store.error = e
+        store.error = `Error ${e.request.status}, ${
+          e.response.data.message || e.request.statusMessage
+        }`
         setTimeout(store.errorFalse, 5000)
       })
   }
