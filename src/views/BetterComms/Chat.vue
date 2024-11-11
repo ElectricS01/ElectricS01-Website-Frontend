@@ -29,7 +29,7 @@
           (requireVerification = true)
       "
     >
-      <div class="chanel-menu">
+      <div class="channel-menu">
         <div class="selector">
           <p
             class="message-text-large"
@@ -123,7 +123,7 @@
           (requireVerification = true)
       "
     >
-      <div class="chanel-menu">
+      <div class="channel-menu">
         <p class="message-text-large">Edit Chat</p>
         <div class="text-small">
           <label class="text-small" for="chat-name">Chat name</label>
@@ -513,6 +513,7 @@
                     v-if="editing === message.id"
                     id="edit"
                     v-model="editText"
+                    style="resize: none"
                     placeholder="Edit your message"
                     autocomplete="off"
                     @keydown.enter.exact.prevent="editMessage(message.id)"
@@ -1243,6 +1244,10 @@ if (!localStorage.getItem("token")) {
         currentChat.value.users[userToUpdate] = socketMessage.changeUser
         // } else {
         // currentChat.value.users.push(socketMessage.changeUser)
+      }
+    } else if (socketMessage.newUser) {
+      if (parseInt(socketMessage.newUser.chatId) === currentChat.value.id) {
+        currentChat.value.users.push(socketMessage.newUser)
       }
     }
     console.log("Data received from websocket")
