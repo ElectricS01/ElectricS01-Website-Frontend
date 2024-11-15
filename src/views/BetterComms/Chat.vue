@@ -732,7 +732,11 @@
                   text-overflow: ellipsis;
                 "
               >
-                {{ user.gameStatus || user.statusMessage }}
+                {{
+                  user.gameName
+                    ? "Playing " + user.gameName
+                    : user.statusMessage
+                }}
               </p>
             </div>
           </div>

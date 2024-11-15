@@ -25,7 +25,11 @@
             </h4>
             <div v-if="editing !== 'status'">
               <p class="message-text-large" style="word-wrap: break-word">
-                {{ showUser.gameStatus || showUser.statusMessage }}
+                {{
+                  showUser.gameName
+                    ? "Playing " + showUser.gameName
+                    : showUser.statusMessage
+                }}
                 <icons
                   v-if="showUser.id === store.userData.id"
                   style="cursor: pointer"
@@ -134,17 +138,41 @@
             </button>
           </div>
         </div>
-        <div class="profile-spacer" />
         <div class="profile-info scroll-bar">
+          <div v-if="showUser.gameName">
+            <div class="settings-spacer">
+              <p>Playing</p>
+              <div />
+            </div>
+            <div style="display: flex">
+              <div style="padding-right: 8px">
+                <img src="/icons/tetris.ico" />
+              </div>
+              <div>
+                <p class="message-text-large">
+                  {{ showUser.gameName }} -
+                  {{ showUser.gameStatus }}
+                </p>
+                <p class="message-text-medium-gray">
+                  {{ dayjsOngoing }}
+                </p>
+              </div>
+            </div>
+          </div>
           <div v-if="showUser.createdAt">
-            <p>Date Created</p>
+            <div class="settings-spacer">
+              <p>Date Created</p>
+              <div />
+            </div>
             <p class="message-text-large">
               {{ store.dayjsDate(showUser.createdAt) }}
             </p>
-            <div class="profile-spacer" />
           </div>
           <div>
-            <p>Description</p>
+            <div class="settings-spacer">
+              <p>Description</p>
+              <div />
+            </div>
             <p
               class="message-text-large"
               style="word-wrap: break-word; white-space: pre-wrap"
@@ -153,13 +181,19 @@
             </p>
           </div>
           <div v-if="showUser.tetris.length">
-            <div class="profile-spacer" />
-            <p>Tetris Scores</p>
-            <p>Easy mode: {{ showUser.tetris[0]?.value }} lines</p>
+            <div class="settings-spacer">
+              <p>Tetris Scores</p>
+              <div />
+            </div>
+            <p style="margin-top: 0">
+              Easy mode: {{ showUser.tetris[0]?.value }} lines
+            </p>
             <p>Medium mode: {{ showUser.tetris[1]?.value }} lines</p>
             <p>Hard mode: {{ showUser.tetris[2]?.value }} lines</p>
             <p>God mode: {{ showUser.tetris[3]?.value }} lines</p>
-            <p>Ultra Nightmare mode: {{ showUser.tetris[4]?.value }} lines</p>
+            <p style="margin-bottom: 0">
+              Ultra Nightmare mode: {{ showUser.tetris[4]?.value }} lines
+            </p>
           </div>
         </div>
       </div>
@@ -173,6 +207,11 @@ import StatusIndicator from "@/components/StatusIndicator.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import { useDataStore } from "@/stores/main"
 import axios from "axios"
+import duration from "dayjs/plugin/duration"
+import dayjs from "dayjs"
+import { ref, onMounted, onUnmounted } from "vue"
+
+dayjs.extend(duration)
 
 const store = useDataStore()
 const props = defineProps({
@@ -184,6 +223,26 @@ const props = defineProps({
 const emits = defineEmits(["showUser", "editing", "statusMessage"])
 
 let editStatus
+
+const dayjsOngoing = ref(
+  dayjs.duration(dayjs().diff(props.showUser.playingSince)).format("HH:mm:ss")
+)
+
+const updateCounter = () => {
+  dayjsOngoing.value = dayjs
+    .duration(dayjs().diff(props.showUser.playingSince))
+    .format("HH:mm:ss")
+}
+
+let interval
+
+onMounted(() => {
+  interval = setInterval(updateCounter, 1000)
+})
+
+onUnmounted(() => {
+  clearInterval(interval)
+})
 
 const editStatusShow = () => {
   emits("editing", "status")
