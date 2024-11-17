@@ -140,7 +140,7 @@
         </div>
         <div class="profile-info scroll-bar">
           <div v-if="showUser.gameName">
-            <div class="settings-spacer">
+            <div class="profile-spacer">
               <p>Playing</p>
               <div />
             </div>
@@ -160,7 +160,7 @@
             </div>
           </div>
           <div v-if="showUser.createdAt">
-            <div class="settings-spacer">
+            <div class="profile-spacer">
               <p>Date Created</p>
               <div />
             </div>
@@ -169,7 +169,7 @@
             </p>
           </div>
           <div>
-            <div class="settings-spacer">
+            <div class="profile-spacer">
               <p>Description</p>
               <div />
             </div>
@@ -181,7 +181,7 @@
             </p>
           </div>
           <div v-if="showUser.tetris.length">
-            <div class="settings-spacer">
+            <div class="profile-spacer">
               <p>Tetris Scores</p>
               <div />
             </div>

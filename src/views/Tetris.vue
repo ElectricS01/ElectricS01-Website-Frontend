@@ -8,7 +8,7 @@
         allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
         src="/tetrisGame.html"
       />
-      <h3>Tetris By ElectricS01 0.29</h3>
+      <h3>Tetris By ElectricS01 0.30</h3>
       {{
         store.userData.id
           ? "You are logged in"

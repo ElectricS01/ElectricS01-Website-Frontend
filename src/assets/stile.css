@@ -257,9 +257,22 @@ button {
 }
 
 .profile-spacer {
-  border-bottom: 1px solid #3d4244;
-  width: 100%;
-  margin: 16px 0;
+  display: flex;
+  align-items: center;
+
+  p {
+    white-space: nowrap;
+    color: #a9a9a9;
+    font-size: 12px;
+    margin: 0;
+    padding-right: 6px;
+  }
+
+  div {
+    border-bottom: 1px solid #3d4244;
+    width: 100%;
+    margin: 20px 0;
+  }
 }
 
 .profile-info {
@@ -1094,22 +1107,9 @@ input:checked + .slider:before {
 }
 
 .settings-spacer {
-  display: flex;
-  align-items: center;
-
-  p {
-    white-space: nowrap;
-    color: #a9a9a9;
-    font-size: 12px;
-    margin: 0;
-    padding-right: 6px;
-  }
-
-  div {
-    border-bottom: 1px solid #3d4244;
-    width: 100%;
-    margin: 20px 0;
-  }
+  border-bottom: 1px solid #3d4244;
+  width: 100%;
+  margin: 10px 0;
 }
 
 .settings-modal {

@@ -342,6 +342,7 @@
                         placeholder="Edit your status"
                         style="margin: 1px; width: calc(100% - 2px)"
                         autocomplete="off"
+                        @keydown.escape="editing = ''"
                         @keydown.enter="editStatusMessage()"
                       />
                     </div>
@@ -354,21 +355,33 @@
                     autocomplete="off"
                     @keydown.enter="toggle('avatar', editAvatar)"
                   />
-                  <div class="profile-spacer" />
                   <div
                     style="height: 332px; overflow-y: auto"
                     class="scroll-bar"
                   >
                     <div v-if="store.userData?.createdAt">
-                      <p>Date Created</p>
+                      <div class="profile-spacer">
+                        <p>Date Created</p>
+                        <div />
+                      </div>
                       <p class="message-text-large">
                         {{ store.dayjsDate(store.userData?.createdAt) }}
                       </p>
-                      <div class="profile-spacer" />
                     </div>
                     <div>
-                      <p>
-                        Description
+                      <div class="profile-spacer">
+                        <p>Description</p>
+                        <div />
+                      </div>
+                      <p
+                        v-if="editing !== 'description'"
+                        class="message-text-large"
+                        style="word-wrap: break-word; white-space: pre-wrap"
+                      >
+                        {{
+                          store.userData?.description ||
+                          `Hi, I'm ${store.userData?.username}!`
+                        }}
                         <icons
                           style="cursor: pointer"
                           size="16"
@@ -379,16 +392,6 @@
                               editFocus()
                           "
                         />
-                      </p>
-                      <p
-                        v-if="editing !== 'description'"
-                        class="message-text-large"
-                        style="word-wrap: break-word; white-space: pre-wrap"
-                      >
-                        {{
-                          store.userData?.description ||
-                          `Hi, I'm ${store.userData?.username}!`
-                        }}
                       </p>
                       <textarea
                         v-else
@@ -401,15 +404,18 @@
                           resize: none;
                         "
                         autocomplete="off"
+                        @keydown.escape="editing = ''"
                         @keydown.enter.exact.prevent="
                           toggle('description', editDescription)
                         "
                       />
                     </div>
                     <div v-if="store.userData?.tetris.length">
-                      <div class="profile-spacer" />
-                      <p>Tetris Scores</p>
-                      <p>
+                      <div class="profile-spacer">
+                        <p>Tetris Scores</p>
+                        <div />
+                      </div>
+                      <p style="margin-top: 0">
                         Easy mode: {{ store.userData?.tetris[0]?.value }} lines
                       </p>
                       <p>
@@ -422,7 +428,7 @@
                       <p>
                         God mode: {{ store.userData?.tetris[3]?.value }} lines
                       </p>
-                      <p>
+                      <p style="margin-bottom: 0">
                         Ultra Nightmare mode:
                         {{ store.userData?.tetris[4]?.value }} lines
                       </p>
@@ -444,7 +450,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.224.0</div>
+            <div>Version: 1.224.1</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -452,10 +458,10 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
-            <h2 class="settings-text">1.224 Game Score Update</h2>
+            <h2 class="settings-text">1.224 Game Status Update</h2>
             <div class="settings-spacer" />
             <ul>
-              <li>Game scores now show on peoples profiles</li>
+              <li>Game Status now shows on profile pages</li>
               <li>
                 Profiles now show how long you've been playing for and your
                 current score in-game
