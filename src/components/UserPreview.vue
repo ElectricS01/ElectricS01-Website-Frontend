@@ -180,7 +180,7 @@
               {{ showUser.description || `Hi, I'm ${showUser.username}!` }}
             </p>
           </div>
-          <div v-if="showUser.tetris.length">
+          <div v-if="showUser.tetris?.length">
             <div class="profile-spacer">
               <p>Tetris Scores</p>
               <div />

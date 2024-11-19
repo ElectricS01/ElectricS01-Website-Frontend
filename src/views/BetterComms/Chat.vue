@@ -1241,6 +1241,9 @@ if (!localStorage.getItem("token")) {
         scrollDown()
       }
     } else if (socketMessage.changeUser) {
+      if (socketMessage.changeUser.id === showUser.value.id) {
+        showUser.value = socketMessage.changeUser
+      }
       const userToUpdate = currentChat.value.users.findIndex(
         (user) => user.id === socketMessage.changeUser.id
       )
