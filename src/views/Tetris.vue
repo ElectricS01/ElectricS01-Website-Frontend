@@ -8,7 +8,7 @@
         allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
         src="/tetrisGame.html"
       />
-      <h3>Tetris By ElectricS01 0.30</h3>
+      <h3>Tetris By ElectricS01 0.31</h3>
       {{
         store.userData.id
           ? "You are logged in"
@@ -31,7 +31,7 @@
 
 <script setup>
 import axios from "axios"
-import { computed, onUnmounted } from "vue"
+import { computed, onMounted, onUnmounted } from "vue"
 import { useDataStore } from "@/stores/main"
 const store = useDataStore()
 
@@ -89,7 +89,8 @@ const leaving = () => {
             { difficulty: 1, value: parseInt(pairs[1].highscore_medium) },
             { difficulty: 2, value: parseInt(pairs[2].highscore_hard) },
             { difficulty: 3, value: parseInt(pairs[3].highscore_god) },
-            { difficulty: 4, value: parseInt(pairs[4].highscore_ultra) }
+            { difficulty: 4, value: parseInt(pairs[4].highscore_ultra) },
+            { difficulty: -1, value: parseInt(pairs[5]?.difficulty) }
           ]
         })
         .catch((e) => {
@@ -114,7 +115,14 @@ const minDimension = computed(() => {
 window.addEventListener("beforeunload", leaving)
 document.addEventListener("resize", updateDimensions)
 
+let interval
+
+onMounted(() => {
+  interval = setInterval(leaving, 10000)
+})
+
 onUnmounted(() => {
+  clearInterval(interval)
   leaving()
   window.removeEventListener("beforeunload", leaving)
   document.removeEventListener("resize", updateDimensions)

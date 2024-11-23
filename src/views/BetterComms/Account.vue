@@ -450,7 +450,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.224.2</div>
+            <div>Version: 1.225.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -458,6 +458,18 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.225 Extra Game Status information</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>Game Status now shows your difficulty and score</li>
+              <li>
+                Game Status correctly shows the correct icon for each game
+              </li>
+              <li>Update to work with backend 1.108.0</li>
+              <li>Update the profile page in settings (1.224.1)</li>
+              <li>Fix spacers in settings (1.224.1)</li>
+              <li>Bug fixes to Tetris (1.224.1)</li>
+            </ul>
             <h2 class="settings-text">1.224 Game Status Update</h2>
             <div class="settings-spacer" />
             <ul>
@@ -467,6 +479,7 @@
                 current score in-game
               </li>
               <li>Minor updates to profile pages</li>
+              <li>Update to work with backend 1.107.0</li>
               <li>WebSockets for users being added to chats (1.223.2)</li>
               <li>Bug fix to Tetris (1.223.1)</li>
             </ul>
@@ -1054,6 +1067,14 @@
               </li>
               <li>Mentions now show the user's username</li>
               <li>Refactor the users list</li>
+            </ul>
+            <h2 class="settings-text">1.167 UX updates</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Changed the rounding of some corners to be more consistent
+              </li>
+              <li>Fix creating chats</li>
             </ul>
           </div>
           <div v-else-if="page === 'admin'" class="settings-page-container">

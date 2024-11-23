@@ -146,7 +146,11 @@
             </div>
             <div style="display: flex">
               <div style="padding-right: 8px">
-                <img src="/icons/tetris.ico" />
+                <img
+                  width="32"
+                  height="32"
+                  :src="`/icons/${showUser.gameName === 'Tetris' ? 'tetris.ico' : showUser.gameName === 'TonkGame' ? 'tonkgameIcon.ico' : 'favicon.ico'}`"
+                />
               </div>
               <div>
                 <p class="message-text-large">
@@ -225,12 +229,14 @@ const emits = defineEmits(["showUser", "editing", "statusMessage"])
 let editStatus
 
 const dayjsOngoing = ref(
-  dayjs.duration(dayjs().diff(props.showUser.playingSince)).format("HH:mm:ss")
+  dayjs
+    .duration(dayjs().diff(props.showUser.playingSince || dayjs()))
+    .format("HH:mm:ss")
 )
 
 const updateCounter = () => {
   dayjsOngoing.value = dayjs
-    .duration(dayjs().diff(props.showUser.playingSince))
+    .duration(dayjs().diff(props.showUser.playingSince || dayjs()))
     .format("HH:mm:ss")
 }
 

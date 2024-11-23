@@ -1,14 +1,12 @@
 module.exports = {
-  root: true,
   env: {
     node: true
   },
   extends: ["plugin:vue/vue3-recommended", "eslint:recommended", "prettier"],
+  ignorePatterns: ["/public/**/**.js"],
   plugins: ["sort-keys-fix"],
+  root: true,
   rules: {
-    "vue/multi-word-component-names": "off",
-    "vue/require-default-prop": "off",
-    "vue/no-v-html": "off",
     "array-element-newline": "off",
     curly: "off",
     "dot-location": "off",
@@ -42,6 +40,9 @@ module.exports = {
     semi: "off",
     "sort-imports": "off",
     "sort-keys-fix/sort-keys-fix": "error",
-    "space-before-function-paren": "off"
+    "space-before-function-paren": "off",
+    "vue/multi-word-component-names": "off",
+    "vue/no-v-html": "off",
+    "vue/require-default-prop": "off"
   }
 }

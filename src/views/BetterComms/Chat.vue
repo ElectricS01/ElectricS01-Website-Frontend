@@ -6,7 +6,12 @@
     :add-friend="addFriend"
     @show-user="showUser = false"
     @editing="editing = $event"
-    @status-message="showUser.statusMessage = $event"
+    @status-message="
+      (showUser.statusMessage = $event),
+        (currentChat.users.find(
+          (user) => user.id === store.userData.id
+        ).statusMessage = $event)
+    "
   />
   <transition>
     <modal-simple
