@@ -11,7 +11,6 @@ const routes = [
     redirect: "/"
   },
   {
-    name: "blog",
     path: "/blog",
     children: [
       {

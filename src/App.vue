@@ -393,7 +393,8 @@ const navbarShown = computed(
     !route.path.startsWith("/login") &&
     !route.path.startsWith("/register") &&
     !route.path.startsWith("/account") &&
-    !route.path.startsWith("/reset")
+    !route.path.startsWith("/reset") &&
+    !route.path.startsWith("/verify")
 )
 
 watch(switcherInput, () => {
