@@ -7,10 +7,10 @@
     @show-user="showUser = false"
     @editing="editing = $event"
     @status-message="
-      (showUser.statusMessage = $event),
-        (currentChat.users.find(
-          (user) => user.id === store.userData.id
-        ).statusMessage = $event)
+      ((showUser.statusMessage = $event),
+      (currentChat.users.find(
+        (user) => user.id === store.userData.id
+      ).statusMessage = $event))
     "
   />
   <transition>
@@ -663,7 +663,7 @@
               class="message-input"
               autocomplete="off"
               @keydown.enter.exact.prevent="sendMessage"
-              @keydown.up.prevent="editLast(), scrollDown(true)"
+              @keydown.up.prevent="(editLast(), scrollDown(true))"
             />
             <button style="cursor: pointer" @click="sendMessage">Send</button>
           </div>

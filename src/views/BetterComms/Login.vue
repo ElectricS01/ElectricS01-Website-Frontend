@@ -24,6 +24,20 @@
           type="password"
           @keydown.enter="submit"
         />
+        <div class="text-small">
+          <label for="password">2FA Code</label>
+        </div>
+        <input
+          id="totp"
+          v-model="totp"
+          placeholder="2FA Code"
+          class="modal-input"
+          type="token"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="one-time-code"
+          @keydown.enter="submit"
+        />
         <div style="display: flex; justify-content: space-between">
           <div class="text-small">
             <router-link class="text-small" to="/reset">
@@ -53,6 +67,7 @@ const router = useRouter()
 
 let username = ""
 let password = ""
+let totp = ""
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 
@@ -61,6 +76,7 @@ const submit = () => {
   axios
     .post("/api/login", {
       password: password.trim(),
+      token: totp,
       userAgent: navigator.userAgent,
       username: username.toLowerCase().trim()
     })

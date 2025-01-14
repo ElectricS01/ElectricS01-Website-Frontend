@@ -37,6 +37,59 @@
       </div>
     </modal>
   </transition>
+  <transition>
+    <modal
+      v-if="otpModelOpen"
+      :is-active="otpModelOpen"
+      @close="otpModelOpen = false"
+    >
+      <div class="settings-modal">
+        <p class="settings-text">Enable 2FA</p>
+        <img :src="qrCodeURL" alt="QR Code" />
+        <p>or</p>
+        <div>
+          <a :href="qrURI">Click to add to 2FA app</a>
+        </div>
+        <p>or</p>
+        <button :onclick="copyToken()">Copy Token</button>
+        <input
+          id="totp"
+          v-model="totp"
+          placeholder="2FA Code"
+          class="modal-input"
+          type="token"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="one-time-code"
+          @keydown.enter="verify2FA()"
+        />
+        <button @click="verify2FA()">Enter</button>
+      </div>
+    </modal>
+  </transition>
+  <transition>
+    <modal
+      v-if="disableModelOpen"
+      :is-active="disableModelOpen"
+      @close="disableModelOpen = false"
+    >
+      <div class="settings-modal">
+        <p class="settings-text">Disable 2FA</p>
+        <input
+          id="totp"
+          v-model="totp"
+          placeholder="2FA Code"
+          class="modal-input"
+          type="token"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="one-time-code"
+          @keydown.enter="disable2FA()"
+        />
+        <button @click="disable2FA()">Enter</button>
+      </div>
+    </modal>
+  </transition>
   <div class="container">
     <div class="grid-menu">
       <div class="settings-menu">
@@ -240,6 +293,22 @@
             <div class="message-text-small">
               Disabling this option will delete your private key from the server
               so please back it up
+            </div>
+            <div class="settings-spacer" />
+            2FA
+            <div
+              v-if="!store.userData?.otpVerified"
+              class="settings-button"
+              @click="enable2FA()"
+            >
+              Enable 2FA
+            </div>
+            <div
+              v-else
+              class="settings-button"
+              @click="disableModelOpen = true"
+            >
+              Disable 2FA
             </div>
             <div class="settings-spacer" />
             Sessions
@@ -450,7 +519,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.225.1</div>
+            <div>Version: 1.226.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
           </div>
@@ -458,6 +527,18 @@
             <h2 class="settings-text">Changelog</h2>
             <div>BetterCommunications changelog</div>
             <div class="settings-spacer" />
+            <h2 class="settings-text">1.226 2FA Authentication</h2>
+            <div class="settings-spacer" />
+            <ul>
+              <li>
+                Added 2FA Authentication which can be enabled in
+                <router-link to="/account/security">
+                  Security Settings
+                </router-link>
+              </li>
+              <li>Update to work with backend 1.109.0</li>
+              <li>Upgrade to Vite 6 (1.225.1)</li>
+            </ul>
             <h2 class="settings-text">1.225 Extra Game Status information</h2>
             <div class="settings-spacer" />
             <ul>
@@ -1166,11 +1247,17 @@ const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
 
 const modalOpen = ref(false)
 const passwordModalOpen = ref(false)
+const otpModelOpen = ref(false)
+const disableModelOpen = ref(false)
 const dmOpen = ref(false)
 const encryptionOpen = ref(false)
 const sessions = ref([])
 const adminData = ref([])
 const editing = ref("")
+const qrCodeURL = ref("")
+const qrURI = ref("")
+const totp = ref("")
+let token = ""
 let page = "account"
 let feedbackText = ""
 let editStatus = ""
@@ -1198,7 +1285,9 @@ const getAdmin = () => {
         adminData.value = res.data
       })
       .catch((e) => {
-        store.error = `Error 503, Cannot Connect to Server ${e}`
+        store.error = `Error ${e.request.status}, ${
+          e.response.data.message || e.request.statusMessage
+        }`
         setTimeout(store.errorFalse, 5000)
       })
   }
@@ -1211,7 +1300,9 @@ const getSessions = () => {
         sessions.value = res.data
       })
       .catch((e) => {
-        store.error = `Error 503, Cannot Connect to Server ${e}`
+        store.error = `Error ${e.request.status}, ${
+          e.response.data.message || e.request.statusMessage
+        }`
         setTimeout(store.errorFalse, 5000)
       })
   }
@@ -1251,7 +1342,9 @@ const deleteFeedback = (id) => {
       getAdmin()
     })
     .catch((e) => {
-      store.error = `Error 503, Cannot Connect to Server ${e}`
+      store.error = `Error ${e.request.status}, ${
+        e.response.data.message || e.request.statusMessage
+      }`
       setTimeout(store.errorFalse, 5000)
     })
 }
@@ -1302,7 +1395,9 @@ const logout = () => {
       router.push("/login")
     })
     .catch((e) => {
-      store.error = `Error 503, Cannot Connect to Server ${e}`
+      store.error = `Error ${e.request.status}, ${
+        e.response.data.message || e.request.statusMessage
+      }`
       setTimeout(store.errorFalse, 5000)
     })
 }
@@ -1338,18 +1433,75 @@ const changeUsername = () => {
 const clearHistory = () => {
   localStorage.removeItem("switcherHistory")
   axios.delete("/api/clear-history").catch((e) => {
-    store.error = `Error 503, Cannot Connect to Server ${e}`
+    store.error = `Error ${e.request.status}, ${
+      e.response.data.message || e.request.statusMessage
+    }`
     setTimeout(store.errorFalse, 5000)
   })
 }
 const resendVerification = () => {
   axios.post("/api/resend-verification").catch((e) => {
-    store.error = `Error 503, Cannot Connect to Server ${e}`
+    store.error = `Error ${e.request.status}, ${
+      e.response.data.message || e.request.statusMessage
+    }`
     setTimeout(store.errorFalse, 5000)
   })
   if (localStorage.getItem("token")) {
     store.getUser()
   }
+}
+const enable2FA = () => {
+  axios
+    .post("/api/enable-2fa")
+    .then((res) => {
+      token = res.data.secret
+      qrCodeURL.value = res.data.qrCodeDataURL
+      qrURI.value = res.data.otpUri
+      otpModelOpen.value = true
+    })
+    .catch((e) => {
+      if (e.response.data.message) {
+        store.error = `${e.message}: ${e.response.data.message}`
+      } else store.error = e.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const verify2FA = () => {
+  axios
+    .post("/api/verify-2fa", {
+      token: totp.value
+    })
+    .then(() => {
+      otpModelOpen.value = false
+      totp.value = ""
+      store.userData.otpVerified = true
+    })
+    .catch((e) => {
+      if (e.response.data.message) {
+        store.error = `${e.message}: ${e.response.data.message}`
+      } else store.error = e.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const disable2FA = () => {
+  axios
+    .post("/api/disable-2fa", {
+      token: totp.value
+    })
+    .then(() => {
+      disableModelOpen.value = false
+      totp.value = ""
+      store.userData.otpVerified = false
+    })
+    .catch((e) => {
+      if (e.response.data.message) {
+        store.error = `${e.message}: ${e.response.data.message}`
+      } else store.error = e.message
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+const copyToken = () => {
+  navigator.clipboard.writeText(token)
 }
 const platform = (userAgent) => {
   if (userAgent) {
@@ -1410,7 +1562,9 @@ async function toggle(property, value) {
           }
         })
         .catch((e) => {
-          store.error = `Error 503, Cannot Connect to Server ${e}`
+          store.error = `Error ${e.request.status}, ${
+            e.response.data.message || e.request.statusMessage
+          }`
           setTimeout(store.errorFalse, 5000)
         })
     }
