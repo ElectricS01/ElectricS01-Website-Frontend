@@ -48,7 +48,7 @@
 
 <script setup>
 import axios from "axios"
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 import { useRouter } from "vue-router"
 
 let username = ""

@@ -87,7 +87,7 @@ import Icons from "@/components/core/Icons.vue"
 
 import { ref } from "vue"
 
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 import axios from "axios"
 
 const store = useDataStore()

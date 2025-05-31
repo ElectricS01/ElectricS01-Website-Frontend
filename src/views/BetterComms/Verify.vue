@@ -13,7 +13,7 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router"
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 import axios from "axios"
 
 const route = useRoute()

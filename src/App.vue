@@ -173,7 +173,7 @@
 <script setup>
 import Icons from "@/components/core/Icons.vue"
 import { useRoute, useRouter } from "vue-router"
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 import { computed, nextTick, ref, watch } from "vue"
 import axios from "axios"
 import ModalSimple from "@/components/core/ModalSimple.vue"

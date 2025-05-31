@@ -110,6 +110,27 @@ export const useDataStore = defineStore("store", () => {
           )
             await router.push("/chat/1")
         }
+        if (userData.value.id === 1)
+          document.addEventListener("paste", (e) => {
+            if (e.clipboardData && e.clipboardData.files.length) {
+              const files = e.clipboardData.files
+              const formData = new FormData()
+              for (const file of files) {
+                formData.append("attachment", file)
+              }
+              axios
+                .post("/api/upload", formData, {
+                  headers: {
+                    "Content-Type": "multipart/form-data"
+                  }
+                })
+                .then((res) => {
+                  navigator.clipboard.writeText(
+                    window.location.origin + "/api/i/" + res.data.message
+                  )
+                })
+            }
+          })
       })
       .catch((e) => {
         if (e.response?.status !== 401) {

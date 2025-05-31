@@ -20,7 +20,7 @@
 
 <script setup>
 import { onUnmounted } from "vue"
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 const store = useDataStore()
 
 document.getElementById("favicon").href = "/icons/tonkgameIcon.ico"

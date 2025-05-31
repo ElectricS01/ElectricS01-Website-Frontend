@@ -23,7 +23,7 @@
 <script setup>
 // import axios from "axios"
 import { computed, onUnmounted } from "vue"
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 const store = useDataStore()
 
 let viewportWidth = window.innerWidth - 16

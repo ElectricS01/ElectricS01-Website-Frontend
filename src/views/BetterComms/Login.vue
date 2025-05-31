@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
 

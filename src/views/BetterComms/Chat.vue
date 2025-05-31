@@ -1183,7 +1183,7 @@ import ModalSimple from "@/components/core/ModalSimple.vue"
 import Friends from "@/views/BetterComms/Friends.vue"
 
 import dayjs from "dayjs"
-import { useDataStore } from "@/stores/main"
+import { useDataStore } from "@/store"
 import axios from "axios"
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
