@@ -39,7 +39,7 @@
 <script setup>
 import Embeds from "@/components/Embeds.vue"
 import { computed, ref } from "vue"
-import { useDataStore } from "@/stores/main.js"
+import { useDataStore } from "@/store"
 import TextContext from "@/components/core/TextContext.vue"
 
 const store = useDataStore()
