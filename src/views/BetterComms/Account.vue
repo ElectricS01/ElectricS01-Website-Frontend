@@ -398,9 +398,9 @@
                           size="16"
                           icon="edit"
                           @click="
-                            ;(editing = 'status'),
+                            ;((editing = 'status'),
                               (editStatus = store.userData?.statusMessage),
-                              editFocus()
+                              editFocus())
                           "
                         />
                       </p>
@@ -456,9 +456,9 @@
                           size="16"
                           icon="edit"
                           @click="
-                            ;(editing = 'description'),
+                            ;((editing = 'description'),
                               (editDescription = store.userData?.description),
-                              editFocus()
+                              editFocus())
                           "
                         />
                       </p>
@@ -519,9 +519,11 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.227.1</div>
+            <div>Version: 1.228.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
+            <div class="settings-spacer" />
+            <div>Build date: {{ store.dayjsLong(buildDate) }}</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <changelog />
@@ -613,6 +615,7 @@ const properties = [
 const dmOptions = ["no one", "friends", "everyone"]
 const encryptionOptions = ["never", "off", "on", "always"]
 const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
+const buildDate = __VITE_BUILD_DATE__ || "Unknown"
 
 const modalOpen = ref(false)
 const passwordModalOpen = ref(false)

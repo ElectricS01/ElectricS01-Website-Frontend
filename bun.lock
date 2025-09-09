@@ -7,6 +7,7 @@
         "@vitejs/plugin-vue": "^5.2.4",
         "axios": "^1.9.0",
         "dayjs": "^1.11.13",
+        "emojilib": "^4.0.2",
         "markdown-it": "^14.1.0",
         "pinia": "^2.3.1",
         "register-service-worker": "^1.7.2",
@@ -478,6 +479,8 @@
     "ejs": ["ejs@3.1.10", "", { "dependencies": { "jake": "^10.8.5" }, "bin": { "ejs": "bin/cli.js" } }, "sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA=="],
 
     "electron-to-chromium": ["electron-to-chromium@1.5.161", "", {}, "sha512-hwtetwfKNZo/UlwHIVBlKZVdy7o8bIZxxKs0Mv/ROPiQQQmDgdm5a+KvKtBsxM8ZjFzTaCeLoodZ8jiBE3o9rA=="],
+
+    "emojilib": ["emojilib@4.0.2", "", {}, "sha512-8sP3sfAi861cNaFFp7RmyKi4S26K34ZKy4si75ojUW627AIVBHhMSu2SFJo3YRoK66YWnbysIbOk/d48uEqtKQ=="],
 
     "entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
 

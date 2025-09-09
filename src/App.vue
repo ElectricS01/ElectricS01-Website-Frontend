@@ -105,7 +105,7 @@
         class="right chat-icon"
         size="28"
         icon="search"
-        @click=";(store.search = !store.search), (store.pins = false)"
+        @click=";((store.search = !store.search), (store.pins = false))"
       >
         <title>Search this chat</title>
       </icons>
@@ -114,7 +114,7 @@
         class="right chat-icon"
         size="28"
         icon="pin"
-        @click=";(store.pins = !store.pins), (store.search = false)"
+        @click=";((store.pins = !store.pins), (store.search = false))"
       >
         <title>View this chat's pins</title>
       </icons>
@@ -267,19 +267,6 @@ const toggleChatBar = () => {
   }
   store.chatBarOpen = localStorage.getItem("chatBarOpen")
 }
-const toggleQuickSwitcher = ({ repeat, metaKey, ctrlKey, key }) => {
-  if (repeat) return
-  if ((metaKey || ctrlKey) && (key === "k" || key === "/")) {
-    store.quickSwitcherShown = !store.quickSwitcherShown
-    searchedItems = store.switcherItems
-    if (store.quickSwitcherShown) {
-      nextTick(() => {
-        const quickSwitcher = document.getElementById("quick-switcher")
-        quickSwitcher?.focus()
-      })
-    }
-  }
-}
 const searchItems = () => {
   if (store.quickSwitcherShown) {
     const lastSearchedItems = searchedItems
@@ -377,14 +364,28 @@ const activateItem = (id) => {
     store.sortSwitcher()
   }
 }
-const escPressed = ({ key }) => {
+const keyPressed = ({ repeat, metaKey, ctrlKey, key }) => {
   if (key === "Escape") {
     store.quickSwitcherShown = false
   }
+  if (repeat) return
+  if (metaKey || ctrlKey) {
+    if (key === "k" || key === "/") {
+      store.quickSwitcherShown = !store.quickSwitcherShown
+      searchedItems = store.switcherItems
+      if (store.quickSwitcherShown) {
+        nextTick(() => {
+          const quickSwitcher = document.getElementById("quick-switcher")
+          quickSwitcher?.focus()
+        })
+      }
+    } else if (key == ".") {
+      toggleMode()
+    }
+  }
 }
 
-document.addEventListener("keydown", toggleQuickSwitcher)
-document.addEventListener("keydown", escPressed)
+document.addEventListener("keydown", keyPressed)
 
 const navbarShown = computed(
   () =>

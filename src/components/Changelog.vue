@@ -2,6 +2,26 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.228 Emoji Quick Picker</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li v-markdown>
+      Added an Emoji Quick Picker to comms activated by typing `:`
+    </li>
+    <li v-markdown>
+      New key combination to quickly change chat with `opt` or `alt` + `up` or
+      `down`
+    </li>
+    <li>Fixed the "Scroll to bottom" button not working</li>
+    <li>Changed the rounding of some corners to be more consistent</li>
+    <li>Fixed the "Scroll to bottom" button's width</li>
+    <li>Changed the background colour of code blocks</li>
+    <li>Made mentions more distinct</li>
+    <li>
+      Added build date in the
+      <router-link to="/account/about">About page</router-link>
+    </li>
+  </ul>
   <h2 class="settings-text">1.227 Image Uploading Alpha</h2>
   <div class="settings-spacer" />
   <ul>
@@ -175,7 +195,7 @@
   <ul>
     <li>
       Display Backend Server Name in the
-      <router-link to="/account/privacy">About Page</router-link>
+      <router-link to="/account/about">About Page</router-link>
     </li>
     <li>Add browser titles to all pages</li>
     <li>Refactor file paths</li>
@@ -585,5 +605,12 @@
   <ul>
     <li>Changed the rounding of some corners to be more consistent</li>
     <li>Fix creating chats</li>
+  </ul>
+  <h2 class="settings-text">1.166 Clickable mentions</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Clicking a mention now shows the user's profile page</li>
+    <li>Improve error messages</li>
+    <li>Refactoring</li>
   </ul>
 </template>

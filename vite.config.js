@@ -4,6 +4,9 @@ import { VitePWA } from "vite-plugin-pwa"
 import path from "path"
 
 export default defineConfig({
+  define: {
+    __VITE_BUILD_DATE__: JSON.stringify(new Date().toISOString())
+  },
   plugins: [
     vue(),
     VitePWA({

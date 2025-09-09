@@ -27,11 +27,11 @@
       v-if="createChatShown && !store.quickSwitcherShown"
       :is-active="createChatShown && !store.quickSwitcherShown"
       @close="
-        ;(createChatShown = false),
+        ;((createChatShown = false),
           (chatNameInput = ''),
           (chatDescriptionInput = ''),
           (chatIconInput = ''),
-          (requireVerification = true)
+          (requireVerification = true))
       "
     >
       <div class="channel-menu">
@@ -120,12 +120,12 @@
       v-if="chatEdit !== -1 && !store.quickSwitcherShown"
       :is-active="chatEdit !== -1 && !store.quickSwitcherShown"
       @close="
-        ;(chatEdit = -1),
+        ;((chatEdit = -1),
           (chatNameInput = ''),
           (chatDescriptionInput = ''),
           (chatIconInput = ''),
           (chatUserInput = ''),
-          (requireVerification = true)
+          (requireVerification = true))
       "
     >
       <div class="channel-menu">
@@ -549,9 +549,9 @@
                     size="20"
                     icon="edit"
                     @click="
-                      ;(editing = message.id),
+                      ;((editing = message.id),
                         (editText = message.messageContents),
-                        scrollDown(true)
+                        scrollDown(true))
                     "
                   />
                   <icons
@@ -577,29 +577,24 @@
         </div>
         <div>
           <transition>
-            <div v-if="replyTo || scrolledUp">
+            <div
+              v-if="replyTo || scrolledUp"
+              style="position: relative; margin-right: 6px"
+            >
               <transition>
                 <div
                   v-if="scrolledUp"
                   :style="{
-                    height: replyTo ? '36px' : '',
-                    marginRight:
-                      store.sidebarOpen === 'true' &&
-                      !(store.search || store.pins)
-                        ? '250px'
-                        : store.search || store.pins
-                          ? '350px'
-                          : '',
-                    marginLeft: store.chatBarOpen === 'true' ? '250px' : ''
+                    height: replyTo ? '36px' : ''
                   }"
                   style="
-                    position: fixed;
+                    position: absolute;
                     z-index: 1;
-                    bottom: 48px;
+                    bottom: 0;
                     cursor: pointer;
                   "
                   class="scroll-button"
-                  @click="scroll"
+                  @click="scrollDown"
                 >
                   <icons size="12" icon="down-arrow" />
                   <p class="message-text-medium">Scroll to bottom</p>
@@ -614,7 +609,6 @@
                   z-index: 2;
                   position: relative;
                 "
-                @click="scroll"
               >
                 <icons size="12" icon="reply" style="margin-right: 4px" />
                 <profile-picture
@@ -655,6 +649,19 @@
             </div>
           </transition>
           <div class="message-send">
+            <div v-if="matchingEmoji.length" class="emoji-picker">
+              <div class="emoji-picker-inner scroll-bar">
+                <div
+                  v-for="(emoji, index) in matchingEmoji"
+                  :key="emoji[0]"
+                  :class="{ selected: index == emojiPickerIndex }"
+                  @click="handleEmojiClick(emoji[0])"
+                >
+                  {{ emoji[0] }}
+                  {{ emoji[1][0] }}
+                </div>
+              </div>
+            </div>
             <textarea
               id="input"
               v-model="inputText"
@@ -662,8 +669,33 @@
               autofocus
               class="message-input"
               autocomplete="off"
-              @keydown.enter.exact.prevent="sendMessage"
-              @keydown.up.prevent="(editLast(), scrollDown(true))"
+              @keydown.enter.exact.prevent="
+                matchingEmoji.length > 0 ? selectCurrentEmoji() : sendMessage()
+              "
+              @keydown.up.prevent="
+                matchingEmoji.length > 0
+                  ? (emojiPickerIndex = Math.max(0, emojiPickerIndex - 1))
+                  : (editLast(), scrollDown(true))
+              "
+              @keydown.down.prevent="
+                matchingEmoji.length > 0
+                  ? (emojiPickerIndex = Math.min(
+                      matchingEmoji.length - 1,
+                      emojiPickerIndex + 1
+                    ))
+                  : null
+              "
+              @keydown.tab.prevent="
+                matchingEmoji.length > 0 ? selectCurrentEmoji() : null
+              "
+              @keydown.escape.prevent="
+                matchingEmoji.length > 0
+                  ? (inputText = inputText.substring(
+                      0,
+                      inputText.lastIndexOf(':')
+                    ))
+                  : null
+              "
             />
             <button style="cursor: pointer" @click="sendMessage">Send</button>
           </div>
@@ -1187,6 +1219,7 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import emojilib from "emojilib"
 
 const store = useDataStore()
 const route = useRoute()
@@ -1204,6 +1237,7 @@ const loadingMessages = ref(true)
 const scrolledUp = ref(false)
 const showUser = ref(false)
 const chatEdit = ref(-1)
+const emojiPickerIndex = ref(0)
 const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
@@ -1582,6 +1616,28 @@ const handleClick = (part) => {
     openUser(part.match(/\d+/)[0])
   }
 }
+const getEmojiText = () => {
+  const lastColon = inputText.value.indexOf(":")
+  if (
+    lastColon === -1 ||
+    (lastColon != 0 && inputText.value[lastColon - 1] !== " ")
+  )
+    return null
+
+  return inputText.value.substring(lastColon + 1).toLowerCase()
+}
+const handleEmojiClick = (emoji) => {
+  const lastColon = inputText.value.lastIndexOf(":")
+  if (lastColon !== -1) {
+    inputText.value = inputText.value.substring(0, lastColon) + emoji + " "
+  }
+  emojiPickerIndex.value = 0
+}
+const selectCurrentEmoji = () => {
+  if (matchingEmoji.value.length > 0) {
+    handleEmojiClick(matchingEmoji.value[emojiPickerIndex.value][0])
+  }
+}
 const findUser = (userId) => {
   const user = currentChat.value.users.find(
     (user) => user.id === parseInt(userId)
@@ -1718,7 +1774,7 @@ const showContextMenu = (event, user) => {
   contextMenuVisible.value = true
   contextMenuItemUser.value = user
 }
-const escPressed = ({ key }) => {
+const keyPressed = ({ key, altKey }) => {
   if (key === "Escape") {
     if (contextMenuVisible.value) {
       contextMenuVisible.value = false
@@ -1750,6 +1806,27 @@ const escPressed = ({ key }) => {
         )
       ].association.notifications = 0
     }
+  } else if (altKey) {
+    if (key == "ArrowDown") {
+      const chatIndex = store.userData.chatsList.findIndex(
+        (chat) => chat.id === currentChat.value.id
+      )
+      getChat(
+        store.userData.chatsList[
+          (chatIndex + 1) % store.userData.chatsList.length
+        ].id
+      )
+    } else if (key == "ArrowUp") {
+      const chatIndex = store.userData.chatsList.findIndex(
+        (chat) => chat.id === currentChat.value.id
+      )
+      getChat(
+        store.userData.chatsList[
+          (chatIndex + store.userData.chatsList.length - 1) %
+            store.userData.chatsList.length
+        ].id
+      )
+    }
   }
 }
 const scrollEvent = () => {
@@ -1767,6 +1844,14 @@ const onlineUsers = computed(() =>
 const offlineUsers = computed(() =>
   currentChat.value.users.filter((user) => user?.status === "offline")
 )
+const matchingEmoji = computed(() => {
+  const text = getEmojiText()
+  if (text == null) return []
+
+  return Object.entries(emojilib)
+    .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
+    .slice(0, 20)
+})
 async function getChat(id) {
   if (!id) {
     id = store.userData.chatsList[0].id
@@ -1799,7 +1884,7 @@ async function getChat(id) {
 }
 
 onMounted(async () => {
-  document.addEventListener("keydown", escPressed)
+  document.addEventListener("keydown", keyPressed)
   const messagesDiv = document.getElementById("messages-div")
   if (messagesDiv) messagesDiv.addEventListener("scroll", scrollEvent)
   if (route.path.startsWith("/user")) {
@@ -1808,7 +1893,7 @@ onMounted(async () => {
   await getChat(route.params.chatId)
 })
 onUnmounted(() => {
-  document.removeEventListener("keydown", escPressed)
+  document.removeEventListener("keydown", keyPressed)
   const messagesDiv = document.getElementById("messages-div")
   if (messagesDiv) messagesDiv.removeEventListener("scroll", scrollEvent)
 })
