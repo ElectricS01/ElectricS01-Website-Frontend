@@ -2,6 +2,13 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.229 TonkGame 0.4.3.1.0</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Update TonkGame to the latest version</li>
+    <li>Fixed the link for Non-JavaScript enabled browsers</li>
+    <li>Upgrade to Vite 7</li>
+  </ul>
   <h2 class="settings-text">1.228 Emoji Quick Picker</h2>
   <div class="settings-spacer" />
   <ul>
@@ -606,11 +613,22 @@
     <li>Changed the rounding of some corners to be more consistent</li>
     <li>Fix creating chats</li>
   </ul>
-  <h2 class="settings-text">1.166 Clickable mentions</h2>
+  <h2 class="settings-text">1.166 Fixed clickable mentions</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Clicking a mention now properly shows the user's profile page</li>
+    <li>Improve error messages</li>
+    <li>Refactoring</li>
+  </ul>
+  <h2 class="settings-text">1.165 Clickable mentions</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Clicking a mention now shows the user's profile page</li>
-    <li>Improve error messages</li>
     <li>Refactoring</li>
+  </ul>
+  <h2 class="settings-text">1.164 Non-JavaScript browser link</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added a link to access the website without JavaScript enabled</li>
   </ul>
 </template>
