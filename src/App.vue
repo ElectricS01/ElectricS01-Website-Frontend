@@ -50,7 +50,7 @@
       </router-link>
       <div class="icon-mobile" @click="mobileNav">☰</div>
     </div>
-    <div v-else class="chat-navbar">
+    <div v-else :class="backgroundShown ? 'navbar' : 'chat-navbar'">
       <router-link
         class="chat-button"
         :class="{ 'responsive-chat': route.path.startsWith('/chat') }"
@@ -128,7 +128,7 @@
   <main :class="isDarkMode === 'true' ? 'dark-mode' : 'light-mode'">
     <div class="background-container">
       <img
-        v-if="navbarShown"
+        v-if="backgroundShown"
         class="background"
         :style="{ opacity: loaded ? 1 : 0 }"
         alt="background"
@@ -396,6 +396,13 @@ const navbarShown = computed(
     !route.path.startsWith("/account") &&
     !route.path.startsWith("/reset") &&
     !route.path.startsWith("/verify")
+)
+
+const backgroundShown = computed(
+  () =>
+    !route.path.startsWith("/chat") &&
+    !route.path.startsWith("/user") &&
+    !route.path.startsWith("/account")
 )
 
 watch(switcherInput, () => {

@@ -2,6 +2,22 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.230 Passkey authentication</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      You can now add, rename, and delete Passkeys in
+      <router-link to="/account/security">Security Settings</router-link>
+    </li>
+    <li>Passkeys autofill in the Login page</li>
+    <li>
+      Revamped the Login, Register, Reset Password, and Verify Email pages
+    </li>
+    <li>Update to work with backend 1.111.0</li>
+    <li>
+      Fixed the 2FA incorrectly using SHA1 instead of SHA256 (backend 1.110.2)
+    </li>
+  </ul>
   <h2 class="settings-text">1.229 TonkGame 0.4.3.1.0</h2>
   <div class="settings-spacer" />
   <ul>
@@ -630,5 +646,15 @@
   <div class="settings-spacer" />
   <ul>
     <li>Added a link to access the website without JavaScript enabled</li>
+  </ul>
+  <h2 class="settings-text">1.163 TonkGame 0.4.2.10.0</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Update TonkGame to the latest version</li>
+  </ul>
+  <h2 class="settings-text">1.162 TonkGame 0.4.2.9.2</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Update TonkGame to the latest version</li>
   </ul>
 </template>

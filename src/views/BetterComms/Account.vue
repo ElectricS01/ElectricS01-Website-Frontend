@@ -1,5 +1,48 @@
 <template>
   <transition>
+    <modal
+      v-if="renamePasskeyOpen"
+      :is-active="renamePasskeyOpen"
+      @close="renamePasskeyOpen = false"
+    >
+      <div class="settings-modal">
+        <p class="settings-text">Rename Passkey</p>
+        <input
+          v-model="passkeyName"
+          placeholder="Passkey Name"
+          class="modal-input"
+          autocomplete="off"
+          @keydown.enter="updatePasskeyName"
+        />
+        <div class="settings-button-container">
+          <button @click="renamePasskeyOpen = false">Cancel</button>
+          <button @click="updatePasskeyName">Save</button>
+        </div>
+      </div>
+    </modal>
+  </transition>
+  <transition>
+    <modal
+      v-if="deletePasskeyOpen"
+      :is-active="deletePasskeyOpen"
+      @close="deletePasskeyOpen = false"
+    >
+      <div class="settings-modal">
+        <p class="settings-text">Delete Passkey</p>
+        <p class="message-text-medium-gray" style="margin-bottom: 10px">
+          This will remove the passkey from your account, but it will remain on
+          your device
+        </p>
+        <div class="settings-button-container">
+          <button @click="deletePasskeyOpen = false">Cancel</button>
+          <button class="button-red" @click="confirmDeletePasskeyOpen = true">
+            Delete
+          </button>
+        </div>
+      </div>
+    </modal>
+  </transition>
+  <transition>
     <modal v-if="modalOpen" :is-active="modalOpen" @close="modalOpen = false">
       <div class="settings-modal">
         <p class="settings-text">Submit feedback</p>
@@ -20,9 +63,9 @@
   </transition>
   <transition>
     <modal
-      v-if="passwordModalOpen"
-      :is-active="passwordModalOpen"
-      @close="passwordModalOpen = false"
+      v-if="logoutAllOpen"
+      :is-active="logoutAllOpen"
+      @close="logoutAllOpen = false"
     >
       <div class="settings-modal">
         <p class="settings-text">Logout everywhere</p>
@@ -33,15 +76,48 @@
           autocomplete="off"
           @keydown.enter="logoutAllSubmit"
         />
-        <button @click="logoutAllSubmit">Enter</button>
+        <div class="settings-button-container">
+          <button @click="logoutAllOpen = false">Cancel</button>
+          <button class="button-red" @click="logoutAllSubmit">
+            Logout everywhere
+          </button>
+        </div>
       </div>
     </modal>
   </transition>
   <transition>
     <modal
-      v-if="otpModelOpen"
-      :is-active="otpModelOpen"
-      @close="otpModelOpen = false"
+      v-if="confirmDeletePasskeyOpen"
+      :is-active="confirmDeletePasskeyOpen"
+      @close="confirmDeletePasskeyOpen = false"
+    >
+      <div class="settings-modal">
+        <p class="settings-text">
+          Delete
+          {{ passkeyToDelete.name }} Passkey
+        </p>
+        <p class="message-text-medium-gray">This action cannot be undone</p>
+        <input
+          v-model="password"
+          placeholder="Password"
+          class="settings-input"
+          autocomplete="off"
+          @keydown.enter="confirmDeletePasskey"
+        />
+        <div class="settings-button-container">
+          <button @click="confirmDeletePasskeyOpen = false">Cancel</button>
+          <button class="button-red" @click="confirmDeletePasskey">
+            Delete
+          </button>
+        </div>
+      </div>
+    </modal>
+  </transition>
+  <transition>
+    <modal
+      v-if="enableOtpOpen"
+      :is-active="enableOtpOpen"
+      @close="enableOtpOpen = false"
     >
       <div class="settings-modal">
         <p class="settings-text">Enable 2FA</p>
@@ -51,7 +127,7 @@
           <a :href="qrURI">Click to add to 2FA app</a>
         </div>
         <p>or</p>
-        <button :onclick="copyToken()">Copy Token</button>
+        <button @click="copyToken">Copy Token</button>
         <input
           id="totp"
           v-model="totp"
@@ -69,9 +145,9 @@
   </transition>
   <transition>
     <modal
-      v-if="disableModelOpen"
-      :is-active="disableModelOpen"
-      @close="disableModelOpen = false"
+      v-if="disableOtpOpen"
+      :is-active="disableOtpOpen"
+      @close="disableOtpOpen = false"
     >
       <div class="settings-modal">
         <p class="settings-text">Disable 2FA</p>
@@ -299,16 +375,63 @@
             <div
               v-if="!store.userData?.otpVerified"
               class="settings-button"
-              @click="enable2FA()"
+              @click="enable2FA"
             >
               Enable 2FA
             </div>
-            <div
-              v-else
-              class="settings-button"
-              @click="disableModelOpen = true"
-            >
+            <div v-else class="settings-button" @click="disableOtpOpen = true">
               Disable 2FA
+            </div>
+            <div class="message-text-small">
+              Two-factor authentication (2FA) prevents unauthorised access by
+              requiring a code from your authenticator app
+            </div>
+            <div class="settings-spacer" />
+            Passkeys
+            <div class="settings-button" @click="registerPasskey">
+              Add Passkey
+            </div>
+            <div class="message-text-small">
+              Passkeys allow you to log in securely without a password using
+              Touch ID, Face ID, Windows Hello, or security keys
+            </div>
+            <div v-if="passkeys.length > 0" class="settings-spacer" />
+            <div class="grid-sessions">
+              <div
+                v-for="passkey in passkeys"
+                :key="passkey.id"
+                class="grid-sessions-item"
+              >
+                <div>
+                  <p class="message-text">
+                    {{ passkey.name }}
+                  </p>
+                  <p class="message-text-small">
+                    Added: {{ store.dayjsLong(passkey.createdAt) }} -
+                    {{ store.dayjsSince(passkey.createdAt) }}
+                  </p>
+                  <p
+                    class="message-text-small"
+                    :title="passkey.credentialDeviceType"
+                  >
+                    {{ passkey.credentialBackedUp ? "Synced" : "Device only" }}
+                  </p>
+                </div>
+                <div class="button-container">
+                  <button
+                    class="settings-button"
+                    @click="renamePasskey(passkey)"
+                  >
+                    Rename
+                  </button>
+                  <button
+                    class="settings-button-red"
+                    @click="deletePasskey(passkey)"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
             <div class="settings-spacer" />
             Sessions
@@ -318,9 +441,12 @@
                 :key="session.id"
                 class="grid-sessions-item"
               >
-                <p>Id: {{ session.id }}</p>
-                <p>Date created: {{ store.dayjsLong(session.createdAt) }}</p>
-                <p>Platform: {{ platform(session.userAgent) }}</p>
+                <p>{{ platform(session.userAgent) }}</p>
+                <p class="message-text-small">
+                  Added: {{ store.dayjsLong(session.createdAt) }} -
+                  {{ store.dayjsSince(session.createdAt) }}
+                </p>
+                <p class="message-text-small">Id: {{ session.id }}</p>
               </div>
             </div>
           </div>
@@ -519,7 +645,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.229.0</div>
+            <div>Version: 1.230.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -586,6 +712,7 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
 import { nextTick, ref, watch } from "vue"
+import { startRegistration } from "@simplewebauthn/browser"
 
 const store = useDataStore()
 const route = useRoute()
@@ -617,18 +744,25 @@ const encryptionOptions = ["never", "off", "on", "always"]
 const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
 const buildDate = __VITE_BUILD_DATE__ || "Unknown"
 
+const renamePasskeyOpen = ref(false)
+const deletePasskeyOpen = ref(false)
 const modalOpen = ref(false)
-const passwordModalOpen = ref(false)
-const otpModelOpen = ref(false)
-const disableModelOpen = ref(false)
+const logoutAllOpen = ref(false)
+const confirmDeletePasskeyOpen = ref(false)
+const enableOtpOpen = ref(false)
+const disableOtpOpen = ref(false)
 const dmOpen = ref(false)
 const encryptionOpen = ref(false)
 const sessions = ref([])
+const passkeys = ref([])
 const adminData = ref([])
 const editing = ref("")
 const qrCodeURL = ref("")
 const qrURI = ref("")
 const totp = ref("")
+const passkeyName = ref("")
+const selectedPasskey = ref()
+const passkeyToDelete = ref()
 let token = ""
 let page = "account"
 let feedbackText = ""
@@ -665,20 +799,37 @@ const getAdmin = () => {
   }
 }
 const getSessions = () => {
-  if (localStorage.getItem("token")) {
-    axios
-      .get("/api/sessions")
-      .then((res) => {
-        sessions.value = res.data
-      })
-      .catch((e) => {
-        store.error = `Error ${e.request.status}, ${
-          e.response.data.message || e.request.statusMessage
-        }`
-        setTimeout(store.errorFalse, 5000)
-      })
-  }
+  if (!localStorage.getItem("token")) return
+
+  axios
+    .get("/api/sessions")
+    .then((res) => {
+      sessions.value = res.data
+    })
+    .catch((e) => {
+      store.error = `Error ${e.request.status}, ${
+        e.response.data.message || e.request.statusMessage
+      }`
+      setTimeout(store.errorFalse, 5000)
+    })
 }
+
+const getPasskeys = () => {
+  if (!localStorage.getItem("token")) return
+
+  axios
+    .get("/api/passkeys")
+    .then((res) => {
+      passkeys.value = res.data
+    })
+    .catch((e) => {
+      store.error = `Error ${e.request.status}, ${
+        e.response?.data?.message || e.request.statusMessage
+      }`
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+
 const changePage = (newPage) => {
   if (pages.includes(page)) {
     page = newPage
@@ -689,6 +840,7 @@ const changePage = (newPage) => {
   }
   if (page === "security") {
     getSessions()
+    getPasskeys()
   } else if (page === "admin") {
     getAdmin()
   }
@@ -763,6 +915,7 @@ const logout = () => {
       Object.assign(axios.defaults, {
         headers: { Authorization: null }
       })
+      store.userData = {}
       localStorage.removeItem("token")
       router.push("/login")
     })
@@ -774,8 +927,7 @@ const logout = () => {
     })
 }
 const logoutAll = () => {
-  passwordModalOpen.value = true
-  password = ""
+  logoutAllOpen.value = true
 }
 const logoutAllSubmit = () => {
   if (password) {
@@ -787,6 +939,7 @@ const logoutAllSubmit = () => {
         Object.assign(axios.defaults, {
           headers: { Authorization: null }
         })
+        store.userData = {}
         localStorage.removeItem("token")
         router.push("/login")
       })
@@ -829,7 +982,7 @@ const enable2FA = () => {
       token = res.data.secret
       qrCodeURL.value = res.data.qrCodeDataURL
       qrURI.value = res.data.otpUri
-      otpModelOpen.value = true
+      enableOtpOpen.value = true
     })
     .catch((e) => {
       if (e.response.data.message) {
@@ -844,13 +997,13 @@ const verify2FA = () => {
       token: totp.value
     })
     .then(() => {
-      otpModelOpen.value = false
+      enableOtpOpen.value = false
       totp.value = ""
       store.userData.otpVerified = true
     })
     .catch((e) => {
       if (e.response.data.message) {
-        store.error = `${e.message}: ${e.response.data.message}`
+        store.error = e.response.data.message
       } else store.error = e.message
       setTimeout(store.errorFalse, 5000)
     })
@@ -861,7 +1014,7 @@ const disable2FA = () => {
       token: totp.value
     })
     .then(() => {
-      disableModelOpen.value = false
+      disableOtpOpen.value = false
       totp.value = ""
       store.userData.otpVerified = false
     })
@@ -874,6 +1027,89 @@ const disable2FA = () => {
 }
 const copyToken = () => {
   navigator.clipboard.writeText(token)
+}
+
+const registerPasskey = async () => {
+  try {
+    const optionsResponse = await axios.post("/api/add-passkey")
+
+    const registrationResponse = await startRegistration({
+      optionsJSON: optionsResponse.data.options
+    })
+
+    await axios.post("/api/confirm-passkey", {
+      ...registrationResponse,
+      challengeId: optionsResponse.data.challengeId,
+      passkeyName: platform(navigator.userAgent)
+    })
+
+    getPasskeys()
+    store.error = ""
+  } catch (error) {
+    if (error.name === "NotAllowedError") {
+      store.error = "Passkey registration was cancelled"
+    } else {
+      store.error =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to register passkey"
+    }
+    setTimeout(store.errorFalse, 5000)
+  }
+}
+
+const renamePasskey = (passkey) => {
+  selectedPasskey.value = passkey
+  passkeyName.value = passkey.name
+  renamePasskeyOpen.value = true
+}
+
+const updatePasskeyName = () => {
+  if (!passkeyName.value) return
+
+  axios
+    .patch(`/api/edit-passkey/${selectedPasskey.value.id}`, {
+      passkeyName: passkeyName.value
+    })
+    .then(() => {
+      getPasskeys()
+      renamePasskeyOpen.value = false
+      passkeyName.value = ""
+      selectedPasskey.value = null
+    })
+    .catch((e) => {
+      store.error = `Error ${e.request.status}, ${
+        e.response?.data?.message || e.request.statusMessage
+      }`
+      setTimeout(store.errorFalse, 5000)
+    })
+}
+
+const deletePasskey = (id) => {
+  passkeyToDelete.value = id
+  deletePasskeyOpen.value = true
+}
+
+const confirmDeletePasskey = () => {
+  if (!password) return
+
+  axios
+    .post(`/api/delete-passkey/${passkeyToDelete.value.id}`, {
+      password: password
+    })
+    .then(() => {
+      password = ""
+      getPasskeys()
+      deletePasskeyOpen.value = false
+      confirmDeletePasskeyOpen.value = false
+      passkeyToDelete.value = null
+    })
+    .catch((e) => {
+      store.error = `Error ${e.request.status}, ${
+        e.response?.data?.message || e.request.statusMessage
+      }`
+      setTimeout(store.errorFalse, 5000)
+    })
 }
 const platform = (userAgent) => {
   if (userAgent) {
@@ -954,6 +1190,7 @@ async function checkImage(url) {
 
 if (page === "security") {
   getSessions()
+  getPasskeys()
 } else if (page === "admin") {
   getAdmin()
 }

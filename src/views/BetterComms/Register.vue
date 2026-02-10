@@ -11,6 +11,7 @@
           v-model="username"
           placeholder="Username"
           class="modal-input"
+          autofocus
           @keydown.enter="submit"
         />
         <div class="text-small">
@@ -50,6 +51,7 @@
 import axios from "axios"
 import { useDataStore } from "@/store"
 import { useRouter } from "vue-router"
+import { onMounted } from "vue"
 
 let username = ""
 let email = ""
@@ -126,4 +128,9 @@ const submit = async () => {
       setTimeout(store.errorFalse, 5000)
     })
 }
+
+onMounted(() => {
+  const usernameInput = document.getElementById("username")
+  usernameInput?.focus()
+})
 </script>

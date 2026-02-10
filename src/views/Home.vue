@@ -5,8 +5,8 @@
       Hi, I'm ElectricS01, I'm a passionate programmer with experince in
       Full-Stack Web Application, Desktop, and CLI development.
     </p>
-    I develop projects with Vue, Javascript, Python, C#/.NET, SwiftUI, Rust, and
-    GameMaker Studio.
+    I develop projects with Vue, TypeScript, JavaScript, C#/.NET, Python,
+    SwiftUI, Rust, and GameMaker Studio.
     <div class="grid-home">
       <div class="box grid-item">
         <router-link class="border" to="/tonkgame">

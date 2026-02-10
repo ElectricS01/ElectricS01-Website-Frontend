@@ -11,6 +11,8 @@
           v-model="username"
           placeholder="Username"
           class="modal-input"
+          autocomplete="username webauthn"
+          autofocus
           @keydown.enter="submit"
         />
         <div class="text-small">
@@ -60,6 +62,11 @@
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
+import {
+  startAuthentication,
+  WebAuthnAbortService
+} from "@simplewebauthn/browser"
+import { onMounted, onUnmounted } from "vue"
 
 const store = useDataStore()
 const route = useRoute()
@@ -71,6 +78,34 @@ let totp = ""
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 
+const handleLoginSuccess = (data) => {
+  localStorage.setItem("token", data.token)
+  store.ws.send(JSON.stringify({ token: data.token }))
+  console.log("Socket connected")
+  Object.assign(axios.defaults, {
+    headers: { Authorization: data.token }
+  })
+  store.userData = data
+  if (!store.userData.saveSwitcher) {
+    store.userData.switcherHistory =
+      JSON.parse(localStorage.getItem("switcherHistory")) || []
+  }
+  store.sortSwitcher()
+  if (store.userData.chatsList) {
+    store.switcherItems.push(
+      ...store.userData.chatsList.map((obj) => [
+        obj.type === 1 && obj.ownerDetails.id !== store.userData.id
+          ? obj.ownerDetails.username
+          : obj.name,
+        obj.id
+      ])
+    )
+    store.loadingChats = false
+    store.chatSort()
+  }
+  router.push(route.query.redirect || "/chat")
+}
+
 const submit = () => {
   store.error = ""
   axios
@@ -81,35 +116,39 @@ const submit = () => {
       username: username.toLowerCase().trim()
     })
     .then((res) => {
-      localStorage.setItem("token", res.data.token)
-      store.ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
-      console.log("Socket connected")
-      Object.assign(axios.defaults, {
-        headers: { Authorization: res.data.token }
-      })
-      store.userData = res.data
-      if (!store.userData.saveSwitcher) {
-        store.userData.switcherHistory =
-          JSON.parse(localStorage.getItem("switcherHistory")) || []
-      }
-      store.sortSwitcher()
-      if (store.userData.chatsList) {
-        store.switcherItems.push(
-          ...store.userData.chatsList.map((obj) => [
-            obj.type === 1 && obj.ownerDetails.id !== store.userData.id
-              ? obj.ownerDetails.username
-              : obj.name,
-            obj.id
-          ])
-        )
-        store.loadingChats = false
-        store.chatSort()
-      }
-      router.push(route.query.redirect || "/chat")
+      handleLoginSuccess(res.data)
     })
     .catch((e) => {
       store.error = e.response.data.message
       setTimeout(store.errorFalse, 5000)
     })
 }
+
+axios.get("/api/passkey-challenge").then((challengeResponse) => {
+  startAuthentication({
+    optionsJSON: challengeResponse.data.options,
+    useBrowserAutofill: true
+  }).then((result) => {
+    axios
+      .post("/api/verify-passkey", {
+        ...result,
+        challengeId: challengeResponse.data.challengeId,
+        userAgent: navigator.userAgent
+      })
+      .then((verificationResponse) => {
+        if (verificationResponse.data.verified) {
+          handleLoginSuccess(verificationResponse.data)
+        }
+      })
+  })
+})
+
+onMounted(() => {
+  const usernameInput = document.getElementById("username")
+  usernameInput?.focus()
+})
+
+onUnmounted(() => {
+  WebAuthnAbortService.cancelCeremony()
+})
 </script>

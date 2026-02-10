@@ -3,6 +3,9 @@ module.exports = {
     node: true
   },
   extends: ["plugin:vue/vue3-recommended", "eslint:recommended", "prettier"],
+  globals: {
+    __VITE_BUILD_DATE__: "readonly"
+  },
   ignorePatterns: ["/public/**/**.js"],
   plugins: ["sort-keys-fix"],
   root: true,
