@@ -559,8 +559,8 @@ button:hover,
   display: none;
 }
 
-@media screen and (max-width: 838px) {
-  .navbar a:not(:first-child):not(.chat-button) {
+@media screen and (max-width: 744px) {
+  .navbar:not(.responsive) a:not(:first-child):not(.chat-button) {
     display: none;
   }
 

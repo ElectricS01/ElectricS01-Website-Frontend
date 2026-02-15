@@ -657,4 +657,19 @@
   <ul>
     <li>Update TonkGame to the latest version</li>
   </ul>
+  <h2 class="settings-text">1.161 TonkGame 0.4.2.9.0</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Update TonkGame to the latest version</li>
+  </ul>
+  <h2 class="settings-text">1.160 TonkGame and Tetris descriptions</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Added description messages to
+      <router-link to="/tonkgame">TonkGame</router-link>
+      and
+      <router-link to="/tetris">Tetris</router-link>
+    </li>
+  </ul>
 </template>
