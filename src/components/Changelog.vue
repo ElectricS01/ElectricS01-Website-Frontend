@@ -17,6 +17,7 @@
     <li>
       Fixed the 2FA incorrectly using SHA1 instead of SHA256 (backend 1.110.2)
     </li>
+    <li>Updated dependencies</li>
   </ul>
   <h2 class="settings-text">1.229 TonkGame 0.4.3.1.0</h2>
   <div class="settings-spacer" />
@@ -24,6 +25,7 @@
     <li>Update TonkGame to the latest version</li>
     <li>Fixed the link for Non-JavaScript enabled browsers</li>
     <li>Upgrade to Vite 7</li>
+    <li>Updated dependencies</li>
   </ul>
   <h2 class="settings-text">1.228 Emoji Quick Picker</h2>
   <div class="settings-spacer" />
@@ -134,11 +136,13 @@
       Created the
       <router-link to="/blog/whats-been-happening">Third Blog Post</router-link>
     </li>
+    <li>Updated dependencies</li>
   </ul>
   <h2 class="settings-text">1.218 Home Page updates</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Updated the home page</li>
+    <li>Updated dependencies</li>
   </ul>
   <h2 class="settings-text">1.217 Planit on the Home Page</h2>
   <div class="settings-spacer" />
@@ -149,6 +153,7 @@
       to the
       <router-link to="/">Home Page</router-link>
     </li>
+    <li>Updated dependencies</li>
   </ul>
   <h2 class="settings-text">1.216 Multi-line inputs</h2>
   <div class="settings-spacer" />
@@ -671,5 +676,21 @@
       and
       <router-link to="/tetris">Tetris</router-link>
     </li>
+  </ul>
+  <h2 class="settings-text">1.159 Mapit on the Home Page</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Added
+      <router-link to="/mapit">Mapit</router-link>
+      to the
+      <router-link to="/">Home Page</router-link>
+    </li>
+  </ul>
+  <h2 class="settings-text">1.158 Refactoring</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Refactoring</li>
+    <li>Updated dependencies</li>
   </ul>
 </template>

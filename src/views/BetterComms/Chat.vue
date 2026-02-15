@@ -1854,6 +1854,20 @@ const matchingEmoji = computed(() => {
 })
 async function getChat(id) {
   if (!id) {
+    if (!store.userData.chatsList) {
+      watch(
+        () => store.userData.chatsList,
+        (newValue) => {
+          if (newValue) {
+            getChat(id)
+          }
+        },
+        {
+          once: true
+        }
+      )
+      return
+    }
     id = store.userData.chatsList[0].id
   }
   if (id !== currentChat.value.id) {
@@ -1890,7 +1904,7 @@ onMounted(async () => {
   if (route.path.startsWith("/user")) {
     openUser(route.params.id)
   }
-  await getChat(route.params.chatId)
+  getChat(route.params.chatId)
 })
 onUnmounted(() => {
   document.removeEventListener("keydown", keyPressed)
