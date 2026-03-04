@@ -2,6 +2,19 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.231 Notification Icon</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>The tab icon now updates with the number of unread messages</li>
+    <li>The tab title also updates with the number of unread messages</li>
+    <li>The tab title displays the name of the chat which you have open</li>
+    <li>
+      Fixed the most recent chat not loading when opening the website from a
+      user link (1.230.2)
+    </li>
+    <li>Fixed the mobile navbar not opening (1.230.1)</li>
+    <li>Updated dependencies</li>
+  </ul>
   <h2 class="settings-text">1.230 Passkey authentication</h2>
   <div class="settings-spacer" />
   <ul>
@@ -692,5 +705,22 @@
   <ul>
     <li>Refactoring</li>
     <li>Updated dependencies</li>
+  </ul>
+  <h2 class="settings-text">1.157 Factorials Calculator</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Added factorial support to the
+      <router-link to="/calculator">Calculator</router-link>
+    </li>
+    <li>Refactoring</li>
+  </ul>
+  <h2 class="settings-text">1.156 Parentheses Calculator</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Support parentheses in the
+      <router-link to="/calculator">Calculator</router-link>
+    </li>
   </ul>
 </template>

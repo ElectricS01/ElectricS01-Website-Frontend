@@ -1,3 +1,4 @@
+/* eslint sort-keys-fix/sort-keys-fix: "off" */
 import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
@@ -162,8 +163,10 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to) => {
-  document.title = to.meta?.title ?? "ElectricS01's Website"
+router.beforeEach((to, from) => {
+  if (to.name !== from.name) {
+    document.title = to.meta?.title ?? "ElectricS01's Website"
+  }
 })
 
 export default router

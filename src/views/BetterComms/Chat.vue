@@ -1272,6 +1272,7 @@ if (!localStorage.getItem("token")) {
           socketMessage.newMessage.createdAt
         console.log(store.userData.chatsList[chatIndex])
         store.userData.chatsList[chatIndex].association.notifications += 1
+        updatePageTitle()
       }
       store.chatSort()
       if (socketMessage.newMessage.chatId === currentChat.value.id) {
@@ -1362,6 +1363,7 @@ const sendMessage = () => {
         res.data.lastMessage.focus = false
         currentChat.value.messages.push(res.data.lastMessage)
         currentChat.value.lastRead = currentChat.value.messages.length
+        updatePageTitle()
         scrollDown()
       })
       .catch((e) => {
@@ -1805,6 +1807,7 @@ const keyPressed = ({ key, altKey }) => {
           (chat) => chat.id === parseInt(route.params.chatId)
         )
       ].association.notifications = 0
+      updatePageTitle()
     }
   } else if (altKey) {
     if (key == "ArrowDown") {
@@ -1852,6 +1855,54 @@ const matchingEmoji = computed(() => {
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 20)
 })
+
+const updateFavicon = (notificationCount) => {
+  if (notificationCount < 1) {
+    document.getElementById("favicon").href = "/icons/favicon.ico"
+    return
+  }
+
+  const favicon = document.querySelector("link[rel~='icon']")
+  const size = 64
+  const canvas = document.createElement("canvas")
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext("2d")
+
+  const img = new Image()
+  img.src = favicon.href
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, size, size)
+
+    const radius = 20
+    ctx.fillStyle = "red"
+    ctx.beginPath()
+    ctx.arc(size - radius, size - radius, radius, 0, 2 * Math.PI)
+    ctx.fill()
+
+    ctx.fillStyle = "white"
+    ctx.font = "bold 32px sans-serif"
+    ctx.textAlign = "center"
+    ctx.textBaseline = "middle"
+    ctx.fillText(
+      notificationCount > 9 ? "9+" : notificationCount,
+      size - radius,
+      size - radius
+    )
+
+    favicon.href = canvas.toDataURL("image/png")
+  }
+}
+
+const updatePageTitle = () => {
+  let notificationCount = store.userData.chatsList.reduce((sum, chat) => {
+    return sum + (chat.association.notifications || 0)
+  }, 0)
+
+  document.title = `${notificationCount !== 0 ? "(" + notificationCount + ") " : ""}BetterComms | ${currentChat.value.name}`
+  updateFavicon(notificationCount)
+}
+
 async function getChat(id) {
   if (!id) {
     if (!store.userData.chatsList) {
@@ -1884,6 +1935,7 @@ async function getChat(id) {
       replyTo.value = null
       loadingMessages.value = false
       scrollDown(true)
+      updatePageTitle()
     })
     .catch((e) => {
       if (e.response?.status === 400) {
