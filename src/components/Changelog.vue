@@ -723,4 +723,20 @@
       <router-link to="/calculator">Calculator</router-link>
     </li>
   </ul>
+  <h2 class="settings-text">1.155 Negative Exponent Calculator</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Support negative exponents in the
+      <router-link to="/calculator">Calculator</router-link>
+    </li>
+  </ul>
+  <h2 class="settings-text">1.154 Negative Numbers Calculator</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Support negative numbers in the
+      <router-link to="/calculator">Calculator</router-link>
+    </li>
+  </ul>
 </template>

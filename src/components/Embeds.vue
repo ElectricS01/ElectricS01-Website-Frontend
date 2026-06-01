@@ -1,5 +1,5 @@
 <template>
-  <div v-if="embed.type === 'image'" class="embed-container">
+  <div v-if="embed?.type === 'image'" class="embed-container">
     <img
       :src="embed.mediaProxyLink"
       class="embed"
