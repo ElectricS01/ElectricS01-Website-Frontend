@@ -46,7 +46,7 @@ if (localStorage.getItem("token")) {
 onUnmounted(() => {
   if (localStorage.getItem("token")) {
     setTimeout(() => {
-      store.ws.send(JSON.stringify({ page: null }))
+      if (store.ws !== null) store.ws.send(JSON.stringify({ page: null }))
     }, 1000)
   }
 })

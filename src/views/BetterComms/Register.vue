@@ -96,8 +96,7 @@ const submit = async () => {
     })
     .then((res) => {
       localStorage.setItem("token", res.data.token)
-      store.ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
-      console.log("Socket connected")
+      store.openWebSocket()
       Object.assign(axios.defaults, {
         headers: { Authorization: res.data.token }
       })

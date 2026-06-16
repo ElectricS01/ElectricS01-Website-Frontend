@@ -5,7 +5,19 @@
         id="game_drop"
         :style="minDimension"
         title="Tetris"
-        allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
+        allow="
+          autoplay;
+          fullscreen *;
+          geolocation;
+          microphone;
+          camera;
+          midi;
+          xr-spatial-tracking;
+          gamepad;
+          gyroscope;
+          accelerometer;
+          cross-origin-isolated;
+        "
         src="/tetrisGame.html"
       />
       <h3>Tetris By ElectricS01 0.31</h3>
@@ -57,7 +69,7 @@ const searchLocalStorageItems = (searchString) => {
   }
   return matchingItems
 }
-const leaving = () => {
+const sendScores = () => {
   if (localStorage.getItem("token")) {
     const lines =
       searchLocalStorageItems("userdata.ini")[0]?.value.split("\r\n")
@@ -112,19 +124,25 @@ const minDimension = computed(() => {
   }
 })
 
-window.addEventListener("beforeunload", leaving)
+window.addEventListener("beforeunload", sendScores)
 document.addEventListener("resize", updateDimensions)
 
 let interval
 
 onMounted(() => {
-  interval = setInterval(leaving, 10000)
+  interval = setInterval(sendScores, 10000)
 })
 
 onUnmounted(() => {
   clearInterval(interval)
-  leaving()
-  window.removeEventListener("beforeunload", leaving)
+  sendScores()
+  window.removeEventListener("beforeunload", sendScores)
   document.removeEventListener("resize", updateDimensions)
+
+  if (localStorage.getItem("token")) {
+    setTimeout(() => {
+      if (store.ws !== null) store.ws.send(JSON.stringify({ page: null }))
+    }, 1000)
+  }
 })
 </script>

@@ -645,7 +645,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.231.1</div>
+            <div>Version: 1.231.2</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -908,16 +908,23 @@ const editStatusMessage = () => {
       setTimeout(store.errorFalse, 5000)
     })
 }
+const onLogout = () => {
+  Object.assign(axios.defaults, {
+    headers: { Authorization: null }
+  })
+  store.ws.close()
+  store.ws = null
+  console.log("Socket closed")
+
+  store.userData = {}
+  localStorage.removeItem("token")
+  router.push("/login")
+}
 const logout = () => {
   axios
     .post("/api/logout")
     .then(() => {
-      Object.assign(axios.defaults, {
-        headers: { Authorization: null }
-      })
-      store.userData = {}
-      localStorage.removeItem("token")
-      router.push("/login")
+      onLogout()
     })
     .catch((e) => {
       store.error = `Error ${e.request.status}, ${
@@ -936,12 +943,7 @@ const logoutAllSubmit = () => {
         password
       })
       .then(() => {
-        Object.assign(axios.defaults, {
-          headers: { Authorization: null }
-        })
-        store.userData = {}
-        localStorage.removeItem("token")
-        router.push("/login")
+        onLogout()
       })
       .catch((e) => {
         console.log(e)

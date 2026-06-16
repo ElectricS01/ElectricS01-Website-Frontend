@@ -5,7 +5,19 @@
         id="game_drop"
         :style="minDimension"
         title="Collider"
-        allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; xr-spatial-tracking; gamepad; gyroscope; accelerometer; cross-origin-isolated"
+        allow="
+          autoplay;
+          fullscreen *;
+          geolocation;
+          microphone;
+          camera;
+          midi;
+          xr-spatial-tracking;
+          gamepad;
+          gyroscope;
+          accelerometer;
+          cross-origin-isolated;
+        "
         src="/colliderGame.html"
       />
       <h3>Collider By ElectricS01</h3>
@@ -48,7 +60,7 @@ if (localStorage.getItem("token")) {
 //   }
 //   return matchingItems
 // }
-// const leaving = () => {
+// const sendScores = () => {
 //   if (localStorage.getItem("token")) {
 //     axios
 //       .patch("/api/tetris", {
@@ -72,7 +84,7 @@ const minDimension = computed(() => {
   }
 })
 
-// window.addEventListener("beforeunload", leaving)
+// window.addEventListener("beforeunload", sendScores)
 window.addEventListener("resize", updateDimensions)
 
 onUnmounted(() => {
@@ -85,10 +97,11 @@ onUnmounted(() => {
     //       console.log("Error 503, Cannot Connect to Server " + e)
     //     })
     setTimeout(() => {
-      store.ws.send(JSON.stringify({ page: null }))
+      if (store.ws !== null) store.ws.send(JSON.stringify({ page: null }))
     }, 1000)
   }
-  // document.removeEventListener("beforeunload", leaving)
+
+  // document.removeEventListener("beforeunload", sendScores)
   window.removeEventListener("resize", updateDimensions)
 })
 </script>

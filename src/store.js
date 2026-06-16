@@ -31,7 +31,7 @@ export const useDataStore = defineStore("store", () => {
   const switcherItems = ref(switcherPages)
   const showFriends = ref(false)
 
-  let ws
+  const ws = ref(null)
 
   const errorFalse = () => {
     error.value = ""
@@ -40,17 +40,24 @@ export const useDataStore = defineStore("store", () => {
   const dayjsDate = (date) => dayjs(date).format("D MMMM YYYY")
   const dayjsSince = (date) => dayjs(date).fromNow()
 
-  ws = new WebSocket(
-    process.env.NODE_ENV === "production"
-      ? "wss://electrics01.com/ws"
-      : "ws://localhost:24554/ws"
-  )
-  ws.onopen = () => {
+  const openWebSocket = () => {
     if (localStorage.getItem("token")) {
-      ws.send(JSON.stringify({ token: localStorage.getItem("token") }))
+      console.log("Opening socket")
+      ws.value = new WebSocket(
+        process.env.NODE_ENV === "production"
+          ? "wss://electrics01.com/ws"
+          : "ws://localhost:24554/ws"
+      )
       console.log("Socket connected")
+
+      ws.value.onopen = () => {
+        ws.value.send(JSON.stringify({ token: localStorage.getItem("token") }))
+        console.log("Socket authenticated")
+      }
     }
   }
+
+  openWebSocket()
 
   const getItemSearches = (item) => {
     if (Array.isArray(item)) {
@@ -231,6 +238,7 @@ export const useDataStore = defineStore("store", () => {
     errorFalse,
     getUser,
     loadingChats,
+    openWebSocket,
     quickSwitcherShown,
     savePrivateKey,
     showFriends,

@@ -1,4 +1,6 @@
 name: Upload
+permissions:
+  contents: read
 on:
   push:
     branches:

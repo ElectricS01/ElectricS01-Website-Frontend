@@ -80,8 +80,7 @@ document.getElementById("favicon").href = "/icons/favicon.ico"
 
 const handleLoginSuccess = (data) => {
   localStorage.setItem("token", data.token)
-  store.ws.send(JSON.stringify({ token: data.token }))
-  console.log("Socket connected")
+  store.openWebSocket()
   Object.assign(axios.defaults, {
     headers: { Authorization: data.token }
   })

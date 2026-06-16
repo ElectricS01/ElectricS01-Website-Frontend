@@ -1270,7 +1270,6 @@ if (!localStorage.getItem("token")) {
       if (chatIndex !== -1) {
         store.userData.chatsList[chatIndex].latest =
           socketMessage.newMessage.createdAt
-        console.log(store.userData.chatsList[chatIndex])
         store.userData.chatsList[chatIndex].association.notifications += 1
         updatePageTitle()
       }
@@ -1896,7 +1895,7 @@ const updateFavicon = (notificationCount) => {
 
 const updatePageTitle = () => {
   let notificationCount = store.userData.chatsList.reduce((sum, chat) => {
-    return sum + (chat.association.notifications || 0)
+    return sum + (chat.association?.notifications || 0)
   }, 0)
 
   document.title = `${notificationCount !== 0 ? "(" + notificationCount + ") " : ""}BetterComms | ${currentChat.value.name}`
