@@ -194,14 +194,21 @@ button {
     color 1s ease;
 }
 
+.dark-button-red,
 .button-red {
   color: #ff2f2f;
+}
+
+.dark-button-red,
+.dark-button {
+  background-color: var(--dark);
 }
 
 .profile-button-message,
 .profile-button-add,
 .profile-button-remove,
 .profile-button-pending {
+  background-color: var(--dark);
   color: #1e90ff;
   padding: 8px;
   font-size: 14px;

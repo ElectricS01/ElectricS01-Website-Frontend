@@ -145,7 +145,11 @@
         <div style="text-align: center" class="loader" />
       </div>
     </sidebar-left>
-    <friends v-if="store.showFriends" :add-friend="addFriend" />
+    <friends
+      v-if="store.showFriends"
+      :add-friend="addFriend"
+      @dm-created="onDmCreated($event)"
+    />
     <div v-else style="flex-grow: 1; display: flex; width: calc(100% - 700px)">
       <div
         style="
@@ -1052,7 +1056,7 @@ import UserPreview from "@/components/UserPreview.vue"
 import CreateChat from "@/components/CreateChat.vue"
 import EditChat from "@/components/EditChat.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
-import Friends from "@/views/BetterComms/Friends.vue"
+import Friends from "@/components/Friends.vue"
 
 import dayjs from "dayjs"
 import { useDataStore } from "@/store"
@@ -1488,6 +1492,7 @@ const contextMenuSendDm = async (id) => {
 const onDmCreated = (data) => {
   showUser.value = false
   createChatShown.value = false
+  store.showFriends = false
   editing.value = ""
   store.userData.chatsList = data.chats
   store.chatSort()

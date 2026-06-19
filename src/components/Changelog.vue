@@ -773,4 +773,18 @@
     <li>Refactoring</li>
     <li>Updated dependencies</li>
   </ul>
+  <h2 class="settings-text">1.151 Edit Profile Pictures</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Profile pictures can now be edited in the
+      <router-link to="/account/profile">Account Profile page</router-link>
+    </li>
+    <li>Updated dependencies</li>
+  </ul>
+  <h2 class="settings-text">1.150 Dependency Updates</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Updated dependencies</li>
+  </ul>
 </template>

@@ -23,74 +23,15 @@
           </p>
         </div>
         <div v-if="createChatType">
-          <div class="text-small">
-            <label class="text-small" for="chat-name">Chat name</label>
-          </div>
-          <input
-            id="chat-name"
-            v-model="chatNameInput"
-            placeholder="Chat name"
-            class="modal-input"
-            @keydown.enter="createChat"
+          <chat-modal-fields
+            v-model:chat-name="chatNameInput"
+            v-model:chat-description="chatDescriptionInput"
+            v-model:chat-icon="chatIconInput"
+            v-model:require-verification="requireVerification"
+            v-model:chat-users="chatUsers"
+            @submit="createChat"
           />
-          <div class="text-small">
-            <label for="chat-description">Chat description</label>
-          </div>
-          <input
-            id="chat-description"
-            v-model="chatDescriptionInput"
-            placeholder="Chat description"
-            class="modal-input"
-            @keydown.enter="createChat"
-          />
-          <div class="text-small">
-            <label for="chat-icon">Chat icon</label>
-          </div>
-          <input
-            id="chat-icon"
-            v-model="chatIconInput"
-            placeholder="Chat icon"
-            class="modal-input"
-            @keydown.enter="createChat"
-          />
-          <div v-if="store.userData.emailVerified">
-            <div class="text-small">
-              <label for="requireVerification">Require verification</label>
-            </div>
-            <div
-              class="switch"
-              @click="requireVerification = !requireVerification"
-            >
-              <input
-                id="requireVerification"
-                type="checkbox"
-                :checked="requireVerification"
-              />
-              <span class="slider" />
-            </div>
-          </div>
-          <div class="text-main">Users</div>
-          <div class="text-small">
-            <label for="add-user">Add a user</label>
-          </div>
-          <div v-for="user in chatUsers" :key="user.id" class="create-chat-row">
-            {{ user.username }}
-            <button
-              v-if="user.id !== store.userData.id"
-              class="button-red"
-              @click="chatUsers = chatUsers.filter((u) => u.id !== user.id)"
-            >
-              Remove
-            </button>
-          </div>
-          <input
-            id="add-user"
-            v-model="chatUsernameInput"
-            placeholder="Add a user"
-            class="modal-input"
-            @keydown.enter="addChatUser(chatUsernameInput, chatUsers)"
-          />
-          <button @click="createChat">Create</button>
+          <button class="dark-button" @click="createChat">Create</button>
         </div>
         <div v-else>
           <div class="text-small">
@@ -117,6 +58,7 @@ import duration from "dayjs/plugin/duration"
 import dayjs from "dayjs"
 import { ref } from "vue"
 import { getUserByName, sendDm } from "@/helpers/chatUsers"
+import ChatModalFields from "./ChatModalFields.vue"
 
 dayjs.extend(duration)
 
@@ -145,18 +87,6 @@ const setDefaultValues = () => {
   chatUsernameInput.value = ""
   chatUsers.value = []
   creating = false
-}
-
-const addChatUser = async () => {
-  const userId = await getUserByName(chatUsernameInput.value)
-  if (userId === -1) {
-    store.handleError("User not found", 2500)
-  } else if (chatUsers.value.findIndex((user) => user.id === userId) === -1) {
-    chatUsers.value.push({ id: userId, username: chatUsernameInput.value })
-  } else {
-    store.handleError("This user is already apart of this group", 2500)
-  }
-  chatUsernameInput.value = ""
 }
 
 const createChat = () => {

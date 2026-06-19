@@ -85,11 +85,12 @@
         Login
       </router-link>
       <router-link
-        class="right chat-button"
+        v-if="store.userData.id"
+        class="right chat-icon"
         to="/"
         title="Go to ElectricS01.com home"
       >
-        Home
+        <icons size="28" icon="home" />
       </router-link>
       <icons
         v-if="active('/chat') && !store.showFriends"

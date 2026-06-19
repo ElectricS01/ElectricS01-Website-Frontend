@@ -227,7 +227,7 @@ const props = defineProps({
 const emits = defineEmits(["showUser", "editing", "statusMessage", "dmCreated"])
 
 let editStatus
-let created = false
+let creating = false
 
 const dayjsOngoing = ref(
   dayjs
@@ -278,17 +278,17 @@ const editStatusMessage = () => {
 }
 
 const sendUserDm = async (id) => {
-  if (created) return
-  created = true
+  if (creating) return
+  creating = true
 
   try {
     const data = await sendDm(id)
     emits("dmCreated", data)
 
-    created = false
+    creating = false
   } catch (e) {
     store.handleAxiosError(e || "Something went wrong")
-    created = true
+    creating = false
   }
 }
 </script>
