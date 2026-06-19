@@ -3,7 +3,7 @@
     <modal
       v-if="showUser && !store.quickSwitcherShown"
       :is-active="typeof showUser === 'object' && !store.quickSwitcherShown"
-      @close="emits('showUser'), emits('editing', '')"
+      @close="(emits('showUser'), emits('editing', ''))"
     >
       <img
         :src="showUser.banner || 'https://i.electrics01.com/i/d81dabf74c88.png'"
@@ -58,7 +58,7 @@
                   showUser.friend?.status)
               "
               class="profile-button-message"
-              @click="sendDm(showUser.id)"
+              @click="sendUserDm(showUser.id)"
             >
               <icons
                 style="padding-right: 4px"
@@ -214,6 +214,7 @@ import axios from "axios"
 import duration from "dayjs/plugin/duration"
 import dayjs from "dayjs"
 import { ref, onMounted, onUnmounted } from "vue"
+import { sendDm } from "@/helpers/chatUsers"
 
 dayjs.extend(duration)
 
@@ -221,12 +222,12 @@ const store = useDataStore()
 const props = defineProps({
   addFriend: Function,
   editing: [Number, String],
-  sendDm: Function,
   showUser: [Boolean, Object]
 })
-const emits = defineEmits(["showUser", "editing", "statusMessage"])
+const emits = defineEmits(["showUser", "editing", "statusMessage", "dmCreated"])
 
 let editStatus
+let created = false
 
 const dayjsOngoing = ref(
   dayjs
@@ -255,6 +256,7 @@ const editStatusShow = () => {
   editStatus = props.showUser.statusMessage
   store.editFocus()
 }
+
 const editStatusMessage = () => {
   if (
     editStatus.trim() === props.showUser.statusMessage ||
@@ -271,8 +273,22 @@ const editStatusMessage = () => {
       emits("editing", "")
     })
     .catch((e) => {
-      store.error = e
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
+}
+
+const sendUserDm = async (id) => {
+  if (created) return
+  created = true
+
+  try {
+    const data = await sendDm(id)
+    emits("dmCreated", data)
+
+    created = false
+  } catch (e) {
+    store.handleAxiosError(e || "Something went wrong")
+    created = true
+  }
 }
 </script>

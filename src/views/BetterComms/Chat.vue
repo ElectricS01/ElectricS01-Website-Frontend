@@ -2,7 +2,6 @@
   <user-preview
     :show-user="showUser"
     :editing="editing"
-    :send-dm="sendDm"
     :add-friend="addFriend"
     @show-user="showUser = false"
     @editing="editing = $event"
@@ -12,6 +11,7 @@
         (user) => user.id === store.userData.id
       ).statusMessage = $event))
     "
+    @dm-created="onDmCreated($event)"
   />
   <transition>
     <modal-simple
@@ -22,187 +22,23 @@
       <img :src="embed" class="message-embed" alt="Embedded image" />
     </modal-simple>
   </transition>
-  <transition>
-    <modal
-      v-if="createChatShown && !store.quickSwitcherShown"
-      :is-active="createChatShown && !store.quickSwitcherShown"
-      @close="
-        ;((createChatShown = false),
-          (chatNameInput = ''),
-          (chatDescriptionInput = ''),
-          (chatIconInput = ''),
-          (requireVerification = true))
-      "
-    >
-      <div class="channel-menu">
-        <div class="selector">
-          <p
-            class="message-text-large"
-            :class="{ active: createChatType }"
-            @click="createChatType = true"
-          >
-            Create New Chat
-          </p>
-          <p
-            class="message-text-large"
-            :class="{ active: !createChatType }"
-            @click="createChatType = false"
-          >
-            Create Direct Message
-          </p>
-        </div>
-        <div v-if="createChatType">
-          <div class="text-small">
-            <label class="text-small" for="chat-name">Chat name</label>
-          </div>
-          <input
-            id="chat-name"
-            v-model="chatNameInput"
-            placeholder="Chat name"
-            class="modal-input"
-            @keydown.enter="createChat"
-          />
-          <div class="text-small">
-            <label for="chat-description">Chat description</label>
-          </div>
-          <input
-            id="chat-description"
-            v-model="chatDescriptionInput"
-            placeholder="Chat description"
-            class="modal-input"
-            @keydown.enter="createChat"
-          />
-          <div class="text-small">
-            <label for="chat-icon">Chat icon</label>
-          </div>
-          <input
-            id="chat-icon"
-            v-model="chatIconInput"
-            placeholder="Chat icon"
-            class="modal-input"
-            @keydown.enter="createChat"
-          />
-          <div v-if="store.userData.emailVerified">
-            <div class="text-small">
-              <label for="requireVerification">Require verification</label>
-            </div>
-            <div
-              class="switch"
-              @click="requireVerification = !requireVerification"
-            >
-              <input
-                id="requireVerification"
-                type="checkbox"
-                :checked="requireVerification"
-              />
-              <span class="slider" />
-            </div>
-          </div>
-        </div>
-        <div v-else>
-          <div class="text-small">
-            <label for="username">Username</label>
-          </div>
-          <input
-            id="username"
-            v-model="chatUsernameInput"
-            placeholder="Username"
-            class="modal-input"
-            @keydown.enter="chatUsernameEnter"
-          />
-        </div>
-        <button @click="createChat">Create</button>
-      </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal
-      v-if="chatEdit !== -1 && !store.quickSwitcherShown"
-      :is-active="chatEdit !== -1 && !store.quickSwitcherShown"
-      @close="
-        ;((chatEdit = -1),
-          (chatNameInput = ''),
-          (chatDescriptionInput = ''),
-          (chatIconInput = ''),
-          (chatUserInput = ''),
-          (requireVerification = true))
-      "
-    >
-      <div class="channel-menu">
-        <p class="message-text-large">Edit Chat</p>
-        <div class="text-small">
-          <label class="text-small" for="chat-name">Chat name</label>
-        </div>
-        <input
-          id="chat-name"
-          v-model="chatNameInput"
-          placeholder="Chat name"
-          class="modal-input"
-          @keydown.enter="saveChat"
-        />
-        <div class="text-small">
-          <label for="chat-description">Chat description</label>
-        </div>
-        <input
-          id="chat-description"
-          v-model="chatDescriptionInput"
-          placeholder="Chat description"
-          class="modal-input"
-          @keydown.enter="saveChat"
-        />
-        <div class="text-small">
-          <label for="chat-icon">Chat icon</label>
-        </div>
-        <input
-          id="chat-icon"
-          v-model="chatIconInput"
-          placeholder="Chat icon"
-          class="modal-input"
-          @keydown.enter="saveChat"
-        />
-        <div v-if="store.userData.emailVerified">
-          <div class="text-small">
-            <label for="requireVerification">Require verification</label>
-          </div>
-          <div
-            class="switch"
-            @click="requireVerification = !requireVerification"
-          >
-            <input
-              id="requireVerification"
-              type="checkbox"
-              :checked="requireVerification"
-            />
-            <span class="slider" />
-          </div>
-        </div>
-        <div class="text-small">
-          <label for="add-user">Add a user</label>
-        </div>
-        <input
-          id="add-user"
-          v-model="chatUserInput"
-          placeholder="Add a user"
-          class="modal-input"
-          @keydown.enter="chatUserEnter"
-        />
-        <button @click="saveChat">Save</button>
-        <button
-          v-if="chatEdit !== 1"
-          class="button-red"
-          @click="deleteChat(chatEdit)"
-        >
-          Delete
-        </button>
-      </div>
-    </modal>
-  </transition>
+  <create-chat
+    ref="createChatRef"
+    :create-chat-shown="createChatShown"
+    @hide-create-chat="createChatShown = false"
+    @chat-created="handleChatCreated($event)"
+    @dm-created="onDmCreated($event)"
+  />
+  <edit-chat
+    ref="editChatRef"
+    :editing-chat="chatEdit"
+    @hide-editing-chat="chatEdit = null"
+    @chat-edited="handleChatEdited"
+  />
   <div class="chat-container">
     <sidebar-left v-if="store.chatBarOpen === 'true'">
       <div class="filter-button" @click="store.showFriends = true">Friends</div>
-      <div class="filter-button" @click="createChatShown = true">
-        Create Chat
-      </div>
+      <div class="filter-button" @click="openCreateChat">Create Chat</div>
       <div v-if="!store.loadingChats">
         <div
           v-for="chat in store.userData.chatsList"
@@ -299,7 +135,7 @@
           <div
             v-if="chat.owner === store.userData.id && chat.type !== 1"
             class="chat-settings"
-            @click="editChat(chat)"
+            @click="showEditChat(chat)"
           >
             <icons size="20" icon="settings" />
           </div>
@@ -330,14 +166,17 @@
           </div>
           <div v-else>
             <div style="padding: 12px 16px">
-              <h1 v-if="currentChat.type !== 1">
+              <h1 v-if="currentChat.type !== 1" class="chat-title">
                 Welcome to {{ currentChat.name }}
               </h1>
-              <h1 v-else-if="currentChat.owner !== store.userData.id">
+              <h1
+                v-else-if="currentChat.owner !== store.userData.id"
+                class="chat-title"
+              >
                 Welcome to your Direct Message with
                 {{ currentChat?.ownerDetails.username }}
               </h1>
-              <h1 v-else>
+              <h1 v-else class="chat-title">
                 Welcome to your Direct Message with {{ currentChat.name }}
               </h1>
               <b style="display: block; overflow-wrap: break-word">
@@ -840,7 +679,7 @@
             <div
               v-if="contextMenuItemUser.id !== store.userData.id"
               class="context-menu-item"
-              @click="sendDm(contextMenuItemUser.id)"
+              @click="contextMenuSendDm(contextMenuItemUser.id)"
             >
               Message {{ contextMenuItemUser.username }}
             </div>
@@ -1204,13 +1043,14 @@
 <script setup>
 import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/core/Icons.vue"
-import Modal from "@/components/core/Modal.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import Sidebar from "@/components/core/Sidebar.vue"
 import SidebarLeft from "@/components/core/SidebarLeft.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/UserPreview.vue"
+import CreateChat from "@/components/CreateChat.vue"
+import EditChat from "@/components/EditChat.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 import Friends from "@/views/BetterComms/Friends.vue"
 
@@ -1220,6 +1060,7 @@ import axios from "axios"
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import emojilib from "emojilib"
+import { sendDm } from "@/helpers/chatUsers"
 
 const store = useDataStore()
 const route = useRoute()
@@ -1230,27 +1071,21 @@ const embed = ref()
 const currentChat = ref({})
 const replyTo = ref()
 const editing = ref("")
-const requireVerification = ref(true)
+const createChatRef = ref(null)
+const editChatRef = ref(null)
 const createChatShown = ref(false)
-const createChatType = ref(true)
 const loadingMessages = ref(true)
 const scrolledUp = ref(false)
 const showUser = ref(false)
-const chatEdit = ref(-1)
+const chatEdit = ref(null)
 const emojiPickerIndex = ref(0)
 const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
 const inputText = ref("")
-const chatUserInput = ref("")
 
 let editText
 let searchText = ""
-let chatNameInput
-let chatDescriptionInput
-let chatIconInput
-let chatUsernameInput
-let chatUsers
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 if (!localStorage.getItem("token")) {
@@ -1260,7 +1095,7 @@ if (!localStorage.getItem("token")) {
     console.log(event)
     const socketMessage = JSON.parse(event.data)
     if (socketMessage.authFail) {
-      store.error = `Error 401, ${socketMessage.authFail}`
+      store.handleError(`Error 401, ${socketMessage.authFail}`)
       router.push("/login?redirect=" + route.path)
     } else if (socketMessage.newMessage) {
       const chatIndex = store.userData.chatsList.findIndex(
@@ -1366,10 +1201,7 @@ const sendMessage = () => {
         scrollDown()
       })
       .catch((e) => {
-        store.error = `Error ${e.request.status}, ${
-          e.response.data.message || e.request.statusMessage
-        }`
-        setTimeout(store.errorFalse, 5000)
+        store.handleAxiosError(e)
       })
   }
 }
@@ -1383,8 +1215,7 @@ const deleteMessage = (messageId) => {
       scrollDown()
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const pinMessage = (messageId, pinned) => {
@@ -1422,41 +1253,20 @@ const pinMessage = (messageId, pinned) => {
       scrollDown()
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
-const editChat = (chat) => {
-  chatEdit.value = chat.id
-  chatNameInput = chat.name
-  chatDescriptionInput = chat.description
-  chatIconInput = chat.icon
-  requireVerification.value = chat.requireVerification
-  chatUsers = currentChat.value.users.map((user) => user.id)
+
+const showEditChat = (chat) => {
+  editChatRef.value?.loadChat?.(chat)
+  chatEdit.value = chat
 }
-const deleteChat = (chatId) => {
-  axios
-    .delete(`/api/delete-chat/${chatId}`)
-    .then((res) => {
-      chatEdit.value = -1
-      chatNameInput = ""
-      chatDescriptionInput = ""
-      chatIconInput = ""
-      requireVerification.value = true
-      store.userData.chatsList = res.data.chats
-      store.chatSort()
-      currentChat.value = res.data.chat
-      replyTo.value = null
-      if (currentChat.value.messages) {
-        currentChat.value.messages.focus = false
-        scrollDown()
-      }
-    })
-    .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
-    })
+
+const openCreateChat = () => {
+  createChatRef.value?.clearInputs?.()
+  createChatShown.value = true
 }
+
 const editMessage = (messageId) => {
   if (editText.trim() === findMessage(messageId).messageContents) {
     editing.value = ""
@@ -1472,8 +1282,7 @@ const editMessage = (messageId) => {
       ] = res.data
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const searchChat = () => {
@@ -1491,93 +1300,28 @@ const replyToMessage = (messageId) => {
   const input = document.getElementById("input")
   input?.focus()
 }
-const createChat = () => {
-  if (!store.userData.emailVerified) {
-    requireVerification.value = false
-  }
-  if (
-    chatNameInput &&
-    chatDescriptionInput &&
-    typeof requireVerification.value === "boolean"
-  )
-    axios
-      .post("/api/create-chat", {
-        description: chatDescriptionInput,
-        icon: chatIconInput,
-        name: chatNameInput,
-        requireVerification: requireVerification.value
-      })
-      .then((res) => {
-        createChatShown.value = false
-        chatNameInput = ""
-        chatDescriptionInput = ""
-        chatIconInput = ""
-        requireVerification.value = true
-        store.userData.chatsList = res.data.chats
-        store.chatSort()
-        currentChat.value = res.data.chat
-        router.push(`/chat/${currentChat.value.id}`)
-        replyTo.value = null
-        if (currentChat.value.messages) {
-          currentChat.value.messages.focus = false
-          scrollDown()
-        }
-      })
-      .catch((e) => {
-        store.error = e.response.data.message
-        setTimeout(store.errorFalse, 5000)
-      })
-}
-const saveChat = () => {
-  if (!store.userData.emailVerified) {
-    requireVerification.value = false
-  }
-  if (
-    chatNameInput &&
-    chatDescriptionInput &&
-    typeof requireVerification.value === "boolean"
-  )
-    axios
-      .patch(`/api/edit-chat/${chatEdit.value}`, {
-        description: chatDescriptionInput,
-        icon: chatIconInput,
-        name: chatNameInput,
-        requireVerification: requireVerification.value,
-        users: chatUsers.filter(
-          (user) =>
-            !currentChat.value.users.map((user) => user.id).includes(user)
-        )
-      })
-      .then((res) => {
-        chatEdit.value = -1
-        chatNameInput = ""
-        chatDescriptionInput = ""
-        chatIconInput = ""
-        requireVerification.value = true
-        store.userData.chatsList = res.data.chats
-        store.chatSort()
-        currentChat.value = res.data.chat
-        replyTo.value = null
-        if (currentChat.value.messages) {
-          currentChat.value.messages.focus = false
-          scrollDown()
-        }
-      })
-      .catch((e) => {
-        store.error = e.response.data.message
-        setTimeout(store.errorFalse, 5000)
-      })
-}
-const chatUserEnter = async () => {
-  const userId = await getUserByName(chatUserInput.value)
-  chatUserInput.value = ""
-  if (chatUsers.indexOf(userId) === -1) {
-    chatUsers.push(userId)
-  } else {
-    store.error = "This user is already apart of this group"
-    setTimeout(store.errorFalse, 2500)
+
+const handleChatCreated = (chat) => {
+  createChatShown.value = false
+  currentChat.value = chat
+  router.push(`/chat/${currentChat.value.id}`)
+  replyTo.value = null
+  if (currentChat.value.messages) {
+    currentChat.value.messages.focus = false
+    scrollDown()
   }
 }
+
+const handleChatEdited = (chat) => {
+  chatEdit.value = null
+  currentChat.value = chat
+  replyTo.value = null
+  if (currentChat.value.messages) {
+    currentChat.value.messages.focus = false
+    scrollDown()
+  }
+}
+
 const dayjsShort = (date) => dayjs(date).format("HH:mm:ss")
 const openUser = (userId, user) => {
   if (user !== null) {
@@ -1590,28 +1334,11 @@ const openUser = (userId, user) => {
         showUser.value = res.data
       })
       .catch((e) => {
-        store.error = e.response.data.message
-        setTimeout(store.errorFalse, 5000)
+        store.handleAxiosError(e)
       })
   }
 }
-const getUserByName = async (username) => {
-  try {
-    const response = await axios.post("/api/get-user", {
-      username
-    })
-    return response.data
-  } catch (error) {
-    store.error = error.response.data.message
-    setTimeout(store.errorFalse, 5000)
-  }
-}
-const chatUsernameEnter = async () => {
-  createChatType.value = false
-  createChatShown.value = false
-  const userData = await getUserByName(chatUsernameInput)
-  sendDm(userData)
-}
+
 const handleClick = (part) => {
   if (part.startsWith('<span @click="handleUserMentionClick(')) {
     openUser(part.match(/\d+/)[0])
@@ -1662,8 +1389,7 @@ const removeUser = (userId) => {
       }
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const copyText = (text) => {
@@ -1745,30 +1471,33 @@ async function addFriend(userId, notOpen) {
       }
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
-const sendDm = (id) => {
-  contextMenuVisible.value = false
-  axios
-    .post(`/api/direct-message/${id}`)
-    .then((res) => {
-      showUser.value = false
-      editing.value = ""
-      store.userData.chatsList = res.data.chats
-      store.chatSort()
-      inputText.value = ""
-      currentChat.value = res.data.chat
-      currentChat.value.messages.focus = false
-      router.push(`/chat/${currentChat.value.id}`)
-      scrollDown()
-    })
-    .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
-    })
+
+const contextMenuSendDm = async (id) => {
+  try {
+    contextMenuVisible.value = false
+    const data = await sendDm(id)
+    onDmCreated(data)
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
+
+const onDmCreated = (data) => {
+  showUser.value = false
+  createChatShown.value = false
+  editing.value = ""
+  store.userData.chatsList = data.chats
+  store.chatSort()
+  inputText.value = ""
+  currentChat.value = data.chat
+  currentChat.value.messages.focus = false
+  router.push(`/chat/${currentChat.value.id}`)
+  scrollDown()
+}
+
 const showContextMenu = (event, user) => {
   event.preventDefault()
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
@@ -1785,8 +1514,10 @@ const keyPressed = ({ key, altKey }) => {
       showUser.value = false
     } else if (embed.value) {
       embed.value = false
-    } else if (chatEdit.value !== -1) {
-      chatEdit.value = -1
+    } else if (createChatShown.value) {
+      createChatShown.value = false
+    } else if (chatEdit.value !== null) {
+      chatEdit.value = null
     } else if (editing.value) {
       editing.value = ""
     } else if (replyTo.value) {
@@ -1937,13 +1668,10 @@ async function getChat(id) {
       updatePageTitle()
     })
     .catch((e) => {
-      if (e.response?.status === 400) {
+      if (e.response?.status === 403 && store.userData.chatsList[0].id !== id) {
         getChat(store.userData.chatsList[0].id)
-      } else if (e.response?.status !== 401) {
-        store.error = `Error ${e.request.status}, ${
-          e.response.data.message || e.request.statusMessage
-        }`
-        setTimeout(store.errorFalse, 5000)
+      } else if (e.response?.status !== 403) {
+        store.handleAxiosError(e)
       }
     })
 }

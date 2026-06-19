@@ -23,7 +23,7 @@ const store = useDataStore()
 document.getElementById("favicon").href = "/icons/favicon.ico"
 
 const submit = () => {
-  store.error = ""
+  store.errorFalse()
   axios
     .post("/api/verify", {
       token: route.query.token
@@ -32,8 +32,7 @@ const submit = () => {
       router.push("/chat")
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 </script>

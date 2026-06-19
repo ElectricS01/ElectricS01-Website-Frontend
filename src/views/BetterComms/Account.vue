@@ -645,7 +645,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.231.2</div>
+            <div>Version: 1.232.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -791,10 +791,7 @@ const getAdmin = () => {
         adminData.value = res.data
       })
       .catch((e) => {
-        store.error = `Error ${e.request.status}, ${
-          e.response.data.message || e.request.statusMessage
-        }`
-        setTimeout(store.errorFalse, 5000)
+        store.handleAxiosError(e)
       })
   }
 }
@@ -807,10 +804,7 @@ const getSessions = () => {
       sessions.value = res.data
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response.data.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 
@@ -823,10 +817,7 @@ const getPasskeys = () => {
       passkeys.value = res.data
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response?.data?.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 
@@ -851,10 +842,7 @@ const submitFeedback = () => {
       feedback: feedbackText
     })
     .catch((e) => {
-      if (e.response.data.message) {
-        store.error = `${e.message}: ${e.response.data.message}`
-      } else store.error = e.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
   modalOpen.value = false
   feedbackText = ""
@@ -866,10 +854,7 @@ const deleteFeedback = (id) => {
       getAdmin()
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response.data.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const selectDm = (option) => {
@@ -904,8 +889,7 @@ const editStatusMessage = () => {
       editing.value = ""
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const onLogout = () => {
@@ -927,10 +911,7 @@ const logout = () => {
       onLogout()
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response.data.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const logoutAll = () => {
@@ -947,10 +928,7 @@ const logoutAllSubmit = () => {
       })
       .catch((e) => {
         console.log(e)
-        store.error = `Error ${e.request.status}, ${
-          e.response.data.message || e.request.statusMessage
-        }`
-        setTimeout(store.errorFalse, 5000)
+        store.handleAxiosError(e)
       })
   }
 }
@@ -960,18 +938,12 @@ const changeUsername = () => {
 const clearHistory = () => {
   localStorage.removeItem("switcherHistory")
   axios.delete("/api/clear-history").catch((e) => {
-    store.error = `Error ${e.request.status}, ${
-      e.response.data.message || e.request.statusMessage
-    }`
-    setTimeout(store.errorFalse, 5000)
+    store.handleAxiosError(e)
   })
 }
 const resendVerification = () => {
   axios.post("/api/resend-verification").catch((e) => {
-    store.error = `Error ${e.request.status}, ${
-      e.response.data.message || e.request.statusMessage
-    }`
-    setTimeout(store.errorFalse, 5000)
+    store.handleAxiosError(e)
   })
   if (localStorage.getItem("token")) {
     store.getUser()
@@ -987,10 +959,7 @@ const enable2FA = () => {
       enableOtpOpen.value = true
     })
     .catch((e) => {
-      if (e.response.data.message) {
-        store.error = `${e.message}: ${e.response.data.message}`
-      } else store.error = e.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const verify2FA = () => {
@@ -1004,10 +973,7 @@ const verify2FA = () => {
       store.userData.otpVerified = true
     })
     .catch((e) => {
-      if (e.response.data.message) {
-        store.error = e.response.data.message
-      } else store.error = e.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const disable2FA = () => {
@@ -1021,10 +987,7 @@ const disable2FA = () => {
       store.userData.otpVerified = false
     })
     .catch((e) => {
-      if (e.response.data.message) {
-        store.error = `${e.message}: ${e.response.data.message}`
-      } else store.error = e.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const copyToken = () => {
@@ -1046,17 +1009,13 @@ const registerPasskey = async () => {
     })
 
     getPasskeys()
-    store.error = ""
+    store.errorFalse()
   } catch (error) {
     if (error.name === "NotAllowedError") {
-      store.error = "Passkey registration was cancelled"
+      store.handleError("Passkey registration was cancelled")
     } else {
-      store.error =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to register passkey"
+      store.handleAxiosError(error)
     }
-    setTimeout(store.errorFalse, 5000)
   }
 }
 
@@ -1080,10 +1039,7 @@ const updatePasskeyName = () => {
       selectedPasskey.value = null
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response?.data?.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 
@@ -1107,10 +1063,7 @@ const confirmDeletePasskey = () => {
       passkeyToDelete.value = null
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response?.data?.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 const platform = (userAgent) => {
@@ -1172,10 +1125,7 @@ async function toggle(property, value) {
           }
         })
         .catch((e) => {
-          store.error = `Error ${e.request.status}, ${
-            e.response.data.message || e.request.statusMessage
-          }`
-          setTimeout(store.errorFalse, 5000)
+          store.handleAxiosError(e)
         })
     }
   }
@@ -1186,7 +1136,7 @@ async function checkImage(url) {
     const buff = await res.blob()
     return buff.type.startsWith("image/")
   } catch (e) {
-    store.error = "Invalid image"
+    store.handleError("Invalid image")
   }
 }
 

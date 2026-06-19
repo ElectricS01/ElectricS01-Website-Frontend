@@ -104,8 +104,7 @@ const getFriends = () => {
       friends.value = res.data
     })
     .catch((e) => {
-      store.error = `Error 503, Cannot Connect to Server ${e}`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 async function add(id) {

@@ -2,6 +2,20 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.232 Improved Chat Creation</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Users can be added to chats during chat creation</li>
+    <li>Show a list of added users when creating or updating a chat</li>
+    <li>Fix adding users to chats</li>
+    <li>Fix clipping chat names</li>
+    <li>Refactoring</li>
+    <li>Close WebSockets when logged out</li>
+    <li>Update to work with backend 1.113.0</li>
+    <li>Upgrade to Vite 8 (1.232.2)</li>
+    <li>Updated dependencies (1.232.2)</li>
+    <li>Updated dependencies (1.232.1)</li>
+  </ul>
   <h2 class="settings-text">1.231 Notification Icon</h2>
   <div class="settings-spacer" />
   <ul>
@@ -738,5 +752,25 @@
       Support negative numbers in the
       <router-link to="/calculator">Calculator</router-link>
     </li>
+  </ul>
+  <h2 class="settings-text">1.153 UI Cleanup</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Fix chats list direct message width</li>
+    <li>Refactoring</li>
+  </ul>
+  <h2 class="settings-text">1.152 Account Profile page improvments</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Status message can now be edited in the
+      <router-link to="/account/profile">Account Profile page</router-link>
+    </li>
+    <li>
+      Account created date and Tetris scores are now displayed in the
+      <router-link to="/account/profile">Account Profile page</router-link>
+    </li>
+    <li>Refactoring</li>
+    <li>Updated dependencies</li>
   </ul>
 </template>

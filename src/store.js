@@ -32,10 +32,61 @@ export const useDataStore = defineStore("store", () => {
   const showFriends = ref(false)
 
   const ws = ref(null)
+  let errorTimeout = null
 
   const errorFalse = () => {
     error.value = ""
+    if (errorTimeout) {
+      clearTimeout(errorTimeout)
+      errorTimeout = null
+    }
   }
+
+  const showError = (message, timeout = 5000) => {
+    error.value = message
+    if (errorTimeout) {
+      clearTimeout(errorTimeout)
+    }
+    errorTimeout = setTimeout(errorFalse, timeout)
+    return message
+  }
+
+  const getErrorMessage = (input) => {
+    if (!input) return ""
+    if (typeof input === "string") return input
+    if (typeof input === "number" || typeof input === "boolean") {
+      return String(input)
+    }
+    if (input?.message) return input.message
+    if (input?.error) return input.error
+    return ""
+  }
+
+  const handleError = (message, timeout = 5000) => {
+    return showError(message || "Something went wrong", timeout)
+  }
+
+  const handleAxiosError = (input, timeout = 5000) => {
+    if (input?.code === "ERR_CANCELED") {
+      return null
+    }
+
+    const message =
+      (input?.response?.status >= 500
+        ? "500 Internal Server Error"
+        : getErrorMessage(input?.response?.data)) ||
+      (input?.response?.status
+        ? `Error ${input.response.status}${
+            input.response.statusText ? `, ${input.response.statusText}` : ""
+          }`
+        : "") ||
+      (input?.request && !input?.response ? "Cannot connect to server" : "") ||
+      getErrorMessage(input) ||
+      "Something went wrong"
+
+    return showError(message, timeout)
+  }
+
   const dayjsLong = (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss")
   const dayjsDate = (date) => dayjs(date).format("D MMMM YYYY")
   const dayjsSince = (date) => dayjs(date).fromNow()
@@ -141,8 +192,7 @@ export const useDataStore = defineStore("store", () => {
       })
       .catch((e) => {
         if (e.response?.status !== 401) {
-          error.value = `Error 503, Cannot Connect to Server ${e}`
-          setTimeout(errorFalse, 5000)
+          handleAxiosError(e)
         }
       })
   }
@@ -237,6 +287,8 @@ export const useDataStore = defineStore("store", () => {
     error,
     errorFalse,
     getUser,
+    handleAxiosError,
+    handleError,
     loadingChats,
     openWebSocket,
     quickSwitcherShown,

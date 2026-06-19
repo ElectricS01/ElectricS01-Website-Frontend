@@ -83,7 +83,7 @@ const submit = async () => {
     keyPair.privateKey,
     password.trim()
   )
-  store.error = ""
+  store.errorFalse()
   axios
     .post("/api/register", {
       email: email.toLowerCase().trim(),
@@ -121,10 +121,7 @@ const submit = async () => {
       router.push("/chat")
     })
     .catch((e) => {
-      store.error = `Error ${e.request.status}, ${
-        e.response.data.message || e.request.statusMessage
-      }`
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 

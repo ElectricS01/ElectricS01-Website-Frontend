@@ -106,7 +106,7 @@ const handleLoginSuccess = (data) => {
 }
 
 const submit = () => {
-  store.error = ""
+  store.errorFalse()
   axios
     .post("/api/login", {
       password: password.trim(),
@@ -118,8 +118,7 @@ const submit = () => {
       handleLoginSuccess(res.data)
     })
     .catch((e) => {
-      store.error = e.response.data.message
-      setTimeout(store.errorFalse, 5000)
+      store.handleAxiosError(e)
     })
 }
 

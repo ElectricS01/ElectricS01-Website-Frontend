@@ -769,6 +769,11 @@ code {
   padding: 0 2px;
 }
 
+.chat-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .title {
   font-size: 36px;
   margin-top: 12px;
@@ -852,6 +857,13 @@ code {
 .modal-input {
   width: 100%;
   padding: 6px;
+}
+
+.create-chat-row {
+  height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .blog-header {
