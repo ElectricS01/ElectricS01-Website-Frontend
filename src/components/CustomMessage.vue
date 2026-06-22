@@ -15,7 +15,7 @@
       :id="'edit-' + message.id"
       class="message-text-small"
       @mouseover="showEdited()"
-      @mouseleave=";(editShown = false), (editHover = false)"
+      @mouseleave=";((editShown = false), (editHover = false))"
     >
       (edited)
     </b>
@@ -23,7 +23,7 @@
       <text-context
         v-if="editShown"
         :position="editShownPosition"
-        :text="store.dayjsLong(message.updatedAt)"
+        :text="dayjsLong(message.updatedAt)"
       />
     </transition>
     <embeds
@@ -39,10 +39,9 @@
 <script setup>
 import Embeds from "@/components/Embeds.vue"
 import { computed, ref } from "vue"
-import { useDataStore } from "@/store"
 import TextContext from "@/components/core/TextContext.vue"
+import { dayjsLong } from "@/helpers/dates"
 
-const store = useDataStore()
 const props = defineProps({
   findUser: Function,
   handleClick: Function,

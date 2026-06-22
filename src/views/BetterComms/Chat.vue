@@ -224,27 +224,10 @@
                 </p>
                 <div style="border-bottom: 1px solid #ff2f2f; width: 50%" />
               </div>
-              <div
-                v-if="
-                  store.dayjsDate(message.createdAt) !==
-                  store.dayjsDate(currentChat.messages[index - 1]?.createdAt)
-                "
-                style="
-                  padding-bottom: 8px;
-                  height: 16px;
-                  display: flex;
-                  align-items: center;
-                "
-              >
-                <div style="border-bottom: 1px solid #212425; width: 50%" />
-                <p
-                  style="padding: 0 4px; white-space: nowrap"
-                  class="message-text-small"
-                >
-                  {{ store.dayjsDate(message.createdAt) }}
-                </p>
-                <div style="border-bottom: 1px solid #212425; width: 50%" />
-              </div>
+              <chat-spacer
+                :message="message"
+                :previous-message="currentChat.messages[index - 1]"
+              />
               <div
                 v-if="message.reply && findMessage(message.reply)"
                 style="
@@ -354,7 +337,7 @@
                       }}
                     </b>
                     <b class="message-text-small">
-                      {{ " " + store.dayjsLong(message.createdAt) }}
+                      {{ " " + dayjsLong(message.createdAt) }}
                     </b>
                   </div>
                   <textarea
@@ -756,32 +739,22 @@
             @keydown.enter="searchChat"
           />
           <div
+            v-if="searchMessages.length === 0"
+            class="message-text-medium-gray"
+            style="text-align: center; margin: 8px"
+          >
+            No messages found
+          </div>
+          <div
             v-for="(message, index) in searchMessages"
             :id="'message-' + index"
             :key="message.id"
             style="padding: 4px"
           >
-            <div
-              v-if="
-                store.dayjsDate(message.createdAt) !==
-                store.dayjsDate(searchMessages[index - 1]?.createdAt)
-              "
-              style="
-                padding-bottom: 8px;
-                height: 16px;
-                display: flex;
-                align-items: center;
-              "
-            >
-              <div style="border-bottom: 1px solid #212425; width: 50%" />
-              <p
-                style="padding: 0 4px; white-space: nowrap"
-                class="message-text-small"
-              >
-                {{ store.dayjsDate(message.createdAt) }}
-              </p>
-              <div style="border-bottom: 1px solid #212425; width: 50%" />
-            </div>
+            <chat-spacer
+              :message="message"
+              :previous-message="searchMessages[index - 1]"
+            />
             <div
               v-if="message.reply && findMessage(message.reply)"
               style="
@@ -882,7 +855,7 @@
                     {{ message.user?.username }}
                   </b>
                   <b class="message-text-small">
-                    {{ " " + store.dayjsLong(message.createdAt) }}
+                    {{ " " + dayjsLong(message.createdAt) }}
                   </b>
                 </div>
                 <custom-message
@@ -896,145 +869,15 @@
           </div>
         </div>
         <div v-else-if="store.pins">
-          <div
-            v-for="(message, index) in currentChat.pins"
-            :id="'message-' + index"
-            :key="message.id"
-            style="padding: 4px"
-          >
-            <div
-              v-if="
-                store.dayjsDate(message.createdAt) !==
-                store.dayjsDate(currentChat.pins[index - 1]?.createdAt)
-              "
-              style="
-                padding-bottom: 8px;
-                height: 16px;
-                display: flex;
-                align-items: center;
-              "
-            >
-              <div style="border-bottom: 1px solid #212425; width: 50%" />
-              <p
-                style="padding: 0 4px; white-space: nowrap"
-                class="message-text-small"
-              >
-                {{ store.dayjsDate(message.createdAt) }}
-              </p>
-              <div style="border-bottom: 1px solid #212425; width: 50%" />
-            </div>
-            <div
-              v-if="message.reply && findMessage(message.reply)"
-              style="
-                display: flex;
-                overflow-wrap: break-word;
-                margin: 0 0 8px 28px;
-              "
-            >
-              <icons size="16" icon="reply" style="margin-right: 4px" />
-              <profile-picture
-                size="16"
-                :avatar="findMessage(message.reply)?.user?.avatar"
-                :small="true"
-                @click="
-                  openUser(
-                    findMessage(message.reply)?.user?.id,
-                    findMessage(message.reply)?.user
-                  )
-                "
-              />
-              <b
-                class="message-text-medium"
-                style="margin: 4px 4px 0 4px"
-                @click="
-                  openUser(
-                    findMessage(message.reply)?.user?.id,
-                    findMessage(message.reply)?.user
-                  )
-                "
-              >
-                {{
-                  findMessage(message.reply)?.user?.username
-                    ? "@" + findMessage(message.reply)?.user?.username
-                    : "@Deleted user"
-                }}
-              </b>
-              <p
-                class="message-text-medium-gray-hover"
-                style="margin-top: 4px; margin-bottom: 0"
-                @click="goToMessage(findMessage(message.reply))"
-              >
-                {{ findMessage(message.reply)?.messageContents }}
-              </p>
-            </div>
-            <div
-              v-else-if="message.reply"
-              style="
-                overflow-wrap: break-word;
-                margin: 0 0 8px 28px;
-                display: flex;
-              "
-            >
-              <icons
-                colour="darkgrey"
-                size="16"
-                icon="reply"
-                style="margin-right: 4px"
-              />
-              <icons colour="darkgrey" size="16" icon="user" />
-              <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
-                Message has been deleted
-              </b>
-            </div>
-            <div
-              class="message-grid"
-              style="position: relative; width: 100%"
-              @click="goToMessage(findMessage(message.id))"
-            >
-              <div
-                v-if="!merge(message, currentChat.pins[index - 1])"
-                style="
-                  margin: 0 12px 0 4px;
-                  cursor: pointer;
-                  border-radius: 16px;
-                "
-                class="message-item"
-                @click="openUser(message.user?.id, message.user)"
-              >
-                <profile-picture size="32" :avatar="message.user?.avatar" />
-              </div>
-              <div v-else class="message-time">
-                <b class="message-text-small">
-                  {{ dayjsShort(message.createdAt) }}
-                </b>
-              </div>
-              <div
-                class="message-item"
-                style="width: calc(100% - 48px); overflow-wrap: break-word"
-              >
-                <div
-                  v-if="!merge(message, currentChat.pins[index - 1])"
-                  class="message-header"
-                >
-                  <b
-                    class="message-text-medium"
-                    @click="openUser(message.user.id, message.user)"
-                  >
-                    {{ message.user?.username }}
-                  </b>
-                  <b class="message-text-small">
-                    {{ " " + store.dayjsLong(message.createdAt) }}
-                  </b>
-                </div>
-                <custom-message
-                  :message="message"
-                  :handle-click="handleClick"
-                  :find-user="findUser"
-                  :scroll="scrollDown"
-                />
-              </div>
-            </div>
-          </div>
+          <pins-sidebar
+            :pins="currentChat.pins"
+            :find-message="findMessage"
+            :find-user="findUser"
+            :go-to-message="goToMessage"
+            :open-user="openUser"
+            :handle-click="handleClick"
+            :scroll="scrollDown"
+          />
         </div>
         <div v-else class="center">
           <div style="text-align: center" class="loader" />
@@ -1052,19 +895,22 @@ import Sidebar from "@/components/core/Sidebar.vue"
 import SidebarLeft from "@/components/core/SidebarLeft.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
-import UserPreview from "@/components/UserPreview.vue"
-import CreateChat from "@/components/CreateChat.vue"
-import EditChat from "@/components/EditChat.vue"
+import UserPreview from "@/components/modals/UserPreview.vue"
+import CreateChat from "@/components/modals/CreateChat.vue"
+import EditChat from "@/components/modals/EditChat.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 import Friends from "@/components/Friends.vue"
+import PinsSidebar from "@/components/sidebars/PinsSidebar.vue"
+import ChatSpacer from "@/components/ChatSpacer.vue"
 
-import dayjs from "dayjs"
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import emojilib from "emojilib"
 import { sendDm } from "@/helpers/chatUsers"
+import { dayjsLong, dayjsShort } from "@/helpers/dates"
+import { merge } from "@/helpers/messages"
 
 const store = useDataStore()
 const route = useRoute()
@@ -1326,7 +1172,6 @@ const handleChatEdited = (chat) => {
   }
 }
 
-const dayjsShort = (date) => dayjs(date).format("HH:mm:ss")
 const openUser = (userId, user) => {
   if (user !== null) {
     contextMenuVisible.value = false
@@ -1421,20 +1266,10 @@ const scrollDown = (override) => {
     }
   })
 }
-const merge = (message, previousMessage) => {
-  if (previousMessage) {
-    return (
-      previousMessage.userId === message.userId &&
-      dayjs(previousMessage.createdAt).isSame(message.createdAt, "day") &&
-      !message.reply &&
-      !dayjs(previousMessage.createdAt).isBefore(
-        dayjs(message.createdAt).subtract(15, "minutes")
-      )
-    )
-  }
-}
+
 const findMessage = (messageId) =>
   currentChat.value.messages.findLast((message) => message.id === messageId)
+
 const goToMessage = (messageId) => {
   const div = document.getElementById("messages-div")
   const element = document.getElementById(
@@ -1630,9 +1465,10 @@ const updateFavicon = (notificationCount) => {
 }
 
 const updatePageTitle = () => {
-  let notificationCount = store.userData.chatsList.reduce((sum, chat) => {
-    return sum + (chat.association?.notifications || 0)
-  }, 0)
+  let notificationCount =
+    store.userData.chatsList?.reduce((sum, chat) => {
+      return sum + (chat.association?.notifications || 0)
+    }, 0) ?? 0
 
   document.title = `${notificationCount !== 0 ? "(" + notificationCount + ") " : ""}BetterComms | ${currentChat.value.name}`
   updateFavicon(notificationCount)
@@ -1671,6 +1507,20 @@ async function getChat(id) {
       loadingMessages.value = false
       scrollDown(true)
       updatePageTitle()
+      if (!store.userData.chatsList) {
+        watch(
+          () => store.userData.chatsList,
+          (newValue) => {
+            if (newValue) {
+              updatePageTitle()
+            }
+          },
+          {
+            once: true
+          }
+        )
+        return
+      }
     })
     .catch((e) => {
       if (e.response?.status === 403 && store.userData.chatsList[0].id !== id) {

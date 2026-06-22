@@ -83,7 +83,7 @@
           />
           Accept Friend
         </button>
-        <div style="padding: 8px">{{ store.dayjsSince(friend.createdAt) }}</div>
+        <div style="padding: 8px">{{ dayjsSince(friend.createdAt) }}</div>
       </div>
     </div>
   </div>
@@ -98,6 +98,7 @@ import { ref } from "vue"
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { sendDm } from "@/helpers/chatUsers"
+import { dayjsSince } from "@/helpers/dates"
 
 const store = useDataStore()
 const props = defineProps({

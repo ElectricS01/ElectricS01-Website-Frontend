@@ -1,12 +1,8 @@
 import { defineStore } from "pinia"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
 
 import { nextTick, ref } from "vue"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
-
-dayjs.extend(relativeTime)
 
 const switcherPages = [
   "Home",
@@ -86,10 +82,6 @@ export const useDataStore = defineStore("store", () => {
 
     return showError(message, timeout)
   }
-
-  const dayjsLong = (date) => dayjs(date).format("DD/MM/YYYY HH:mm:ss")
-  const dayjsDate = (date) => dayjs(date).format("D MMMM YYYY")
-  const dayjsSince = (date) => dayjs(date).fromNow()
 
   const openWebSocket = () => {
     if (localStorage.getItem("token")) {
@@ -279,9 +271,6 @@ export const useDataStore = defineStore("store", () => {
   }
   return {
     chatSort,
-    dayjsDate,
-    dayjsLong,
-    dayjsSince,
     editFocus,
     encryptPrivateKey,
     error,

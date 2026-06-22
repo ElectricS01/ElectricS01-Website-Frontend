@@ -29,15 +29,12 @@
 </template>
 <script setup>
 import Modal from "@/components/core/Modal.vue"
-import { useDataStore } from "@/store"
-import axios from "axios"
-import duration from "dayjs/plugin/duration"
-import dayjs from "dayjs"
-import { ref } from "vue"
-import { getChatUsers } from "@/helpers/chatUsers"
 import ChatModalFields from "./ChatModalFields.vue"
 
-dayjs.extend(duration)
+import { useDataStore } from "@/store"
+import axios from "axios"
+import { ref } from "vue"
+import { getChatUsers } from "@/helpers/chatUsers"
 
 const store = useDataStore()
 const props = defineProps({

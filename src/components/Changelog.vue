@@ -773,11 +773,11 @@
     <li>Refactoring</li>
     <li>Updated dependencies</li>
   </ul>
-  <h2 class="settings-text">1.151 Edit Profile Pictures</h2>
+  <h2 class="settings-text">1.151 Edit Profile Bannars</h2>
   <div class="settings-spacer" />
   <ul>
     <li>
-      Profile pictures can now be edited in the
+      Profile bannars can now be edited in the
       <router-link to="/account/profile">Account Profile page</router-link>
     </li>
     <li>Updated dependencies</li>
@@ -786,5 +786,19 @@
   <div class="settings-spacer" />
   <ul>
     <li>Updated dependencies</li>
+  </ul>
+  <h2 class="settings-text">1.149 Edit Profile Pictures</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Profile pictures can now be edited in the
+      <router-link to="/account/profile">Account Profile page</router-link>
+    </li>
+    <li>Updated dependencies</li>
+  </ul>
+  <h2 class="settings-text">1.148 TonkGame 0.4.2.7</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Update TonkGame to the latest version</li>
   </ul>
 </template>

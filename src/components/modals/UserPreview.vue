@@ -169,7 +169,7 @@
               <div />
             </div>
             <p class="message-text-large">
-              {{ store.dayjsDate(showUser.createdAt) }}
+              {{ dayjsDate(showUser.createdAt) }}
             </p>
           </div>
           <div>
@@ -209,12 +209,14 @@ import Icons from "@/components/core/Icons.vue"
 import Modal from "@/components/core/Modal.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
+
 import { useDataStore } from "@/store"
 import axios from "axios"
 import duration from "dayjs/plugin/duration"
 import dayjs from "dayjs"
 import { ref, onMounted, onUnmounted } from "vue"
 import { sendDm } from "@/helpers/chatUsers"
+import { dayjsDate } from "@/helpers/dates"
 
 dayjs.extend(duration)
 

@@ -231,7 +231,7 @@
               Change Password
             </div>
             <div class="settings-spacer" />
-            Creation date: {{ store.dayjsLong(store.userData?.createdAt) }}
+            Creation date: {{ dayjsLong(store.userData?.createdAt) }}
             <div class="settings-spacer" />
             Account ID: {{ store.userData?.id }}
             <div class="settings-spacer" />
@@ -407,8 +407,8 @@
                     {{ passkey.name }}
                   </p>
                   <p class="message-text-small">
-                    Added: {{ store.dayjsLong(passkey.createdAt) }} -
-                    {{ store.dayjsSince(passkey.createdAt) }}
+                    Added: {{ dayjsLong(passkey.createdAt) }} -
+                    {{ dayjsSince(passkey.createdAt) }}
                   </p>
                   <p
                     class="message-text-small"
@@ -443,8 +443,8 @@
               >
                 <p>{{ platform(session.userAgent) }}</p>
                 <p class="message-text-small">
-                  Added: {{ store.dayjsLong(session.createdAt) }} -
-                  {{ store.dayjsSince(session.createdAt) }}
+                  Added: {{ dayjsLong(session.createdAt) }} -
+                  {{ dayjsSince(session.createdAt) }}
                 </p>
                 <p class="message-text-small">Id: {{ session.id }}</p>
               </div>
@@ -560,7 +560,7 @@
                         <div />
                       </div>
                       <p class="message-text-large">
-                        {{ store.dayjsDate(store.userData?.createdAt) }}
+                        {{ dayjsDate(store.userData?.createdAt) }}
                       </p>
                     </div>
                     <div>
@@ -645,11 +645,11 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.232.1</div>
+            <div>Version: 1.232.2</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
-            <div>Build date: {{ store.dayjsLong(buildDate) }}</div>
+            <div>Build date: {{ dayjsLong(buildDate) }}</div>
           </div>
           <div v-else-if="page === 'changelog'" class="settings-page-container">
             <changelog />
@@ -665,7 +665,7 @@
                 <th>{{ feedback.id }}</th>
                 <th>{{ feedback.userId }}</th>
                 <th>{{ feedback.feedback }}</th>
-                <th>{{ store.dayjsLong(feedback.createdAt) }}</th>
+                <th>{{ dayjsLong(feedback.createdAt) }}</th>
                 <th>
                   <icons
                     size="16"
@@ -684,7 +684,7 @@
                 <th>{{ user.id }}</th>
                 <th>{{ user.username }}</th>
                 <th>{{ user.admin }}</th>
-                <th>{{ store.dayjsLong(user.createdAt) }}</th>
+                <th>{{ dayjsLong(user.createdAt) }}</th>
                 <th>
                   <icons
                     size="16"
@@ -708,11 +708,13 @@ import Modal from "@/components/core/Modal.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
+
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
 import { nextTick, ref, watch } from "vue"
 import { startRegistration } from "@simplewebauthn/browser"
+import { dayjsDate, dayjsLong, dayjsSince } from "@/helpers/dates"
 
 const store = useDataStore()
 const route = useRoute()

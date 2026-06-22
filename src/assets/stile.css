@@ -438,6 +438,23 @@ button {
   user-select: none;
 }
 
+.chat-spacer {
+  padding-bottom: 8px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+
+  div {
+    border-bottom: 1px solid #212425;
+    width: 50%;
+  }
+
+  p {
+    padding: 0 4px;
+    white-space: nowrap;
+  }
+}
+
 .chat-navbar a.right,
 .navbar a.right,
 .right {
@@ -566,7 +583,7 @@ button:hover,
   display: none;
 }
 
-@media screen and (max-width: 744px) {
+@media screen and (max-width: 838px) {
   .navbar:not(.responsive) a:not(:first-child):not(.chat-button) {
     display: none;
   }
@@ -833,6 +850,7 @@ code {
   color: #fff;
 }
 
+.chat-spacer p,
 .message-text-small {
   color: grey;
   font-size: 10px;
