@@ -741,6 +741,12 @@ input {
   background-color: #ff2f2f;
 }
 
+.reply-preview {
+  display: flex;
+  overflow-wrap: break-word;
+  margin: 0 0 8px 28px;
+}
+
 .message-input {
   height: 32px;
   width: calc(100% - 88px);

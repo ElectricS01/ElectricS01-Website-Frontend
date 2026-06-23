@@ -93,6 +93,19 @@
         <icons size="28" icon="home" />
       </router-link>
       <icons
+        v-if="active('/chat')"
+        class="right chat-icon"
+        size="28"
+        icon="notifications"
+        @click="
+          ;((store.notifications = !store.notifications),
+            (store.search = false),
+            (store.pins = false))
+        "
+      >
+        <title>Show notifications</title>
+      </icons>
+      <icons
         v-if="active('/chat') && !store.showFriends"
         class="right chat-icon"
         size="28"
@@ -106,7 +119,11 @@
         class="right chat-icon"
         size="28"
         icon="search"
-        @click=";((store.search = !store.search), (store.pins = false))"
+        @click="
+          ;((store.search = !store.search),
+            (store.notifications = false),
+            (store.pins = false))
+        "
       >
         <title>Search this chat</title>
       </icons>
@@ -115,7 +132,11 @@
         class="right chat-icon"
         size="28"
         icon="pin"
-        @click=";((store.pins = !store.pins), (store.search = false))"
+        @click="
+          ;((store.pins = !store.pins),
+            (store.notifications = false),
+            (store.search = false))
+        "
       >
         <title>View this chat's pins</title>
       </icons>
@@ -248,15 +269,18 @@ const toggleSidebar = () => {
   if (
     localStorage.getItem("sidebarOpen") !== "true" ||
     store.search === true ||
-    store.pins === true
+    store.pins === true ||
+    store.notifications === true
   ) {
     localStorage.setItem("sidebarOpen", "true")
     store.search = false
     store.pins = false
+    store.notifications = false
   } else {
     localStorage.setItem("sidebarOpen", "false")
     store.search = false
     store.pins = false
+    store.notifications = false
   }
   store.sidebarOpen = localStorage.getItem("sidebarOpen")
 }

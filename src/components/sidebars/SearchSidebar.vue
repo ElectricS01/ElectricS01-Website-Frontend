@@ -1,18 +1,28 @@
 <template>
+  <input
+    v-model="searchText"
+    style="margin: 0"
+    placeholder="Search this chat"
+    autocomplete="off"
+    @keydown.enter="searchChat"
+  />
   <div
-    v-if="pins?.length === 0"
+    v-if="searchMessages.length === 0"
     class="message-text-medium-gray"
     style="text-align: center; margin: 8px"
   >
-    No pinned messages
+    No messages found
   </div>
   <div
-    v-for="(message, index) in pins"
+    v-for="(message, index) in searchMessages"
     :id="'message-' + index"
     :key="message.id"
     style="padding: 4px"
   >
-    <chat-spacer :message="message" :previous-message="pins[index - 1]" />
+    <chat-spacer
+      :message="message"
+      :previous-message="searchMessages[index - 1]"
+    />
     <div
       v-if="message.reply && findMessage(message.reply)"
       class="reply-preview"
@@ -61,7 +71,7 @@
       @click="goToMessage(message.id)"
     >
       <div
-        v-if="!merge(message, pins[index - 1])"
+        v-if="!merge(message, searchMessages[index - 1])"
         style="margin: 0 12px 0 4px; cursor: pointer; border-radius: 16px"
         class="message-item"
         @click="openUser(message.user?.id)"
@@ -77,7 +87,10 @@
         class="message-item"
         style="width: calc(100% - 48px); overflow-wrap: break-word"
       >
-        <div class="message-header">
+        <div
+          v-if="!merge(message, searchMessages[index - 1])"
+          class="message-header"
+        >
           <b class="message-text-medium" @click="openUser(message.user.id)">
             {{ message.user?.username }}
           </b>
@@ -97,24 +110,39 @@
 </template>
 
 <script setup>
+import ChatSpacer from "../ChatSpacer.vue"
 import Icons from "../core/Icons.vue"
 import ProfilePicture from "../ProfilePicture.vue"
 import CustomMessage from "../CustomMessage.vue"
-import ChatSpacer from "../ChatSpacer.vue"
 
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
+import { ref } from "vue"
 
-defineProps({
+const props = defineProps({
+  chatMessages: {
+    required: true,
+    type: Array
+  },
   findMessage: Function,
   findUser: Function,
   goToMessage: Function,
   handleClick: Function,
   openUser: Function,
-  pins: {
-    required: true,
-    type: Array
-  },
   scroll: Function
 })
+
+const searchText = ref("")
+const searchMessages = ref([])
+
+const searchChat = () => {
+  if (searchText.value) {
+    const keywords = searchText.value.toLowerCase().split(" ")
+    searchMessages.value = props.chatMessages.filter((message) =>
+      keywords.some((keyword) =>
+        message.messageContents.toLowerCase().includes(keyword)
+      )
+    )
+  }
+}
 </script>

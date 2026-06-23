@@ -230,33 +230,19 @@
               />
               <div
                 v-if="message.reply && findMessage(message.reply)"
-                style="
-                  display: flex;
-                  overflow-wrap: break-word;
-                  margin: 0 0 8px 28px;
-                "
+                class="reply-preview"
               >
                 <icons size="16" icon="reply" style="margin-right: 4px" />
                 <profile-picture
                   size="16"
                   :avatar="findMessage(message.reply)?.user?.avatar"
                   :small="true"
-                  @click="
-                    openUser(
-                      findMessage(message.reply)?.user?.id,
-                      findMessage(message.reply)?.user
-                    )
-                  "
+                  @click="openUser(findMessage(message.reply)?.user?.id)"
                 />
                 <b
                   class="message-text-medium"
                   style="margin: 4px 4px 0 4px"
-                  @click="
-                    openUser(
-                      findMessage(message.reply)?.user?.id,
-                      findMessage(message.reply)?.user
-                    )
-                  "
+                  @click="openUser(findMessage(message.reply)?.user?.id)"
                 >
                   {{
                     findMessage(message.reply)?.user?.username
@@ -267,19 +253,12 @@
                 <p
                   class="message-text-medium-gray-hover"
                   style="margin-top: 4px; margin-bottom: 0"
-                  @click="goToMessage(findMessage(message.reply))"
+                  @click="goToMessage(message.reply)"
                 >
                   {{ findMessage(message.reply)?.messageContents }}
                 </p>
               </div>
-              <div
-                v-else-if="message.reply"
-                style="
-                  overflow-wrap: break-word;
-                  margin: 0 0 8px 28px;
-                  display: flex;
-                "
-              >
+              <div v-else-if="message.reply" class="reply-preview">
                 <icons
                   colour="darkgrey"
                   size="16"
@@ -305,7 +284,7 @@
                   v-if="!merge(message, currentChat.messages[index - 1])"
                   style="margin: 0 4px; cursor: pointer; border-radius: 16px"
                   class="message-item"
-                  @click="openUser(message.user.id, message.user)"
+                  @click="openUser(message.user.id)"
                 >
                   <profile-picture
                     style="margin: 4px"
@@ -328,7 +307,7 @@
                   >
                     <b
                       class="message-text-medium"
-                      @click="openUser(message.user.id, message.user)"
+                      @click="openUser(message.user.id)"
                     >
                       {{
                         message.user?.username
@@ -441,22 +420,12 @@
                   size="12"
                   :avatar="findMessage(replyTo).user?.avatar"
                   :small="true"
-                  @click="
-                    openUser(
-                      findMessage(replyTo).user.id,
-                      findMessage(replyTo).user
-                    )
-                  "
+                  @click="openUser(findMessage(replyTo).user.id)"
                 />
                 <b
                   class="message-text-medium"
                   style="margin: 0 4px 0 4px"
-                  @click="
-                    openUser(
-                      findMessage(replyTo).user.id,
-                      findMessage(replyTo).user
-                    )
-                  "
+                  @click="openUser(findMessage(replyTo).user.id)"
                 >
                   {{
                     findMessage(replyTo).user?.username
@@ -467,7 +436,7 @@
                 <p
                   class="message-text-medium-gray"
                   style="margin: 0"
-                  @click="goToMessage(findMessage(replyTo))"
+                  @click="goToMessage(replyTo)"
                 >
                   {{ findMessage(replyTo).messageContents }}
                 </p>
@@ -527,363 +496,254 @@
           </div>
         </div>
       </div>
-      <sidebar
-        v-if="store.sidebarOpen === 'true' || store.search || store.pins"
-        :style="{ width: store.search || store.pins ? '342px' : '' }"
+    </div>
+    <sidebar
+      v-if="
+        ((store.sidebarOpen === 'true' || store.search || store.pins) &&
+          !store.showFriends) ||
+        store.notifications
+      "
+      :style="{
+        width: store.search || store.pins || store.notifications ? '342px' : ''
+      }"
+    >
+      <div
+        v-if="
+          !loadingMessages &&
+          !store.search &&
+          !store.pins &&
+          !store.notifications
+        "
       >
-        <div v-if="!loadingMessages && !store.search && !store.pins">
-          <div class="filter-button" @click="userSortPress()">
-            <p v-if="store.sortUsers === 'id'">Sort: Id</p>
-            <p v-else-if="store.sortUsers === 'username'">Sort: Username</p>
-            <p v-else-if="store.sortUsers === 'status'">Sort: Status</p>
-            <p v-else-if="store.sortUsers === 'statusMessage'">
-              Sort: Status Message
+        <div class="filter-button" @click="userSortPress()">
+          <p v-if="store.sortUsers === 'id'">Sort: Id</p>
+          <p v-else-if="store.sortUsers === 'username'">Sort: Username</p>
+          <p v-else-if="store.sortUsers === 'status'">Sort: Status</p>
+          <p v-else-if="store.sortUsers === 'statusMessage'">
+            Sort: Status Message
+          </p>
+        </div>
+        <div
+          v-if="
+            currentChat.users?.some(
+              (someUser) => someUser?.status !== 'offline'
+            )
+          "
+          style="
+            padding: 0 4px;
+            display: flex;
+            height: 20px;
+            align-items: center;
+          "
+        >
+          <p style="padding-right: 4px" class="message-text-small">Online</p>
+          <div style="border-bottom: 1px solid #212425; width: 100%" />
+        </div>
+        <div
+          v-for="user in onlineUsers"
+          :key="user.id"
+          style="cursor: pointer; margin: 0 0 4px"
+          class="message-grid"
+          @contextmenu.prevent="showContextMenu($event, user)"
+          @click="openUser(user.id)"
+        >
+          <div class="profile-picture">
+            <profile-picture
+              style="margin: 4px"
+              size="32"
+              :avatar="user.avatar"
+              :small="true"
+            />
+            <svg class="online-indicator" width="15" height="15">
+              <status-indicator size="5" :status="user.status" />
+            </svg>
+          </div>
+          <div style="flex-grow: 1; width: 178px" class="message-item">
+            <b
+              class="message-text-large"
+              style="
+                margin: 4px 0 2px 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              "
+            >
+              {{ user.username }}
+            </b>
+            <p
+              class="message-text-medium-gray"
+              style="
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              "
+            >
+              {{
+                user.gameName ? "Playing " + user.gameName : user.statusMessage
+              }}
             </p>
           </div>
-          <div
-            v-if="
-              currentChat.users?.some(
-                (someUser) => someUser?.status !== 'offline'
-              )
-            "
-            style="
-              padding: 0 4px;
-              display: flex;
-              height: 20px;
-              align-items: center;
-            "
-          >
-            <p style="padding-right: 4px" class="message-text-small">Online</p>
-            <div style="border-bottom: 1px solid #212425; width: 100%" />
-          </div>
-          <div
-            v-for="user in onlineUsers"
-            :key="user.id"
-            style="cursor: pointer; margin: 0 0 4px"
-            class="message-grid"
-            @contextmenu.prevent="showContextMenu($event, user)"
-            @click="openUser(user.id, user)"
-          >
-            <div class="profile-picture">
-              <profile-picture
-                style="margin: 4px"
-                size="32"
-                :avatar="user.avatar"
-                :small="true"
-              />
-              <svg class="online-indicator" width="15" height="15">
-                <status-indicator size="5" :status="user.status" />
-              </svg>
-            </div>
-            <div style="flex-grow: 1; width: 178px" class="message-item">
-              <b
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
-              >
-                {{ user.username }}
-              </b>
-              <p
-                class="message-text-medium-gray"
-                style="
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
-              >
-                {{
-                  user.gameName
-                    ? "Playing " + user.gameName
-                    : user.statusMessage
-                }}
-              </p>
-            </div>
-          </div>
-          <div
-            v-if="
-              currentChat.users?.some(
-                (someUser) => someUser?.status === 'offline'
-              )
-            "
-            style="
-              padding: 0 4px;
-              display: flex;
-              height: 20px;
-              align-items: center;
-            "
-          >
-            <p style="padding-right: 4px" class="message-text-small">Offline</p>
-            <div style="border-bottom: 1px solid #212425; width: 100%" />
-          </div>
-          <div
-            v-for="user in offlineUsers"
-            :key="user.id"
-            style="cursor: pointer; margin: 0 0 4px"
-            class="message-grid"
-            @contextmenu.prevent="showContextMenu($event, user)"
-            @click="openUser(user.id, user)"
-          >
-            <div class="profile-picture">
-              <profile-picture
-                style="margin: 4px"
-                size="32"
-                :avatar="user.avatar"
-              />
-              <svg class="online-indicator" width="15" height="15">
-                <status-indicator size="5" :status="user.status" />
-              </svg>
-            </div>
-            <div class="message-item">
-              <b
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  width: 178px;
-                "
-              >
-                {{ user.username }}
-              </b>
-            </div>
-          </div>
-          <context-menu
-            v-if="contextMenuVisible"
-            :position="contextMenuPosition"
-            @close="contextMenuVisible = false"
-          >
-            <div
-              class="context-menu-item"
-              @click="openUser(contextMenuItemUser.id, true)"
-            >
-              Profile
-            </div>
-            <div
-              v-if="contextMenuItemUser.id !== store.userData.id"
-              class="context-menu-item"
-              @click="contextMenuSendDm(contextMenuItemUser.id)"
-            >
-              Message {{ contextMenuItemUser.username }}
-            </div>
-            <div
-              v-if="
-                contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friendRequests &&
-                !contextMenuItemUser.friend?.status
-              "
-              class="context-menu-item"
-              @click="addFriend(contextMenuItemUser.id, true)"
-            >
-              Friend {{ contextMenuItemUser.username }}
-            </div>
-            <div
-              v-else-if="
-                contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend?.status === 'accepted'
-              "
-              class="context-menu-item"
-              @click="addFriend(contextMenuItemUser.id, true)"
-            >
-              Unfriend {{ contextMenuItemUser.username }}
-            </div>
-            <div
-              v-else-if="
-                contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend?.status === 'pending'
-              "
-              class="context-menu-item"
-              @click="addFriend(contextMenuItemUser.id, true)"
-            >
-              Cancel {{ contextMenuItemUser.username }}
-            </div>
-            <div
-              v-else-if="
-                contextMenuItemUser.id !== store.userData.id &&
-                contextMenuItemUser.friend?.status === 'incoming'
-              "
-              class="context-menu-item"
-              @click="addFriend(contextMenuItemUser.id, true)"
-            >
-              Accept {{ contextMenuItemUser.username }}
-            </div>
-            <div
-              v-if="
-                currentChat.owner === store.userData.id &&
-                contextMenuItemUser.id !== store.userData.id &&
-                currentChat.type === 0
-              "
-              class="context-menu-item"
-              @click="removeUser(contextMenuItemUser.id)"
-            >
-              Remove {{ contextMenuItemUser.username }}
-            </div>
-            <div
-              class="context-menu-item"
-              @click="copyText(contextMenuItemUser.id)"
-            >
-              Copy User ID
-            </div>
-          </context-menu>
         </div>
-        <div v-else-if="store.search">
-          <input
-            v-model="searchText"
-            style="margin: 0"
-            placeholder="Search this chat"
-            autocomplete="off"
-            @keydown.enter="searchChat"
-          />
-          <div
-            v-if="searchMessages.length === 0"
-            class="message-text-medium-gray"
-            style="text-align: center; margin: 8px"
-          >
-            No messages found
-          </div>
-          <div
-            v-for="(message, index) in searchMessages"
-            :id="'message-' + index"
-            :key="message.id"
-            style="padding: 4px"
-          >
-            <chat-spacer
-              :message="message"
-              :previous-message="searchMessages[index - 1]"
+        <div
+          v-if="
+            currentChat.users?.some(
+              (someUser) => someUser?.status === 'offline'
+            )
+          "
+          style="
+            padding: 0 4px;
+            display: flex;
+            height: 20px;
+            align-items: center;
+          "
+        >
+          <p style="padding-right: 4px" class="message-text-small">Offline</p>
+          <div style="border-bottom: 1px solid #212425; width: 100%" />
+        </div>
+        <div
+          v-for="user in offlineUsers"
+          :key="user.id"
+          style="cursor: pointer; margin: 0 0 4px"
+          class="message-grid"
+          @contextmenu.prevent="showContextMenu($event, user)"
+          @click="openUser(user.id)"
+        >
+          <div class="profile-picture">
+            <profile-picture
+              style="margin: 4px"
+              size="32"
+              :avatar="user.avatar"
             />
-            <div
-              v-if="message.reply && findMessage(message.reply)"
+            <svg class="online-indicator" width="15" height="15">
+              <status-indicator size="5" :status="user.status" />
+            </svg>
+          </div>
+          <div class="message-item">
+            <b
+              class="message-text-large"
               style="
-                display: flex;
-                overflow-wrap: break-word;
-                margin: 0 0 8px 28px;
+                margin: 4px 0 2px 0;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 178px;
               "
             >
-              <icons size="16" icon="reply" style="margin-right: 4px" />
-              <profile-picture
-                size="16"
-                :avatar="findMessage(message.reply)?.user?.avatar"
-                :small="true"
-                @click="
-                  openUser(
-                    findMessage(message.reply)?.user?.id,
-                    findMessage(message.reply)?.user
-                  )
-                "
-              />
-              <b
-                class="message-text-medium"
-                style="margin: 4px 4px 0 4px"
-                @click="
-                  openUser(
-                    findMessage(message.reply)?.user?.id,
-                    findMessage(message.reply)?.user
-                  )
-                "
-              >
-                {{
-                  findMessage(message.reply)?.user?.username
-                    ? "@" + findMessage(message.reply)?.user?.username
-                    : "@Deleted user"
-                }}
-              </b>
-              <p
-                class="message-text-medium-gray-hover"
-                style="margin-top: 4px; margin-bottom: 0"
-                @click="goToMessage(findMessage(message.reply))"
-              >
-                {{ findMessage(message.reply)?.messageContents }}
-              </p>
-            </div>
-            <div
-              v-else-if="message.reply"
-              style="
-                overflow-wrap: break-word;
-                margin: 0 0 8px 28px;
-                display: flex;
-              "
-            >
-              <icons
-                colour="darkgrey"
-                size="16"
-                icon="reply"
-                style="margin-right: 4px"
-              />
-              <icons colour="darkgrey" size="16" icon="user" />
-              <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
-                Message has been deleted
-              </b>
-            </div>
-            <div
-              class="message-grid"
-              style="position: relative; width: 100%"
-              @click="goToMessage(findMessage(message.id))"
-            >
-              <div
-                v-if="!merge(message, searchMessages[index - 1])"
-                style="
-                  margin: 0 12px 0 4px;
-                  cursor: pointer;
-                  border-radius: 16px;
-                "
-                class="message-item"
-                @click="openUser(message.user?.id, message.user)"
-              >
-                <profile-picture size="32" :avatar="message.user?.avatar" />
-              </div>
-              <div v-else class="message-time">
-                <b class="message-text-small">
-                  {{ dayjsShort(message.createdAt) }}
-                </b>
-              </div>
-              <div
-                class="message-item"
-                style="width: calc(100% - 48px); overflow-wrap: break-word"
-              >
-                <div
-                  v-if="!merge(message, searchMessages[index - 1])"
-                  class="message-header"
-                >
-                  <b
-                    class="message-text-medium"
-                    @click="openUser(message.user.id, message.user)"
-                  >
-                    {{ message.user?.username }}
-                  </b>
-                  <b class="message-text-small">
-                    {{ " " + dayjsLong(message.createdAt) }}
-                  </b>
-                </div>
-                <custom-message
-                  :message="message"
-                  :handle-click="handleClick"
-                  :find-user="findUser"
-                  :scroll="scrollDown"
-                />
-              </div>
-            </div>
+              {{ user.username }}
+            </b>
           </div>
         </div>
-        <div v-else-if="store.pins">
-          <pins-sidebar
-            :pins="currentChat.pins"
-            :find-message="findMessage"
-            :find-user="findUser"
-            :go-to-message="goToMessage"
-            :open-user="openUser"
-            :handle-click="handleClick"
-            :scroll="scrollDown"
-          />
-        </div>
-        <div v-else class="center">
-          <div style="text-align: center" class="loader" />
-        </div>
-      </sidebar>
-    </div>
+        <context-menu
+          v-if="contextMenuVisible"
+          :position="contextMenuPosition"
+          @close="contextMenuVisible = false"
+        >
+          <div
+            class="context-menu-item"
+            @click="openUser(contextMenuItemUser.id)"
+          >
+            Profile
+          </div>
+          <div
+            v-if="contextMenuItemUser.id !== store.userData.id"
+            class="context-menu-item"
+            @click="contextMenuSendDm(contextMenuItemUser.id)"
+          >
+            Message {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            v-if="
+              contextMenuItemUser.id !== store.userData.id &&
+              contextMenuItemUser.friendRequests &&
+              !contextMenuItemUser.friend?.status
+            "
+            class="context-menu-item"
+            @click="addFriend(contextMenuItemUser.id, true)"
+          >
+            Friend {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            v-else-if="
+              contextMenuItemUser.id !== store.userData.id &&
+              contextMenuItemUser.friend?.status === 'accepted'
+            "
+            class="context-menu-item"
+            @click="addFriend(contextMenuItemUser.id, true)"
+          >
+            Unfriend {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            v-else-if="
+              contextMenuItemUser.id !== store.userData.id &&
+              contextMenuItemUser.friend?.status === 'pending'
+            "
+            class="context-menu-item"
+            @click="addFriend(contextMenuItemUser.id, true)"
+          >
+            Cancel {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            v-else-if="
+              contextMenuItemUser.id !== store.userData.id &&
+              contextMenuItemUser.friend?.status === 'incoming'
+            "
+            class="context-menu-item"
+            @click="addFriend(contextMenuItemUser.id, true)"
+          >
+            Accept {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            v-if="
+              currentChat.owner === store.userData.id &&
+              contextMenuItemUser.id !== store.userData.id &&
+              currentChat.type === 0
+            "
+            class="context-menu-item"
+            @click="removeUser(contextMenuItemUser.id)"
+          >
+            Remove {{ contextMenuItemUser.username }}
+          </div>
+          <div
+            class="context-menu-item"
+            @click="copyText(contextMenuItemUser.id)"
+          >
+            Copy User ID
+          </div>
+        </context-menu>
+      </div>
+      <div v-else-if="store.search">
+        <search-sidebar
+          :chat-messages="currentChat.messages"
+          :find-message="findMessage"
+          :find-user="findUser"
+          :go-to-message="goToMessage"
+          :open-user="openUser"
+          :handle-click="handleClick"
+          :scroll="scrollDown"
+        />
+      </div>
+      <div v-else-if="store.pins">
+        <pins-sidebar
+          :pins="currentChat.pins"
+          :find-message="findMessage"
+          :find-user="findUser"
+          :go-to-message="goToMessage"
+          :open-user="openUser"
+          :handle-click="handleClick"
+          :scroll="scrollDown"
+        />
+      </div>
+      <div v-else-if="store.notifications">
+        <notifications-sidebar
+          :notifications="store.userData.notifications"
+          :open-user="openUser"
+          :open-chat="getChat"
+        />
+      </div>
+      <div v-else class="center">
+        <div style="text-align: center" class="loader" />
+      </div>
+    </sidebar>
   </div>
 </template>
 
@@ -902,6 +762,8 @@ import ModalSimple from "@/components/core/ModalSimple.vue"
 import Friends from "@/components/Friends.vue"
 import PinsSidebar from "@/components/sidebars/PinsSidebar.vue"
 import ChatSpacer from "@/components/ChatSpacer.vue"
+import SearchSidebar from "@/components/sidebars/SearchSidebar.vue"
+import NotificationsSidebar from "@/components/sidebars/NotificationsSidebar.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -916,7 +778,6 @@ const store = useDataStore()
 const route = useRoute()
 const router = useRouter()
 
-const searchMessages = ref([])
 const embed = ref()
 const currentChat = ref({})
 const replyTo = ref()
@@ -935,7 +796,6 @@ const contextMenuPosition = ref({ x: 0, y: 0 })
 const inputText = ref("")
 
 let editText
-let searchText = ""
 
 document.getElementById("favicon").href = "/icons/favicon.ico"
 if (!localStorage.getItem("token")) {
@@ -1135,16 +995,7 @@ const editMessage = (messageId) => {
       store.handleAxiosError(e)
     })
 }
-const searchChat = () => {
-  if (searchText) {
-    const keywords = searchText.toLowerCase().split(" ")
-    searchMessages.value = currentChat.value.messages.filter((message) =>
-      keywords.some((keyword) =>
-        message.messageContents.toLowerCase().includes(keyword)
-      )
-    )
-  }
-}
+
 const replyToMessage = (messageId) => {
   replyTo.value = messageId
   const input = document.getElementById("input")
@@ -1172,20 +1023,18 @@ const handleChatEdited = (chat) => {
   }
 }
 
-const openUser = (userId, user) => {
-  if (user !== null) {
-    contextMenuVisible.value = false
-    axios
-      .post("/api/get-user", {
-        userId
-      })
-      .then((res) => {
-        showUser.value = res.data
-      })
-      .catch((e) => {
-        store.handleAxiosError(e)
-      })
-  }
+const openUser = (userId) => {
+  contextMenuVisible.value = false
+  axios
+    .post("/api/get-user", {
+      userId
+    })
+    .then((res) => {
+      showUser.value = res.data
+    })
+    .catch((e) => {
+      store.handleAxiosError(e)
+    })
 }
 
 const handleClick = (part) => {
@@ -1271,10 +1120,17 @@ const findMessage = (messageId) =>
   currentChat.value.messages.findLast((message) => message.id === messageId)
 
 const goToMessage = (messageId) => {
-  const div = document.getElementById("messages-div")
-  const element = document.getElementById(
-    `message-${currentChat.value.messages.indexOf(messageId)}`
+  const index = currentChat.value.messages.findIndex(
+    (message) => message.id === messageId
   )
+
+  const div = document.getElementById("messages-div")
+  const element = document.getElementById(`message-${index}`)
+
+  if (!div || !element) {
+    return
+  }
+
   const elementRect = element.getBoundingClientRect()
   const absoluteElementTop = elementRect.top + div.scrollTop
   const middleOfScreen = div.clientHeight / 2
@@ -1287,7 +1143,7 @@ const goToMessage = (messageId) => {
   element.classList.add("highlight")
   setTimeout(() => {
     element.classList.remove("highlight")
-  }, 1000)
+  }, 1500)
 }
 const editLast = () => {
   const messageEdit = currentChat.value.messages.filter(

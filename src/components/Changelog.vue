@@ -2,6 +2,26 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.233 Notifications sidebar</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added a new Notifications sidebar</li>
+    <li>
+      Notifications are shown when you receive a friend request or are invited
+      to a chat
+    </li>
+    <li>Refactoring</li>
+    <li>
+      Fix a possible error when loading a chat for the first time (1.232.2)
+    </li>
+    <li>Refactoring (1.232.2)</li>
+    <li>
+      Improved button contrast on User Profiles and the Create/Edit Chat modal
+      (1.232.1)
+    </li>
+    <li>Changed the Home button to a Home icon (1.232.1)</li>
+    <li>Refactoring (1.232.1)</li>
+  </ul>
   <h2 class="settings-text">1.232 Improved Chat Creation</h2>
   <div class="settings-spacer" />
   <ul>
@@ -12,9 +32,9 @@
     <li>Refactoring</li>
     <li>Close WebSockets when logged out</li>
     <li>Update to work with backend 1.113.0</li>
-    <li>Upgrade to Vite 8 (1.232.2)</li>
-    <li>Updated dependencies (1.232.2)</li>
-    <li>Updated dependencies (1.232.1)</li>
+    <li>Upgrade to Vite 8 (1.231.2)</li>
+    <li>Updated dependencies (1.231.2)</li>
+    <li>Updated dependencies (1.231.1)</li>
   </ul>
   <h2 class="settings-text">1.231 Notification Icon</h2>
   <div class="settings-spacer" />
@@ -621,6 +641,7 @@
     <li>Owners may now remove users from their chats</li>
     <li>Sort chat's users when the chat loads</li>
     <li>Refactor messages</li>
+    <li>Update to work with backend 1.80.0</li>
   </ul>
   <h2 class="settings-text">1.172 Bug fix for Collider</h2>
   <div class="settings-spacer" />
@@ -654,6 +675,7 @@
     </li>
     <li>Mentions now show the user's username</li>
     <li>Refactor the users list</li>
+    <li>Update to work with backend 1.79.0</li>
   </ul>
   <h2 class="settings-text">1.167 UX updates</h2>
   <div class="settings-spacer" />
@@ -800,5 +822,16 @@
   <div class="settings-spacer" />
   <ul>
     <li>Update TonkGame to the latest version</li>
+  </ul>
+  <h2 class="settings-text">1.147 Performance improvements</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Updated to use new backend APIs</li>
+    <li>Update to work with backend 1.74.0</li>
+  </ul>
+  <h2 class="settings-text">1.146 Home Page updates</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Update Home Page descriptions</li>
   </ul>
 </template>
