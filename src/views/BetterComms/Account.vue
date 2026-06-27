@@ -645,7 +645,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.233.0</div>
+            <div>Version: 1.234.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -1137,7 +1137,7 @@ async function checkImage(url) {
     const res = await fetch(url)
     const buff = await res.blob()
     return buff.type.startsWith("image/")
-  } catch (e) {
+  } catch {
     store.handleError("Invalid image")
   }
 }

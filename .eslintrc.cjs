@@ -2,12 +2,22 @@ module.exports = {
   env: {
     node: true
   },
-  extends: ["plugin:vue/vue3-recommended", "eslint:recommended", "prettier"],
+  extends: [
+    "plugin:vue/vue3-recommended",
+    "eslint:recommended",
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  parser: "vue-eslint-parser",
+  parserOptions: {
+    parser: "@typescript-eslint/parser",
+    sourceType: "module"
+  },
   globals: {
     __VITE_BUILD_DATE__: "readonly"
   },
   ignorePatterns: ["/public/**/**.js"],
-  plugins: ["sort-keys-fix"],
+  plugins: ["sort-keys-fix", "@typescript-eslint"],
   root: true,
   rules: {
     "array-element-newline": "off",

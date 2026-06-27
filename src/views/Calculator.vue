@@ -50,6 +50,7 @@ const factorial = (n) => {
   }
   return result
 }
+/* eslint sort-keys-fix/sort-keys-fix: "off" */
 const evaluateExpression = (tokens) => {
   const precedence = {
     "+": 1,
@@ -115,7 +116,7 @@ const evaluateExpression = (tokens) => {
 }
 const calculateResult = () => {
   try {
-    const regex = /(\d*\.?\d+)|([\+\-\*\/\(\)]|\^|!)/g
+    const regex = /(\d*\.?\d+)|([+\-*/()]|\^|!)/g
     const tokens = equation.value.match(regex)
 
     if (tokens === null) {

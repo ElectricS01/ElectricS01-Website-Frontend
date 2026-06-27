@@ -3,12 +3,7 @@
     <div class="modal" :class="{ 'is-active': isActive }" @click="closeModal">
       <div class="modal-content" @click.stop>
         <button class="modal-close" @click="closeModal">
-          <icons
-            width="32"
-            height="32"
-            icon="close"
-            style="padding: 4px; cursor: pointer"
-          />
+          <icons size="32" icon="close" style="padding: 4px; cursor: pointer" />
         </button>
         <slot />
       </div>

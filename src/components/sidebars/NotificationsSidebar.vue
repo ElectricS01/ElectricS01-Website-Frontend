@@ -24,13 +24,12 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  notifications: {
-    required: true,
-    type: Array
-  },
-  openChat: Function,
-  openUser: Function
-})
+<script setup lang="ts">
+import type { Notification } from "@/types/notification"
+
+defineProps<{
+  notifications: Notification[]
+  openChat: (chatId: number) => void
+  openUser: (userId: number) => void
+}>()
 </script>

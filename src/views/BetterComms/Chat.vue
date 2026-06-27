@@ -483,14 +483,7 @@
               @keydown.tab.prevent="
                 matchingEmoji.length > 0 ? selectCurrentEmoji() : null
               "
-              @keydown.escape.prevent="
-                matchingEmoji.length > 0
-                  ? (inputText = inputText.substring(
-                      0,
-                      inputText.lastIndexOf(':')
-                    ))
-                  : null
-              "
+              @keydown.escape.prevent="override = true"
             />
             <button style="cursor: pointer" @click="sendMessage">Send</button>
           </div>
@@ -794,6 +787,7 @@ const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
 const inputText = ref("")
+const override = ref(false)
 
 let editText
 
@@ -1275,11 +1269,15 @@ const offlineUsers = computed(() =>
 )
 const matchingEmoji = computed(() => {
   const text = getEmojiText()
-  if (text == null) return []
+  if (text == null || override.value) return []
 
   return Object.entries(emojilib)
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 20)
+})
+
+watch(inputText, () => {
+  override.value = false
 })
 
 const updateFavicon = (notificationCount) => {

@@ -104,6 +104,10 @@
   </svg>
 </template>
 
-<script setup>
-defineProps({ colour: String, icon: String, size: String })
+<script setup lang="ts">
+defineProps<{
+  colour?: string
+  icon: string
+  size: string
+}>()
 </script>

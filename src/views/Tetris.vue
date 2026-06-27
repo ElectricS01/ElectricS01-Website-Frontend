@@ -20,7 +20,7 @@
         "
         src="/tetrisGame.html"
       />
-      <h3>Tetris By ElectricS01 0.31</h3>
+      <h3>Tetris By ElectricS01 1.1</h3>
       {{
         store.userData.id
           ? "You are logged in"
@@ -72,7 +72,7 @@ const searchLocalStorageItems = (searchString) => {
 const sendScores = () => {
   if (localStorage.getItem("token")) {
     const lines =
-      searchLocalStorageItems("userdata.ini")[0]?.value.split("\r\n")
+      searchLocalStorageItems("tetrisdata.ini")[0]?.value.split("\r\n")
     if (lines) {
       const nonEmptyLines = lines.filter(
         (line) => line.trim() !== "" && line.includes("=")
@@ -101,7 +101,7 @@ const sendScores = () => {
             { difficulty: 1, value: parseInt(pairs[1].highscore_medium) },
             { difficulty: 2, value: parseInt(pairs[2].highscore_hard) },
             { difficulty: 3, value: parseInt(pairs[3].highscore_god) },
-            { difficulty: 4, value: parseInt(pairs[4].highscore_ultra) },
+            { difficulty: 4, value: parseInt(pairs[4]?.highscore_ultra) },
             { difficulty: -1, value: parseInt(pairs[5]?.difficulty) }
           ]
         })

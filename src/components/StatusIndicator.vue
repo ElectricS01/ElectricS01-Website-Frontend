@@ -29,6 +29,9 @@
   />
 </template>
 
-<script setup>
-defineProps({ size: String, status: String })
+<script setup lang="ts">
+defineProps<{
+  size: string
+  status: string
+}>()
 </script>

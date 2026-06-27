@@ -2,6 +2,16 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.234 Tetris Update</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Updated Tetris to 1.1</li>
+    <li>Fixed Tetris score uploading</li>
+    <li>You can now press escape to close the Emoji Quick Picker</li>
+    <li>Start switching some components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Updated dependencies</li>
+  </ul>
   <h2 class="settings-text">1.233 Notifications sidebar</h2>
   <div class="settings-spacer" />
   <ul>
@@ -828,10 +838,30 @@
   <ul>
     <li>Updated to use new backend APIs</li>
     <li>Update to work with backend 1.74.0</li>
+    <li>Updated dependencies</li>
   </ul>
   <h2 class="settings-text">1.146 Home Page updates</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Update Home Page descriptions</li>
+  </ul>
+  <h2 class="settings-text">1.145 Direct Messages</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      You can now press "Send Message" on a user's profile to send them a direct
+      message
+    </li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.72.0</li>
+  </ul>
+  <h2 class="settings-text">1.144 Rename to BetterCommunications</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Renamed the site to BetterCommunications</li>
+    <li>You can now edit chat settings after creation</li>
+    <li>Chat deletion has been moved to inside the chat settings menu</li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.71.0</li>
   </ul>
 </template>
