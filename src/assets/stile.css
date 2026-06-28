@@ -809,6 +809,14 @@ code {
   margin-top: 12px;
 }
 
+.chat-title {
+  font-size: 16px;
+  margin: 4px 0 2px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .message-text-large {
   color: #fff;
   font-size: 16px;
@@ -883,6 +891,13 @@ code {
 .error-message {
   color: #ff2f2f;
   font-size: 10px;
+}
+
+.sidebar-text {
+  text-align: center;
+  margin: 8px;
+  color: grey;
+  font-size: 12px;
 }
 
 .modal-input {

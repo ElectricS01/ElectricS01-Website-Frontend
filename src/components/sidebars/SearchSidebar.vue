@@ -6,11 +6,7 @@
     autocomplete="off"
     @keydown.enter="searchChat"
   />
-  <div
-    v-if="searchMessages.length === 0"
-    class="message-text-medium-gray"
-    style="text-align: center; margin: 8px"
-  >
+  <div v-if="searchMessages.length === 0" class="sidebar-text">
     No messages found
   </div>
   <div

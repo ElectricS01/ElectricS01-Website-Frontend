@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-if="pins?.length === 0"
-    class="message-text-medium-gray"
-    style="text-align: center; margin: 8px"
-  >
-    No pinned messages
-  </div>
+  <div v-if="pins?.length === 0" class="sidebar-text">No pinned messages</div>
   <div
     v-for="(message, index) in pins"
     :id="'message-' + index"

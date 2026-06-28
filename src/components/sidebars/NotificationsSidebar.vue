@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="notifications?.length === 0"
-    class="message-text-medium-gray"
-    style="text-align: center; margin: 8px"
-  >
+  <div v-if="notifications?.length === 0" class="sidebar-text">
     No notifications
   </div>
   <div
@@ -21,10 +17,14 @@
     >
       You were added to {{ notification.otherId }}
     </div>
+    <b class="message-text-small">
+      {{ " " + dayjsLong(notification.createdAt) }}
+    </b>
   </div>
 </template>
 
 <script setup lang="ts">
+import { dayjsLong } from "@/helpers/dates"
 import type { Notification } from "@/types/notification"
 
 defineProps<{

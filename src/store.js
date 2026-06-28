@@ -13,6 +13,12 @@ const switcherPages = [
   "Mapit",
   "Blog",
   "Account",
+  ["Privacy", "account/privacy"],
+  ["Security", "account/security"],
+  ["Appearance", "account/appearance"],
+  ["Profile", "account/profile"],
+  ["About", "account/about"],
+  ["Changelog", "account/changelog"],
   "Chat"
 ]
 
@@ -147,7 +153,7 @@ export const useDataStore = defineStore("store", () => {
               obj.type === 1 && obj.ownerDetails.id !== userData.value.id
                 ? obj.ownerDetails.username
                 : obj.name,
-              obj.id
+              `chat/${obj.id}`
             ])
           )
           loadingChats.value = false

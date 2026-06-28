@@ -1,38 +1,50 @@
 <template>
   <div class="parent" :style="menuStyle">
-    <div id="popover" popover class="context-menu">
+    <div ref="popover" popover class="context-menu">
       <slot />
     </div>
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted } from "vue"
+<script setup lang="ts">
+import { computed, onMounted, ref, type CSSProperties } from "vue"
+import type { Position } from "@/types/position"
 
-const props = defineProps({
-  position: Object
-})
-const emit = defineEmits(["close"])
+const props = defineProps<{
+  position: Position
+}>()
 
-const menuStyle = computed(() => {
+const emit = defineEmits<{
+  close: []
+}>()
+
+const popover = ref<HTMLElement | null>(null)
+
+const menuStyle = computed<CSSProperties>(() => {
   const adjustedX = props.position.x + window.scrollX
   const adjustedY = props.position.y + window.scrollY
+
   return {
     left: `${adjustedX}px`,
     top: `${adjustedY - 48}px`
   }
 })
-const toggle = (event) => {
+
+const toggle = (event: ToggleEvent) => {
   if (event.newState === "closed") {
-    const popover = document.getElementById("popover")
-    popover.removeEventListener("beforetoggle", toggle)
+    if (popover.value) {
+      popover.value.removeEventListener("beforetoggle", toggle)
+    }
+
     emit("close")
   }
 }
+
 onMounted(() => {
-  const popover = document.getElementById("popover")
-  popover.showPopover()
-  popover.addEventListener("beforetoggle", toggle)
+  if (popover.value) {
+    popover.value.showPopover()
+    popover.value.addEventListener("beforetoggle", toggle)
+  }
 })
 </script>
 

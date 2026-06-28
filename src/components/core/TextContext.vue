@@ -6,14 +6,19 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "vue"
+<script setup lang="ts">
+import { Position } from "@/types/position"
+import { computed, type CSSProperties } from "vue"
 
-const props = defineProps({ position: Object, text: String })
+const props = defineProps<{
+  position: Position
+  text: string
+}>()
 
-const menuStyle = computed(() => {
+const menuStyle = computed<CSSProperties>(() => {
   const adjustedX = props.position.x + window.scrollX
   const adjustedY = props.position.y + window.scrollY
+
   return {
     left: `${adjustedX}px`,
     top: `${adjustedY}px`
@@ -26,6 +31,7 @@ const menuStyle = computed(() => {
   position: fixed;
   z-index: 3;
 }
+
 .context-menu {
   translate: -50% -100%;
   inset: unset;

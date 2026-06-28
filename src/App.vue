@@ -352,7 +352,7 @@ const activateItem = (id) => {
     router.push(
       typeof searchedItems[id] === "string"
         ? `/${searchedItems[id]}`
-        : `/chat/${searchedItems[id][1]}`
+        : `/${searchedItems[id][1]}`
     )
     const existingPage = store.userData.switcherHistory.find((page) => {
       if (typeof page.page === "string") {

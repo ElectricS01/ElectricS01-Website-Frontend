@@ -1,6 +1,10 @@
 <template>
   <div class="model-background">
-    <div class="modal" :class="{ 'is-active': isActive }" @click="closeModal">
+    <div
+      class="modal"
+      :class="{ 'is-active': isActive }"
+      @click="emit('close')"
+    >
       <div @click.stop>
         <slot />
       </div>
@@ -8,16 +12,14 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  isActive: {
-    default: false,
-    type: Boolean
-  }
-})
-const emit = defineEmits(["close"])
+<script setup lang="ts">
+defineProps<{
+  isActive: boolean
+}>()
 
-const closeModal = () => emit("close")
+const emit = defineEmits<{
+  close: []
+}>()
 </script>
 
 <style scoped>

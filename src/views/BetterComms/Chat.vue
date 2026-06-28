@@ -75,14 +75,13 @@
               class="message-item"
             >
               <b
-                v-if="chat.type === 0 || chat.type === 2"
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
+                v-if="
+                  chat.type === 0 ||
+                  chat.type === 2 ||
+                  (chat.type === 1 &&
+                    chat.ownerDetails.id === store.userData.id)
                 "
+                class="chat-title"
               >
                 {{ chat.name }}
               </b>
@@ -90,29 +89,9 @@
                 v-else-if="
                   chat.type === 1 && chat.ownerDetails.id !== store.userData.id
                 "
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
+                class="chat-title"
               >
                 {{ chat.ownerDetails.username }}
-              </b>
-              <b
-                v-else-if="
-                  chat.type === 1 && chat.ownerDetails.id === store.userData.id
-                "
-                class="message-text-large"
-                style="
-                  margin: 4px 0 2px 0;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
-              >
-                {{ chat.name }}
               </b>
               <p
                 class="message-text-medium-gray"

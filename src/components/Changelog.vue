@@ -864,4 +864,16 @@
     <li>Refactoring</li>
     <li>Update to work with backend 1.71.0</li>
   </ul>
+  <h2 class="settings-text">1.143 Create Chats</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>You can now create chats with a title, description, and icon</li>
+    <li>Refactoring</li>
+  </ul>
+  <h2 class="settings-text">1.142 Chats list</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added a list of chats the the sidebar sorted by last message</li>
+    <li>Chats can be created and deleted from the sidebar</li>
+  </ul>
 </template>
