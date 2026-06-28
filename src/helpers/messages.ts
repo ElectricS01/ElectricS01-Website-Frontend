@@ -1,6 +1,7 @@
+import { Message } from "@/types/message"
 import dayjs from "dayjs"
 
-export const merge = (message, previousMessage) => {
+export const merge = (message: Message, previousMessage: Message) => {
   if (previousMessage) {
     return (
       previousMessage.userId === message.userId &&

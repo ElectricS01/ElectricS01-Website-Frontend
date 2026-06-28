@@ -13,14 +13,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { dayjsDate } from "@/helpers/dates"
+import { Message } from "@/types/message"
 
-defineProps({
-  message: {
-    required: true,
-    type: Object
-  },
-  previousMessage: Object
-})
+defineProps<{
+  message: Message
+  previousMessage?: Message
+}>()
 </script>
