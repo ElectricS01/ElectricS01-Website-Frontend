@@ -84,24 +84,7 @@ const handleLoginSuccess = (data) => {
   Object.assign(axios.defaults, {
     headers: { Authorization: data.token }
   })
-  store.userData = data
-  if (!store.userData.saveSwitcher) {
-    store.userData.switcherHistory =
-      JSON.parse(localStorage.getItem("switcherHistory")) || []
-  }
-  store.sortSwitcher()
-  if (store.userData.chatsList) {
-    store.switcherItems.push(
-      ...store.userData.chatsList.map((obj) => [
-        obj.type === 1 && obj.ownerDetails.id !== store.userData.id
-          ? obj.ownerDetails.username
-          : obj.name,
-        obj.id
-      ])
-    )
-    store.loadingChats = false
-    store.chatSort()
-  }
+  store.handleUser(data)
   router.push(route.query.redirect || "/chat")
 }
 

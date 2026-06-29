@@ -69,7 +69,7 @@ export const useDataStore = defineStore("store", () => {
   }
 
   const handleAxiosError = (input, timeout = 5000) => {
-    if (input?.code === "ERR_CANCELED") {
+    if (input?.code === "ERR_CANCELED" || input?.response?.status === 304) {
       return null
     }
 
@@ -137,34 +137,41 @@ export const useDataStore = defineStore("store", () => {
       return searchesB - searchesA
     })
   }
+
+  const handleUser = (data) => {
+    if (typeof data === "object") userData.value = data
+    if (!userData.value.saveSwitcher) {
+      userData.value.switcherHistory =
+        JSON.parse(localStorage.getItem("switcherHistory")) || []
+    }
+    sortSwitcher()
+    if (userData.value.chatsList) {
+      switcherItems.value.push(
+        ...userData.value.chatsList.map((obj) => [
+          obj.type === 1 && obj.ownerDetails.id !== userData.value.id
+            ? obj.ownerDetails.username
+            : obj.name,
+          `chat/${obj.id}`
+        ])
+      )
+      loadingChats.value = false
+      chatSort()
+    }
+  }
+
   const getUser = () => {
     axios
       .get("/api/user")
       .then(async (res) => {
-        if (typeof res.data === "object") userData.value = res.data
-        if (!userData.value.saveSwitcher) {
-          userData.value.switcherHistory =
-            JSON.parse(localStorage.getItem("switcherHistory")) || []
-        }
-        sortSwitcher()
-        if (userData.value.chatsList) {
-          switcherItems.value.push(
-            ...userData.value.chatsList.map((obj) => [
-              obj.type === 1 && obj.ownerDetails.id !== userData.value.id
-                ? obj.ownerDetails.username
-                : obj.name,
-              `chat/${obj.id}`
-            ])
+        handleUser(res.data)
+        if (
+          userData.value.chatsList &&
+          route.path.startsWith("/chat") &&
+          !userData.value.chatsList.find(
+            (chat) => chat?.id === parseInt(route.params.chatId)
           )
-          loadingChats.value = false
-          chatSort()
-          if (
-            route.path.startsWith("/chat") &&
-            !userData.value.chatsList.find(
-              (chat) => chat?.id === parseInt(route.params.chatId)
-            )
-          )
-            await router.push("/chat/1")
+        ) {
+          await router.push("/chat/1")
         }
         if (userData.value.id === 1)
           document.addEventListener("paste", (e) => {
@@ -284,6 +291,7 @@ export const useDataStore = defineStore("store", () => {
     getUser,
     handleAxiosError,
     handleError,
+    handleUser,
     loadingChats,
     openWebSocket,
     quickSwitcherShown,

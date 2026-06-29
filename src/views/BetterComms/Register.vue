@@ -100,24 +100,7 @@ const submit = async () => {
       Object.assign(axios.defaults, {
         headers: { Authorization: res.data.token }
       })
-      store.userData = res.data
-      if (!store.userData.saveSwitcher) {
-        store.userData.switcherHistory =
-          JSON.parse(localStorage.getItem("switcherHistory")) || []
-      }
-      store.sortSwitcher()
-      if (store.userData.chatsList) {
-        store.switcherItems.push(
-          ...store.userData.chatsList.map((obj) => [
-            obj.type === 1 && obj.ownerDetails.id !== store.userData.id
-              ? obj.ownerDetails.username
-              : obj.name,
-            obj.id
-          ])
-        )
-        store.loadingChats = false
-        store.chatSort()
-      }
+      store.handleUser(res.data)
       router.push("/chat")
     })
     .catch((e) => {

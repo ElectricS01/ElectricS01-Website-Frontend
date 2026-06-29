@@ -797,6 +797,13 @@ if (!localStorage.getItem("token")) {
         currentChat.value.messages.push(socketMessage.newMessage)
         scrollDown()
       }
+    } else if (socketMessage.deleteMessage) {
+      const messageIndex = currentChat.value.messages.findIndex(
+        (message) => message.id === socketMessage.deleteMessage.id
+      )
+      if (messageIndex !== -1) {
+        currentChat.value.messages[messageIndex].deleted = true
+      }
     } else if (socketMessage.changeUser) {
       if (socketMessage.changeUser.id === showUser.value.id) {
         showUser.value = socketMessage.changeUser

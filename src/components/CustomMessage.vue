@@ -3,6 +3,7 @@
     <span
       v-for="(part, index) in messageParts"
       :key="part"
+      :style="{ color: props.message.deleted ? 'grey' : 'inherit' }"
       @click="handleClick(part)"
     >
       <span v-if="check(index)" v-html="part" />

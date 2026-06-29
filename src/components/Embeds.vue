@@ -10,9 +10,17 @@
   </div>
 </template>
 
-<script setup>
-defineProps({ embed: Object, scroll: Function })
-const emit = defineEmits(["embed"])
+<script setup lang="ts">
+import { Embed } from "@/types/message"
+
+defineProps<{
+  embed: Embed
+  scroll: () => void
+}>()
+
+const emit = defineEmits<{
+  embed: []
+}>()
 </script>
 
 <style scoped>
