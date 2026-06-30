@@ -7,7 +7,7 @@
     "dev": "bunx --bun vite",
     "prod": "bunx --bun vite build",
     "lint": "bunx --bun eslint --ext .js,.ts,.vue --fix ./src",
-    "typecheck": "bunx --bun tsc --noEmit"
+    "typecheck": "bunx vue-tsc --noEmit"
   },
   "repository": "https://github.com/ElectricS01/ElectricS01-Website-Frontend.git",
   "author": "ElectricS01 <103579308+ElectricS01@users.noreply.github.com>",
@@ -33,6 +33,7 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
-    "eslint-plugin-vue": "^9.33.0"
+    "eslint-plugin-vue": "^9.33.0",
+    "vue-tsc": "^3.3.5"
   }
 }

@@ -1,9 +1,8 @@
 <template>
-  <div>
+  <div :class="{ deleted: props.message.deleted }">
     <span
       v-for="(part, index) in messageParts"
       :key="part"
-      :style="{ color: props.message.deleted ? 'grey' : 'inherit' }"
       @click="handleClick(part)"
     >
       <span v-if="check(index)" v-html="part" />
@@ -37,24 +36,31 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Embeds from "@/components/Embeds.vue"
 import { computed, ref } from "vue"
 import TextContext from "@/components/core/TextContext.vue"
 import { dayjsLong } from "@/helpers/dates"
+import { Message } from "@/types/message"
+import { User } from "@/types/user"
+import { Position } from "@/types/position"
 
-const props = defineProps({
-  findUser: Function,
-  handleClick: Function,
-  message: Object,
-  scroll: Function
-})
-const emit = defineEmits(["embed"])
+const props = defineProps<{
+  findUser: (userId: number) => User
+  handleClick: (part: string) => void
+  message: Message
+  scroll: () => void
+}>()
+
+const emit = defineEmits<{
+  embed: [string]
+}>()
+
 const editShown = ref(false)
 let editHover = false
-let editShownPosition = { x: 0, y: 0 }
+let editShownPosition: Position = { x: 0, y: 0 }
 
-const check = (index) => {
+const check = (index: number) => {
   const parts = props.message.messageContents
     .split(/(\n|<@\d+>)/g)
     .filter((part) => part !== "")
@@ -68,7 +74,10 @@ const showEdited = () => {
     if (editHover) {
       const editMessage = document
         .getElementById(`edit-${props.message.id}`)
-        .getBoundingClientRect()
+        ?.getBoundingClientRect()
+
+      if (!editMessage) return
+
       editShownPosition = {
         x: editMessage.x + editMessage.width / 2,
         y: editMessage.y
@@ -84,9 +93,18 @@ const messageParts = computed(() => {
     .filter((part) => part !== "")
   return parts.map((part) => {
     if (part.startsWith("<@")) {
-      const userId = part.match(/\d+/)[0]
-      return `<span @click="handleUserMentionClick(${userId})" class="mention">@${
-        props.findUser(userId).username
+      const matches = part.match(/\d+/)
+      if (
+        !matches ||
+        matches.length !== 1 ||
+        Number.isNaN(Number(matches[0]))
+      ) {
+        return part
+      }
+
+      const user = props.findUser(Number(matches[0]))
+      return `<span @click="handleUserMentionClick(${matches[0]})" class="mention">@${
+        user?.username ?? "unknown"
       }</span>`
     } else if (part === "\n") {
       return "<br />"
@@ -97,6 +115,10 @@ const messageParts = computed(() => {
 </script>
 
 <style>
+.deleted {
+  color: grey;
+}
+
 .custom-message {
   ul,
   ol {

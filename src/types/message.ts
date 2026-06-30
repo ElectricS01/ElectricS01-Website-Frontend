@@ -9,5 +9,9 @@ export interface Message {
   messageContents: string
   embeds: Embed[]
   reply: number
+  edited: boolean
   createdAt: string
+  updatedAt: string
+
+  deleted?: boolean
 }
