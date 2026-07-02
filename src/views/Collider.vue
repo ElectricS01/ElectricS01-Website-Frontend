@@ -41,8 +41,6 @@ const store = useDataStore()
 let viewportWidth = window.innerWidth - 16
 let viewportHeight = window.innerHeight - 48
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-
 if (localStorage.getItem("token")) {
   setTimeout(() => {
     store.ws.send(JSON.stringify({ page: "Collider" }))

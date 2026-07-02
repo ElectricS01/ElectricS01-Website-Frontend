@@ -96,7 +96,7 @@
         </div>
         <custom-message
           :message="message"
-          :handle-click="handleClick"
+          :open-user="openUser"
           :find-user="findUser"
           :scroll="scroll"
         />
@@ -105,7 +105,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ChatSpacer from "../ChatSpacer.vue"
 import Icons from "../core/Icons.vue"
 import ProfilePicture from "../ProfilePicture.vue"
@@ -114,22 +114,20 @@ import CustomMessage from "../CustomMessage.vue"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
 import { ref } from "vue"
+import { Message } from "@/types/message"
+import { User } from "@/types/user"
 
-const props = defineProps({
-  chatMessages: {
-    required: true,
-    type: Array
-  },
-  findMessage: Function,
-  findUser: Function,
-  goToMessage: Function,
-  handleClick: Function,
-  openUser: Function,
-  scroll: Function
-})
+const props = defineProps<{
+  chatMessages: Message[]
+  findMessage: (messageId: number) => Message
+  findUser: (userId: number) => User
+  goToMessage: (messageId: number) => void
+  openUser: (userId: number) => void
+  scroll: () => void
+}>()
 
 const searchText = ref("")
-const searchMessages = ref([])
+const searchMessages = ref<Message[]>([])
 
 const searchChat = () => {
   if (searchText.value) {

@@ -232,8 +232,6 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Icons from "@/components/core/Icons.vue"
-
-document.getElementById("favicon").href = "/icons/favicon.ico"
 </script>

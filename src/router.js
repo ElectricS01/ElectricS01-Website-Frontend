@@ -53,6 +53,7 @@ const routes = [
     name: "tonkgame",
     path: "/tonkgame",
     meta: {
+      icon: "/icons/tonkgame.ico",
       title: "TonkGame by ElectricS01"
     }
   },
@@ -69,6 +70,7 @@ const routes = [
     name: "tetris",
     path: "/tetris",
     meta: {
+      icon: "/icons/tetris.ico",
       title: "Tetris by ElectricS01"
     }
   },
@@ -149,6 +151,34 @@ const routes = [
     }
   },
   {
+    name: "mapit",
+    path: "/mapit/:pathMatch(.*)*",
+    beforeEnter() {
+      window.location.href = "https://mapit.electrics01.com"
+    }
+  },
+  {
+    name: "schedule",
+    path: "/schedule/:pathMatch(.*)*",
+    beforeEnter() {
+      window.location.href = "https://scheduler.electrics01.com"
+    }
+  },
+  {
+    name: "scheduler",
+    path: "/scheduler/:pathMatch(.*)*",
+    beforeEnter() {
+      window.location.href = "https://scheduler.electrics01.com"
+    }
+  },
+  {
+    name: "planit",
+    path: "/planit/:pathMatch(.*)*",
+    beforeEnter() {
+      window.location.href = "https://planit.electrics01.com"
+    }
+  },
+  {
     component: () => import("./views/404.vue"),
     name: "404",
     path: "/:pathMatch(.*)*",
@@ -166,6 +196,9 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   if (to.name !== from.name) {
     document.title = to.meta?.title ?? "ElectricS01's Website"
+
+    document.getElementById("favicon").href =
+      to.meta?.icon ?? "/icons/favicon.ico"
   }
 })
 

@@ -60,8 +60,6 @@ let password = ""
 const store = useDataStore()
 const router = useRouter()
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-
 const submit = async () => {
   const keyPair = await window.crypto.subtle.generateKey(
     {

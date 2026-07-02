@@ -76,8 +76,6 @@ let username = ""
 let password = ""
 let totp = ""
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-
 const handleLoginSuccess = (data) => {
   localStorage.setItem("token", data.token)
   store.openWebSocket()

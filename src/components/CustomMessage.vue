@@ -1,15 +1,18 @@
 <template>
   <div :class="{ deleted: props.message.deleted }">
-    <span
-      v-for="(part, index) in messageParts"
-      :key="part"
-      @click="handleClick(part)"
-    >
-      <span v-if="check(index)" v-html="part" />
-      <span v-if="!check(index)" v-markdown class="custom-message">
-        {{ part }}
+    <template v-for="(part, index) in messageParts" :key="index">
+      <span
+        v-if="part.type === 'mention'"
+        class="mention"
+        @click.stop="openUser(part.userId)"
+      >
+        @{{ part.username }}
       </span>
-    </span>
+      <br v-else-if="part.type === 'newline'" />
+      <span v-else v-markdown class="custom-message">
+        {{ part.value }}
+      </span>
+    </template>
     <b
       v-if="message.edited"
       :id="'edit-' + message.id"
@@ -47,7 +50,7 @@ import { Position } from "@/types/position"
 
 const props = defineProps<{
   findUser: (userId: number) => User
-  handleClick: (part: string) => void
+  openUser: (userId: number) => void
   message: Message
   scroll: () => void
 }>()
@@ -60,14 +63,11 @@ const editShown = ref(false)
 let editHover = false
 let editShownPosition: Position = { x: 0, y: 0 }
 
-const check = (index: number) => {
-  const parts = props.message.messageContents
-    .split(/(\n|<@\d+>)/g)
-    .filter((part) => part !== "")
-  if (parts[index].startsWith("<@") || parts[index] === "\n") {
-    return true
-  }
-}
+type MessagePart =
+  | { type: "mention"; userId: number; username: string }
+  | { type: "newline" }
+  | { type: "text"; value: string }
+
 const showEdited = () => {
   editHover = true
   setTimeout(() => {
@@ -87,30 +87,35 @@ const showEdited = () => {
   }, 500)
 }
 
-const messageParts = computed(() => {
-  const parts = props.message.messageContents
+const messageParts = computed<MessagePart[]>(() => {
+  return props.message.messageContents
     .split(/(\n|<@\d+>)/g)
-    .filter((part) => part !== "")
-  return parts.map((part) => {
-    if (part.startsWith("<@")) {
-      const matches = part.match(/\d+/)
-      if (
-        !matches ||
-        matches.length !== 1 ||
-        Number.isNaN(Number(matches[0]))
-      ) {
-        return part
+    .filter(Boolean)
+    .map((part) => {
+      if (part.startsWith("<@")) {
+        const matches = part.match(/\d+/)
+        if (
+          !matches ||
+          matches.length !== 1 ||
+          Number.isNaN(Number(matches[0]))
+        ) {
+          return { type: "text", value: part }
+        }
+        const user = props.findUser(Number(matches[0]))
+
+        return {
+          type: "mention",
+          userId: Number(matches[0]),
+          username: user?.username ?? "unknown"
+        }
       }
 
-      const user = props.findUser(Number(matches[0]))
-      return `<span @click="handleUserMentionClick(${matches[0]})" class="mention">@${
-        user?.username ?? "unknown"
-      }</span>`
-    } else if (part === "\n") {
-      return "<br />"
-    }
-    return part
-  })
+      if (part === "\n") {
+        return { type: "newline" }
+      }
+
+      return { type: "text", value: part }
+    })
 })
 </script>
 

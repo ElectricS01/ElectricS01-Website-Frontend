@@ -20,8 +20,6 @@ const route = useRoute()
 const router = useRouter()
 const store = useDataStore()
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-
 const submit = () => {
   store.errorFalse()
   axios

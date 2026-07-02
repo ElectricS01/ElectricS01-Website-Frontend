@@ -39,8 +39,6 @@ let success = false
 
 const store = useDataStore()
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-
 const submit = () => {
   store.errorFalse()
   axios

@@ -81,7 +81,7 @@
         </div>
         <custom-message
           :message="message"
-          :handle-click="handleClick"
+          :open-user="openUser"
           :find-user="findUser"
           :scroll="scroll"
         />
@@ -90,7 +90,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Icons from "../core/Icons.vue"
 import ProfilePicture from "../ProfilePicture.vue"
 import CustomMessage from "../CustomMessage.vue"
@@ -98,17 +98,15 @@ import ChatSpacer from "../ChatSpacer.vue"
 
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
+import { User } from "@/types/user"
+import { Message } from "@/types/message"
 
-defineProps({
-  findMessage: Function,
-  findUser: Function,
-  goToMessage: Function,
-  handleClick: Function,
-  openUser: Function,
-  pins: {
-    required: true,
-    type: Array
-  },
-  scroll: Function
-})
+defineProps<{
+  findMessage: (messageId: number) => Message
+  findUser: (userId: number) => User
+  goToMessage: (messageId: number) => void
+  openUser: (userId: number) => void
+  pins: Message[]
+  scroll: () => void
+}>()
 </script>

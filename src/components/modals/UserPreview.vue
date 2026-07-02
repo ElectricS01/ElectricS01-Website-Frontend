@@ -149,7 +149,7 @@
                 <img
                   width="32"
                   height="32"
-                  :src="`/icons/${showUser.gameName === 'Tetris' ? 'tetris.ico' : showUser.gameName === 'TonkGame' ? 'tonkgameIcon.ico' : 'favicon.ico'}`"
+                  :src="`/icons/${showUser.gameName === 'Tetris' ? 'tetris.ico' : showUser.gameName === 'TonkGame' ? 'tonkgame.ico' : 'favicon.ico'}`"
                 />
               </div>
               <div>

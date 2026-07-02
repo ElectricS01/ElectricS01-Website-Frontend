@@ -102,7 +102,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-document.getElementById("favicon").href = "/icons/favicon.ico"
-</script>

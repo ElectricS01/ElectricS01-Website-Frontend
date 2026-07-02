@@ -35,8 +35,6 @@ import { onUnmounted } from "vue"
 import { useDataStore } from "@/store"
 const store = useDataStore()
 
-document.getElementById("favicon").href = "/icons/tonkgameIcon.ico"
-
 if (localStorage.getItem("token")) {
   setTimeout(() => {
     store.ws.send(JSON.stringify({ page: "TonkGame" }))

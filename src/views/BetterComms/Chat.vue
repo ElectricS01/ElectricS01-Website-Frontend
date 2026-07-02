@@ -310,9 +310,9 @@
                   <custom-message
                     v-show="editing !== message.id"
                     :message="message"
-                    :handle-click="handleClick"
-                    :scroll="scrollDown"
                     :find-user="findUser"
+                    :open-user="openUser"
+                    :scroll="scrollDown"
                     @embed="embed = $event"
                   />
                 </div>
@@ -690,7 +690,6 @@
           :find-user="findUser"
           :go-to-message="goToMessage"
           :open-user="openUser"
-          :handle-click="handleClick"
           :scroll="scrollDown"
         />
       </div>
@@ -701,7 +700,6 @@
           :find-user="findUser"
           :go-to-message="goToMessage"
           :open-user="openUser"
-          :handle-click="handleClick"
           :scroll="scrollDown"
         />
       </div>
@@ -770,7 +768,6 @@ const override = ref(false)
 
 let editText
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
 if (!localStorage.getItem("token")) {
   router.push("/login?redirect=" + route.path)
 } else {
@@ -1017,11 +1014,6 @@ const openUser = (userId) => {
     })
 }
 
-const handleClick = (part) => {
-  if (part.startsWith('<span @click="handleUserMentionClick(')) {
-    openUser(part.match(/\d+/)[0])
-  }
-}
 const getEmojiText = () => {
   const lastColon = inputText.value.indexOf(":")
   if (
@@ -1272,7 +1264,7 @@ const updateFavicon = (notificationCount) => {
     return
   }
 
-  const favicon = document.querySelector("link[rel~='icon']")
+  const favicon = document.getElementById("favicon")
   const size = 64
   const canvas = document.createElement("canvas")
   canvas.width = size

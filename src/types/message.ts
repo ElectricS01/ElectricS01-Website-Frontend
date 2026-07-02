@@ -1,3 +1,5 @@
+import { User } from "./user"
+
 export interface Embed {
   type: string
   mediaProxyLink: string
@@ -12,6 +14,8 @@ export interface Message {
   edited: boolean
   createdAt: string
   updatedAt: string
+
+  user: User
 
   deleted?: boolean
 }
