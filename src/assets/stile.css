@@ -553,7 +553,8 @@ button:hover,
 
 .context-menu-item:hover,
 .chat-settings:hover,
-.message-grid:hover {
+.message-grid:hover,
+.user-row:hover {
   background-color: var(--dark);
 }
 
@@ -679,6 +680,26 @@ button:hover,
   max-height: 80vh;
 }
 
+.user-row {
+  display: flex;
+  cursor: pointer;
+  margin: 0 0 4px;
+}
+
+.user-row-text {
+  width: 178px;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+
+  b,
+  p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
 textarea,
 input {
   color: #fff;
@@ -749,7 +770,7 @@ input {
 
 .message-input {
   height: 32px;
-  width: calc(100% - 88px);
+  width: calc(100% - 72px);
   margin: 8px;
   padding: 6px;
   resize: none;
@@ -821,6 +842,16 @@ code {
   color: #fff;
   font-size: 16px;
   margin: 0;
+}
+
+.username-text,
+.username-text-offline {
+  font-size: 16px;
+  margin: 4px 0 2px 0;
+}
+
+.username-text-offline {
+  color: grey;
 }
 
 .contact-menu .contact-grid a {

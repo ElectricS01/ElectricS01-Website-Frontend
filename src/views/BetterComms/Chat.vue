@@ -464,7 +464,9 @@
               "
               @keydown.escape.prevent="override = true"
             />
-            <button style="cursor: pointer" @click="sendMessage">Send</button>
+            <button style="cursor: pointer" @click="sendMessage">
+              <icons icon="send" size="24" />
+            </button>
           </div>
         </div>
       </div>
@@ -511,51 +513,13 @@
           <p style="padding-right: 4px" class="message-text-small">Online</p>
           <div style="border-bottom: 1px solid #212425; width: 100%" />
         </div>
-        <div
+        <user-row
           v-for="user in onlineUsers"
           :key="user.id"
-          style="cursor: pointer; margin: 0 0 4px"
-          class="message-grid"
+          :user="user"
           @contextmenu.prevent="showContextMenu($event, user)"
           @click="openUser(user.id)"
-        >
-          <div class="profile-picture">
-            <profile-picture
-              style="margin: 4px"
-              size="32"
-              :avatar="user.avatar"
-              :small="true"
-            />
-            <svg class="online-indicator" width="15" height="15">
-              <status-indicator size="5" :status="user.status" />
-            </svg>
-          </div>
-          <div style="flex-grow: 1; width: 178px" class="message-item">
-            <b
-              class="message-text-large"
-              style="
-                margin: 4px 0 2px 0;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-              "
-            >
-              {{ user.username }}
-            </b>
-            <p
-              class="message-text-medium-gray"
-              style="
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-              "
-            >
-              {{
-                user.gameName ? "Playing " + user.gameName : user.statusMessage
-              }}
-            </p>
-          </div>
-        </div>
+        />
         <div
           v-if="
             currentChat.users?.some(
@@ -572,39 +536,13 @@
           <p style="padding-right: 4px" class="message-text-small">Offline</p>
           <div style="border-bottom: 1px solid #212425; width: 100%" />
         </div>
-        <div
+        <user-row
           v-for="user in offlineUsers"
           :key="user.id"
-          style="cursor: pointer; margin: 0 0 4px"
-          class="message-grid"
+          :user="user"
           @contextmenu.prevent="showContextMenu($event, user)"
           @click="openUser(user.id)"
-        >
-          <div class="profile-picture">
-            <profile-picture
-              style="margin: 4px"
-              size="32"
-              :avatar="user.avatar"
-            />
-            <svg class="online-indicator" width="15" height="15">
-              <status-indicator size="5" :status="user.status" />
-            </svg>
-          </div>
-          <div class="message-item">
-            <b
-              class="message-text-large"
-              style="
-                margin: 4px 0 2px 0;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                width: 178px;
-              "
-            >
-              {{ user.username }}
-            </b>
-          </div>
-        </div>
+        />
         <context-menu
           v-if="contextMenuVisible"
           :position="contextMenuPosition"
@@ -743,6 +681,7 @@ import emojilib from "emojilib"
 import { sendDm } from "@/helpers/chatUsers"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
+import UserRow from "@/components/UserRow.vue"
 
 const store = useDataStore()
 const route = useRoute()
