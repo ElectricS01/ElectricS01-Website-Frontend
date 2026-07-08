@@ -13,19 +13,19 @@
   "author": "ElectricS01 <103579308+ElectricS01@users.noreply.github.com>",
   "dependencies": {
     "@simplewebauthn/browser": "^13.3.0",
-    "@typescript-eslint/eslint-plugin": "^8.62.0",
-    "@typescript-eslint/parser": "^8.62.0",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",
     "emojilib": "^4.0.3",
-    "markdown-it": "^14.2.0",
+    "markdown-it": "^14.3.0",
     "pinia": "^3.0.4",
     "register-service-worker": "^1.7.2",
     "typescript": "^6.0.3",
-    "vite": "^8.1.0",
+    "vite": "^8.1.3",
     "vite-plugin-pwa": "^1.3.0",
-    "vue": "^3.5.38",
+    "vue": "^3.5.39",
     "vue-router": "^5.1.0"
   },
   "devDependencies": {
@@ -34,6 +34,6 @@
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-vue": "^9.33.0",
-    "vue-tsc": "^3.3.5"
+    "vue-tsc": "^3.3.7"
   }
 }

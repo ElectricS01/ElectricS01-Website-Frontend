@@ -423,10 +423,14 @@
             </div>
           </transition>
           <div class="message-send">
-            <div v-if="matchingEmoji.length" class="emoji-picker">
+            <div
+              v-if="matchingEmoji.length && !emojiPickerVisible"
+              class="emoji-picker"
+            >
               <div class="emoji-picker-inner scroll-bar">
                 <div
                   v-for="(emoji, index) in matchingEmoji"
+                  :id="'picker-emoji-' + index"
                   :key="emoji[0]"
                   :class="{ selected: index == emojiPickerIndex }"
                   @click="handleEmojiClick(emoji[0])"
@@ -446,27 +450,26 @@
               @keydown.enter.exact.prevent="
                 matchingEmoji.length > 0 ? selectCurrentEmoji() : sendMessage()
               "
-              @keydown.up.prevent="
-                matchingEmoji.length > 0
-                  ? (emojiPickerIndex = Math.max(0, emojiPickerIndex - 1))
-                  : (editLast(), scrollDown(true))
-              "
-              @keydown.down.prevent="
-                matchingEmoji.length > 0
-                  ? (emojiPickerIndex = Math.min(
-                      matchingEmoji.length - 1,
-                      emojiPickerIndex + 1
-                    ))
-                  : null
-              "
+              @keydown.up.prevent="handleUpKey"
+              @keydown.down.prevent="handleDownKey"
               @keydown.tab.prevent="
                 matchingEmoji.length > 0 ? selectCurrentEmoji() : null
               "
               @keydown.escape.prevent="override = true"
             />
-            <button style="cursor: pointer" @click="sendMessage">
+            <button
+              style="cursor: pointer; width: 40px"
+              @click="showEmojiPicker"
+            >
+              <icons icon="emoji" size="24" />
+            </button>
+            <button style="cursor: pointer; width: 40px" @click="sendMessage">
               <icons icon="send" size="24" />
             </button>
+            <emoji-picker
+              v-if="emojiPickerVisible"
+              @emoji-selected="handleEmojiSelected"
+            ></emoji-picker>
           </div>
         </div>
       </div>
@@ -661,7 +664,6 @@ import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import Sidebar from "@/components/core/Sidebar.vue"
 import SidebarLeft from "@/components/core/SidebarLeft.vue"
-import StatusIndicator from "@/components/StatusIndicator.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/modals/UserPreview.vue"
 import CreateChat from "@/components/modals/CreateChat.vue"
@@ -677,11 +679,12 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import emojilib from "emojilib"
 import { sendDm } from "@/helpers/chatUsers"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
 import UserRow from "@/components/UserRow.vue"
+import EmojiPicker from "@/components/EmojiPicker.vue"
+import { normalizedEmojis } from "@/helpers/emoji"
 
 const store = useDataStore()
 const route = useRoute()
@@ -699,6 +702,7 @@ const scrolledUp = ref(false)
 const showUser = ref(false)
 const chatEdit = ref(null)
 const emojiPickerIndex = ref(0)
+const emojiPickerVisible = ref(false)
 const contextMenuVisible = ref(false)
 const contextMenuItemUser = ref({})
 const contextMenuPosition = ref({ x: 0, y: 0 })
@@ -807,7 +811,24 @@ const userSortPress = () => {
   }
   userSort(store.sortUsers)
 }
+
+const focusInput = () => {
+  const input = document.getElementById("input")
+  input?.focus()
+}
+
+const showEmojiPicker = () => {
+  emojiPickerVisible.value = !emojiPickerVisible.value
+}
+
+const handleEmojiSelected = (emoji) => {
+  inputText.value = inputText.value + emoji
+  emojiPickerVisible.value = false
+  focusInput()
+}
+
 const sendMessage = () => {
+  emojiPickerVisible.value = false
   if (inputText.value?.trim()) {
     axios
       .post("/api/message", {
@@ -914,8 +935,7 @@ const editMessage = (messageId) => {
 
 const replyToMessage = (messageId) => {
   replyTo.value = messageId
-  const input = document.getElementById("input")
-  input?.focus()
+  focusInput()
 }
 
 const handleChatCreated = (chat) => {
@@ -971,7 +991,7 @@ const handleEmojiClick = (emoji) => {
   emojiPickerIndex.value = 0
 }
 const selectCurrentEmoji = () => {
-  if (matchingEmoji.value.length > 0) {
+  if (matchingEmoji.value.length > emojiPickerIndex.value) {
     handleEmojiClick(matchingEmoji.value[emojiPickerIndex.value][0])
   }
 }
@@ -1125,6 +1145,9 @@ const keyPressed = ({ key, altKey }) => {
       createChatShown.value = false
     } else if (chatEdit.value !== null) {
       chatEdit.value = null
+    } else if (emojiPickerVisible.value) {
+      emojiPickerVisible.value = false
+      focusInput()
     } else if (editing.value) {
       editing.value = ""
     } else if (replyTo.value) {
@@ -1188,14 +1211,46 @@ const matchingEmoji = computed(() => {
   const text = getEmojiText()
   if (text == null || override.value) return []
 
-  return Object.entries(emojilib)
+  return normalizedEmojis
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
-    .slice(0, 20)
+    .slice(0, 30)
 })
 
 watch(inputText, () => {
   override.value = false
+  emojiPickerIndex.value = 0
+  scrollToSelected()
 })
+
+const scrollToSelected = () => {
+  const selected = document.getElementById(
+    `picker-emoji-${emojiPickerIndex.value}`
+  )
+  selected?.scrollIntoView({
+    block: "nearest",
+    inline: "nearest"
+  })
+}
+
+const handleUpKey = () => {
+  if (matchingEmoji.value.length > 0) {
+    emojiPickerIndex.value = Math.max(0, emojiPickerIndex.value - 1)
+    scrollToSelected()
+  } else {
+    editLast()
+    scrollDown(true)
+  }
+}
+
+const handleDownKey = () => {
+  if (matchingEmoji.value.length > 0) {
+    emojiPickerIndex.value = Math.min(
+      matchingEmoji.value.length - 1,
+      emojiPickerIndex.value + 1
+    )
+    scrollToSelected()
+  }
+}
 
 const updateFavicon = (notificationCount) => {
   if (notificationCount < 1) {

@@ -2,6 +2,35 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.235 Emoji Picker</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added an Emoji Picker to the message input</li>
+    <li>Emoji Picker can be searched by name</li>
+    <li>Emoji in the Emoji Picker can be selected with arrow keys</li>
+    <li>The Emoji Quick Picker now scrolls automatically</li>
+    <li>Refactoring</li>
+    <li>Updated dependencies</li>
+    <li>Offline users are now greyed out in the users list (1.234.6)</li>
+    <li>Switched more code to use Typescript (1.234.6)</li>
+    <li>Harden mention rendering to prevent XSS attacks (1.234.5)</li>
+    <li>Switched more components to use Typescript (1.234.5)</li>
+    <li>Refactoring (1.234.5)</li>
+    <li>
+      Ignore invalid mentions during rendering which could allow XSS attacks
+      (1.234.4)
+    </li>
+    <li>Use vue-tsc for type checking (1.234.4)</li>
+    <li>Switched more components to use Typescript (1.234.4)</li>
+    <li>Added WebSocket for deleted messages (1.234.3)</li>
+    <li>Messages now appear grey when deleted by others (1.234.3)</li>
+    <li>Fixed Quick Switcher broken on first login (1.234.3)</li>
+    <li>Switched more components to use Typescript (1.234.3)</li>
+    <li>Embedded links now open in a new tab (1.234.2)</li>
+    <li>Switched more components to use Typescript (1.234.2)</li>
+    <li>Add Account pages to the Quick Switcher (1.234.1)</li>
+    <li>Switched more components to use Typescript (1.234.1)</li>
+  </ul>
   <h2 class="settings-text">1.234 Tetris Update</h2>
   <div class="settings-spacer" />
   <ul>

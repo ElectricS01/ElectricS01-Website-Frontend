@@ -497,6 +497,11 @@ button {
   margin: 4px;
   font-size: 17px;
   transition: background-color 1s ease;
+
+  &.chat-icon {
+    height: 28px;
+    padding: 6px;
+  }
 }
 
 .navbar a.main {
@@ -770,7 +775,7 @@ input {
 
 .message-input {
   height: 32px;
-  width: calc(100% - 72px);
+  width: calc(100% - 120px);
   margin: 8px;
   padding: 6px;
   resize: none;
