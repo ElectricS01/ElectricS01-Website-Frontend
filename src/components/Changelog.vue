@@ -2,6 +2,14 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.236 Reactions</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Reactions can be added to messages by clicking the emoji icon</li>
+    <li>Reactions are now displayed under messages</li>
+    <li>Refactoring</li>
+    <li>Updated dependencies</li>
+  </ul>
   <h2 class="settings-text">1.235 Emoji Picker</h2>
   <div class="settings-spacer" />
   <ul>

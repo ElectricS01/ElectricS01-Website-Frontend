@@ -5,6 +5,11 @@ export interface Embed {
   mediaProxyLink: string
 }
 
+export interface Reaction {
+  emoji: string
+  userId: number
+}
+
 export interface Message {
   id: number
   userId: number
@@ -12,10 +17,10 @@ export interface Message {
   embeds: Embed[]
   reply: number
   edited: boolean
+  user: User
+  reactions: Reaction[]
   createdAt: string
   updatedAt: string
-
-  user: User
 
   deleted?: boolean
 }

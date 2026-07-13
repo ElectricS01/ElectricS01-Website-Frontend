@@ -136,6 +136,22 @@ iframe {
   margin: 3px 0;
 }
 
+.sidebar-spacer {
+  padding: 0 4px;
+  display: flex;
+  height: 20px;
+  align-items: center;
+
+  p {
+    padding-right: 4px;
+  }
+
+  div {
+    border-bottom: 1px solid #212425;
+    width: 100%;
+  }
+}
+
 .switcher-modal {
   height: 400px;
   width: min(calc(100vw - 48px), 400px);

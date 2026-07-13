@@ -315,8 +315,30 @@
                     :scroll="scrollDown"
                     @embed="embed = $event"
                   />
+                  <message-emoji
+                    :reactions="message.reactions"
+                    :user-id="store.userData.id"
+                    @reaction-selected="addReaction(message.id, $event)"
+                    @reaction-removed="removeReaction(message.id, $event)"
+                  />
                 </div>
-                <div v-show="editing !== message.id" class="message-icons">
+                <div
+                  v-show="editing !== message.id"
+                  class="message-icons"
+                  :style="{
+                    display: reactingTo === message.id ? 'flex' : ''
+                  }"
+                >
+                  <icons
+                    style="cursor: pointer"
+                    size="20"
+                    icon="emoji"
+                    @click="reactPressed(message.id)"
+                  />
+                  <emoji-picker
+                    v-if="reactingTo === message.id"
+                    @emoji-selected="addReaction(message.id, $event)"
+                  />
                   <icons
                     v-show="
                       store.userData?.admin ||
@@ -469,7 +491,7 @@
             <emoji-picker
               v-if="emojiPickerVisible"
               @emoji-selected="handleEmojiSelected"
-            ></emoji-picker>
+            />
           </div>
         </div>
       </div>
@@ -501,20 +523,11 @@
           </p>
         </div>
         <div
-          v-if="
-            currentChat.users?.some(
-              (someUser) => someUser?.status !== 'offline'
-            )
-          "
-          style="
-            padding: 0 4px;
-            display: flex;
-            height: 20px;
-            align-items: center;
-          "
+          v-if="currentChat.users?.some((user) => user?.status !== 'offline')"
+          class="sidebar-spacer"
         >
-          <p style="padding-right: 4px" class="message-text-small">Online</p>
-          <div style="border-bottom: 1px solid #212425; width: 100%" />
+          <p class="message-text-small">Online</p>
+          <div />
         </div>
         <user-row
           v-for="user in onlineUsers"
@@ -524,20 +537,11 @@
           @click="openUser(user.id)"
         />
         <div
-          v-if="
-            currentChat.users?.some(
-              (someUser) => someUser?.status === 'offline'
-            )
-          "
-          style="
-            padding: 0 4px;
-            display: flex;
-            height: 20px;
-            align-items: center;
-          "
+          v-if="currentChat.users?.some((user) => user?.status === 'offline')"
+          class="sidebar-spacer"
         >
-          <p style="padding-right: 4px" class="message-text-small">Offline</p>
-          <div style="border-bottom: 1px solid #212425; width: 100%" />
+          <p class="message-text-small">Offline</p>
+          <div />
         </div>
         <user-row
           v-for="user in offlineUsers"
@@ -624,33 +628,30 @@
           </div>
         </context-menu>
       </div>
-      <div v-else-if="store.search">
-        <search-sidebar
-          :chat-messages="currentChat.messages"
-          :find-message="findMessage"
-          :find-user="findUser"
-          :go-to-message="goToMessage"
-          :open-user="openUser"
-          :scroll="scrollDown"
-        />
-      </div>
-      <div v-else-if="store.pins">
-        <pins-sidebar
-          :pins="currentChat.pins"
-          :find-message="findMessage"
-          :find-user="findUser"
-          :go-to-message="goToMessage"
-          :open-user="openUser"
-          :scroll="scrollDown"
-        />
-      </div>
-      <div v-else-if="store.notifications">
-        <notifications-sidebar
-          :notifications="store.userData.notifications"
-          :open-user="openUser"
-          :open-chat="getChat"
-        />
-      </div>
+      <search-sidebar
+        v-else-if="store.search"
+        :chat-messages="currentChat.messages"
+        :find-message="findMessage"
+        :find-user="findUser"
+        :go-to-message="goToMessage"
+        :open-user="openUser"
+        :scroll="scrollDown"
+      />
+      <pins-sidebar
+        v-else-if="store.pins"
+        :pins="currentChat.pins"
+        :find-message="findMessage"
+        :find-user="findUser"
+        :go-to-message="goToMessage"
+        :open-user="openUser"
+        :scroll="scrollDown"
+      />
+      <notifications-sidebar
+        v-else-if="store.notifications"
+        :notifications="store.userData.notifications"
+        :open-user="openUser"
+        :open-chat="getChat"
+      />
       <div v-else class="center">
         <div style="text-align: center" class="loader" />
       </div>
@@ -674,6 +675,9 @@ import PinsSidebar from "@/components/sidebars/PinsSidebar.vue"
 import ChatSpacer from "@/components/ChatSpacer.vue"
 import SearchSidebar from "@/components/sidebars/SearchSidebar.vue"
 import NotificationsSidebar from "@/components/sidebars/NotificationsSidebar.vue"
+import UserRow from "@/components/UserRow.vue"
+import EmojiPicker from "@/components/EmojiPicker.vue"
+import MessageEmoji from "@/components/MessageEmoji.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -682,8 +686,6 @@ import { useRoute, useRouter } from "vue-router"
 import { sendDm } from "@/helpers/chatUsers"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
-import UserRow from "@/components/UserRow.vue"
-import EmojiPicker from "@/components/EmojiPicker.vue"
 import { normalizedEmojis } from "@/helpers/emoji"
 
 const store = useDataStore()
@@ -701,6 +703,7 @@ const loadingMessages = ref(true)
 const scrolledUp = ref(false)
 const showUser = ref(false)
 const chatEdit = ref(null)
+const reactingTo = ref(-1)
 const emojiPickerIndex = ref(0)
 const emojiPickerVisible = ref(false)
 const contextMenuVisible = ref(false)
@@ -818,6 +821,7 @@ const focusInput = () => {
 }
 
 const showEmojiPicker = () => {
+  reactingTo.value = -1
   emojiPickerVisible.value = !emojiPickerVisible.value
 }
 
@@ -825,6 +829,59 @@ const handleEmojiSelected = (emoji) => {
   inputText.value = inputText.value + emoji
   emojiPickerVisible.value = false
   focusInput()
+}
+
+const reactPressed = (messageId) => {
+  if (reactingTo.value === messageId) {
+    reactingTo.value = -1
+  } else {
+    reactingTo.value = messageId
+    emojiPickerVisible.value = false
+  }
+}
+
+const addReaction = async (messageId, emoji) => {
+  try {
+    if (
+      !currentChat.value.messages
+        .find((m) => m.id === messageId)
+        .reactions.some(
+          (r) => r.emoji === emoji && r.userId === store.userData.id
+        )
+    ) {
+      await axios.post("/api/react", {
+        emoji,
+        messageId
+      })
+      currentChat.value.messages
+        .find((m) => m.id === messageId)
+        .reactions.push({ emoji, userId: store.userData.id })
+      scrollDown()
+    }
+    reactingTo.value = -1
+  } catch (error) {
+    store.handleAxiosError(error)
+    return -1
+  }
+}
+
+const removeReaction = async (messageId, emoji) => {
+  try {
+    await axios.post("/api/unreact", {
+      emoji,
+      messageId
+    })
+    reactingTo.value = -1
+    currentChat.value.messages.find((m) => m.id === messageId).reactions =
+      currentChat.value.messages
+        .find((m) => m.id === messageId)
+        .reactions.filter(
+          (r) => r.emoji !== emoji || r.userId !== store.userData.id
+        )
+  } catch (error) {
+    store.handleAxiosError(error)
+    return -1
+  }
 }
 
 const sendMessage = () => {
@@ -1145,6 +1202,9 @@ const keyPressed = ({ key, altKey }) => {
       createChatShown.value = false
     } else if (chatEdit.value !== null) {
       chatEdit.value = null
+    } else if (reactingTo.value !== -1) {
+      reactingTo.value = -1
+      focusInput()
     } else if (emojiPickerVisible.value) {
       emojiPickerVisible.value = false
       focusInput()

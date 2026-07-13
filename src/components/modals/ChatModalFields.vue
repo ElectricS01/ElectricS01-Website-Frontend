@@ -53,7 +53,7 @@
       v-model="chatUsername"
       placeholder="Add a user"
       class="modal-input"
-      @keydown.enter="addChatUser(chatUsername, chatUsers)"
+      @keydown.enter="addChatUser"
     />
     <div v-for="user in chatUsers" :key="user.id" class="create-chat-row">
       {{ user.username }}
