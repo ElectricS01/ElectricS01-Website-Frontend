@@ -32,7 +32,7 @@
     />
     <div v-if="store.userData.emailVerified">
       <div class="text-small">
-        <label for="requireVerification">Require verification</label>
+        <label for="requireVerification">Require email verification</label>
       </div>
       <div class="switch" @click="requireVerification = !requireVerification">
         <input

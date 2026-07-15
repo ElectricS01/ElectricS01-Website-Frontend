@@ -913,4 +913,10 @@
     <li>Added a list of chats the the sidebar sorted by last message</li>
     <li>Chats can be created and deleted from the sidebar</li>
   </ul>
+  <h2 class="settings-text">1.141 Improved loading behaviour</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Embeds no longer shift the scrolling of the chat</li>
+    <li>Fixed loading on the verify page</li>
+  </ul>
 </template>

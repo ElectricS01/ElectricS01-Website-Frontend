@@ -36,94 +36,17 @@
     @chat-edited="handleChatEdited"
   />
   <div class="chat-container">
-    <sidebar-left v-if="store.chatBarOpen === 'true'">
-      <div class="filter-button" @click="store.showFriends = true">Friends</div>
-      <div class="filter-button" @click="openCreateChat">Create Chat</div>
-      <div v-if="!store.loadingChats">
-        <div
-          v-for="chat in store.userData.chatsList"
-          :key="chat.id"
-          style="display: flex; margin: 0 0 4px; align-items: center"
-        >
-          <div
-            style="cursor: pointer"
-            class="message-grid"
-            :style="{
-              backgroundColor:
-                currentChat.id === chat.id && !store.showFriends
-                  ? '#212425'
-                  : '',
-              width:
-                chat.owner === store.userData.id && chat.type !== 1
-                  ? 'calc(100% - 36px)'
-                  : '100%'
-            }"
-            @click="getChat(chat.id)"
-          >
-            <profile-picture
-              style="margin: 4px 12px 4px 4px"
-              size="32"
-              :avatar="
-                chat.type === 1 && chat.ownerDetails.id !== store.userData.id
-                  ? chat.ownerDetails.avatar
-                  : chat.icon
-              "
-              :small="true"
-            />
-            <div
-              style="flex-grow: 1; width: calc(100% - 88px)"
-              class="message-item"
-            >
-              <b
-                v-if="
-                  chat.type === 0 ||
-                  chat.type === 2 ||
-                  (chat.type === 1 &&
-                    chat.ownerDetails.id === store.userData.id)
-                "
-                class="chat-title"
-              >
-                {{ chat.name }}
-              </b>
-              <b
-                v-else-if="
-                  chat.type === 1 && chat.ownerDetails.id !== store.userData.id
-                "
-                class="chat-title"
-              >
-                {{ chat.ownerDetails.username }}
-              </b>
-              <p
-                class="message-text-medium-gray"
-                style="
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                "
-              >
-                {{ chat.description }}
-              </p>
-            </div>
-            <div
-              v-if="chat.type !== 2 && chat.association.notifications"
-              class="chat-notifications"
-            >
-              {{ chat.association.notifications }}
-            </div>
-          </div>
-          <div
-            v-if="chat.owner === store.userData.id && chat.type !== 1"
-            class="chat-settings"
-            @click="showEditChat(chat)"
-          >
-            <icons size="20" icon="settings" />
-          </div>
-        </div>
-      </div>
-      <div v-else class="center">
-        <div style="text-align: center" class="loader" />
-      </div>
-    </sidebar-left>
+    <chats-list
+      v-if="store.chatBarOpen === 'true'"
+      :chats="store.userData.chatsList"
+      :loading="store.loadingChats"
+      :current-id="store.showFriends ? undefined : currentChat.id"
+      :user-id="store.userData.id"
+      @open-chat="getChat($event)"
+      @open-create-chat="openCreateChat"
+      @show-edit-chat="showEditChat($event)"
+      @show-friends="store.showFriends = true"
+    />
     <friends
       v-if="store.showFriends"
       :add-friend="addFriend"
@@ -171,13 +94,13 @@
                 "
                 class="message-text-medium-gray"
               >
-                This chat does not require verification
+                This chat does not require email verification
               </b>
               <b
                 v-else-if="currentChat.type !== 1"
                 class="message-text-medium-gray"
               >
-                This chat requires verification
+                This chat requires email verification
               </b>
             </div>
             <div
@@ -664,7 +587,6 @@ import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import Sidebar from "@/components/core/Sidebar.vue"
-import SidebarLeft from "@/components/core/SidebarLeft.vue"
 import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/modals/UserPreview.vue"
 import CreateChat from "@/components/modals/CreateChat.vue"
@@ -678,6 +600,7 @@ import NotificationsSidebar from "@/components/sidebars/NotificationsSidebar.vue
 import UserRow from "@/components/UserRow.vue"
 import EmojiPicker from "@/components/EmojiPicker.vue"
 import MessageEmoji from "@/components/MessageEmoji.vue"
+import ChatsList from "@/components/sidebars/ChatsList.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -1009,6 +932,7 @@ const handleChatCreated = (chat) => {
 const handleChatEdited = (chat) => {
   chatEdit.value = null
   currentChat.value = chat
+  router.push(`/chat/${currentChat.value.id}`)
   replyTo.value = null
   if (currentChat.value.messages) {
     currentChat.value.messages.focus = false

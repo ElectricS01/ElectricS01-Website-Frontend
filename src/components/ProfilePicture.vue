@@ -10,7 +10,12 @@
     :src="avatar"
     alt="Profile icon"
   />
-  <icons v-else style="cursor: pointer" :size="size" icon="user" />
+  <icons
+    v-else
+    style="cursor: pointer"
+    :size="size"
+    :icon="placeholder ?? 'user'"
+  />
 </template>
 
 <script setup lang="ts">
@@ -20,6 +25,7 @@ defineProps<{
   avatar?: string
   size: string
   small?: boolean
+  placeholder?: string
 }>()
 </script>
 

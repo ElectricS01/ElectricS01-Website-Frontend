@@ -148,7 +148,7 @@ export const useDataStore = defineStore("store", () => {
     if (userData.value.chatsList) {
       switcherItems.value.push(
         ...userData.value.chatsList.map((obj) => [
-          obj.type === 1 && obj.ownerDetails.id !== userData.value.id
+          obj.type === 1 && obj.owner !== userData.value.id
             ? obj.ownerDetails.username
             : obj.name,
           `chat/${obj.id}`

@@ -357,6 +357,44 @@ button {
   text-align: center;
 }
 
+.chat-row {
+  display: flex;
+  margin: 0 0 4px;
+  align-items: center;
+}
+
+.chat-row-button {
+  width: 100%;
+  display: flex;
+  cursor: pointer;
+
+  &.active {
+    background-color: var(--dark);
+  }
+}
+
+.chat-row-picture {
+  margin: 4px 12px 4px 4px;
+}
+
+.chat-row-button-item {
+  flex: 1;
+  width: 0;
+}
+
+.chat-settings {
+  flex: 0 0 auto;
+  padding: 6px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.ellipse {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .emoji-picker {
   position: absolute;
   text-align: left;
@@ -575,7 +613,8 @@ button:hover,
 .context-menu-item:hover,
 .chat-settings:hover,
 .message-grid:hover,
-.user-row:hover {
+.user-row:hover,
+.chat-row-button:hover {
   background-color: var(--dark);
 }
 
@@ -762,16 +801,6 @@ input {
   }
 }
 
-.chat-settings {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  margin-left: 4px;
-  cursor: pointer;
-}
-
 .chat-notifications {
   height: 24px;
   width: 24px;
@@ -841,22 +870,15 @@ code {
   padding: 0 2px;
 }
 
-.chat-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .title {
   font-size: 36px;
   margin-top: 12px;
 }
 
 .chat-title {
+  font-weight: bold;
   font-size: 16px;
   margin: 4px 0 2px 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .message-text-large {

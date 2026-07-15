@@ -645,7 +645,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.236.0</div>
+            <div>Version: 1.236.1</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -661,38 +661,54 @@
             Feedback
             <div class="settings-spacer" />
             <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>UserID</th>
+                  <th>Content</th>
+                  <th>Created Date</th>
+                </tr>
+              </thead>
               <tr v-for="feedback in adminData.feedback" :key="feedback.id">
-                <th>{{ feedback.id }}</th>
-                <th>{{ feedback.userId }}</th>
-                <th>{{ feedback.feedback }}</th>
-                <th>{{ dayjsLong(feedback.createdAt) }}</th>
-                <th>
+                <td>{{ feedback.id }}</td>
+                <td>{{ feedback.userId }}</td>
+                <td>{{ feedback.feedback }}</td>
+                <td>{{ dayjsLong(feedback.createdAt) }}</td>
+                <td>
                   <icons
                     size="16"
                     icon="delete"
                     style="cursor: pointer"
                     @click="deleteFeedback(feedback.id)"
                   />
-                </th>
+                </td>
               </tr>
             </table>
             <div class="settings-spacer" />
             Users
             <div class="settings-spacer" />
             <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Username</th>
+                  <th>Admin</th>
+                  <th>Created Date</th>
+                </tr>
+              </thead>
               <tr v-for="user in adminData.users" :key="user.id">
-                <th>{{ user.id }}</th>
-                <th>{{ user.username }}</th>
-                <th>{{ user.admin }}</th>
-                <th>{{ dayjsLong(user.createdAt) }}</th>
-                <th>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.admin }}</td>
+                <td>{{ dayjsLong(user.createdAt) }}</td>
+                <td>
                   <icons
                     size="16"
                     icon="delete"
                     style="cursor: pointer"
                     @click="deleteFeedback(user.id)"
                   />
-                </th>
+                </td>
               </tr>
             </table>
           </div>
