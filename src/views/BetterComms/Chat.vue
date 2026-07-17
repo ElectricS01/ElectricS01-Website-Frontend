@@ -388,7 +388,12 @@
             <textarea
               id="input"
               v-model="inputText"
-              placeholder="Send a message"
+              :disabled="inputDisabled"
+              :placeholder="
+                inputDisabled
+                  ? 'This chat requires email address verification'
+                  : 'Send a message'
+              "
               autofocus
               class="message-input"
               autocomplete="off"
@@ -403,13 +408,26 @@
               @keydown.escape.prevent="override = true"
             />
             <button
+              :disabled="inputDisabled"
               style="cursor: pointer; width: 40px"
               @click="showEmojiPicker"
             >
-              <icons icon="emoji" size="24" />
+              <icons
+                icon="emoji"
+                size="24"
+                :colour="inputDisabled ? 'grey' : undefined"
+              />
             </button>
-            <button style="cursor: pointer; width: 40px" @click="sendMessage">
-              <icons icon="send" size="24" />
+            <button
+              :disabled="inputDisabled"
+              style="cursor: pointer; width: 40px"
+              @click="sendMessage"
+            >
+              <icons
+                icon="send"
+                size="24"
+                :colour="inputDisabled ? 'grey' : undefined"
+              />
             </button>
             <emoji-picker
               v-if="emojiPickerVisible"
@@ -660,6 +678,7 @@ if (!localStorage.getItem("token")) {
       store.chatSort()
       if (socketMessage.newMessage.chatId === currentChat.value.id) {
         socketMessage.newMessage.focus = false
+        socketMessage.newMessage.reactions = []
         currentChat.value.messages.push(socketMessage.newMessage)
         scrollDown()
       }
@@ -686,6 +705,10 @@ if (!localStorage.getItem("token")) {
       if (parseInt(socketMessage.newUser.chatId) === currentChat.value.id) {
         currentChat.value.users.push(socketMessage.newUser)
       }
+    } else if (socketMessage.newChat) {
+      socketMessage.newChat.association = { notifications: 0 }
+      store.userData.chatsList.push(socketMessage.newChat)
+      store.chatSort()
     }
     console.log("Data received from websocket")
   }
@@ -1198,6 +1221,9 @@ const matchingEmoji = computed(() => {
   return normalizedEmojis
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 30)
+})
+const inputDisabled = computed(() => {
+  return !store.userData.emailVerified && currentChat.value.requireVerification
 })
 
 watch(inputText, () => {

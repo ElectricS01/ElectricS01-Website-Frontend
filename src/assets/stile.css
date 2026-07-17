@@ -780,6 +780,12 @@ input {
   &::placeholder {
     color: grey;
   }
+
+  &:disabled {
+    background-color: var(--dark);
+    color: grey;
+    border: 1px solid grey;
+  }
 }
 
 .loader {

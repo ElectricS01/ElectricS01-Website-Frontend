@@ -905,18 +905,35 @@
   <div class="settings-spacer" />
   <ul>
     <li>You can now create chats with a title, description, and icon</li>
+    <li>Hardened icon link security</li>
     <li>Refactoring</li>
+    <li>Update to work with backend 1.68.0</li>
   </ul>
   <h2 class="settings-text">1.142 Chats list</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Added a list of chats the the sidebar sorted by last message</li>
     <li>Chats can be created and deleted from the sidebar</li>
+    <li>Update to work with backend 1.67.0</li>
   </ul>
   <h2 class="settings-text">1.141 Improved loading behaviour</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Embeds no longer shift the scrolling of the chat</li>
     <li>Fixed loading on the verify page</li>
+  </ul>
+  <h2 class="settings-text">1.140 Email verification</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>An email verification link will be sent to all new users</li>
+    <li>
+      Verification status is shown in
+      <router-link to="/account/account">Account Settings</router-link>
+    </li>
+    <li>
+      A verification link can be resent in
+      <router-link to="/account/account">Account Settings</router-link>
+    </li>
+    <li>Update to work with backend 1.66.0</li>
   </ul>
 </template>

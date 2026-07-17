@@ -96,8 +96,13 @@ const createChat = () => {
     chatDescriptionInput.value === "" ||
     typeof requireVerification.value !== "boolean" ||
     creating === true
-  )
+  ) {
+    if (chatNameInput.value === "")
+      store.handleError("Chat name cannot be empty", 2500)
+    else if (chatDescriptionInput.value === "")
+      store.handleError("Chat description cannot be empty", 2500)
     return
+  }
 
   creating = true
   axios
