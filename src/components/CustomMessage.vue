@@ -1,6 +1,6 @@
 <template>
   <div :class="{ deleted: props.message.deleted }">
-    <template v-for="(part, index) in messageParts" :key="index">
+    <template v-for="part in messageParts" :key="part.key">
       <span
         v-if="part.type === 'mention'"
         class="mention"
@@ -64,9 +64,9 @@ let editHover = false
 let editShownPosition: Position = { x: 0, y: 0 }
 
 type MessagePart =
-  | { type: "mention"; userId: number; username: string }
-  | { type: "newline" }
-  | { type: "text"; value: string }
+  | { key: string; type: "mention"; userId: number; username: string }
+  | { key: string; type: "newline" }
+  | { key: string; type: "text"; value: string }
 
 const showEdited = () => {
   editHover = true
@@ -91,7 +91,7 @@ const messageParts = computed<MessagePart[]>(() => {
   return props.message.messageContents
     .split(/(\n|<@\d+>)/g)
     .filter(Boolean)
-    .map((part) => {
+    .map((part, index) => {
       if (part.startsWith("<@")) {
         const matches = part.match(/\d+/)
         if (
@@ -99,11 +99,12 @@ const messageParts = computed<MessagePart[]>(() => {
           matches.length !== 1 ||
           Number.isNaN(Number(matches[0]))
         ) {
-          return { type: "text", value: part }
+          return { key: `text-${index}-${part}`, type: "text", value: part }
         }
         const user = props.findUser(Number(matches[0]))
 
         return {
+          key: `mention-${index}-${matches[0]}-${user?.username ?? "unknown"}`,
           type: "mention",
           userId: Number(matches[0]),
           username: user?.username ?? "unknown"
@@ -111,10 +112,10 @@ const messageParts = computed<MessagePart[]>(() => {
       }
 
       if (part === "\n") {
-        return { type: "newline" }
+        return { key: `newline-${index}`, type: "newline" }
       }
 
-      return { type: "text", value: part }
+      return { key: `text-${index}-${part}`, type: "text", value: part }
     })
 })
 </script>

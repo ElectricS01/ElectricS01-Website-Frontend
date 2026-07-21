@@ -2,6 +2,22 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.237 Chats List WebSockets</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Edited Chats are updated in real time</li>
+    <li>Fixed edited messages not updating until refreshing the page</li>
+    <li>Update to work with backend 1.114.0</li>
+    <li>New Chats are now added to the Chats List in real time (1.236.2)</li>
+    <li>Notifications are now shown for the Global chat (1.236.2)</li>
+    <li>
+      Added an error when creating a chat without a name or description
+      (1.236.2)
+    </li>
+    <li>Changed the icon for group chats (1.236.1)</li>
+    <li>Switched more components to use Typescript (1.236.1)</li>
+    <li>Refactoring (1.236.1)</li>
+  </ul>
   <h2 class="settings-text">1.236 Reactions</h2>
   <div class="settings-spacer" />
   <ul>
@@ -825,7 +841,7 @@
   <h2 class="settings-text">1.153 UI Cleanup</h2>
   <div class="settings-spacer" />
   <ul>
-    <li>Fix chats list direct message width</li>
+    <li>Fix Chats List direct message width</li>
     <li>Refactoring</li>
   </ul>
   <h2 class="settings-text">1.152 Account Profile page improvments</h2>
@@ -909,7 +925,7 @@
     <li>Refactoring</li>
     <li>Update to work with backend 1.68.0</li>
   </ul>
-  <h2 class="settings-text">1.142 Chats list</h2>
+  <h2 class="settings-text">1.142 Chats List</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Added a list of chats the the sidebar sorted by last message</li>

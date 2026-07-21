@@ -709,6 +709,19 @@ if (!localStorage.getItem("token")) {
       socketMessage.newChat.association = { notifications: 0 }
       store.userData.chatsList.push(socketMessage.newChat)
       store.chatSort()
+    } else if (socketMessage.editChat) {
+      const chatIndex = store.userData.chatsList.findIndex(
+        (chat) => chat.id === socketMessage.editChat.id
+      )
+
+      socketMessage.editChat.association = {
+        notifications:
+          store.userData.chatsList[chatIndex].association.notifications
+      }
+
+      if (chatIndex !== -1) {
+        store.userData.chatsList[chatIndex] = socketMessage.editChat
+      }
     }
     console.log("Data received from websocket")
   }

@@ -21,7 +21,6 @@
                 : chat.icon
             "
             :placeholder="chat.type !== 1 ? 'users' : undefined"
-            :small="true"
           />
           <div class="chat-row-button-item">
             <p
