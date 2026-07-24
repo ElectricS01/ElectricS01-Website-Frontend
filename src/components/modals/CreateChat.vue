@@ -1,54 +1,51 @@
 <template>
-  <transition>
-    <modal
-      v-if="createChatShown && !store.quickSwitcherShown"
-      :is-active="createChatShown && !store.quickSwitcherShown"
-      @close="emits('hideCreateChat')"
-    >
-      <div class="channel-menu">
-        <div class="selector">
-          <p
-            class="message-text-large"
-            :class="{ active: createChatType }"
-            @click="createChatType = true"
-          >
-            Create New Chat
-          </p>
-          <p
-            class="message-text-large"
-            :class="{ active: !createChatType }"
-            @click="createChatType = false"
-          >
-            Create Direct Message
-          </p>
-        </div>
-        <div v-if="createChatType">
-          <chat-modal-fields
-            v-model:chat-name="chatNameInput"
-            v-model:chat-description="chatDescriptionInput"
-            v-model:chat-icon="chatIconInput"
-            v-model:require-verification="requireVerification"
-            v-model:chat-users="chatUsers"
-            @submit="createChat"
-          />
-          <button class="dark-button" @click="createChat">Create</button>
-        </div>
-        <div v-else>
-          <div class="text-small">
-            <label for="username">Username</label>
-          </div>
-          <input
-            id="username"
-            v-model="chatUsernameInput"
-            placeholder="Username"
-            class="modal-input"
-            @keydown.enter="createDirectMessage"
-          />
-          <button @click="createDirectMessage">Create</button>
-        </div>
+  <modal
+    :is-active="createChatShown && !store.quickSwitcherShown"
+    @close="emits('hideCreateChat')"
+  >
+    <div class="channel-menu">
+      <div class="selector">
+        <p
+          class="message-text-large"
+          :class="{ active: createChatType }"
+          @click="createChatType = true"
+        >
+          Create New Chat
+        </p>
+        <p
+          class="message-text-large"
+          :class="{ active: !createChatType }"
+          @click="createChatType = false"
+        >
+          Create Direct Message
+        </p>
       </div>
-    </modal>
-  </transition>
+      <div v-if="createChatType">
+        <chat-modal-fields
+          v-model:chat-name="chatNameInput"
+          v-model:chat-description="chatDescriptionInput"
+          v-model:chat-icon="chatIconInput"
+          v-model:require-verification="requireVerification"
+          v-model:chat-users="chatUsers"
+          @submit="createChat"
+        />
+        <button class="dark-button" @click="createChat">Create</button>
+      </div>
+      <div v-else>
+        <div class="text-small">
+          <label for="username">Username</label>
+        </div>
+        <input
+          id="username"
+          v-model="chatUsernameInput"
+          placeholder="Username"
+          class="modal-input"
+          @keydown.enter="createDirectMessage"
+        />
+        <button @click="createDirectMessage">Create</button>
+      </div>
+    </div>
+  </modal>
 </template>
 <script setup>
 import Modal from "@/components/core/Modal.vue"

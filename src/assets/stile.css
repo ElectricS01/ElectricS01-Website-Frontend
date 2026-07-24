@@ -1245,6 +1245,7 @@ input:checked + .slider:before {
 
 .settings-page-container {
   width: fit-content;
+  max-width: 100%;
 }
 
 .settings-sidebar {

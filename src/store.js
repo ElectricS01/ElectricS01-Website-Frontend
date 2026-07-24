@@ -4,6 +4,10 @@ import { nextTick, ref } from "vue"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
 
+/**
+ * @typedef {import("@/types/user").UserData} UserData
+ */
+
 const switcherPages = [
   "Home",
   "TonkGame",
@@ -76,7 +80,9 @@ export const useDataStore = defineStore("store", () => {
     const message =
       (input?.response?.status >= 500
         ? "500 Internal Server Error"
-        : getErrorMessage(input?.response?.data)) ||
+        : input?.response?.status == 404
+          ? "404 Not Found"
+          : getErrorMessage(input?.response?.data)) ||
       (input?.response?.status
         ? `Error ${input.response.status}${
             input.response.statusText ? `, ${input.response.statusText}` : ""
@@ -299,6 +305,7 @@ export const useDataStore = defineStore("store", () => {
     showFriends,
     sortSwitcher,
     switcherItems,
+    /** @type {UserData} */
     userData,
     ws
   }

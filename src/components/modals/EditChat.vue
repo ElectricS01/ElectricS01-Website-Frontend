@@ -1,31 +1,28 @@
 <template>
-  <transition>
-    <modal
-      v-if="editingChat !== null && !store.quickSwitcherShown"
-      :is-active="editingChat !== null && !store.quickSwitcherShown"
-      @close="emits('hideEditingChat')"
-    >
-      <div class="channel-menu">
-        <p class="message-text-large">Edit Chat</p>
-        <chat-modal-fields
-          v-model:chat-name="chatNameInput"
-          v-model:chat-description="chatDescriptionInput"
-          v-model:chat-icon="chatIconInput"
-          v-model:require-verification="requireVerification"
-          v-model:chat-users="chatUsers"
-          @submit="saveChat"
-        />
-        <button class="dark-button" @click="saveChat">Save</button>
-        <button
-          v-if="editingChat?.type !== 2"
-          class="dark-button-red"
-          @click="deleteChat(editingChat?.id)"
-        >
-          Delete
-        </button>
-      </div>
-    </modal>
-  </transition>
+  <modal
+    :is-active="editingChat !== null && !store.quickSwitcherShown"
+    @close="emits('hideEditingChat')"
+  >
+    <div class="channel-menu">
+      <p class="message-text-large">Edit Chat</p>
+      <chat-modal-fields
+        v-model:chat-name="chatNameInput"
+        v-model:chat-description="chatDescriptionInput"
+        v-model:chat-icon="chatIconInput"
+        v-model:require-verification="requireVerification"
+        v-model:chat-users="chatUsers"
+        @submit="saveChat"
+      />
+      <button class="dark-button" @click="saveChat">Save</button>
+      <button
+        v-if="editingChat?.type !== 2"
+        class="dark-button-red"
+        @click="deleteChat(editingChat?.id)"
+      >
+        Delete
+      </button>
+    </div>
+  </modal>
 </template>
 <script setup>
 import Modal from "@/components/core/Modal.vue"

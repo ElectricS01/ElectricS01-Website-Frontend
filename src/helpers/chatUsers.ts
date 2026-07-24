@@ -3,7 +3,7 @@ import axios from "axios"
 
 const store = useDataStore()
 
-export const getChatUsers = async (chatId) => {
+export const getChatUsers = async (chatId: number) => {
   try {
     const response = await axios.get(`/api/chat-users/${chatId}`)
     return response.data
@@ -13,7 +13,7 @@ export const getChatUsers = async (chatId) => {
   }
 }
 
-export const getUserByName = async (username) => {
+export const getUserByName = async (username: string) => {
   try {
     const response = await axios.post("/api/get-user", {
       username
@@ -25,7 +25,7 @@ export const getUserByName = async (username) => {
   }
 }
 
-export const sendDm = async (id) => {
+export const sendDm = async (id: number) => {
   const response = await axios.post(`/api/direct-message/${id}`)
   store.userData.chatsList = response.data.chats
   store.chatSort()

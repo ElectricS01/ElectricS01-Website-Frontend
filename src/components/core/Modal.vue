@@ -1,18 +1,20 @@
 <template>
-  <div class="model-background">
-    <div
-      class="modal"
-      :class="{ 'is-active': isActive }"
-      @click="emit('close')"
-    >
-      <div class="modal-content" @click.stop>
-        <button class="modal-close" @click="emit('close')">
-          <icons size="32" icon="close" style="padding: 4px; cursor: pointer" />
-        </button>
-        <slot />
+  <transition>
+    <div v-if="isActive" class="model-background">
+      <div
+        class="modal"
+        :class="{ 'is-active': isActive }"
+        @click="emit('close')"
+      >
+        <div class="modal-content" @click.stop>
+          <button class="modal-close" @click="emit('close')">
+            <icons size="32" icon="close" />
+          </button>
+          <slot />
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
@@ -51,7 +53,7 @@ const emit = defineEmits<{
   position: absolute;
   top: 24px;
   right: 24px;
-  padding: 0;
+  padding: 4px;
   border-radius: 24px;
 }
 

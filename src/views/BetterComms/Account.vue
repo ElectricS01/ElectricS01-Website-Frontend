@@ -1,171 +1,192 @@
 <template>
-  <transition>
-    <modal
-      v-if="renamePasskeyOpen"
-      :is-active="renamePasskeyOpen"
-      @close="renamePasskeyOpen = false"
-    >
-      <div class="settings-modal">
-        <p class="settings-text">Rename Passkey</p>
-        <input
-          v-model="passkeyName"
-          placeholder="Passkey Name"
-          class="modal-input"
-          autocomplete="off"
-          @keydown.enter="updatePasskeyName"
-        />
-        <div class="settings-button-container">
-          <button @click="renamePasskeyOpen = false">Cancel</button>
-          <button @click="updatePasskeyName">Save</button>
-        </div>
+  <modal :is-active="changeUsernameOpen" @close="changeUsernameOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Change Username</p>
+      <div class="text-small">
+        <label for="username">Username</label>
       </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal
-      v-if="deletePasskeyOpen"
-      :is-active="deletePasskeyOpen"
-      @close="deletePasskeyOpen = false"
-    >
-      <div class="settings-modal">
-        <p class="settings-text">Delete Passkey</p>
-        <p class="message-text-medium-gray" style="margin-bottom: 10px">
-          This will remove the passkey from your account, but it will remain on
-          your device
-        </p>
-        <div class="settings-button-container">
-          <button @click="deletePasskeyOpen = false">Cancel</button>
-          <button class="button-red" @click="confirmDeletePasskeyOpen = true">
-            Delete
-          </button>
-        </div>
+      <input
+        id="username"
+        v-model="newUsername"
+        placeholder="Username"
+        class="modal-input"
+        autocomplete="off"
+        @keydown.enter="updateUsername"
+      />
+      <div class="text-small">
+        <label for="password">Password</label>
       </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal v-if="modalOpen" :is-active="modalOpen" @close="modalOpen = false">
-      <div class="settings-modal">
-        <p class="settings-text">Submit feedback</p>
-        <input
-          id="feedback"
-          v-model="feedbackText"
-          placeholder="Feedback"
-          class="settings-input"
-          autocomplete="off"
-          @keydown.enter="submitFeedback"
-        />
-        <button @click="submitFeedback">Enter</button>
-        <p class="message-text-medium-gray">
-          Your user identification number is recorded for reference
-        </p>
+      <input
+        id="password"
+        v-model="password"
+        placeholder="Password"
+        class="modal-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="updateUsername"
+      />
+      <div class="settings-button-container">
+        <button @click="changeUsernameOpen = false">Cancel</button>
+        <button @click="updateUsername">Save</button>
       </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal
-      v-if="logoutAllOpen"
-      :is-active="logoutAllOpen"
-      @close="logoutAllOpen = false"
-    >
-      <div class="settings-modal">
-        <p class="settings-text">Logout everywhere</p>
-        <input
-          v-model="password"
-          placeholder="Password"
-          class="settings-input"
-          autocomplete="off"
-          @keydown.enter="logoutAllSubmit"
-        />
-        <div class="settings-button-container">
-          <button @click="logoutAllOpen = false">Cancel</button>
-          <button class="button-red" @click="logoutAllSubmit">
-            Logout everywhere
-          </button>
-        </div>
+    </div>
+  </modal>
+  <modal :is-active="renamePasskeyOpen" @close="renamePasskeyOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">
+        Rename {{ selectedPasskey?.name ?? "Passkey" }}
+      </p>
+      <input
+        v-model="passkeyName"
+        placeholder="Passkey Name"
+        class="modal-input"
+        autocomplete="off"
+        @keydown.enter="updatePasskeyName"
+      />
+      <div class="settings-button-container">
+        <button @click="renamePasskeyOpen = false">Cancel</button>
+        <button @click="updatePasskeyName">Save</button>
       </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal
-      v-if="confirmDeletePasskeyOpen"
-      :is-active="confirmDeletePasskeyOpen"
-      @close="confirmDeletePasskeyOpen = false"
-    >
-      <div class="settings-modal">
-        <p class="settings-text">
+    </div>
+  </modal>
+  <modal :is-active="deletePasskeyOpen" @close="deletePasskeyOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">
+        Delete {{ passkeyToDelete?.name ?? "Passkey" }}
+      </p>
+      <p class="message-text-medium-gray" style="margin-bottom: 10px">
+        This will remove the passkey from your account, but it will remain on
+        your device
+      </p>
+      <div class="settings-button-container">
+        <button class="settings-button" @click="deletePasskeyOpen = false">
+          Cancel
+        </button>
+        <button
+          class="settings-button-red"
+          @click="confirmDeletePasskeyOpen = true"
+        >
           Delete
-          {{ passkeyToDelete.name }} Passkey
-        </p>
-        <p class="message-text-medium-gray">This action cannot be undone</p>
-        <input
-          v-model="password"
-          placeholder="Password"
-          class="settings-input"
-          autocomplete="off"
-          @keydown.enter="confirmDeletePasskey"
-        />
-        <div class="settings-button-container">
-          <button @click="confirmDeletePasskeyOpen = false">Cancel</button>
-          <button class="button-red" @click="confirmDeletePasskey">
-            Delete
-          </button>
-        </div>
+        </button>
       </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal
-      v-if="enableOtpOpen"
-      :is-active="enableOtpOpen"
-      @close="enableOtpOpen = false"
-    >
-      <div class="settings-modal">
-        <p class="settings-text">Enable 2FA</p>
-        <img :src="qrCodeURL" alt="QR Code" />
-        <p>or</p>
-        <div>
-          <a :href="qrURI">Click to add to 2FA app</a>
-        </div>
-        <p>or</p>
-        <button @click="copyToken">Copy Token</button>
-        <input
-          id="totp"
-          v-model="totp"
-          placeholder="2FA Code"
-          class="modal-input"
-          type="token"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          autocomplete="one-time-code"
-          @keydown.enter="verify2FA()"
-        />
-        <button @click="verify2FA()">Enter</button>
+    </div>
+  </modal>
+  <modal :is-active="modalOpen" @close="modalOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Submit feedback</p>
+      <input
+        id="feedback"
+        v-model="feedbackText"
+        placeholder="Feedback"
+        class="settings-input"
+        autocomplete="off"
+        @keydown.enter="submitFeedback"
+      />
+      <div class="settings-button-container">
+        <button class="settings-button" @click="submitFeedback">Enter</button>
       </div>
-    </modal>
-  </transition>
-  <transition>
-    <modal
-      v-if="disableOtpOpen"
-      :is-active="disableOtpOpen"
-      @close="disableOtpOpen = false"
-    >
-      <div class="settings-modal">
-        <p class="settings-text">Disable 2FA</p>
-        <input
-          id="totp"
-          v-model="totp"
-          placeholder="2FA Code"
-          class="modal-input"
-          type="token"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          autocomplete="one-time-code"
-          @keydown.enter="disable2FA()"
-        />
-        <button @click="disable2FA()">Enter</button>
+      <p class="message-text-medium-gray">
+        Your user identification number is recorded for reference
+      </p>
+    </div>
+  </modal>
+  <modal :is-active="logoutAllOpen" @close="logoutAllOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Logout everywhere</p>
+      <input
+        v-model="password"
+        placeholder="Password"
+        class="settings-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="logoutAllSubmit"
+      />
+      <div class="settings-button-container">
+        <button class="settings-button" @click="logoutAllOpen = false">
+          Cancel
+        </button>
+        <button class="settings-button-red" @click="logoutAllSubmit">
+          Logout everywhere
+        </button>
       </div>
-    </modal>
-  </transition>
+    </div>
+  </modal>
+  <modal
+    :is-active="confirmDeletePasskeyOpen"
+    @close="confirmDeletePasskeyOpen = false"
+  >
+    <div class="settings-modal">
+      <p class="settings-text">
+        Delete
+        {{ passkeyToDelete.name ?? "Passkey" }}
+      </p>
+      <p class="message-text-medium-gray">This action cannot be undone</p>
+      <input
+        v-model="password"
+        placeholder="Password"
+        class="settings-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="confirmDeletePasskey"
+      />
+      <div class="settings-button-container">
+        <button
+          class="settings-button"
+          @click="confirmDeletePasskeyOpen = false"
+        >
+          Cancel
+        </button>
+        <button class="settings-button-red" @click="confirmDeletePasskey">
+          Delete
+        </button>
+      </div>
+    </div>
+  </modal>
+  <modal :is-active="enableOtpOpen" @close="enableOtpOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Enable 2FA</p>
+      <img :src="qrCodeURL" alt="QR Code" />
+      <p>or</p>
+      <div>
+        <a :href="qrURI">Click to add to 2FA app</a>
+      </div>
+      <p>or</p>
+      <button @click="copyToken">Copy Token</button>
+      <input
+        id="totp"
+        v-model="totp"
+        placeholder="2FA Code"
+        class="modal-input"
+        type="token"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        autocomplete="one-time-code"
+        @keydown.enter="verify2FA()"
+      />
+      <div class="settings-button-container">
+        <button class="settings-button" @click="verify2FA()">Enable</button>
+      </div>
+    </div>
+  </modal>
+  <modal :is-active="disableOtpOpen" @close="disableOtpOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Disable 2FA</p>
+      <input
+        id="totp"
+        v-model="totp"
+        placeholder="2FA Code"
+        class="modal-input"
+        type="token"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        autocomplete="one-time-code"
+        @keydown.enter="disable2FA()"
+      />
+      <div class="settings-button-container">
+        <button class="settings-button" @click="disable2FA()">Disable</button>
+      </div>
+    </div>
+  </modal>
   <div class="container">
     <div class="grid-menu">
       <div class="settings-menu">
@@ -208,13 +229,13 @@
             <div class="settings-button-red" @click="logout">Logout</div>
             <div class="settings-spacer" />
             Username: {{ store.userData?.username }}
-            <div class="settings-button" @click="changeUsername()">
+            <div class="settings-button" @click="showChangeUsername()">
               Change Username
             </div>
             <div class="settings-spacer" />
-            Email: {{ store.userData?.email }}
-            <div class="settings-button" @click="changeUsername()">
-              Change Email
+            Email address: {{ store.userData?.email }}
+            <div class="settings-button" @click="showChangeEmail()">
+              Change Email Address
             </div>
             <div class="settings-spacer" />
             Email verified: {{ store.userData?.emailVerified }}
@@ -223,19 +244,19 @@
               class="settings-button"
               @click="resendVerification()"
             >
-              Resend email
+              Resend Verification Email
             </div>
             <div class="settings-spacer" />
             Password: {{ store.userData?.password }}
-            <div class="settings-button" @click="changeUsername()">
+            <div class="settings-button" @click="showChangePassword()">
               Change Password
             </div>
             <div class="settings-spacer" />
-            Creation date: {{ dayjsLong(store.userData?.createdAt) }}
+            Account creation date: {{ dayjsLong(store.userData?.createdAt) }}
             <div class="settings-spacer" />
             Account ID: {{ store.userData?.id }}
             <div class="settings-spacer" />
-            <div class="settings-button-red" @click="changeUsername()">
+            <div class="settings-button-red" @click="showCloseAccount()">
               Close account
             </div>
           </div>
@@ -485,7 +506,7 @@
                     width: calc(100% - 2px);
                   "
                   autocomplete="off"
-                  @keydown.enter="toggle('banner', editBanner)"
+                  @keydown.enter="changeProperty('banner', editBanner)"
                 />
                 <div class="profile-page">
                   <div class="profile-grid">
@@ -548,7 +569,7 @@
                     placeholder="Edit your profile picture"
                     style="margin: 1px; height: fit-content"
                     autocomplete="off"
-                    @keydown.enter="toggle('avatar', editAvatar)"
+                    @keydown.enter="changeProperty('avatar', editAvatar)"
                   />
                   <div
                     style="height: 332px; overflow-y: auto"
@@ -601,7 +622,7 @@
                         autocomplete="off"
                         @keydown.escape="editing = ''"
                         @keydown.enter.exact.prevent="
-                          toggle('description', editDescription)
+                          changeProperty('description', editDescription)
                         "
                       />
                     </div>
@@ -645,7 +666,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.237.0</div>
+            <div>Version: 1.238.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -762,6 +783,7 @@ const encryptionOptions = ["never", "off", "on", "always"]
 const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
 const buildDate = __VITE_BUILD_DATE__ || "Unknown"
 
+const changeUsernameOpen = ref(false)
 const renamePasskeyOpen = ref(false)
 const deletePasskeyOpen = ref(false)
 const modalOpen = ref(false)
@@ -778,6 +800,7 @@ const editing = ref("")
 const qrCodeURL = ref("")
 const qrURI = ref("")
 const totp = ref("")
+const newUsername = ref("")
 const passkeyName = ref("")
 const selectedPasskey = ref()
 const passkeyToDelete = ref()
@@ -874,12 +897,12 @@ const deleteFeedback = (id) => {
       store.handleAxiosError(e)
     })
 }
-const selectDm = (option) => {
-  toggle("directMessages", option)
+const selectDm = async (option) => {
+  await changeProperty("directMessages", option)
   dmOpen.value = false
 }
-const selectEncryption = (option) => {
-  toggle("encryption", option)
+const selectEncryption = async (option) => {
+  await changeProperty("encryption", option)
   encryptionOpen.value = false
 }
 const editFocus = () => {
@@ -944,14 +967,53 @@ const logoutAllSubmit = () => {
         onLogout()
       })
       .catch((e) => {
-        console.log(e)
         store.handleAxiosError(e)
       })
   }
 }
-const changeUsername = () => {
-  console.log("Coming Soon™")
+const showChangeUsername = () => {
+  changeUsernameOpen.value = true
+  newUsername.value = store.userData?.username
+  password = ""
 }
+
+const updateUsername = () => {
+  if (!newUsername.value) {
+    store.handleError("Username cannot be empty", 2500)
+    return
+  }
+  if (!password) {
+    store.handleError("Password is required", 2500)
+    return
+  }
+  axios
+    .patch("/api/edit-username", {
+      password,
+      username: newUsername.value
+    })
+    .then((res) => {
+      store.userData.username = res.data.username
+      changeUsernameOpen.value = false
+      newUsername.value = ""
+      password = ""
+    })
+    .catch((e) => {
+      store.handleAxiosError(e)
+    })
+}
+
+const showChangeEmail = () => {
+  console.log("Unavailable")
+}
+
+const showChangePassword = () => {
+  console.log("Unavailable")
+}
+
+const showCloseAccount = () => {
+  console.log("Unavailable")
+}
+
 const clearHistory = () => {
   localStorage.removeItem("switcherHistory")
   axios.delete("/api/clear-history").catch((e) => {
@@ -1060,8 +1122,8 @@ const updatePasskeyName = () => {
     })
 }
 
-const deletePasskey = (id) => {
-  passkeyToDelete.value = id
+const deletePasskey = (passkey) => {
+  passkeyToDelete.value = passkey
   deletePasskeyOpen.value = true
 }
 
@@ -1115,46 +1177,68 @@ const platform = (userAgent) => {
   return "Unknown OS Unknown Browser"
 }
 
-async function toggle(property, value) {
-  if (properties.includes(property)) {
-    if (editing.value === "description") {
-      editing.value = ""
-    }
-    if (
-      ((property === "avatar" || property === "banner") &&
-        value &&
-        (await checkImage(value))) ||
-      (property !== "avatar" && property !== "banner")
-    ) {
-      if (!value) {
-        if (store.userData) {
-          value = !store.userData[property]
-        }
-      }
-      axios
-        .post("/api/user-prop", {
-          property,
-          val: value
-        })
-        .then(() => {
-          if (localStorage.getItem("token")) {
-            store.getUser()
-          }
-        })
-        .catch((e) => {
-          store.handleAxiosError(e)
-        })
-    }
-  }
+const checkImage = async (url) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false)
+
+    img.src = url
+  })
 }
-async function checkImage(url) {
-  try {
-    const res = await fetch(url)
-    const buff = await res.blob()
-    return buff.type.startsWith("image/")
-  } catch {
-    store.handleError("Invalid image")
+
+async function toggle(property) {
+  if (!properties.includes(property)) {
+    return
   }
+
+  if (!store.userData || typeof store.userData[property] === "undefined") {
+    return
+  }
+
+  const value = !store.userData[property]
+  setProperty(property, value)
+}
+
+const changeProperty = async (property, value) => {
+  if (!properties.includes(property)) {
+    return
+  }
+
+  if (property === "description") {
+    editing.value = ""
+  }
+
+  if (!value) {
+    return
+  }
+
+  if (
+    (property === "avatar" || property === "banner") &&
+    !(await checkImage(value))
+  ) {
+    store.handleError("Invalid URL", 2500)
+    return
+  }
+
+  setProperty(property, value)
+}
+
+const setProperty = (property, value) => {
+  axios
+    .post("/api/user-prop", {
+      property,
+      val: value
+    })
+    .then(() => {
+      if (localStorage.getItem("token")) {
+        store.getUser()
+      }
+    })
+    .catch((e) => {
+      store.handleAxiosError(e)
+    })
 }
 
 if (page === "security") {

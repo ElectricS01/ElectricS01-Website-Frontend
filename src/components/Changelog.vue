@@ -2,6 +2,17 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.238 Change Username</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      You can now change your username in
+      <router-link to="/settings/account">Account Settings</router-link>
+    </li>
+    <li>Changing username requires password confirmation</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Update to work with backend 1.115.0</li>
+  </ul>
   <h2 class="settings-text">1.237 Chats List WebSockets</h2>
   <div class="settings-spacer" />
   <ul>
