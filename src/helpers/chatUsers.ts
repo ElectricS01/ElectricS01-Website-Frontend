@@ -1,11 +1,12 @@
 import { useDataStore } from "@/store"
+import { ChatUser } from "@/types/user"
 import axios from "axios"
 
 const store = useDataStore()
 
 export const getChatUsers = async (chatId: number) => {
   try {
-    const response = await axios.get(`/api/chat-users/${chatId}`)
+    const response = await axios.get<ChatUser[]>(`/api/chat-users/${chatId}`)
     return response.data
   } catch (error) {
     store.handleAxiosError(error)

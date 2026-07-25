@@ -11,6 +11,7 @@ export interface Chat {
   description: string
   icon: string
   owner: number
+  requireVerification: boolean
   ownerDetails: BasicUser
   association: ChatAssociation
 }

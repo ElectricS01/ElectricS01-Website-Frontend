@@ -157,36 +157,33 @@
         src="/src/assets/background.png"
         @load="loaded = true"
       />
-      <transition>
-        <modal-simple
-          v-if="store.quickSwitcherShown"
-          :is-active="store.quickSwitcherShown"
-          @close="store.quickSwitcherShown = false"
-        >
-          <div class="switcher-modal">
-            <input
-              id="quick-switcher"
-              v-model="switcherInput"
-              placeholder="Quick switcher"
-              class="switcher-input"
-              @keydown.enter="activateItem(highlightedIndex)"
-              @keydown.down.prevent="moveHighlight(1)"
-              @keydown.up.prevent="moveHighlight(-1)"
-            />
-            <div class="switch-container scroll-bar">
-              <div
-                v-for="(item, index) in searchedItems"
-                :key="item"
-                class="switcher-item"
-                :class="{ highlighted: index === highlightedIndex }"
-                @click="activateItem(index)"
-              >
-                {{ typeof item === "string" ? item : item[0] }}
-              </div>
+      <modal-simple
+        :is-active="store.quickSwitcherShown"
+        @close="store.quickSwitcherShown = false"
+      >
+        <div class="switcher-modal">
+          <input
+            id="quick-switcher"
+            v-model="switcherInput"
+            placeholder="Quick switcher"
+            class="switcher-input"
+            @keydown.enter="activateItem(highlightedIndex)"
+            @keydown.down.prevent="moveHighlight(1)"
+            @keydown.up.prevent="moveHighlight(-1)"
+          />
+          <div class="switch-container scroll-bar">
+            <div
+              v-for="(item, index) in searchedItems"
+              :key="item"
+              class="switcher-item"
+              :class="{ highlighted: index === highlightedIndex }"
+              @click="activateItem(index)"
+            >
+              {{ typeof item === "string" ? item : item[0] }}
             </div>
           </div>
-        </modal-simple>
-      </transition>
+        </div>
+      </modal-simple>
       <router-view />
     </div>
   </main>

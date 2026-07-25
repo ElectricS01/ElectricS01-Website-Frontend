@@ -13,15 +13,12 @@
     "
     @dm-created="onDmCreated($event)"
   />
-  <transition>
-    <modal-simple
-      v-if="embed && !store.quickSwitcherShown"
-      :is-active="embed && !store.quickSwitcherShown"
-      @close="embed = false"
-    >
-      <img :src="embed" class="message-embed" alt="Embedded image" />
-    </modal-simple>
-  </transition>
+  <modal-simple
+    :is-active="embed !== null && !store.quickSwitcherShown"
+    @close="embed = null"
+  >
+    <img :src="embed" class="message-embed" alt="Embedded image" />
+  </modal-simple>
   <create-chat
     ref="createChatRef"
     :create-chat-shown="createChatShown"
@@ -101,6 +98,9 @@
                 class="message-text-medium-gray"
               >
                 This chat requires email verification
+              </b>
+              <b v-if="currentChat.type === 1" class="message-text-medium-gray">
+                {{ "This user does not require encrypted direct messages" }}
               </b>
             </div>
             <div
@@ -633,7 +633,7 @@ const store = useDataStore()
 const route = useRoute()
 const router = useRouter()
 
-const embed = ref()
+const embed = ref(null)
 const currentChat = ref({})
 const replyTo = ref()
 const editing = ref("")
@@ -1157,7 +1157,7 @@ const keyPressed = ({ key, altKey }) => {
     } else if (showUser.value) {
       showUser.value = false
     } else if (embed.value) {
-      embed.value = false
+      embed.value = null
     } else if (createChatShown.value) {
       createChatShown.value = false
     } else if (chatEdit.value !== null) {

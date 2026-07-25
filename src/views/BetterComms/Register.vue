@@ -52,6 +52,7 @@ import axios from "axios"
 import { useDataStore } from "@/store"
 import { useRouter } from "vue-router"
 import { onMounted } from "vue"
+import { savePrivateKey } from "@/helpers/indexedDb"
 
 let username = ""
 let email = ""
@@ -66,33 +67,38 @@ const submit = async () => {
   creating = true
 
   try {
-    const keyPair = await window.crypto.subtle.generateKey(
+    const keyPair = await crypto.subtle.generateKey(
       {
-        hash: { name: "SHA-256" },
-        modulusLength: 2048,
-        name: "RSA-OAEP",
-        publicExponent: new Uint8Array([0x01, 0x00, 0x01])
+        name: "X25519"
       },
       true,
-      ["encrypt", "decrypt"]
+      ["deriveBits"]
     )
-    const exportedKey = await window.crypto.subtle.exportKey(
-      "spki",
-      keyPair.publicKey
-    )
+
+    const exportedKey = await crypto.subtle.exportKey("raw", keyPair.publicKey)
+
     const keyString = btoa(String.fromCharCode(...new Uint8Array(exportedKey)))
-    await store.savePrivateKey(keyPair.privateKey)
-    const privateKey = await store.encryptPrivateKey(
+    await savePrivateKey(keyPair.privateKey)
+
+    store.userData.publicKey = keyPair.publicKey
+    store.userData.privateKey = keyPair.privateKey
+
+    console.log(store.userData.publicKey)
+    console.log(store.userData.privateKey)
+
+    const encryptedPrivateKey = await store.encryptPrivateKey(
       keyPair.privateKey,
       password.trim()
     )
+
+    console.log(encryptedPrivateKey)
 
     store.errorFalse()
 
     const res = await axios.post("/api/register", {
       email: email.toLowerCase().trim(),
       password: password.trim(),
-      privateKey,
+      privateKey: encryptedPrivateKey,
       publicKey: keyString,
       savePrivateKey: false,
       userAgent: navigator.userAgent,
@@ -105,6 +111,10 @@ const submit = async () => {
       headers: { Authorization: res.data.token }
     })
     store.handleUser(res.data)
+
+    console.log(store.userData.publicKey)
+    console.log(store.userData.privateKey)
+
     router.push("/chat")
   } catch (e) {
     creating = false

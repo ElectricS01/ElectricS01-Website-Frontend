@@ -1,8 +1,11 @@
 import { Chat } from "./chat"
 
-export interface BasicUser {
+export interface ChatUser {
   id: number
   username: string
+}
+
+export interface BasicUser extends ChatUser {
   avatar: string
 }
 
@@ -14,4 +17,5 @@ export interface User extends BasicUser {
 
 export interface UserData extends User {
   chatsList: Chat[]
+  emailVerified: boolean
 }

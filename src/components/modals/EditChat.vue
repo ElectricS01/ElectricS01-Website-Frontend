@@ -24,7 +24,7 @@
     </div>
   </modal>
 </template>
-<script setup>
+<script setup lang="ts">
 import Modal from "@/components/core/Modal.vue"
 import ChatModalFields from "./ChatModalFields.vue"
 
@@ -32,23 +32,28 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { ref } from "vue"
 import { getChatUsers } from "@/helpers/chatUsers"
+import { Chat } from "@/types/chat"
+import { ChatUser } from "@/types/user"
 
 const store = useDataStore()
-const props = defineProps({
-  editingChat: Object
-})
-const emits = defineEmits(["hideEditingChat", "chatEdited"])
+const props = defineProps<{
+  editingChat: Chat | null
+}>()
+const emits = defineEmits<{
+  hideEditingChat: []
+  chatEdited: [Chat]
+}>()
 
 const requireVerification = ref(true)
 const chatNameInput = ref("")
 const chatDescriptionInput = ref("")
 const chatIconInput = ref("")
 const chatUsernameInput = ref("")
-const chatUsers = ref([])
+const chatUsers = ref<ChatUser[]>([])
 
 let creating = false
 
-const loadChat = async (chat) => {
+const loadChat = async (chat: Chat) => {
   chatNameInput.value = chat.name
   chatDescriptionInput.value = chat.description
   chatIconInput.value = chat.icon
@@ -92,7 +97,8 @@ const saveChat = () => {
     })
 }
 
-const deleteChat = (chatId) => {
+const deleteChat = (chatId: number | undefined) => {
+  if (chatId === undefined) return
   axios
     .delete(`/api/delete-chat/${chatId}`)
     .then((res) => {

@@ -1,6 +1,6 @@
 <template>
   <transition>
-    <div v-if="isActive" class="model-background">
+    <div v-if="isActive" class="modal-background">
       <div
         class="modal"
         :class="{ 'is-active': isActive }"
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 </script>
 
 <style scoped>
-.model-background {
+.modal-background {
   position: fixed;
   top: 0;
   left: 0;

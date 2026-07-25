@@ -3,6 +3,7 @@ import { defineStore } from "pinia"
 import { nextTick, ref } from "vue"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
+import { loadPrivateKey } from "./helpers/indexedDb"
 
 /**
  * @typedef {import("@/types/user").UserData} UserData
@@ -170,6 +171,9 @@ export const useDataStore = defineStore("store", () => {
       .get("/api/user")
       .then(async (res) => {
         handleUser(res.data)
+        userData.value.privateKey = await loadPrivateKey()
+        console.log(userData.value.publicKey)
+        console.log(userData.value.privateKey)
         if (
           userData.value.chatsList &&
           route.path.startsWith("/chat") &&
@@ -233,25 +237,6 @@ export const useDataStore = defineStore("store", () => {
       }
     })
   }
-  async function savePrivateKey(privateKey) {
-    const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open("MyKeyDatabase", 1)
-      request.onupgradeneeded = (event) => {
-        event.target.result.createObjectStore("keys", { keyPath: "id" })
-      }
-      request.onsuccess = () => resolve(request.result)
-      request.onerror = () => reject(request.error)
-    })
-    const exportedKey = await crypto.subtle.exportKey("jwk", privateKey)
-    await new Promise((resolve, reject) => {
-      const transaction = db.transaction(["keys"], "readwrite")
-      const objectStore = transaction.objectStore("keys")
-      const request = objectStore.put({ id: "privateKey", key: exportedKey })
-      request.onsuccess = resolve
-      request.onerror = reject
-    })
-    userData.value.privateKey = privateKey
-  }
   async function encryptPrivateKey(privateKey, password) {
     const salt = crypto.getRandomValues(new Uint8Array(16))
     const derivedKey = await crypto.subtle.deriveKey(
@@ -301,7 +286,6 @@ export const useDataStore = defineStore("store", () => {
     loadingChats,
     openWebSocket,
     quickSwitcherShown,
-    savePrivateKey,
     showFriends,
     sortSwitcher,
     switcherItems,
