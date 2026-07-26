@@ -7,10 +7,8 @@
     "strict": true,
     "allowJs": true,
 
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
 
     "plugins": [{ "name": "@vue/typescript-plugin" }],

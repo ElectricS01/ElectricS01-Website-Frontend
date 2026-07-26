@@ -99,16 +99,21 @@ export const useDataStore = defineStore("store", () => {
   const openWebSocket = () => {
     if (localStorage.getItem("token")) {
       console.log("Opening socket")
-      ws.value = new WebSocket(
-        process.env.NODE_ENV === "production"
-          ? "wss://electrics01.com/ws"
-          : "ws://localhost:24554/ws"
-      )
+      ws.value = new WebSocket("/ws")
       console.log("Socket connected")
 
       ws.value.onopen = () => {
         ws.value.send(JSON.stringify({ token: localStorage.getItem("token") }))
         console.log("Socket authenticated")
+      }
+
+      ws.value.onclose = (event) => {
+        console.log("Socket closed")
+        console.log(`${event.code}: "${event.reason ?? "no message"}"`)
+        if (event.code === 3000) {
+          router.push("/login?redirect=" + route.path)
+          localStorage.removeItem("token")
+        }
       }
     }
   }
@@ -171,7 +176,7 @@ export const useDataStore = defineStore("store", () => {
       .get("/api/user")
       .then(async (res) => {
         handleUser(res.data)
-        userData.value.privateKey = await loadPrivateKey()
+        userData.value.privateKey = await loadPrivateKey(userData.value.id)
         console.log(userData.value.publicKey)
         console.log(userData.value.privateKey)
         if (
@@ -260,9 +265,10 @@ export const useDataStore = defineStore("store", () => {
     const exportedKey = await crypto.subtle.exportKey("jwk", privateKey)
     const keyString = JSON.stringify(exportedKey)
     const keyBuffer = new TextEncoder().encode(keyString)
+    const iv = crypto.getRandomValues(new Uint8Array(12))
     const encryptedBuffer = await crypto.subtle.encrypt(
       {
-        iv: crypto.getRandomValues(new Uint8Array(12)),
+        iv,
         name: "AES-GCM"
       },
       derivedKey,
@@ -270,6 +276,7 @@ export const useDataStore = defineStore("store", () => {
     )
     return JSON.stringify({
       encryptedKey: Array.from(new Uint8Array(encryptedBuffer)),
+      iv: Array.from(iv),
       salt: Array.from(salt)
     })
   }

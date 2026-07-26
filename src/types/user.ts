@@ -18,4 +18,6 @@ export interface User extends BasicUser {
 export interface UserData extends User {
   chatsList: Chat[]
   emailVerified: boolean
+  publicKey: CryptoKey
+  privateKey: CryptoKey
 }

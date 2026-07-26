@@ -15,7 +15,7 @@ async function openDatabase() {
   })
 }
 
-export async function savePrivateKey(privateKey: CryptoKey) {
+export async function savePrivateKey(privateKey: CryptoKey, userId: number) {
   const db = await openDatabase()
 
   return new Promise<void>((resolve, reject) => {
@@ -23,12 +23,12 @@ export async function savePrivateKey(privateKey: CryptoKey) {
     const store = transaction.objectStore("keys")
 
     const request = store.put({
-      id: "privateKey",
+      id: userId,
       key: privateKey
     })
 
     request.onsuccess = () => {
-      console.log("Private was saved")
+      console.log("Private key was saved")
       resolve()
     }
     request.onerror = () => {
@@ -41,14 +41,14 @@ export async function savePrivateKey(privateKey: CryptoKey) {
   })
 }
 
-export async function loadPrivateKey() {
+export async function loadPrivateKey(userId: number) {
   const db = await openDatabase()
 
   return new Promise<CryptoKey | undefined>((resolve, reject) => {
     const transaction = db.transaction("keys", "readonly")
     const store = transaction.objectStore("keys")
 
-    const request = store.get("privateKey")
+    const request = store.get(userId)
 
     request.onsuccess = () => {
       db.close()
@@ -58,6 +58,8 @@ export async function loadPrivateKey() {
         resolve(undefined)
         return
       }
+
+      console.log("Private key was loaded")
 
       resolve(request.result.key)
     }

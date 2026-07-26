@@ -104,7 +104,13 @@ export default defineConfig({
   server: {
     port: 8080,
     proxy: {
-      "/api": "http://localhost:24555"
+      "/api": {
+        target: "http://localhost:24555"
+      },
+      "/ws": {
+        target: "ws://localhost:24554",
+        ws: true
+      }
     }
   }
 })

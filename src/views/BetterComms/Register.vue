@@ -47,7 +47,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios"
 import { useDataStore } from "@/store"
 import { useRouter } from "vue-router"
@@ -63,6 +63,21 @@ const store = useDataStore()
 const router = useRouter()
 
 const submit = async () => {
+  if (!username) {
+    store.handleError("Username is required", 2500)
+    return
+  }
+
+  if (!email) {
+    store.handleError("Email is required", 2500)
+    return
+  }
+
+  if (!password) {
+    store.handleError("Password is required", 2500)
+    return
+  }
+
   if (creating) return
   creating = true
 
@@ -75,10 +90,13 @@ const submit = async () => {
       ["deriveBits"]
     )
 
-    const exportedKey = await crypto.subtle.exportKey("raw", keyPair.publicKey)
-
-    const keyString = btoa(String.fromCharCode(...new Uint8Array(exportedKey)))
-    await savePrivateKey(keyPair.privateKey)
+    const exportedPublicKey = await crypto.subtle.exportKey(
+      "raw",
+      keyPair.publicKey
+    )
+    const publicKeyString = btoa(
+      String.fromCharCode(...new Uint8Array(exportedPublicKey))
+    )
 
     store.userData.publicKey = keyPair.publicKey
     store.userData.privateKey = keyPair.privateKey
@@ -99,8 +117,8 @@ const submit = async () => {
       email: email.toLowerCase().trim(),
       password: password.trim(),
       privateKey: encryptedPrivateKey,
-      publicKey: keyString,
-      savePrivateKey: false,
+      publicKey: publicKeyString,
+      savePrivateKey: true,
       userAgent: navigator.userAgent,
       username: username.trim()
     })
@@ -111,6 +129,7 @@ const submit = async () => {
       headers: { Authorization: res.data.token }
     })
     store.handleUser(res.data)
+    await savePrivateKey(keyPair.privateKey, store.userData.id)
 
     console.log(store.userData.publicKey)
     console.log(store.userData.privateKey)
