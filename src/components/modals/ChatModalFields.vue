@@ -68,35 +68,25 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { getUserByName } from "@/helpers/chatUsers"
 import { useDataStore } from "@/store"
 import { ref } from "vue"
+import { ChatUser } from "@/types/user"
 
 const store = useDataStore()
 
 defineEmits(["submit"])
 
-const chatName = defineModel("chatName", {
-  default: "",
-  type: String
+const chatName = defineModel<string>("chatName", { required: true })
+const chatDescription = defineModel<string>("chatDescription", {
+  required: true
 })
-const chatDescription = defineModel("chatDescription", {
-  default: "",
-  type: String
+const chatIcon = defineModel<string>("chatIcon", { required: true })
+const requireVerification = defineModel<boolean>("requireVerification", {
+  required: true
 })
-const chatIcon = defineModel("chatIcon", {
-  default: "",
-  type: String
-})
-const requireVerification = defineModel("requireVerification", {
-  default: true,
-  type: Boolean
-})
-const chatUsers = defineModel("chatUsers", {
-  default: [],
-  type: Array
-})
+const chatUsers = defineModel<ChatUser[]>("chatUsers", { required: true })
 
 const chatUsername = ref("")
 

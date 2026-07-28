@@ -4,6 +4,7 @@ body {
   color: #fff;
   /*background-image: linear-gradient(rgb(255, 204, 0),rgb(255, 102, 0));*/ /*debug*/
   background-color: #181a1b;
+  --lightest: #808080;
   --light: #3d4244;
   --grey: #282a2b;
   --grey-hover: #313435;
@@ -11,6 +12,9 @@ body {
   --dark: #212425;
   --dark-hover: #313435;
   --hover-transparent: #31343580;
+  --red: #ff2f2f;
+  --green: #47bf4c;
+  --blue: #1e90ff;
 }
 
 .scroll-bar-dark::-webkit-scrollbar,
@@ -210,9 +214,11 @@ button {
     color 1s ease;
 }
 
+.profile-button-remove,
+.settings-button-red,
 .dark-button-red,
 .button-red {
-  color: #ff2f2f;
+  color: var(--red);
 }
 
 .dark-button-red,
@@ -220,24 +226,28 @@ button {
   background-color: var(--dark);
 }
 
-.profile-button-message,
-.profile-button-add,
-.profile-button-remove,
+.profile-button-message {
+  color: var(--blue);
+
+  &:hover {
+    background-color: #1e90ff1a;
+  }
+}
+
+.profile-button-add {
+  color: var(--green);
+
+  &:hover {
+    background-color: #47bf4c1a;
+  }
+}
+
 .profile-button-pending {
-  background-color: var(--dark);
-  color: #1e90ff;
-  padding: 8px;
-  font-size: 14px;
-  display: flex;
-  width: 100%;
-}
+  color: var(--lightest);
 
-.profile-button-message:hover {
-  background-color: #1e90ff1a;
-}
-
-.profile-button-add:hover {
-  background-color: #47bf4c1a;
+  &:hover {
+    background-color: #8080801a;
+  }
 }
 
 .button-red:hover,
@@ -246,8 +256,15 @@ button {
   background-color: #ff2f2f1a;
 }
 
-.profile-button-pending:hover {
-  background-color: #8080801a;
+.profile-button-message,
+.profile-button-add,
+.profile-button-remove,
+.profile-button-pending {
+  background-color: var(--dark);
+  padding: 8px;
+  font-size: 14px;
+  display: flex;
+  width: 100%;
 }
 
 .profile-buttons {
@@ -446,7 +463,7 @@ button {
   margin: 0;
   font-size: 16px;
   overflow: hidden;
-  background-color: #ff2f2f;
+  background-color: var(--red);
   position: fixed;
   top: 48px;
   left: 0;
@@ -601,6 +618,7 @@ button {
 .scroll-bar-dark::-webkit-scrollbar-thumb:hover,
 .dropdown-toggle:hover,
 .dropdown-menu li:hover,
+.settings-button-container button:hover,
 .settings-button:hover,
 .scroll-bar::-webkit-scrollbar-thumb:hover,
 .left:hover,
@@ -815,7 +833,7 @@ input {
   align-items: center;
   justify-content: center;
   display: flex;
-  background-color: #ff2f2f;
+  background-color: var(--red);
 }
 
 .reply-preview {
@@ -848,7 +866,7 @@ ol {
 
 a {
   text-decoration: none;
-  color: #00a8fc;
+  color: var(--blue);
 }
 
 p {
@@ -945,9 +963,14 @@ code {
 }
 
 .chat-spacer p,
-.message-text-small {
+.message-text-small,
+.bottom-text-small {
   color: grey;
   font-size: 10px;
+}
+
+.bottom-text-small {
+  margin-bottom: 0;
 }
 
 .text-small {
@@ -969,7 +992,12 @@ code {
 }
 
 .error-message {
-  color: #ff2f2f;
+  color: var(--red);
+  font-size: 10px;
+}
+
+.current-session {
+  color: var(--blue);
   font-size: 10px;
 }
 
@@ -1257,6 +1285,8 @@ input:checked + .slider:before {
   overflow-y: auto;
 }
 
+.settings-button-red,
+.settings-button-container button,
 .settings-button {
   background-color: #212425;
   padding: 8px;
@@ -1265,17 +1295,6 @@ input:checked + .slider:before {
   font-size: 16px;
   display: table;
   border-radius: 4px;
-}
-
-.settings-button-red {
-  background-color: #212425;
-  padding: 8px;
-  margin: 4px 0;
-  cursor: pointer;
-  font-size: 16px;
-  display: table;
-  border-radius: 4px;
-  color: #ff2f2f;
 }
 
 .settings-button-container {

@@ -28,6 +28,12 @@ bun prod
 bun lint
 ```
 
+### Checks types
+
+```
+bun typecheck
+```
+
 ### Updates dependencies
 
 ```

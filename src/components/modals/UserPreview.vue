@@ -73,7 +73,6 @@
               !showUser.friend?.status
             "
             class="profile-button-add"
-            style="color: #47bf4c"
             @click="addFriend(showUser.id, false)"
           >
             <icons
@@ -90,7 +89,6 @@
               showUser.friend?.status === 'accepted'
             "
             class="profile-button-remove"
-            style="color: #ff2f2f"
             @click="addFriend(showUser.id, false)"
           >
             <icons
@@ -106,7 +104,6 @@
               showUser.friendRequests && showUser.friend?.status === 'pending'
             "
             class="profile-button-pending"
-            style="color: #808080"
             @click="addFriend(showUser.id, false)"
           >
             <icons

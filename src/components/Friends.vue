@@ -30,7 +30,7 @@
         <button
           v-if="!friend.status"
           class="profile-button-add"
-          style="color: #47bf4c; width: fit-content"
+          style="width: fit-content"
           @click="add(friend.user.id)"
         >
           <icons
@@ -44,7 +44,7 @@
         <button
           v-else-if="friend.status === 'accepted'"
           class="profile-button-remove"
-          style="color: #ff2f2f; width: fit-content"
+          style="width: fit-content"
           @click="add(friend.user.id)"
         >
           <icons
@@ -58,7 +58,7 @@
         <button
           v-else-if="friend.status === 'incoming'"
           class="profile-button-pending"
-          style="color: #808080; width: fit-content"
+          style="width: fit-content"
           @click="add(friend.user.id)"
         >
           <icons
@@ -72,7 +72,7 @@
         <button
           v-else-if="friend.status === 'pending'"
           class="profile-button-pending"
-          style="color: #47bf4c; width: fit-content"
+          style="width: fit-content"
           @click="add(friend.user.id)"
         >
           <icons

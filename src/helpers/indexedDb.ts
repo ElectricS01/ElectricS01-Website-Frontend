@@ -65,7 +65,7 @@ export async function loadPrivateKey(userId: number) {
     }
 
     request.onerror = () => {
-      console.log("Private key could not be loaded")
+      console.log("Error: Private key could not be loaded")
       console.error(request.error)
       db.close()
       reject(request.error)

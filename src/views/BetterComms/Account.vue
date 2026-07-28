@@ -1,4 +1,80 @@
 <template>
+  <modal :is-active="deleteSessionOpen" @close="deleteSessionOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">
+        Delete {{ sessionToDelete.name ?? "Session" }}
+      </p>
+      <div class="text-small">
+        <label for="password">Password</label>
+      </div>
+      <input
+        id="password"
+        v-model="password"
+        placeholder="Password"
+        class="modal-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="deleteSession"
+      />
+      <div class="settings-button-container">
+        <button @click="deleteSessionOpen = false">Cancel</button>
+        <button class="button-red" @click="deleteSession">Delete</button>
+      </div>
+    </div>
+  </modal>
+  <modal :is-active="exportKeyOpen" @close="exportKeyOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Export your Private Key</p>
+      <div class="text-small">
+        <label for="password">Password</label>
+      </div>
+      <input
+        id="password"
+        v-model="password"
+        placeholder="Password"
+        class="modal-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="exportPrivateKey"
+      />
+      <div class="settings-button-container">
+        <button @click="exportKeyOpen = false">Cancel</button>
+        <button @click="exportPrivateKey">Export</button>
+      </div>
+    </div>
+  </modal>
+  <modal :is-active="importKeyOpen" @close="importKeyOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Import your Private Key</p>
+      <div class="text-small">
+        <label for="privateKey">Private Key</label>
+      </div>
+      <input
+        id="privateKey"
+        v-model="newPrivateKey"
+        placeholder="Private Key"
+        class="modal-input"
+        autocomplete="off"
+        @keydown.enter="importPrivateKey"
+      />
+      <div class="text-small">
+        <label for="password">Password</label>
+      </div>
+      <input
+        id="password"
+        v-model="password"
+        placeholder="Password"
+        class="modal-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="importPrivateKey"
+      />
+      <div class="settings-button-container">
+        <button @click="importKeyOpen = false">Cancel</button>
+        <button @click="importPrivateKey">Import</button>
+      </div>
+    </div>
+  </modal>
   <modal :is-active="changeUsernameOpen" @close="changeUsernameOpen = false">
     <div class="settings-modal">
       <p class="settings-text">Change Username</p>
@@ -59,13 +135,8 @@
         your device
       </p>
       <div class="settings-button-container">
-        <button class="settings-button" @click="deletePasskeyOpen = false">
-          Cancel
-        </button>
-        <button
-          class="settings-button-red"
-          @click="confirmDeletePasskeyOpen = true"
-        >
+        <button @click="deletePasskeyOpen = false">Cancel</button>
+        <button class="button-red" @click="confirmDeletePasskeyOpen = true">
           Delete
         </button>
       </div>
@@ -83,7 +154,7 @@
         @keydown.enter="submitFeedback"
       />
       <div class="settings-button-container">
-        <button class="settings-button" @click="submitFeedback">Enter</button>
+        <button @click="submitFeedback">Enter</button>
       </div>
       <p class="message-text-medium-gray">
         Your user identification number is recorded for reference
@@ -102,10 +173,8 @@
         @keydown.enter="logoutAllSubmit"
       />
       <div class="settings-button-container">
-        <button class="settings-button" @click="logoutAllOpen = false">
-          Cancel
-        </button>
-        <button class="settings-button-red" @click="logoutAllSubmit">
+        <button @click="logoutAllOpen = false">Cancel</button>
+        <button class="button-red" @click="logoutAllSubmit">
           Logout everywhere
         </button>
       </div>
@@ -130,15 +199,8 @@
         @keydown.enter="confirmDeletePasskey"
       />
       <div class="settings-button-container">
-        <button
-          class="settings-button"
-          @click="confirmDeletePasskeyOpen = false"
-        >
-          Cancel
-        </button>
-        <button class="settings-button-red" @click="confirmDeletePasskey">
-          Delete
-        </button>
+        <button @click="confirmDeletePasskeyOpen = false">Cancel</button>
+        <button class="button-red" @click="confirmDeletePasskey">Delete</button>
       </div>
     </div>
   </modal>
@@ -164,7 +226,7 @@
         @keydown.enter="verify2FA()"
       />
       <div class="settings-button-container">
-        <button class="settings-button" @click="verify2FA()">Enable</button>
+        <button @click="verify2FA()">Enable</button>
       </div>
     </div>
   </modal>
@@ -183,7 +245,7 @@
         @keydown.enter="disable2FA()"
       />
       <div class="settings-button-container">
-        <button class="settings-button" @click="disable2FA()">Disable</button>
+        <button @click="disable2FA()">Disable</button>
       </div>
     </div>
   </modal>
@@ -283,34 +345,22 @@
             </div>
             <div class="settings-spacer" />
             Allow friend requests from new people
-            <label class="switch">
-              <input
-                type="checkbox"
-                :checked="store.userData?.friendRequests"
-                @click="toggle('friendRequests')"
-              />
-              <span class="slider" />
-            </label>
+            <toggle
+              :value="store.userData?.friendRequests"
+              @switch="toggleProp('friendRequests')"
+            />
             <div class="settings-spacer" />
             Show the date of your accounts creation on your profile
-            <label class="switch">
-              <input
-                type="checkbox"
-                :checked="store.userData?.showCreated"
-                @click="toggle('showCreated')"
-              />
-              <span class="slider" />
-            </label>
+            <toggle
+              :value="store.userData?.showCreated"
+              @switch="toggleProp('showCreated')"
+            />
             <div class="settings-spacer" />
             Save Quick Switcher history online
-            <label class="switch">
-              <input
-                type="checkbox"
-                :checked="store.userData?.saveSwitcher"
-                @click="toggle('saveSwitcher')"
-              />
-              <span class="slider" />
-            </label>
+            <toggle
+              :value="store.userData?.saveSwitcher"
+              @switch="toggleProp('saveSwitcher')"
+            />
             <div class="settings-spacer" />
             Clear your Quick Switcher history
             <div class="settings-button" @click="clearHistory()">
@@ -373,15 +423,19 @@
               }"
             >
               Save your Encryption Private Key
-              <label class="switch">
-                <input
-                  type="checkbox"
-                  :checked="store.userData?.savePrivateKey"
+              <div class="button-container">
+                <toggle
+                  :value="store.userData?.savePrivateKey"
                   :disabled="store.userData?.encryption === 'never'"
-                  @click="toggle('savePrivateKey')"
+                  @switch="toggleProp('savePrivateKey')"
                 />
-                <span class="slider" />
-              </label>
+                <div class="settings-button" @click="showExportKey">
+                  Export Private Key
+                </div>
+                <div class="settings-button" @click="showImportKey">
+                  Import Private Key
+                </div>
+              </div>
             </div>
             <div class="message-text-small">
               If enabled, your private key will be encrypted using your password
@@ -462,12 +516,28 @@
                 :key="session.id"
                 class="grid-sessions-item"
               >
-                <p>{{ platform(session.userAgent) }}</p>
+                {{ platform(session.userAgent) }}
+                <b
+                  v-if="store.userData.sessionId === session.id"
+                  class="current-session"
+                >
+                  Current
+                </b>
                 <p class="message-text-small">
                   Added: {{ dayjsLong(session.createdAt) }} -
                   {{ dayjsSince(session.createdAt) }}
                 </p>
-                <p class="message-text-small">Id: {{ session.id }}</p>
+                <p class="message-text-small">
+                  Expires: {{ dayjsLong(session.expiresAt) }} -
+                  {{ dayjsSince(session.expiresAt) }}
+                </p>
+                <p class="bottom-text-small">Id: {{ session.id }}</p>
+                <div
+                  class="settings-button-red"
+                  @click="showDeleteSession(session)"
+                >
+                  Delete
+                </div>
               </div>
             </div>
           </div>
@@ -666,7 +736,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.239.1</div>
+            <div>Version: 1.240.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -745,6 +815,7 @@ import Modal from "@/components/core/Modal.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
+import Toggle from "@/components/Toggle.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -786,6 +857,9 @@ const buildDate = __VITE_BUILD_DATE__ || "Unknown"
 const changeUsernameOpen = ref(false)
 const renamePasskeyOpen = ref(false)
 const deletePasskeyOpen = ref(false)
+const deleteSessionOpen = ref(false)
+const exportKeyOpen = ref(false)
+const importKeyOpen = ref(false)
 const modalOpen = ref(false)
 const logoutAllOpen = ref(false)
 const confirmDeletePasskeyOpen = ref(false)
@@ -804,6 +878,8 @@ const newUsername = ref("")
 const passkeyName = ref("")
 const selectedPasskey = ref()
 const passkeyToDelete = ref()
+const sessionToDelete = ref()
+const newPrivateKey = ref("")
 let token = ""
 let page = "account"
 let feedbackText = ""
@@ -936,7 +1012,7 @@ const onLogout = () => {
   Object.assign(axios.defaults, {
     headers: { Authorization: null }
   })
-  store.ws.close()
+  store.ws?.close()
   store.ws = null
   console.log("Socket closed")
 
@@ -951,6 +1027,10 @@ const logout = () => {
       onLogout()
     })
     .catch((e) => {
+      if (e?.response?.status === 401) {
+        onLogout()
+        return
+      }
       store.handleAxiosError(e)
     })
 }
@@ -1004,14 +1084,61 @@ const updateUsername = () => {
 
 const showChangeEmail = () => {
   console.log("Unavailable")
+  store.handleError("Unavailable, please contact support")
 }
 
 const showChangePassword = () => {
   console.log("Unavailable")
+  store.handleError("Unavailable, please contact support")
 }
 
 const showCloseAccount = () => {
   console.log("Unavailable")
+  store.handleError("Unavailable, please contact support")
+}
+
+const showExportKey = () => {
+  exportKeyOpen.value = true
+  password = ""
+}
+
+const showImportKey = () => {
+  importKeyOpen.value = true
+  password = ""
+}
+
+const exportPrivateKey = () => {
+  console.log("Unavailable")
+  store.handleError("Unavailable, please contact support")
+}
+
+const importPrivateKey = () => {
+  console.log("Unavailable")
+  store.handleError("Unavailable, please contact support")
+}
+
+const showDeleteSession = (session) => {
+  deleteSessionOpen.value = true
+  sessionToDelete.value = session
+  password = ""
+}
+
+const deleteSession = async () => {
+  try {
+    await axios.delete(`/api/delete-session/${sessionToDelete.value.id}`, {
+      data: {
+        password: password
+      }
+    })
+    deleteSessionOpen.value = false
+    password = ""
+    sessions.value = sessions.value.filter(
+      (s) => s.id !== sessionToDelete.value.id
+    )
+    sessionToDelete.value = null
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
 
 const clearHistory = () => {
@@ -1188,7 +1315,7 @@ const checkImage = async (url) => {
   })
 }
 
-async function toggle(property) {
+async function toggleProp(property) {
   if (!properties.includes(property)) {
     return
   }

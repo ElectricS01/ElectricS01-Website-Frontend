@@ -2,6 +2,20 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.240 Deleting Sessions</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      You can now delete sessions in
+      <router-link to="/account/account">Security Settings</router-link>
+    </li>
+    <li>Deleting a session requires password confirmation</li>
+    <li>Your current session is highlighted</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.117.0</li>
+    <li>Sessions now expire after 30 days (backend 1.117.0)</li>
+  </ul>
   <h2 class="settings-text">1.239 New Encryption Algorithm</h2>
   <div class="settings-spacer" />
   <ul>

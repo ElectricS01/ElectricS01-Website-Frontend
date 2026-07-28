@@ -47,7 +47,7 @@
     </div>
   </modal>
 </template>
-<script setup>
+<script setup lang="ts">
 import Modal from "@/components/core/Modal.vue"
 import ChatModalFields from "./ChatModalFields.vue"
 
@@ -55,11 +55,14 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { ref } from "vue"
 import { getUserByName, sendDm } from "@/helpers/chatUsers"
+import { ChatUser } from "@/types/user"
 
 const store = useDataStore()
+
 defineProps({
   createChatShown: Boolean
 })
+
 const emits = defineEmits(["hideCreateChat", "chatCreated", "dmCreated"])
 
 const createChatType = ref(true)
@@ -68,7 +71,7 @@ const chatDescriptionInput = ref("")
 const chatIconInput = ref("")
 const requireVerification = ref(true)
 const chatUsernameInput = ref("")
-const chatUsers = ref([])
+const chatUsers = ref<ChatUser[]>([])
 
 let creating = false
 

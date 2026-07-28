@@ -36,9 +36,11 @@ import { Chat } from "@/types/chat"
 import { ChatUser } from "@/types/user"
 
 const store = useDataStore()
+
 const props = defineProps<{
   editingChat: Chat | null
 }>()
+
 const emits = defineEmits<{
   hideEditingChat: []
   chatEdited: [Chat]
