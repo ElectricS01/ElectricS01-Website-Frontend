@@ -35,6 +35,7 @@
   <div class="chat-container">
     <chats-list
       v-if="store.chatBarOpen === 'true'"
+      v-model:context-menu="chatsSidebarContext"
       :chats="store.userData.chatsList"
       :loading="store.loadingChats"
       :current-id="store.showFriends ? undefined : currentChat.id"
@@ -43,6 +44,8 @@
       @open-create-chat="openCreateChat"
       @show-edit-chat="showEditChat($event)"
       @show-friends="store.showFriends = true"
+      @remove-user="removeUser($event, store.userData.id)"
+      @read-chat="readChat($event)"
     />
     <friends
       v-if="store.showFriends"
@@ -447,128 +450,25 @@
         width: store.search || store.pins || store.notifications ? '342px' : ''
       }"
     >
-      <div
+      <users-sidebar
         v-if="
           !loadingMessages &&
           !store.search &&
           !store.pins &&
           !store.notifications
         "
-      >
-        <div class="filter-button" @click="userSortPress()">
-          <p v-if="store.sortUsers === 'id'">Sort: Id</p>
-          <p v-else-if="store.sortUsers === 'username'">Sort: Username</p>
-          <p v-else-if="store.sortUsers === 'status'">Sort: Status</p>
-          <p v-else-if="store.sortUsers === 'statusMessage'">
-            Sort: Status Message
-          </p>
-        </div>
-        <div
-          v-if="currentChat.users?.some((user) => user?.status !== 'offline')"
-          class="sidebar-spacer"
-        >
-          <p class="message-text-small">Online</p>
-          <div />
-        </div>
-        <user-row
-          v-for="user in onlineUsers"
-          :key="user.id"
-          :user="user"
-          @contextmenu.prevent="showContextMenu($event, user)"
-          @click="openUser(user.id)"
-        />
-        <div
-          v-if="currentChat.users?.some((user) => user?.status === 'offline')"
-          class="sidebar-spacer"
-        >
-          <p class="message-text-small">Offline</p>
-          <div />
-        </div>
-        <user-row
-          v-for="user in offlineUsers"
-          :key="user.id"
-          :user="user"
-          @contextmenu.prevent="showContextMenu($event, user)"
-          @click="openUser(user.id)"
-        />
-        <context-menu
-          v-if="contextMenuVisible"
-          :position="contextMenuPosition"
-          @close="contextMenuVisible = false"
-        >
-          <div
-            class="context-menu-item"
-            @click="openUser(contextMenuItemUser.id)"
-          >
-            Profile
-          </div>
-          <div
-            v-if="contextMenuItemUser.id !== store.userData.id"
-            class="context-menu-item"
-            @click="contextMenuSendDm(contextMenuItemUser.id)"
-          >
-            Message {{ contextMenuItemUser.username }}
-          </div>
-          <div
-            v-if="
-              contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friendRequests &&
-              !contextMenuItemUser.friend?.status
-            "
-            class="context-menu-item"
-            @click="addFriend(contextMenuItemUser.id, true)"
-          >
-            Friend {{ contextMenuItemUser.username }}
-          </div>
-          <div
-            v-else-if="
-              contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friend?.status === 'accepted'
-            "
-            class="context-menu-item"
-            @click="addFriend(contextMenuItemUser.id, true)"
-          >
-            Unfriend {{ contextMenuItemUser.username }}
-          </div>
-          <div
-            v-else-if="
-              contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friend?.status === 'pending'
-            "
-            class="context-menu-item"
-            @click="addFriend(contextMenuItemUser.id, true)"
-          >
-            Cancel {{ contextMenuItemUser.username }}
-          </div>
-          <div
-            v-else-if="
-              contextMenuItemUser.id !== store.userData.id &&
-              contextMenuItemUser.friend?.status === 'incoming'
-            "
-            class="context-menu-item"
-            @click="addFriend(contextMenuItemUser.id, true)"
-          >
-            Accept {{ contextMenuItemUser.username }}
-          </div>
-          <div
-            v-if="
-              currentChat.owner === store.userData.id &&
-              contextMenuItemUser.id !== store.userData.id &&
-              currentChat.type === 0
-            "
-            class="context-menu-item"
-            @click="removeUser(contextMenuItemUser.id)"
-          >
-            Remove {{ contextMenuItemUser.username }}
-          </div>
-          <div
-            class="context-menu-item"
-            @click="copyText(contextMenuItemUser.id)"
-          >
-            Copy User ID
-          </div>
-        </context-menu>
-      </div>
+        v-model:context-menu="usersSidebarContext"
+        :sort-users="sortUsers"
+        :users="currentChat.users"
+        :can-remove="
+          currentChat.owner === store.userData.id && currentChat.type === 0
+        "
+        :open-user="openUser"
+        :add-friend="addFriend"
+        @remove-user="removeUser(currentChat.id, $event)"
+        @dm-created="onDmCreated($event)"
+        @user-sort-pressed="userSortPress"
+      />
       <search-sidebar
         v-else-if="store.search"
         :chat-messages="currentChat.messages"
@@ -605,7 +505,6 @@ import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import Sidebar from "@/components/core/Sidebar.vue"
-import ContextMenu from "@/components/core/ContextMenu.vue"
 import UserPreview from "@/components/modals/UserPreview.vue"
 import CreateChat from "@/components/modals/CreateChat.vue"
 import EditChat from "@/components/modals/EditChat.vue"
@@ -615,16 +514,15 @@ import PinsSidebar from "@/components/sidebars/PinsSidebar.vue"
 import ChatSpacer from "@/components/ChatSpacer.vue"
 import SearchSidebar from "@/components/sidebars/SearchSidebar.vue"
 import NotificationsSidebar from "@/components/sidebars/NotificationsSidebar.vue"
-import UserRow from "@/components/UserRow.vue"
 import EmojiPicker from "@/components/EmojiPicker.vue"
 import MessageEmoji from "@/components/MessageEmoji.vue"
 import ChatsList from "@/components/sidebars/ChatsList.vue"
+import UsersSidebar from "@/components/sidebars/UsersSidebar.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { sendDm } from "@/helpers/chatUsers"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
 import { normalizedEmojis } from "@/helpers/emoji"
@@ -647,11 +545,12 @@ const chatEdit = ref(null)
 const reactingTo = ref(-1)
 const emojiPickerIndex = ref(0)
 const emojiPickerVisible = ref(false)
-const contextMenuVisible = ref(false)
-const contextMenuItemUser = ref({})
-const contextMenuPosition = ref({ x: 0, y: 0 })
 const inputText = ref("")
 const override = ref(false)
+const sortUsers = ref("id")
+
+const usersSidebarContext = ref(false)
+const chatsSidebarContext = ref(false)
 
 let editText
 
@@ -727,8 +626,14 @@ if (!localStorage.getItem("token")) {
   }
 }
 
-const userSort = (property) => {
-  if (property !== "id") {
+if (localStorage.getItem("sortUsers")) {
+  sortUsers.value = localStorage.getItem("sortUsers")
+} else {
+  sortUsers.value = "id"
+}
+
+const userSort = () => {
+  if (sortUsers.value !== "id") {
     currentChat.value.users
       .sort((a, b) => {
         if (a && b) {
@@ -744,34 +649,35 @@ const userSort = (property) => {
       })
       .sort((a, b) => {
         if (a && b) {
-          if (a[property] === null && b[property] === null) {
+          if (a[sortUsers.value] === null && b[sortUsers.value] === null) {
             return 0
-          } else if (a[property] === null) {
+          } else if (a[sortUsers.value] === null) {
             return 1
-          } else if (b[property] === null) {
+          } else if (b[sortUsers.value] === null) {
             return -1
           }
-          return a[property].localeCompare(b[property])
+          return a[sortUsers.value].localeCompare(b[sortUsers.value])
         }
       })
   } else {
     currentChat.value.users.sort((a, b) => a?.id - b?.id)
   }
 }
+
 const userSortPress = () => {
-  if (store.sortUsers === "id") {
+  if (sortUsers.value === "id") {
     localStorage.setItem("sortUsers", "username")
-  } else if (store.sortUsers === "username") {
+  } else if (sortUsers.value === "username") {
     localStorage.setItem("sortUsers", "status")
-  } else if (store.sortUsers === "status") {
+  } else if (sortUsers.value === "status") {
     localStorage.setItem("sortUsers", "statusMessage")
   } else {
     localStorage.setItem("sortUsers", "id")
   }
   if (localStorage.getItem("sortUsers")) {
-    store.sortUsers = localStorage.getItem("sortUsers")
+    sortUsers.value = localStorage.getItem("sortUsers")
   }
-  userSort(store.sortUsers)
+  userSort(sortUsers.value)
 }
 
 const focusInput = () => {
@@ -921,6 +827,7 @@ const pinMessage = (messageId, pinned) => {
 }
 
 const showEditChat = (chat) => {
+  chatsSidebarContext.value = false
   editChatRef.value?.loadChat?.(chat)
   chatEdit.value = chat
 }
@@ -954,30 +861,32 @@ const replyToMessage = (messageId) => {
   focusInput()
 }
 
-const handleChatCreated = (chat) => {
-  createChatShown.value = false
+const handleChatChange = (chat) => {
   currentChat.value = chat
+  userSort()
   router.push(`/chat/${currentChat.value.id}`)
+  updatePageTitle()
   replyTo.value = null
   if (currentChat.value.messages) {
     currentChat.value.messages.focus = false
     scrollDown()
   }
+}
+
+const handleChatCreated = (chat) => {
+  createChatShown.value = false
+  handleChatChange(chat)
 }
 
 const handleChatEdited = (chat) => {
   chatEdit.value = null
-  currentChat.value = chat
-  router.push(`/chat/${currentChat.value.id}`)
-  replyTo.value = null
-  if (currentChat.value.messages) {
-    currentChat.value.messages.focus = false
-    scrollDown()
-  }
+  handleChatChange(chat)
 }
 
 const openUser = (userId) => {
-  contextMenuVisible.value = false
+  usersSidebarContext.value = false
+  chatsSidebarContext.value = false
+
   axios
     .post("/api/get-user", {
       userId
@@ -1021,26 +930,18 @@ const findUser = (userId) => {
   }
   return { username: userId }
 }
-const removeUser = (userId) => {
-  contextMenuVisible.value = false
+const removeUser = (chatId, userId) => {
+  usersSidebarContext.value = false
   axios
-    .post(`/api/remove/${currentChat.value.id}/${userId}`)
+    .post(`/api/remove/${chatId}/${userId}`)
     .then((res) => {
       store.userData.chatsList = res.data.chats
       store.chatSort()
-      currentChat.value = res.data.chat
-      if (currentChat.value.messages) {
-        currentChat.value.messages.focus = false
-        scrollDown()
-      }
+      handleChatChange(res.data.chat)
     })
     .catch((e) => {
       store.handleAxiosError(e)
     })
-}
-const copyText = (text) => {
-  contextMenuVisible.value = false
-  navigator.clipboard.writeText(text)
 }
 const scrollDown = (override) => {
   nextTick(() => {
@@ -1105,27 +1006,20 @@ const editLast = () => {
 async function addFriend(userId, notOpen) {
   await axios
     .post(`/api/friend/${userId}`)
-    .then(async () => {
+    .then(async (res) => {
       if (notOpen === false) {
-        openUser(userId)
+        showUser.value.friend = {
+          status: res.data.status
+        }
       } else if (notOpen) {
-        await getChat(currentChat.value.id)
-        contextMenuItemUser.value = await findUser(contextMenuItemUser.value.id)
+        currentChat.value.users.find((user) => user.id === userId).friend = {
+          status: res.data.status
+        }
       }
     })
     .catch((e) => {
       store.handleAxiosError(e)
     })
-}
-
-const contextMenuSendDm = async (id) => {
-  try {
-    contextMenuVisible.value = false
-    const data = await sendDm(id)
-    onDmCreated(data)
-  } catch (e) {
-    store.handleAxiosError(e)
-  }
 }
 
 const onDmCreated = (data) => {
@@ -1136,22 +1030,31 @@ const onDmCreated = (data) => {
   store.userData.chatsList = data.chats
   store.chatSort()
   inputText.value = ""
-  currentChat.value = data.chat
-  currentChat.value.messages.focus = false
-  router.push(`/chat/${currentChat.value.id}`)
-  scrollDown()
+  handleChatChange(data.chat)
 }
 
-const showContextMenu = (event, user) => {
-  event.preventDefault()
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  contextMenuVisible.value = true
-  contextMenuItemUser.value = user
+const readChat = async (chatId) => {
+  try {
+    chatsSidebarContext.value = false
+    await axios.post(`/api/read-new/${chatId}`)
+    if (currentChat.value.id === chatId) {
+      currentChat.value.lastRead = currentChat.value.messages.length
+    }
+    store.userData.chatsList[
+      store.userData.chatsList.findIndex((chat) => chat.id === chatId)
+    ].association.notifications = 0
+    updatePageTitle()
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
+
 const keyPressed = ({ key, altKey }) => {
   if (key === "Escape") {
-    if (contextMenuVisible.value) {
-      contextMenuVisible.value = false
+    if (usersSidebarContext.value) {
+      usersSidebarContext.value = false
+    } else if (chatsSidebarContext.value) {
+      chatsSidebarContext.value = false
     } else if (editing.value === "status") {
       editing.value = ""
     } else if (showUser.value) {
@@ -1180,14 +1083,7 @@ const keyPressed = ({ key, altKey }) => {
     } else if (
       currentChat.value.lastRead !== currentChat.value.messages.length
     ) {
-      currentChat.value.lastRead = currentChat.value.messages.length
-      axios.post(`/api/read-new/${currentChat.value.id}`)
-      store.userData.chatsList[
-        store.userData.chatsList.findIndex(
-          (chat) => chat.id === parseInt(route.params.chatId)
-        )
-      ].association.notifications = 0
-      updatePageTitle()
+      readChat(currentChat.value.id)
     }
   } else if (altKey) {
     if (key == "ArrowDown") {
@@ -1221,12 +1117,6 @@ const scrollEvent = () => {
     scrollTop + clientHeight <=
     scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
 }
-const onlineUsers = computed(() =>
-  currentChat.value.users.filter((user) => user?.status === "online")
-)
-const offlineUsers = computed(() =>
-  currentChat.value.users.filter((user) => user?.status === "offline")
-)
 const matchingEmoji = computed(() => {
   const text = getEmojiText()
   if (text == null || override.value) return []
@@ -1351,7 +1241,7 @@ async function getChat(id) {
       currentChat.value = res.data
       currentChat.value.messages.focus = false
       router.push(`/chat/${currentChat.value.id}`)
-      userSort(store.sortUsers)
+      userSort()
       replyTo.value = null
       loadingMessages.value = false
       scrollDown(true)

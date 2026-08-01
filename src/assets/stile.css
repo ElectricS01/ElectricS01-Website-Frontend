@@ -628,7 +628,6 @@ button:hover,
   background-color: var(--dark-hover);
 }
 
-.context-menu-item:hover,
 .chat-settings:hover,
 .message-grid:hover,
 .user-row:hover,
@@ -848,11 +847,6 @@ input {
   margin: 8px;
   padding: 6px;
   resize: none;
-}
-
-.context-menu-item {
-  padding: 4px;
-  cursor: pointer;
 }
 
 .highlight {

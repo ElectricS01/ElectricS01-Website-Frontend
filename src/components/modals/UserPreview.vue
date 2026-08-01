@@ -100,9 +100,7 @@
             Remove Friend
           </button>
           <button
-            v-else-if="
-              showUser.friendRequests && showUser.friend?.status === 'pending'
-            "
+            v-else-if="showUser.friend?.status === 'pending'"
             class="profile-button-pending"
             @click="addFriend(showUser.id, false)"
           >
@@ -119,8 +117,7 @@
               showUser.id !== store.userData.id &&
               showUser.friend?.status === 'incoming'
             "
-            class="profile-button-pending"
-            style="color: #47bf4c"
+            class="profile-button-add"
             @click="addFriend(showUser.id, false)"
           >
             <icons

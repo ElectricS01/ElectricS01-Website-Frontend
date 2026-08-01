@@ -14,16 +14,16 @@
     >
       <div
         style="display: flex; align-items: center; cursor: pointer"
-        @click="sendUserDm(friend.user.id)"
+        @click="sendUserDm(friend.user2.id)"
       >
         <profile-picture
           size="32"
-          :avatar="friend.user.avatar"
+          :avatar="friend.user2.avatar"
           :small="true"
           style="margin: 8px"
         />
         <div style="padding: 8px">
-          {{ friend.user.username }}
+          {{ friend.user2.username }}
         </div>
       </div>
       <div style="display: flex; align-items: center">
@@ -31,7 +31,7 @@
           v-if="!friend.status"
           class="profile-button-add"
           style="width: fit-content"
-          @click="add(friend.user.id)"
+          @click="add(friend.user2.id)"
         >
           <icons
             style="padding-right: 4px"
@@ -45,7 +45,7 @@
           v-else-if="friend.status === 'accepted'"
           class="profile-button-remove"
           style="width: fit-content"
-          @click="add(friend.user.id)"
+          @click="add(friend.user2.id)"
         >
           <icons
             style="padding-right: 4px"
@@ -56,10 +56,10 @@
           Remove Friend
         </button>
         <button
-          v-else-if="friend.status === 'incoming'"
+          v-else-if="friend.status === 'pending'"
           class="profile-button-pending"
           style="width: fit-content"
-          @click="add(friend.user.id)"
+          @click="add(friend.user2.id)"
         >
           <icons
             style="padding-right: 4px"
@@ -70,10 +70,10 @@
           Pending
         </button>
         <button
-          v-else-if="friend.status === 'pending'"
-          class="profile-button-pending"
+          v-else-if="friend.status === 'incoming'"
+          class="profile-button-add"
           style="width: fit-content"
-          @click="add(friend.user.id)"
+          @click="add(friend.user2.id)"
         >
           <icons
             style="padding-right: 4px"

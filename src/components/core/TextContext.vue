@@ -1,6 +1,6 @@
 <template>
-  <div class="parent" :style="menuStyle">
-    <div popover class="context-menu text-small">
+  <div class="text-parent" :style="menuStyle">
+    <div popover class="text-context-menu text-small">
       {{ props.text }}
     </div>
   </div>
@@ -27,12 +27,12 @@ const menuStyle = computed<CSSProperties>(() => {
 </script>
 
 <style scoped>
-.parent {
+.text-parent {
   position: fixed;
   z-index: 3;
 }
 
-.context-menu {
+.text-context-menu {
   translate: -50% -100%;
   inset: unset;
   display: block;

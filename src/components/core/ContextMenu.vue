@@ -48,7 +48,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style>
 .parent {
   anchor-name: --i-btn;
   position: absolute;
@@ -68,6 +68,15 @@ onMounted(() => {
   padding: 2px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   width: max-content;
+
+  div {
+    padding: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--dark);
+    }
+  }
 }
 
 @position-try --right-top {

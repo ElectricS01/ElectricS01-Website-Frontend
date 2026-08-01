@@ -237,11 +237,6 @@ if (localStorage.getItem("chatBarOpen")) {
 } else {
   store.chatBarOpen = false
 }
-if (localStorage.getItem("sortUsers")) {
-  store.sortUsers = localStorage.getItem("sortUsers")
-} else {
-  store.sortUsers = "id"
-}
 
 const active = (routePattern) => route.path.startsWith(routePattern)
 const mobileNav = () => {

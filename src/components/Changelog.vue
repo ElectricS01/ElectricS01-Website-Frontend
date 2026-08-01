@@ -2,18 +2,35 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.241 Leaving chats</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added a context menu to the Chats List</li>
+    <li>You can now leave chats using the Chats List context menu</li>
+    <li>You can mark a chat as read from the context menu</li>
+    <li>You can edit the chat name from the context menu</li>
+    <li>You can copy the Chat ID from the context menu</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.118.0</li>
+  </ul>
   <h2 class="settings-text">1.240 Deleting Sessions</h2>
   <div class="settings-spacer" />
   <ul>
     <li>
       You can now delete sessions in
-      <router-link to="/account/account">Security Settings</router-link>
+      <router-link to="/account/security">Security Settings</router-link>
     </li>
     <li>Deleting a session requires password confirmation</li>
     <li>Your current session is highlighted</li>
     <li>Switched more components to use Typescript</li>
     <li>Refactoring</li>
     <li>Update to work with backend 1.117.0</li>
+    <li>
+      Encrypted private keys are now correctly uploaded to the backend during
+      registration (1.239.1)
+    </li>
+    <li>Multiple private keys per device are now supported (1.239.1)</li>
     <li>Sessions now expire after 30 days (backend 1.117.0)</li>
   </ul>
   <h2 class="settings-text">1.239 New Encryption Algorithm</h2>
@@ -580,7 +597,7 @@
     </li>
     <li>
       Added Sessions in
-      <router-link to="/account/account">Security Settings</router-link>
+      <router-link to="/account/security">Security Settings</router-link>
     </li>
     <li>
       The date and time when a message was edited can now be seen by hovering
@@ -599,7 +616,7 @@
     </li>
     <li>
       Added
-      <router-link to="/account/account">Security Settings</router-link>
+      <router-link to="/account/security">Security Settings</router-link>
     </li>
     <li>Bug fixes</li>
     <li>Updated dependencies</li>
