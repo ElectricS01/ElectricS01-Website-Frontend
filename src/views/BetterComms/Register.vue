@@ -53,6 +53,7 @@ import { useDataStore } from "@/store"
 import { useRouter } from "vue-router"
 import { onMounted } from "vue"
 import { savePrivateKey } from "@/helpers/indexedDb"
+import { encryptPrivateKey } from "@/helpers/encryption"
 
 let username = ""
 let email = ""
@@ -104,7 +105,7 @@ const submit = async () => {
     console.log(store.userData.publicKey)
     console.log(store.userData.privateKey)
 
-    const encryptedPrivateKey = await store.encryptPrivateKey(
+    const encryptedPrivateKey = await encryptPrivateKey(
       keyPair.privateKey,
       password.trim()
     )

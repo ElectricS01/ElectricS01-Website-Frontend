@@ -67,6 +67,8 @@ import {
   WebAuthnAbortService
 } from "@simplewebauthn/browser"
 import { onMounted, onUnmounted } from "vue"
+import { decryptPrivateKey } from "@/helpers/encryption"
+import { loadPrivateKey, savePrivateKey } from "@/helpers/indexedDb"
 
 const store = useDataStore()
 const route = useRoute()
@@ -83,6 +85,7 @@ const handleLoginSuccess = (data) => {
     headers: { Authorization: data.token }
   })
   store.handleUser(data)
+
   router.push(route.query.redirect || "/chat")
 }
 
@@ -95,8 +98,19 @@ const submit = () => {
       userAgent: navigator.userAgent,
       username: username.toLowerCase().trim()
     })
-    .then((res) => {
+    .then(async (res) => {
       handleLoginSuccess(res.data)
+      const privateKey = await loadPrivateKey(res.data.id)
+      if (privateKey) {
+        store.userData.privateKey = privateKey
+      } else if (store.userData.savePrivateKey && res.data.privateKey) {
+        const decryptedKey = await decryptPrivateKey(
+          res.data.privateKey,
+          password.trim()
+        )
+        store.userData.privateKey = decryptedKey
+        await savePrivateKey(decryptedKey, res.data.id)
+      }
     })
     .catch((e) => {
       store.handleAxiosError(e)
@@ -114,9 +128,13 @@ axios.get("/api/passkey-challenge").then((challengeResponse) => {
         challengeId: challengeResponse.data.challengeId,
         userAgent: navigator.userAgent
       })
-      .then((verificationResponse) => {
+      .then(async (verificationResponse) => {
         if (verificationResponse.data.verified) {
           handleLoginSuccess(verificationResponse.data)
+          const privateKey = await loadPrivateKey(verificationResponse.data.id)
+          if (privateKey) {
+            store.userData.privateKey = privateKey
+          }
         }
       })
   })

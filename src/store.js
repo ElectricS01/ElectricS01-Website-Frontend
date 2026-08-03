@@ -242,48 +242,9 @@ export const useDataStore = defineStore("store", () => {
       }
     })
   }
-  async function encryptPrivateKey(privateKey, password) {
-    const salt = crypto.getRandomValues(new Uint8Array(16))
-    const derivedKey = await crypto.subtle.deriveKey(
-      {
-        hash: "SHA-256",
-        iterations: 10000,
-        name: "PBKDF2",
-        salt
-      },
-      await crypto.subtle.importKey(
-        "raw",
-        new TextEncoder().encode(password),
-        "PBKDF2",
-        false,
-        ["deriveKey"]
-      ),
-      { length: 256, name: "AES-GCM" },
-      true,
-      ["encrypt", "decrypt"]
-    )
-    const exportedKey = await crypto.subtle.exportKey("jwk", privateKey)
-    const keyString = JSON.stringify(exportedKey)
-    const keyBuffer = new TextEncoder().encode(keyString)
-    const iv = crypto.getRandomValues(new Uint8Array(12))
-    const encryptedBuffer = await crypto.subtle.encrypt(
-      {
-        iv,
-        name: "AES-GCM"
-      },
-      derivedKey,
-      keyBuffer
-    )
-    return JSON.stringify({
-      encryptedKey: Array.from(new Uint8Array(encryptedBuffer)),
-      iv: Array.from(iv),
-      salt: Array.from(salt)
-    })
-  }
   return {
     chatSort,
     editFocus,
-    encryptPrivateKey,
     error,
     errorFalse,
     getUser,

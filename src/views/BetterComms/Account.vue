@@ -25,21 +25,9 @@
   <modal :is-active="exportKeyOpen" @close="exportKeyOpen = false">
     <div class="settings-modal">
       <p class="settings-text">Export your Private Key</p>
-      <div class="text-small">
-        <label for="password">Password</label>
-      </div>
-      <input
-        id="password"
-        v-model="password"
-        placeholder="Password"
-        class="modal-input"
-        autocomplete="off"
-        type="password"
-        @keydown.enter="exportPrivateKey"
-      />
       <div class="settings-button-container">
         <button @click="exportKeyOpen = false">Cancel</button>
-        <button @click="exportPrivateKey">Export</button>
+        <button @click="exportKeyPair">Export</button>
       </div>
     </div>
   </modal>
@@ -47,15 +35,27 @@
     <div class="settings-modal">
       <p class="settings-text">Import your Private Key</p>
       <div class="text-small">
+        <label for="publicKey">Public Key</label>
+      </div>
+      <input
+        id="publicKey"
+        v-model="newPublicKey"
+        placeholder="Public Key"
+        class="modal-input"
+        autocomplete="off"
+        @keydown.enter="importKeyPair"
+      />
+      <div class="text-small">
         <label for="privateKey">Private Key</label>
       </div>
       <input
+        v-if="store.userData.savePrivateKey"
         id="privateKey"
         v-model="newPrivateKey"
         placeholder="Private Key"
         class="modal-input"
         autocomplete="off"
-        @keydown.enter="importPrivateKey"
+        @keydown.enter="importKeyPair"
       />
       <div class="text-small">
         <label for="password">Password</label>
@@ -67,11 +67,11 @@
         class="modal-input"
         autocomplete="off"
         type="password"
-        @keydown.enter="importPrivateKey"
+        @keydown.enter="importKeyPair"
       />
       <div class="settings-button-container">
         <button @click="importKeyOpen = false">Cancel</button>
-        <button @click="importPrivateKey">Import</button>
+        <button @click="importKeyPair">Import</button>
       </div>
     </div>
   </modal>
@@ -736,7 +736,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.241.0</div>
+            <div>Version: 1.242.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -823,6 +823,8 @@ import { useRoute, useRouter } from "vue-router"
 import { nextTick, ref, watch } from "vue"
 import { startRegistration } from "@simplewebauthn/browser"
 import { dayjsDate, dayjsLong, dayjsSince } from "@/helpers/dates"
+import { download } from "@/helpers/downloads"
+import { exportPublicKey, exportPrivateKey } from "@/helpers/encryption"
 
 const store = useDataStore()
 const route = useRoute()
@@ -879,6 +881,7 @@ const passkeyName = ref("")
 const selectedPasskey = ref()
 const passkeyToDelete = ref()
 const sessionToDelete = ref()
+const newPublicKey = ref("")
 const newPrivateKey = ref("")
 let token = ""
 let page = "account"
@@ -1107,14 +1110,52 @@ const showImportKey = () => {
   password = ""
 }
 
-const exportPrivateKey = () => {
-  console.log("Unavailable")
-  store.handleError("Unavailable, please contact support")
+const exportKeyPair = async () => {
+  if (!store.userData.privateKey || !store.userData.publicKey) {
+    store.handleError("No key pair available on this device")
+    return
+  }
+  download("public.pub", await exportPublicKey(store.userData.publicKey))
+  download("private.pem", await exportPrivateKey(store.userData.privateKey))
 }
 
-const importPrivateKey = () => {
-  console.log("Unavailable")
-  store.handleError("Unavailable, please contact support")
+const importKeyPair = async () => {
+  if (!newPublicKey.value) {
+    store.handleError("Public key is required")
+    return
+  }
+  if (!newPrivateKey.value && store.userData.savePrivateKey) {
+    store.handleError("Private key is required")
+    return
+  }
+  if (!password) {
+    store.handleError("Password is required")
+    return
+  }
+
+  try {
+    if (!store.userData.savePrivateKey) {
+      const res = await axios.patch("/api/update-key-pair", {
+        password: password,
+        publicKey: newPublicKey.value
+      })
+
+      console.log("Public key import unavailable", res)
+      store.handleError("Public key could not be imported, please login again")
+      return
+    }
+
+    const res = await axios.patch("/api/update-key-pair", {
+      password: password,
+      privateKey: newPrivateKey.value,
+      publicKey: newPublicKey.value
+    })
+
+    console.log("Private key import unavailable", res)
+    store.handleError("Private key could not be imported, please login again")
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
 
 const showDeleteSession = (session) => {

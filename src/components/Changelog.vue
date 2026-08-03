@@ -2,13 +2,29 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.242 Syncing Encryption Keys</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Synced encrypted private keys are now decrypted with your password when
+      you log in
+    </li>
+    <li>
+      You can now export your public and private keys in
+      <router-link to="/account/security">Security Settings</router-link>
+    </li>
+    <li>You can now upload a new public key and encrypted private key</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.119.0</li>
+  </ul>
   <h2 class="settings-text">1.241 Leaving chats</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Added a context menu to the Chats List</li>
     <li>You can now leave chats using the Chats List context menu</li>
     <li>You can mark a chat as read from the context menu</li>
-    <li>You can edit the chat name from the context menu</li>
+    <li>You can edit the chat from the context menu</li>
     <li>You can copy the Chat ID from the context menu</li>
     <li>Switched more components to use Typescript</li>
     <li>Refactoring</li>

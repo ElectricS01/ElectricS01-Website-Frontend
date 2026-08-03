@@ -19,6 +19,7 @@
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",
     "emojilib": "^4.0.3",
+    "libsodium-wrappers-sumo": "^0.8.4",
     "markdown-it": "^14.3.0",
     "pinia": "^3.0.4",
     "register-service-worker": "^1.7.2",

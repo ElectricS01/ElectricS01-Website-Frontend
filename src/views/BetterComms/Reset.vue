@@ -30,7 +30,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useDataStore } from "@/store"
 import axios from "axios"
 

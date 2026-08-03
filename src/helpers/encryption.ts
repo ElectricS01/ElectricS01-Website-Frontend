@@ -1,0 +1,115 @@
+import sodium from "libsodium-wrappers-sumo"
+
+export async function encryptPrivateKey(
+  privateKey: CryptoKey,
+  password: string
+) {
+  await sodium.ready
+
+  const exportedKey = await crypto.subtle.exportKey("pkcs8", privateKey)
+  const plaintext = new Uint8Array(exportedKey)
+
+  const salt = sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES)
+
+  const key = sodium.crypto_pwhash(
+    sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+    password,
+    salt,
+    sodium.crypto_pwhash_OPSLIMIT_MODERATE,
+    sodium.crypto_pwhash_MEMLIMIT_MODERATE,
+    sodium.crypto_pwhash_ALG_ARGON2ID13
+  )
+
+  const nonce = sodium.randombytes_buf(
+    sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+  )
+
+  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+    plaintext,
+    null,
+    null,
+    nonce,
+    key
+  )
+
+  sodium.memzero(key)
+
+  return JSON.stringify({
+    ciphertext: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL),
+    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL),
+    salt: sodium.to_base64(salt, sodium.base64_variants.ORIGINAL),
+    version: 1
+  })
+}
+
+export async function decryptPrivateKey(
+  encryptedPrivateKey: string,
+  password: string
+) {
+  await sodium.ready
+
+  const { salt, nonce, ciphertext, version } = JSON.parse(encryptedPrivateKey)
+
+  if (version !== 1) {
+    throw new Error("Unsupported private key version")
+  }
+
+  const key = sodium.crypto_pwhash(
+    sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES,
+    password,
+    sodium.from_base64(salt, sodium.base64_variants.ORIGINAL),
+    sodium.crypto_pwhash_OPSLIMIT_MODERATE,
+    sodium.crypto_pwhash_MEMLIMIT_MODERATE,
+    sodium.crypto_pwhash_ALG_ARGON2ID13
+  )
+
+  try {
+    const plaintext = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+      null,
+      sodium.from_base64(ciphertext, sodium.base64_variants.ORIGINAL),
+      null,
+      sodium.from_base64(nonce, sodium.base64_variants.ORIGINAL),
+      key
+    )
+
+    const keyData = new Uint8Array(plaintext)
+
+    return await crypto.subtle.importKey(
+      "pkcs8",
+      keyData,
+      {
+        name: "X25519"
+      },
+      false,
+      ["deriveBits"]
+    )
+  } finally {
+    sodium.memzero(key)
+  }
+}
+
+export async function exportPublicKey(publicKey: CryptoKey) {
+  const spki = await crypto.subtle.exportKey("spki", publicKey)
+
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(spki)))
+
+  const body = base64.match(/.{1,64}/g)?.join("\n") ?? base64
+
+  return ["-----BEGIN PUBLIC KEY-----", body, "-----END PUBLIC KEY-----"].join(
+    "\n"
+  )
+}
+
+export async function exportPrivateKey(privateKey: CryptoKey) {
+  const pkcs8 = await crypto.subtle.exportKey("pkcs8", privateKey)
+
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(pkcs8)))
+
+  const body = base64.match(/.{1,64}/g)?.join("\n") ?? base64
+
+  return [
+    "-----BEGIN PRIVATE KEY-----",
+    body,
+    "-----END PRIVATE KEY-----"
+  ].join("\n")
+}
