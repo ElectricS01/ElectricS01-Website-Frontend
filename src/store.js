@@ -4,6 +4,7 @@ import { nextTick, ref } from "vue"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
 import { loadPrivateKey } from "./helpers/indexedDb"
+import { importPublicKey } from "./helpers/encryption"
 
 /**
  * @typedef {import("@/types/user").UserData} UserData
@@ -176,7 +177,8 @@ export const useDataStore = defineStore("store", () => {
       .get("/api/user")
       .then(async (res) => {
         handleUser(res.data)
-        userData.value.privateKey = await loadPrivateKey(userData.value.id)
+        userData.value.publicKey = await importPublicKey(res.data.publicKey)
+        userData.value.privateKey = await loadPrivateKey(res.data.id)
         console.log(userData.value.publicKey)
         console.log(userData.value.privateKey)
         if (

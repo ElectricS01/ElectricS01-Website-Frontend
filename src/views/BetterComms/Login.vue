@@ -58,7 +58,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
@@ -67,8 +67,9 @@ import {
   WebAuthnAbortService
 } from "@simplewebauthn/browser"
 import { onMounted, onUnmounted } from "vue"
-import { decryptPrivateKey } from "@/helpers/encryption"
+import { decryptPrivateKey, importPublicKey } from "@/helpers/encryption"
 import { loadPrivateKey, savePrivateKey } from "@/helpers/indexedDb"
+import { LoginData } from "@/types/user"
 
 const store = useDataStore()
 const route = useRoute()
@@ -78,7 +79,7 @@ let username = ""
 let password = ""
 let totp = ""
 
-const handleLoginSuccess = (data) => {
+const handleLoginSuccess = async (data: LoginData) => {
   localStorage.setItem("token", data.token)
   store.openWebSocket()
   Object.assign(axios.defaults, {
@@ -86,7 +87,11 @@ const handleLoginSuccess = (data) => {
   })
   store.handleUser(data)
 
-  router.push(route.query.redirect || "/chat")
+  store.userData.publicKey = await importPublicKey(data.publicKey)
+
+  const redirect = route.query.redirect
+
+  router.push(typeof redirect === "string" ? redirect : "/chat")
 }
 
 const submit = () => {
@@ -99,7 +104,7 @@ const submit = () => {
       username: username.toLowerCase().trim()
     })
     .then(async (res) => {
-      handleLoginSuccess(res.data)
+      await handleLoginSuccess(res.data)
       const privateKey = await loadPrivateKey(res.data.id)
       if (privateKey) {
         store.userData.privateKey = privateKey
@@ -130,7 +135,7 @@ axios.get("/api/passkey-challenge").then((challengeResponse) => {
       })
       .then(async (verificationResponse) => {
         if (verificationResponse.data.verified) {
-          handleLoginSuccess(verificationResponse.data)
+          await handleLoginSuccess(verificationResponse.data)
           const privateKey = await loadPrivateKey(verificationResponse.data.id)
           if (privateKey) {
             store.userData.privateKey = privateKey

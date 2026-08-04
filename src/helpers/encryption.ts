@@ -113,3 +113,22 @@ export async function exportPrivateKey(privateKey: CryptoKey) {
     "-----END PRIVATE KEY-----"
   ].join("\n")
 }
+
+export async function importPublicKey(publicKeyString: string) {
+  try {
+    const bytes = Uint8Array.from(atob(publicKeyString), (c) => c.charCodeAt(0))
+
+    return await crypto.subtle.importKey(
+      "raw",
+      bytes,
+      {
+        name: "X25519"
+      },
+      true,
+      []
+    )
+  } catch {
+    console.error("Failed to import public key", publicKeyString)
+    return undefined
+  }
+}

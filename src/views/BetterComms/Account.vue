@@ -736,7 +736,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.242.0</div>
+            <div>Version: 1.242.1</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -1135,7 +1135,7 @@ const importKeyPair = async () => {
 
   try {
     if (!store.userData.savePrivateKey) {
-      const res = await axios.patch("/api/update-key-pair", {
+      const res = await axios.patch("/api/edit-key-pair", {
         password: password,
         publicKey: newPublicKey.value
       })
@@ -1145,7 +1145,7 @@ const importKeyPair = async () => {
       return
     }
 
-    const res = await axios.patch("/api/update-key-pair", {
+    const res = await axios.patch("/api/edit-key-pair", {
       password: password,
       privateKey: newPrivateKey.value,
       publicKey: newPublicKey.value

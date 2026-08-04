@@ -21,10 +21,19 @@ export interface User extends BasicUser {
   friend?: Friend
 }
 
+export interface LoginData extends User {
+  chatsList: Chat[]
+  emailVerified: boolean
+  savePrivateKey: boolean
+  publicKey: string
+  privateKey: string
+  token: string
+}
+
 export interface UserData extends User {
   chatsList: Chat[]
   emailVerified: boolean
   savePrivateKey: boolean
-  publicKey: CryptoKey
+  publicKey?: CryptoKey
   privateKey: CryptoKey
 }
