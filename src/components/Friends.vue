@@ -89,7 +89,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import Icons from "@/components/core/Icons.vue"
 
@@ -99,21 +99,22 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { sendDm } from "@/helpers/chatUsers"
 import { dayjsSince } from "@/helpers/dates"
+import { Friend } from "@/types/user"
 
 const store = useDataStore()
-const props = defineProps({
-  addFriend: Function
-})
+const props = defineProps<{
+  addFriend: (userId: number) => Promise<void>
+}>()
 
 const emits = defineEmits(["dmCreated"])
 
-const friends = ref({})
+const friends = ref<Friend[]>([])
 
 let creating = false
 
 const getFriends = () => {
   axios
-    .get("/api/friends")
+    .get<Friend[]>("/api/friends")
     .then((res) => {
       friends.value = res.data
     })
@@ -121,13 +122,13 @@ const getFriends = () => {
       store.handleAxiosError(e)
     })
 }
-async function add(id) {
+async function add(id: number) {
   await props.addFriend(id).then(() => {
     getFriends()
   })
 }
 
-const sendUserDm = async (id) => {
+const sendUserDm = async (id: number) => {
   if (creating) return
   creating = true
 

@@ -510,7 +510,7 @@ button {
 }
 
 .chat-spacer {
-  padding-bottom: 8px;
+  padding: 8px 4px 0;
   height: 16px;
   display: flex;
   align-items: center;
@@ -521,6 +521,25 @@ button {
   }
 
   p {
+    padding: 0 4px;
+    white-space: nowrap;
+  }
+}
+
+.red-chat-spacer {
+  padding: 0 4px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+
+  div {
+    border-bottom: 1px solid var(--red);
+    width: 50%;
+  }
+
+  p {
+    color: var(--red);
+    font-size: 10px;
     padding: 0 4px;
     white-space: nowrap;
   }

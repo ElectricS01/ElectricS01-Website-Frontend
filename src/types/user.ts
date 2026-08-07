@@ -1,6 +1,13 @@
 import { Chat } from "./chat"
 
-interface Friend {
+export interface Friend {
+  id: number
+  status: string
+  createdAt: string
+  user2: BasicUser
+}
+
+interface UserFriend {
   status: string
 }
 
@@ -18,7 +25,7 @@ export interface User extends BasicUser {
   statusMessage: string
   friendRequests: boolean
   gameName: string
-  friend?: Friend
+  friend?: UserFriend
 }
 
 export interface LoginData extends User {

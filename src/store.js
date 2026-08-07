@@ -97,7 +97,10 @@ export const useDataStore = defineStore("store", () => {
     return showError(message, timeout)
   }
 
+  let retry = 0
+
   const openWebSocket = () => {
+    retry++
     if (localStorage.getItem("token")) {
       console.log("Opening socket")
       ws.value = new WebSocket("/ws")
@@ -106,6 +109,7 @@ export const useDataStore = defineStore("store", () => {
       ws.value.onopen = () => {
         ws.value.send(JSON.stringify({ token: localStorage.getItem("token") }))
         console.log("Socket authenticated")
+        retry = 0
       }
 
       ws.value.onclose = (event) => {
@@ -114,6 +118,8 @@ export const useDataStore = defineStore("store", () => {
         if (event.code === 3000) {
           router.push("/login?redirect=" + route.path)
           localStorage.removeItem("token")
+        } else if (retry <= 3) {
+          setTimeout(openWebSocket, 1000 * retry)
         }
       }
     }

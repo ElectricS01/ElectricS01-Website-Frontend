@@ -31,9 +31,30 @@
       </div>
     </div>
   </modal>
+  <modal :is-active="generateKeyOpen" @close="generateKeyOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Generate a new Key Pair</p>
+      <div class="text-small">
+        <label for="password">Password</label>
+      </div>
+      <input
+        id="password"
+        v-model="password"
+        placeholder="Password"
+        class="modal-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="generateNewKeyPair"
+      />
+      <div class="settings-button-container">
+        <button @click="generateKeyOpen = false">Cancel</button>
+        <button @click="generateNewKeyPair">Generate</button>
+      </div>
+    </div>
+  </modal>
   <modal :is-active="importKeyOpen" @close="importKeyOpen = false">
     <div class="settings-modal">
-      <p class="settings-text">Import your Private Key</p>
+      <p class="settings-text">Import your Key Pair</p>
       <div class="text-small">
         <label for="publicKey">Public Key</label>
       </div>
@@ -49,7 +70,6 @@
         <label for="privateKey">Private Key</label>
       </div>
       <input
-        v-if="store.userData.savePrivateKey"
         id="privateKey"
         v-model="newPrivateKey"
         placeholder="Private Key"
@@ -429,11 +449,18 @@
                   :disabled="store.userData?.encryption === 'never'"
                   @switch="toggleProp('savePrivateKey')"
                 />
-                <div class="settings-button" @click="showExportKey">
-                  Export Private Key
+                <div
+                  v-if="store.userData.privateKey"
+                  class="settings-button"
+                  @click="showExportKey"
+                >
+                  Export Key Pair
+                </div>
+                <div class="settings-button" @click="showGenerateKey">
+                  Generate New Key Pair
                 </div>
                 <div class="settings-button" @click="showImportKey">
-                  Import Private Key
+                  Import Key Pair
                 </div>
               </div>
             </div>
@@ -736,7 +763,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.242.1</div>
+            <div>Version: 1.243.0</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -824,7 +851,14 @@ import { nextTick, ref, watch } from "vue"
 import { startRegistration } from "@simplewebauthn/browser"
 import { dayjsDate, dayjsLong, dayjsSince } from "@/helpers/dates"
 import { download } from "@/helpers/downloads"
-import { exportPublicKey, exportPrivateKey } from "@/helpers/encryption"
+import {
+  exportPublicKey,
+  exportPrivateKey,
+  generateKeyPair,
+  encryptPrivateKey,
+  stringifyPublicKey
+} from "@/helpers/encryption"
+import { savePrivateKey } from "@/helpers/indexedDb"
 
 const store = useDataStore()
 const route = useRoute()
@@ -861,6 +895,7 @@ const renamePasskeyOpen = ref(false)
 const deletePasskeyOpen = ref(false)
 const deleteSessionOpen = ref(false)
 const exportKeyOpen = ref(false)
+const generateKeyOpen = ref(false)
 const importKeyOpen = ref(false)
 const modalOpen = ref(false)
 const logoutAllOpen = ref(false)
@@ -1102,6 +1137,10 @@ const showCloseAccount = () => {
 
 const showExportKey = () => {
   exportKeyOpen.value = true
+}
+
+const showGenerateKey = () => {
+  generateKeyOpen.value = true
   password = ""
 }
 
@@ -1117,6 +1156,49 @@ const exportKeyPair = async () => {
   }
   download("public.pub", await exportPublicKey(store.userData.publicKey))
   download("private.pem", await exportPrivateKey(store.userData.privateKey))
+
+  exportKeyOpen.value = false
+}
+
+const generateNewKeyPair = async () => {
+  if (!password || !password.trim()) {
+    store.handleError("Password is required")
+    return
+  }
+
+  const { privateKey, publicKey } = await generateKeyPair()
+
+  const publicKeyString = await stringifyPublicKey(publicKey)
+
+  try {
+    if (!store.userData.savePrivateKey) {
+      await axios.patch("/api/edit-key-pair", {
+        password: password,
+        publicKey: publicKeyString
+      })
+    } else {
+      const encryptedPrivateKey = await encryptPrivateKey(
+        privateKey,
+        password.trim()
+      )
+
+      await axios.patch("/api/edit-key-pair", {
+        password: password,
+        privateKey: encryptedPrivateKey,
+        publicKey: publicKeyString
+      })
+    }
+
+    store.userData.privateKey = privateKey
+    store.userData.publicKey = publicKey
+
+    await savePrivateKey(privateKey, store.userData.id)
+
+    generateKeyOpen.value = false
+    password = ""
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
 
 const importKeyPair = async () => {
@@ -1142,17 +1224,24 @@ const importKeyPair = async () => {
 
       console.log("Public key import unavailable", res)
       store.handleError("Public key could not be imported, please login again")
-      return
+    } else {
+      const encryptedPrivateKey = await encryptPrivateKey(
+        newPrivateKey.value,
+        password.trim()
+      )
+
+      const res = await axios.patch("/api/edit-key-pair", {
+        password: password,
+        privateKey: encryptedPrivateKey,
+        publicKey: newPublicKey.value
+      })
+
+      console.log("Private key import unavailable", res)
+      store.handleError("Private key could not be imported, please login again")
     }
 
-    const res = await axios.patch("/api/edit-key-pair", {
-      password: password,
-      privateKey: newPrivateKey.value,
-      publicKey: newPublicKey.value
-    })
-
-    console.log("Private key import unavailable", res)
-    store.handleError("Private key could not be imported, please login again")
+    showImportKey.value = false
+    password = ""
   } catch (e) {
     store.handleAxiosError(e)
   }

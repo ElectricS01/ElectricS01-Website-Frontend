@@ -53,7 +53,11 @@ import { useDataStore } from "@/store"
 import { useRouter } from "vue-router"
 import { onMounted } from "vue"
 import { savePrivateKey } from "@/helpers/indexedDb"
-import { encryptPrivateKey } from "@/helpers/encryption"
+import {
+  encryptPrivateKey,
+  generateKeyPair,
+  stringifyPublicKey
+} from "@/helpers/encryption"
 
 let username = ""
 let email = ""
@@ -83,21 +87,9 @@ const submit = async () => {
   creating = true
 
   try {
-    const keyPair = await crypto.subtle.generateKey(
-      {
-        name: "X25519"
-      },
-      true,
-      ["deriveBits"]
-    )
+    const keyPair = await generateKeyPair()
 
-    const exportedPublicKey = await crypto.subtle.exportKey(
-      "raw",
-      keyPair.publicKey
-    )
-    const publicKeyString = btoa(
-      String.fromCharCode(...new Uint8Array(exportedPublicKey))
-    )
+    const publicKeyString = await stringifyPublicKey(keyPair.publicKey)
 
     store.userData.publicKey = keyPair.publicKey
     store.userData.privateKey = keyPair.privateKey

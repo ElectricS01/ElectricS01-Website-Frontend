@@ -2,6 +2,23 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.243 Regenerating Encryption Keys</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      You can now generate new public and private keys in
+      <router-link to="/account/security">Security Settings</router-link>
+    </li>
+    <li>Encryption requirments are now shown at the top of direct messages</li>
+    <li>
+      The WebSocket now attempts to reconnect if your device loses connection
+      momentarily
+    </li>
+    <li>Imported and synced private keys are now correctly encrypted</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.120.0</li>
+  </ul>
   <h2 class="settings-text">1.242 Syncing Encryption Keys</h2>
   <div class="settings-spacer" />
   <ul>

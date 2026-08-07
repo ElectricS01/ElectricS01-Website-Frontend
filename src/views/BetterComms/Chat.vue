@@ -103,7 +103,7 @@
                 This chat requires email verification
               </b>
               <b v-if="currentChat.type === 1" class="message-text-medium-gray">
-                {{ "This user does not require encrypted direct messages" }}
+                {{ encryptionRequirment }}
               </b>
             </div>
             <div
@@ -111,24 +111,6 @@
               :id="'message-' + index"
               :key="message.id"
             >
-              <div
-                v-if="currentChat.lastRead === index"
-                style="
-                  padding: 0 4px;
-                  height: 12px;
-                  display: flex;
-                  align-items: center;
-                "
-              >
-                <div style="border-bottom: 1px solid #ff2f2f; width: 50%" />
-                <p
-                  style="padding: 0 4px; white-space: nowrap; color: #ff2f2f"
-                  class="message-text-small"
-                >
-                  New messages
-                </p>
-                <div style="border-bottom: 1px solid #ff2f2f; width: 50%" />
-              </div>
               <chat-spacer
                 :message="message"
                 :previous-message="currentChat.messages[index - 1]"
@@ -303,6 +285,17 @@
                     @click="deleteMessage(message.id)"
                   />
                 </div>
+              </div>
+              <div
+                v-if="
+                  currentChat.association.lastRead === message.id &&
+                  index !== currentChat.messages.length - 1
+                "
+                class="red-chat-spacer"
+              >
+                <div />
+                <p>New messages</p>
+                <div />
               </div>
             </div>
           </div>
@@ -765,7 +758,8 @@ const sendMessage = () => {
         replyTo.value = null
         res.data.lastMessage.focus = false
         currentChat.value.messages.push(res.data.lastMessage)
-        currentChat.value.lastRead = currentChat.value.messages.length
+        currentChat.value.association.lastRead =
+          currentChat.value.messages.at(-1).id
         updatePageTitle()
         scrollDown()
       })
@@ -862,7 +856,9 @@ const replyToMessage = (messageId) => {
 }
 
 const handleChatChange = (chat) => {
+  const association = currentChat.value.association
   currentChat.value = chat
+  currentChat.value.association = association
   userSort()
   router.push(`/chat/${currentChat.value.id}`)
   updatePageTitle()
@@ -1038,7 +1034,8 @@ const readChat = async (chatId) => {
     chatsSidebarContext.value = false
     await axios.post(`/api/read-new/${chatId}`)
     if (currentChat.value.id === chatId) {
-      currentChat.value.lastRead = currentChat.value.messages.length
+      currentChat.value.association.lastRead =
+        currentChat.value.messages.at(-1).id
     }
     store.userData.chatsList[
       store.userData.chatsList.findIndex((chat) => chat.id === chatId)
@@ -1077,11 +1074,13 @@ const keyPressed = ({ key, altKey }) => {
       replyTo.value = null
     } else if (
       !showUser.value &&
-      currentChat.value.lastRead === currentChat.value.messages.length
+      currentChat.value.association.lastRead ===
+        currentChat.value.messages.at(-1).id
     ) {
       scrollDown(true)
     } else if (
-      currentChat.value.lastRead !== currentChat.value.messages.length
+      currentChat.value.association.lastRead !==
+      currentChat.value.messages.at(-1).id
     ) {
       readChat(currentChat.value.id)
     }
@@ -1127,6 +1126,24 @@ const matchingEmoji = computed(() => {
 })
 const inputDisabled = computed(() => {
   return !store.userData.emailVerified && currentChat.value.requireVerification
+})
+const encryptionRequirment = computed(() => {
+  if (currentChat.value.type !== 1) return
+  const encryption = currentChat.value.users.find(
+    (u) => u.id !== store.userData.id
+  ).encryption
+  switch (encryption) {
+    case "never":
+      return "This user does not allow encrypted direct messages"
+    case "off":
+      return "This user prefers unencrypted direct messages"
+    case "on":
+      return "This user prefers encrypted direct messages"
+    case "always":
+      return "This user requires encrypted direct messages"
+    default:
+      return ""
+  }
 })
 
 watch(inputText, () => {

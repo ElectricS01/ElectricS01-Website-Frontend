@@ -1,5 +1,20 @@
 import sodium from "libsodium-wrappers-sumo"
 
+export async function generateKeyPair() {
+  return await crypto.subtle.generateKey(
+    {
+      name: "X25519"
+    },
+    true,
+    ["deriveBits"]
+  )
+}
+
+export async function stringifyPublicKey(publicKey: CryptoKey) {
+  const exportedPublicKey = await crypto.subtle.exportKey("raw", publicKey)
+  return btoa(String.fromCharCode(...new Uint8Array(exportedPublicKey)))
+}
+
 export async function encryptPrivateKey(
   privateKey: CryptoKey,
   password: string
