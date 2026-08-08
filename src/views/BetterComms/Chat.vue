@@ -3,7 +3,7 @@
     :show-user="showUser"
     :editing="editing"
     :add-friend="addFriend"
-    @show-user="showUser = false"
+    @show-user="showUser = null"
     @editing="editing = $event"
     @status-message="
       ((showUser.statusMessage = $event),
@@ -533,7 +533,7 @@ const editChatRef = ref(null)
 const createChatShown = ref(false)
 const loadingMessages = ref(true)
 const scrolledUp = ref(false)
-const showUser = ref(false)
+const showUser = ref(null)
 const chatEdit = ref(null)
 const reactingTo = ref(-1)
 const emojiPickerIndex = ref(0)
@@ -1019,7 +1019,7 @@ async function addFriend(userId, notOpen) {
 }
 
 const onDmCreated = (data) => {
-  showUser.value = false
+  showUser.value = null
   createChatShown.value = false
   store.showFriends = false
   editing.value = ""
@@ -1055,7 +1055,7 @@ const keyPressed = ({ key, altKey }) => {
     } else if (editing.value === "status") {
       editing.value = ""
     } else if (showUser.value) {
-      showUser.value = false
+      showUser.value = null
     } else if (embed.value) {
       embed.value = null
     } else if (createChatShown.value) {

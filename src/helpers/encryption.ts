@@ -15,14 +15,16 @@ export async function stringifyPublicKey(publicKey: CryptoKey) {
   return btoa(String.fromCharCode(...new Uint8Array(exportedPublicKey)))
 }
 
+export async function stringifyPrivateKey(privateKey: CryptoKey) {
+  const exportedPrivateKey = await crypto.subtle.exportKey("pkcs8", privateKey)
+  return new Uint8Array(exportedPrivateKey)
+}
+
 export async function encryptPrivateKey(
-  privateKey: CryptoKey,
+  privateKey: Uint8Array<ArrayBuffer>,
   password: string
 ) {
   await sodium.ready
-
-  const exportedKey = await crypto.subtle.exportKey("pkcs8", privateKey)
-  const plaintext = new Uint8Array(exportedKey)
 
   const salt = sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES)
 
@@ -40,7 +42,7 @@ export async function encryptPrivateKey(
   )
 
   const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
-    plaintext,
+    privateKey,
     null,
     null,
     nonce,

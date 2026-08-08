@@ -1,4 +1,4 @@
-import { User } from "./user"
+import { BasicUser } from "./user"
 
 export interface Embed {
   type: string
@@ -17,7 +17,7 @@ export interface Message {
   embeds: Embed[]
   reply: number
   edited: boolean
-  user: User
+  user: BasicUser
   reactions: Reaction[]
   createdAt: string
   updatedAt: string

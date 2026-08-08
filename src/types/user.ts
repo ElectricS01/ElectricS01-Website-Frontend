@@ -1,5 +1,11 @@
 import { Chat } from "./chat"
 
+enum Dms {
+  noOne = "no one",
+  friends = "friends",
+  everyone = "everyone"
+}
+
 export interface Friend {
   id: number
   status: string
@@ -9,6 +15,11 @@ export interface Friend {
 
 interface UserFriend {
   status: string
+}
+interface GameScore {
+  gameId: number
+  difficulty: number
+  value: number
 }
 
 export interface ChatUser {
@@ -26,6 +37,16 @@ export interface User extends BasicUser {
   friendRequests: boolean
   gameName: string
   friend?: UserFriend
+}
+
+export interface ProfileUser extends User {
+  description?: string
+  banner: string
+  directMessages: Dms
+  gameStatus: string
+  playingSince: string
+  createdAt?: string
+  tetris: GameScore[]
 }
 
 export interface LoginData extends User {

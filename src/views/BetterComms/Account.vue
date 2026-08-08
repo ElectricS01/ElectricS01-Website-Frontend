@@ -763,7 +763,7 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.243.0</div>
+            <div>Version: 1.243.1</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
@@ -856,7 +856,9 @@ import {
   exportPrivateKey,
   generateKeyPair,
   encryptPrivateKey,
-  stringifyPublicKey
+  stringifyPublicKey,
+  importPublicKey,
+  stringifyPrivateKey
 } from "@/helpers/encryption"
 import { savePrivateKey } from "@/helpers/indexedDb"
 
@@ -1169,6 +1171,7 @@ const generateNewKeyPair = async () => {
   const { privateKey, publicKey } = await generateKeyPair()
 
   const publicKeyString = await stringifyPublicKey(publicKey)
+  const privateKeyString = await stringifyPrivateKey(privateKey)
 
   try {
     if (!store.userData.savePrivateKey) {
@@ -1178,7 +1181,7 @@ const generateNewKeyPair = async () => {
       })
     } else {
       const encryptedPrivateKey = await encryptPrivateKey(
-        privateKey,
+        privateKeyString,
         password.trim()
       )
 
@@ -1217,13 +1220,10 @@ const importKeyPair = async () => {
 
   try {
     if (!store.userData.savePrivateKey) {
-      const res = await axios.patch("/api/edit-key-pair", {
+      await axios.patch("/api/edit-key-pair", {
         password: password,
         publicKey: newPublicKey.value
       })
-
-      console.log("Public key import unavailable", res)
-      store.handleError("Public key could not be imported, please login again")
     } else {
       const encryptedPrivateKey = await encryptPrivateKey(
         newPrivateKey.value,
@@ -1240,6 +1240,7 @@ const importKeyPair = async () => {
       store.handleError("Private key could not be imported, please login again")
     }
 
+    store.userData.publicKey = importPublicKey(newPublicKey.value)
     showImportKey.value = false
     password = ""
   } catch (e) {

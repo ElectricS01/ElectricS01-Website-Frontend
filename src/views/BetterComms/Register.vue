@@ -56,6 +56,7 @@ import { savePrivateKey } from "@/helpers/indexedDb"
 import {
   encryptPrivateKey,
   generateKeyPair,
+  stringifyPrivateKey,
   stringifyPublicKey
 } from "@/helpers/encryption"
 
@@ -90,6 +91,7 @@ const submit = async () => {
     const keyPair = await generateKeyPair()
 
     const publicKeyString = await stringifyPublicKey(keyPair.publicKey)
+    const privateKeyString = await stringifyPrivateKey(keyPair.privateKey)
 
     store.userData.publicKey = keyPair.publicKey
     store.userData.privateKey = keyPair.privateKey
@@ -98,7 +100,7 @@ const submit = async () => {
     console.log(store.userData.privateKey)
 
     const encryptedPrivateKey = await encryptPrivateKey(
-      keyPair.privateKey,
+      privateKeyString,
       password.trim()
     )
 
