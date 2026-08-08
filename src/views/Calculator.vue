@@ -22,8 +22,6 @@ import { ref, watch } from "vue"
 const equation = ref("")
 let resultant = null
 
-document.getElementById("favicon").href = "/icons/favicon.ico"
-
 const calculate = (operator, operand1, operand2) => {
   switch (operator) {
     case "+":

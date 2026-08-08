@@ -27,7 +27,7 @@
           : "You are not logged in, your scores will not save to your account"
       }}
       <div class="center">
-        <div v-if="store.userData.id" class="button" @click="leaving">
+        <div v-if="store.userData.id" class="button" @click="sendScores">
           Save Scores
         </div>
       </div>
@@ -41,28 +41,24 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from "axios"
 import { computed, onMounted, onUnmounted } from "vue"
 import { useDataStore } from "@/store"
+import { setStatus } from "@/helpers/status"
+
 const store = useDataStore()
 
 let viewportWidth = window.innerWidth - 16
 let viewportHeight = window.innerHeight - 48
 
-document.getElementById("favicon").href = "/icons/tetris.ico"
+setStatus("Tetris")
 
-if (localStorage.getItem("token")) {
-  setTimeout(() => {
-    store.ws.send(JSON.stringify({ page: "Tetris" }))
-  }, 1000)
-}
-
-const searchLocalStorageItems = (searchString) => {
+const searchLocalStorageItems = (searchString: string) => {
   const matchingItems = []
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
-    if (key.includes(searchString)) {
+    if (key?.includes(searchString)) {
       const value = localStorage.getItem(key)
       matchingItems.push({ key, value })
     }
@@ -72,7 +68,7 @@ const searchLocalStorageItems = (searchString) => {
 const sendScores = () => {
   if (localStorage.getItem("token")) {
     const lines =
-      searchLocalStorageItems("tetrisdata.ini")[0]?.value.split("\r\n")
+      searchLocalStorageItems("tetrisdata.ini")[0]?.value?.split("\r\n")
     if (lines) {
       const nonEmptyLines = lines.filter(
         (line) => line.trim() !== "" && line.includes("=")
@@ -127,7 +123,7 @@ const minDimension = computed(() => {
 window.addEventListener("beforeunload", sendScores)
 document.addEventListener("resize", updateDimensions)
 
-let interval
+let interval: number | undefined
 
 onMounted(() => {
   interval = setInterval(sendScores, 10000)
@@ -139,10 +135,6 @@ onUnmounted(() => {
   window.removeEventListener("beforeunload", sendScores)
   document.removeEventListener("resize", updateDimensions)
 
-  if (localStorage.getItem("token")) {
-    setTimeout(() => {
-      if (store.ws !== null) store.ws.send(JSON.stringify({ page: null }))
-    }, 1000)
-  }
+  setStatus(null)
 })
 </script>

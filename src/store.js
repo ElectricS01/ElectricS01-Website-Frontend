@@ -34,6 +34,7 @@ export const useDataStore = defineStore("store", () => {
 
   const error = ref("")
   const userData = ref({})
+  const pageStatus = ref(null)
   const quickSwitcherShown = ref(false)
   const loadingChats = ref(true)
   const switcherItems = ref(switcherPages)
@@ -109,6 +110,9 @@ export const useDataStore = defineStore("store", () => {
       ws.value.onopen = () => {
         ws.value.send(JSON.stringify({ token: localStorage.getItem("token") }))
         console.log("Socket authenticated")
+        if (pageStatus.value !== null) {
+          ws.value.send(JSON.stringify({ page: pageStatus.value }))
+        }
         retry = 0
       }
 
@@ -261,12 +265,15 @@ export const useDataStore = defineStore("store", () => {
     handleUser,
     loadingChats,
     openWebSocket,
+    /** @type {string | null} */
+    pageStatus,
     quickSwitcherShown,
     showFriends,
     sortSwitcher,
     switcherItems,
     /** @type {UserData} */
     userData,
+    /** @type {WebSocket | null} */
     ws
   }
 })

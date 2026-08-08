@@ -32,20 +32,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // import axios from "axios"
 import { computed, onUnmounted } from "vue"
-import { useDataStore } from "@/store"
-const store = useDataStore()
+import { setStatus } from "@/helpers/status"
 
 let viewportWidth = window.innerWidth - 16
 let viewportHeight = window.innerHeight - 48
 
-if (localStorage.getItem("token")) {
-  setTimeout(() => {
-    store.ws.send(JSON.stringify({ page: "Collider" }))
-  }, 1000)
-}
+setStatus("Collider")
 
 // const searchLocalStorageItems = (searchString) => {
 //   const matchingItems = []
@@ -94,12 +89,10 @@ onUnmounted(() => {
     //     .catch((e) => {
     //       console.log("Error 503, Cannot Connect to Server " + e)
     //     })
-    setTimeout(() => {
-      if (store.ws !== null) store.ws.send(JSON.stringify({ page: null }))
-    }, 1000)
   }
-
   // document.removeEventListener("beforeunload", sendScores)
   window.removeEventListener("resize", updateDimensions)
+
+  setStatus(null)
 })
 </script>

@@ -30,22 +30,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onUnmounted } from "vue"
-import { useDataStore } from "@/store"
-const store = useDataStore()
+import { setStatus } from "@/helpers/status"
 
-if (localStorage.getItem("token")) {
-  setTimeout(() => {
-    store.ws.send(JSON.stringify({ page: "TonkGame" }))
-  }, 1000)
-}
+setStatus("TonkGame")
 
 onUnmounted(() => {
-  if (localStorage.getItem("token")) {
-    setTimeout(() => {
-      if (store.ws !== null) store.ws.send(JSON.stringify({ page: null }))
-    }, 1000)
-  }
+  setStatus(null)
 })
 </script>
