@@ -273,35 +273,17 @@
     <div class="grid-menu">
       <div class="settings-menu">
         <div class="settings-sidebar scroll-bar">
-          <div class="settings-item" @click="changePage('account')">
-            Account
-          </div>
-          <div class="settings-item" @click="changePage('privacy')">
-            Privacy
-          </div>
-          <div class="settings-item" @click="changePage('security')">
-            Security
-          </div>
-          <div class="settings-item" @click="changePage('appearance')">
-            Appearance
-          </div>
-          <div class="settings-item" @click="changePage('profile')">
-            Profile
-          </div>
-          <div
-            v-if="store.userData?.admin"
-            class="settings-item"
-            @click="changePage('admin')"
-          >
+          <div @click="changePage('account')">Account</div>
+          <div @click="changePage('privacy')">Privacy</div>
+          <div @click="changePage('security')">Security</div>
+          <div @click="changePage('appearance')">Appearance</div>
+          <div @click="changePage('profile')">Profile</div>
+          <div v-if="store.userData?.admin" @click="changePage('admin')">
             Admin
           </div>
-          <div class="settings-item" @click="changePage('about')">About</div>
-          <div class="settings-item" @click="changePage('changelog')">
-            Changelog
-          </div>
-          <div class="settings-item" @click="modalOpen = true">
-            Any feedback?
-          </div>
+          <div @click="changePage('about')">About</div>
+          <div @click="changePage('changelog')">Changelog</div>
+          <div @click="modalOpen = true">Any feedback?</div>
         </div>
         <div class="settings-page scroll-bar-dark">
           <div v-if="page === 'account'" class="settings-page-container">
@@ -769,9 +751,10 @@
             <div class="settings-spacer" />
             <div>Build date: {{ dayjsLong(buildDate) }}</div>
           </div>
-          <div v-else-if="page === 'changelog'" class="settings-page-container">
-            <changelog />
-          </div>
+          <changelog
+            v-else-if="page === 'changelog'"
+            class="settings-page-container"
+          />
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
             Admin info

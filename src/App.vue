@@ -147,7 +147,7 @@
       </p>
     </transition>
   </header>
-  <main :class="isDarkMode === 'true' ? 'dark-mode' : 'light-mode'">
+  <main :class="isDarkMode === true ? 'dark-mode' : 'light-mode'">
     <div class="background-container">
       <img
         v-if="backgroundShown"
@@ -174,7 +174,7 @@
           <div class="switch-container scroll-bar">
             <div
               v-for="(item, index) in searchedItems"
-              :key="item"
+              :key="index"
               class="switcher-item"
               :class="{ highlighted: index === highlightedIndex }"
               @click="activateItem(index)"
@@ -189,7 +189,7 @@
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Icons from "@/components/core/Icons.vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDataStore } from "@/store"
@@ -203,86 +203,91 @@ const store = useDataStore()
 
 const highlightedIndex = ref(0)
 const switcherInput = ref()
-const isDarkMode = ref("true")
+const isDarkMode = ref(true)
 const loaded = ref(false)
 
 let searchedItems = store.switcherItems
 
-if (localStorage.getItem("isDarkMode")) {
-  isDarkMode.value = localStorage.getItem("isDarkMode")
+const isDarkModeString = localStorage.getItem("isDarkMode")
+if (isDarkModeString) {
+  isDarkMode.value = isDarkModeString === "true"
 } else {
   localStorage.setItem("isDarkMode", "true")
-  isDarkMode.value = "true"
+  isDarkMode.value = true
 }
-if (localStorage.getItem("isDarkMode") !== "true") {
+if (!isDarkMode.value) {
   document.body.style.backgroundColor = "white"
 }
+
 Object.assign(axios.defaults, {
   headers: { Authorization: localStorage.getItem("token") }
 })
+
 if (localStorage.getItem("token")) {
   store.getUser()
 } else {
-  store.userData.switcherHistory =
-    JSON.parse(localStorage.getItem("switcherHistory")) || []
+  const json = localStorage.getItem("switcherHistory")
+  store.userData.switcherHistory = json === null ? [] : JSON.parse(json)
   store.sortSwitcher()
 }
-if (localStorage.getItem("sidebarOpen")) {
-  store.sidebarOpen = localStorage.getItem("sidebarOpen")
-} else {
-  store.sidebarOpen = false
-}
-if (localStorage.getItem("chatBarOpen")) {
-  store.chatBarOpen = localStorage.getItem("chatBarOpen")
-} else {
-  store.chatBarOpen = false
-}
 
-const active = (routePattern) => route.path.startsWith(routePattern)
+const chatBarOpen = localStorage.getItem("chatBarOpen")
+store.chatBarOpen = chatBarOpen === "true" ? true : false
+
+const sidebarOpen = localStorage.getItem("sidebarOpen")
+store.sidebarOpen = sidebarOpen === "true" ? true : false
+
+const active = (routePattern: string) => route.path.startsWith(routePattern)
 const mobileNav = () => {
   const nav = document.getElementById("mobile-navbar")
+  if (!nav) return
   if (nav.className === "navbar") {
     nav.className += " responsive"
   } else {
     nav.className = "navbar"
   }
 }
-let toggleMode = () => {
-  if (localStorage.getItem("isDarkMode") !== "true") {
+const toggleMode = () => {
+  const darkMode = localStorage.getItem("isDarkMode")
+
+  if (darkMode !== "true") {
     localStorage.setItem("isDarkMode", "true")
+    isDarkMode.value = true
     document.body.style.backgroundColor = "#181a1b"
   } else {
     localStorage.setItem("isDarkMode", "false")
+    isDarkMode.value = false
     document.body.style.backgroundColor = "white"
   }
-  isDarkMode.value = localStorage.getItem("isDarkMode")
 }
 const toggleSidebar = () => {
   if (
-    localStorage.getItem("sidebarOpen") !== "true" ||
+    !store.sidebarOpen ||
     store.search === true ||
     store.pins === true ||
     store.notifications === true
   ) {
     localStorage.setItem("sidebarOpen", "true")
+    store.sidebarOpen = true
     store.search = false
     store.pins = false
     store.notifications = false
   } else {
     localStorage.setItem("sidebarOpen", "false")
+    store.sidebarOpen = false
     store.search = false
     store.pins = false
     store.notifications = false
   }
-  store.sidebarOpen = localStorage.getItem("sidebarOpen")
 }
 const toggleChatBar = () => {
-  if (localStorage.getItem("chatBarOpen") !== "true") {
+  if (!store.chatBarOpen) {
     localStorage.setItem("chatBarOpen", "true")
+    store.chatBarOpen = true
   } else {
     localStorage.setItem("chatBarOpen", "false")
+    store.chatBarOpen = false
   }
-  store.chatBarOpen = localStorage.getItem("chatBarOpen")
 }
 const searchItems = () => {
   if (store.quickSwitcherShown) {
@@ -313,7 +318,7 @@ const searchItems = () => {
     }
   }
 }
-const moveHighlight = (step) => {
+const moveHighlight = (step: number) => {
   if (Object.keys(searchedItems).length === 0) return
   if (highlightedIndex.value === -1 && step === -1) {
     highlightedIndex.value = searchedItems.length - 1
@@ -338,7 +343,7 @@ const moveHighlight = (step) => {
     }
   })
 }
-const activateItem = (id) => {
+const activateItem = (id: number) => {
   if (id !== -1 && searchedItems.length && store.quickSwitcherShown) {
     store.quickSwitcherShown = false
     router.push(
@@ -381,7 +386,7 @@ const activateItem = (id) => {
     store.sortSwitcher()
   }
 }
-const keyPressed = ({ repeat, metaKey, ctrlKey, key }) => {
+const keyPressed = ({ repeat, metaKey, ctrlKey, key }: KeyboardEvent) => {
   if (key === "Escape") {
     store.quickSwitcherShown = false
   }

@@ -39,6 +39,11 @@ export const useDataStore = defineStore("store", () => {
   const loadingChats = ref(true)
   const switcherItems = ref(switcherPages)
   const showFriends = ref(false)
+  const chatBarOpen = ref(false)
+  const sidebarOpen = ref(false)
+  const pins = ref(false)
+  const search = ref(false)
+  const notifications = ref(false)
 
   const ws = ref(null)
   let errorTimeout = null
@@ -255,6 +260,7 @@ export const useDataStore = defineStore("store", () => {
     })
   }
   return {
+    chatBarOpen,
     chatSort,
     editFocus,
     error,
@@ -264,11 +270,15 @@ export const useDataStore = defineStore("store", () => {
     handleError,
     handleUser,
     loadingChats,
+    notifications,
     openWebSocket,
     /** @type {string | null} */
     pageStatus,
+    pins,
     quickSwitcherShown,
+    search,
     showFriends,
+    sidebarOpen,
     sortSwitcher,
     switcherItems,
     /** @type {UserData} */

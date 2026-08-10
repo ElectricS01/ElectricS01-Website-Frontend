@@ -93,12 +93,6 @@ const submit = async () => {
     const publicKeyString = await stringifyPublicKey(keyPair.publicKey)
     const privateKeyString = await stringifyPrivateKey(keyPair.privateKey)
 
-    store.userData.publicKey = keyPair.publicKey
-    store.userData.privateKey = keyPair.privateKey
-
-    console.log(store.userData.publicKey)
-    console.log(store.userData.privateKey)
-
     const encryptedPrivateKey = await encryptPrivateKey(
       privateKeyString,
       password.trim()
@@ -125,6 +119,9 @@ const submit = async () => {
     })
     store.handleUser(res.data)
     await savePrivateKey(keyPair.privateKey, store.userData.id)
+
+    store.userData.publicKey = keyPair.publicKey
+    store.userData.privateKey = keyPair.privateKey
 
     console.log(store.userData.publicKey)
     console.log(store.userData.privateKey)

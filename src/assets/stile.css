@@ -559,7 +559,7 @@ button {
 
 .chat-navbar {
   overflow: hidden;
-  background-color: #282a2b;
+  background-color: var(--grey);
   position: fixed;
   top: 0;
   left: 0;
@@ -630,8 +630,8 @@ button {
 }
 
 .filter-button:hover,
-.settings-item:hover {
-  background-color: #282a2b;
+.settings-sidebar div:hover {
+  background-color: var(--grey);
 }
 
 .scroll-bar-dark::-webkit-scrollbar-thumb:hover,
@@ -825,7 +825,7 @@ input {
 }
 
 .loader {
-  border: 6px solid #282a2b;
+  border: 6px solid var(--grey);
   border-top: 6px solid white;
   border-radius: 50%;
   width: 30px;
@@ -1127,7 +1127,7 @@ code {
 
 .settings-menu {
   width: max(800px, calc(100% - (40% - 64px)));
-  background-color: #282a2b;
+  background-color: var(--grey);
   display: flex;
   border-radius: 16px;
   height: min(calc(100% - 32px), max(40%, 600px));
@@ -1263,16 +1263,6 @@ input:checked + .slider:before {
   gap: 8px;
 }
 
-.settings-item {
-  cursor: pointer;
-  font-size: 20px;
-  text-align: left;
-  padding: 16px;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
 .settings-page {
   text-align: left;
   float: left;
@@ -1296,6 +1286,16 @@ input:checked + .slider:before {
   border-radius: 16px 0 0 16px;
   float: left;
   overflow-y: auto;
+
+  div {
+    cursor: pointer;
+    font-size: 20px;
+    text-align: left;
+    padding: 16px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
 
 .settings-button-red,
@@ -1354,7 +1354,7 @@ input:checked + .slider:before {
   left: 0;
   width: 200px;
   padding: 4px;
-  border: 1px solid #282a2b;
+  border: 1px solid var(--grey);
   border-radius: 4px;
   background-color: #212425;
   list-style: none;

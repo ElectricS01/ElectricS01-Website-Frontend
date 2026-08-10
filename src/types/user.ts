@@ -6,6 +6,13 @@ enum Dms {
   everyone = "everyone"
 }
 
+export type SwitcherPage = string | [string, string]
+
+export interface SwitcherHistoryItem {
+  page: SwitcherPage
+  searches: number
+}
+
 export interface Friend {
   id: number
   status: string
@@ -64,4 +71,6 @@ export interface UserData extends User {
   savePrivateKey: boolean
   publicKey?: CryptoKey
   privateKey: CryptoKey
+  switcherHistory: SwitcherHistoryItem[]
+  saveSwitcher: boolean
 }

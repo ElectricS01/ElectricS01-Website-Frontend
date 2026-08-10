@@ -34,7 +34,7 @@
   />
   <div class="chat-container">
     <chats-list
-      v-if="store.chatBarOpen === 'true'"
+      v-if="store.chatBarOpen === true"
       v-model:context-menu="chatsSidebarContext"
       :chats="store.userData.chatsList"
       :loading="store.loadingChats"
@@ -52,390 +52,383 @@
       :add-friend="addFriend"
       @dm-created="onDmCreated($event)"
     />
-    <div v-else style="flex-grow: 1; display: flex; width: calc(100% - 700px)">
+    <div
+      v-else
+      style="
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        width: calc(100% - 700px);
+      "
+    >
       <div
-        style="
-          flex-grow: 1;
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          width: calc(100% - 700px);
-        "
+        id="messages-div"
+        style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
+        class="scroll-bar"
       >
-        <div
-          id="messages-div"
-          style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
-          class="scroll-bar"
-        >
-          <div v-if="loadingMessages" class="center">
-            <div class="loader" />
+        <div v-if="loadingMessages" class="center">
+          <div class="loader" />
+        </div>
+        <div v-else>
+          <div style="padding: 12px 16px">
+            <h1 v-if="currentChat.type !== 1" class="chat-title">
+              Welcome to {{ currentChat.name }}
+            </h1>
+            <h1
+              v-else-if="currentChat.owner !== store.userData.id"
+              class="chat-title"
+            >
+              Welcome to your Direct Message with
+              {{ currentChat?.ownerDetails.username }}
+            </h1>
+            <h1 v-else class="chat-title">
+              Welcome to your Direct Message with {{ currentChat.name }}
+            </h1>
+            <b style="display: block; overflow-wrap: break-word">
+              {{ currentChat.description }}
+            </b>
+            <b
+              v-if="!currentChat.requireVerification && currentChat.type !== 1"
+              class="message-text-medium-gray"
+            >
+              This chat does not require email verification
+            </b>
+            <b
+              v-else-if="currentChat.type !== 1"
+              class="message-text-medium-gray"
+            >
+              This chat requires email verification
+            </b>
+            <b v-if="currentChat.type === 1" class="message-text-medium-gray">
+              {{ encryptionRequirment }}
+            </b>
           </div>
-          <div v-else>
-            <div style="padding: 12px 16px">
-              <h1 v-if="currentChat.type !== 1" class="chat-title">
-                Welcome to {{ currentChat.name }}
-              </h1>
-              <h1
-                v-else-if="currentChat.owner !== store.userData.id"
-                class="chat-title"
-              >
-                Welcome to your Direct Message with
-                {{ currentChat?.ownerDetails.username }}
-              </h1>
-              <h1 v-else class="chat-title">
-                Welcome to your Direct Message with {{ currentChat.name }}
-              </h1>
-              <b style="display: block; overflow-wrap: break-word">
-                {{ currentChat.description }}
-              </b>
+          <div
+            v-for="(message, index) in currentChat.messages"
+            :id="'message-' + index"
+            :key="message.id"
+          >
+            <chat-spacer
+              :message="message"
+              :previous-message="currentChat.messages[index - 1]"
+            />
+            <div
+              v-if="message.reply && findMessage(message.reply)"
+              class="reply-preview"
+            >
+              <icons size="16" icon="reply" style="margin-right: 4px" />
+              <profile-picture
+                size="16"
+                :avatar="findMessage(message.reply)?.user?.avatar"
+                :small="true"
+                @click="openUser(findMessage(message.reply)?.user?.id)"
+              />
               <b
-                v-if="
-                  !currentChat.requireVerification && currentChat.type !== 1
-                "
-                class="message-text-medium-gray"
+                class="message-text-medium"
+                style="margin: 4px 4px 0 4px"
+                @click="openUser(findMessage(message.reply)?.user?.id)"
               >
-                This chat does not require email verification
+                {{
+                  findMessage(message.reply)?.user?.username
+                    ? "@" + findMessage(message.reply)?.user?.username
+                    : "@Deleted user"
+                }}
               </b>
-              <b
-                v-else-if="currentChat.type !== 1"
-                class="message-text-medium-gray"
+              <p
+                class="message-text-medium-gray-hover"
+                style="margin-top: 4px; margin-bottom: 0"
+                @click="goToMessage(message.reply)"
               >
-                This chat requires email verification
-              </b>
-              <b v-if="currentChat.type === 1" class="message-text-medium-gray">
-                {{ encryptionRequirment }}
+                {{ findMessage(message.reply)?.messageContents }}
+              </p>
+            </div>
+            <div v-else-if="message.reply" class="reply-preview">
+              <icons
+                colour="darkgrey"
+                size="16"
+                icon="reply"
+                style="margin-right: 4px"
+              />
+              <icons colour="darkgrey" size="16" icon="user" />
+              <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
+                Message has been deleted
               </b>
             </div>
             <div
-              v-for="(message, index) in currentChat.messages"
-              :id="'message-' + index"
-              :key="message.id"
+              class="message-grid"
+              style="position: relative; width: 100%; margin: 8px 4px 4px"
+              :style="{
+                backgroundColor: editing === message.id ? '#212425' : ''
+              }"
             >
-              <chat-spacer
-                :message="message"
-                :previous-message="currentChat.messages[index - 1]"
-              />
               <div
-                v-if="message.reply && findMessage(message.reply)"
-                class="reply-preview"
+                v-if="!merge(message, currentChat.messages[index - 1])"
+                style="margin: 0 4px; cursor: pointer; border-radius: 16px"
+                class="message-item"
+                @click="openUser(message.user.id)"
               >
-                <icons size="16" icon="reply" style="margin-right: 4px" />
                 <profile-picture
-                  size="16"
-                  :avatar="findMessage(message.reply)?.user?.avatar"
-                  :small="true"
-                  @click="openUser(findMessage(message.reply)?.user?.id)"
+                  style="margin: 4px"
+                  size="32"
+                  :avatar="message.user?.avatar"
                 />
-                <b
-                  class="message-text-medium"
-                  style="margin: 4px 4px 0 4px"
-                  @click="openUser(findMessage(message.reply)?.user?.id)"
-                >
-                  {{
-                    findMessage(message.reply)?.user?.username
-                      ? "@" + findMessage(message.reply)?.user?.username
-                      : "@Deleted user"
-                  }}
-                </b>
-                <p
-                  class="message-text-medium-gray-hover"
-                  style="margin-top: 4px; margin-bottom: 0"
-                  @click="goToMessage(message.reply)"
-                >
-                  {{ findMessage(message.reply)?.messageContents }}
-                </p>
               </div>
-              <div v-else-if="message.reply" class="reply-preview">
-                <icons
-                  colour="darkgrey"
-                  size="16"
-                  icon="reply"
-                  style="margin-right: 4px"
-                />
-                <icons colour="darkgrey" size="16" icon="user" />
-                <b
-                  class="message-text-medium-gray"
-                  style="margin: 4px 4px 0 4px"
-                >
-                  Message has been deleted
+              <div v-else class="message-time">
+                <b class="message-text-small">
+                  {{ dayjsShort(message.createdAt) }}
                 </b>
               </div>
               <div
-                class="message-grid"
-                style="position: relative; width: 100%; margin: 8px 4px 4px"
-                :style="{
-                  backgroundColor: editing === message.id ? '#212425' : ''
-                }"
+                class="message-item"
+                style="width: calc(100% - 96px); overflow-wrap: break-word"
               >
                 <div
                   v-if="!merge(message, currentChat.messages[index - 1])"
-                  style="margin: 0 4px; cursor: pointer; border-radius: 16px"
-                  class="message-item"
-                  @click="openUser(message.user.id)"
+                  class="message-header"
                 >
-                  <profile-picture
-                    style="margin: 4px"
-                    size="32"
-                    :avatar="message.user?.avatar"
-                  />
-                </div>
-                <div v-else class="message-time">
+                  <b
+                    class="message-text-medium"
+                    @click="openUser(message.user.id)"
+                  >
+                    {{
+                      message.user?.username
+                        ? message.user.username
+                        : "Deleted user"
+                    }}
+                  </b>
                   <b class="message-text-small">
-                    {{ dayjsShort(message.createdAt) }}
+                    {{ " " + dayjsLong(message.createdAt) }}
                   </b>
                 </div>
-                <div
-                  class="message-item"
-                  style="width: calc(100% - 96px); overflow-wrap: break-word"
-                >
-                  <div
-                    v-if="!merge(message, currentChat.messages[index - 1])"
-                    class="message-header"
-                  >
-                    <b
-                      class="message-text-medium"
-                      @click="openUser(message.user.id)"
-                    >
-                      {{
-                        message.user?.username
-                          ? message.user.username
-                          : "Deleted user"
-                      }}
-                    </b>
-                    <b class="message-text-small">
-                      {{ " " + dayjsLong(message.createdAt) }}
-                    </b>
-                  </div>
-                  <textarea
-                    v-if="editing === message.id"
-                    id="edit"
-                    v-model="editText"
-                    style="resize: none"
-                    placeholder="Edit your message"
-                    autocomplete="off"
-                    @keydown.enter.exact.prevent="editMessage(message.id)"
-                  />
-                  <custom-message
-                    v-show="editing !== message.id"
-                    :message="message"
-                    :find-user="findUser"
-                    :open-user="openUser"
-                    :scroll="scrollDown"
-                    @embed="embed = $event"
-                  />
-                  <message-emoji
-                    :reactions="message.reactions"
-                    :user-id="store.userData.id"
-                    @reaction-selected="addReaction(message.id, $event)"
-                    @reaction-removed="removeReaction(message.id, $event)"
-                  />
-                </div>
-                <div
+                <textarea
+                  v-if="editing === message.id"
+                  id="edit"
+                  v-model="editText"
+                  style="resize: none"
+                  placeholder="Edit your message"
+                  autocomplete="off"
+                  @keydown.enter.exact.prevent="editMessage(message.id)"
+                />
+                <custom-message
                   v-show="editing !== message.id"
-                  class="message-icons"
-                  :style="{
-                    display: reactingTo === message.id ? 'flex' : ''
-                  }"
-                >
-                  <icons
-                    style="cursor: pointer"
-                    size="20"
-                    icon="emoji"
-                    @click="reactPressed(message.id)"
-                  />
-                  <emoji-picker
-                    v-if="reactingTo === message.id"
-                    @emoji-selected="addReaction(message.id, $event)"
-                  />
-                  <icons
-                    v-show="
-                      store.userData?.admin ||
-                      message.user?.id === store.userData?.id
-                    "
-                    style="cursor: pointer"
-                    size="20"
-                    :icon="message.pinned ? 'unpin' : 'pin'"
-                    @click="pinMessage(message.id, message.pinned)"
-                  />
-                  <icons
-                    v-if="message.user?.id === store.userData?.id"
-                    style="cursor: pointer"
-                    size="20"
-                    icon="edit"
-                    @click="
-                      ;((editing = message.id),
-                        (editText = message.messageContents),
-                        scrollDown(true))
-                    "
-                  />
-                  <icons
-                    style="cursor: pointer"
-                    size="20"
-                    icon="reply"
-                    @click="replyToMessage(message.id)"
-                  />
-                  <icons
-                    v-show="
-                      store.userData?.admin ||
-                      message.user?.id === store.userData?.id
-                    "
-                    style="cursor: pointer"
-                    size="20"
-                    icon="delete"
-                    @click="deleteMessage(message.id)"
-                  />
-                </div>
+                  :message="message"
+                  :find-user="findUser"
+                  :open-user="openUser"
+                  :scroll="scrollDown"
+                  @embed="embed = $event"
+                />
+                <message-emoji
+                  :reactions="message.reactions"
+                  :user-id="store.userData.id"
+                  @reaction-selected="addReaction(message.id, $event)"
+                  @reaction-removed="removeReaction(message.id, $event)"
+                />
               </div>
               <div
-                v-if="
-                  currentChat.association.lastRead === message.id &&
-                  index !== currentChat.messages.length - 1
-                "
-                class="red-chat-spacer"
+                v-show="editing !== message.id"
+                class="message-icons"
+                :style="{
+                  display: reactingTo === message.id ? 'flex' : ''
+                }"
               >
-                <div />
-                <p>New messages</p>
-                <div />
+                <icons
+                  style="cursor: pointer"
+                  size="20"
+                  icon="emoji"
+                  @click="reactPressed(message.id)"
+                />
+                <emoji-picker
+                  v-if="reactingTo === message.id"
+                  @emoji-selected="addReaction(message.id, $event)"
+                />
+                <icons
+                  v-show="
+                    store.userData?.admin ||
+                    message.user?.id === store.userData?.id
+                  "
+                  style="cursor: pointer"
+                  size="20"
+                  :icon="message.pinned ? 'unpin' : 'pin'"
+                  @click="pinMessage(message.id, message.pinned)"
+                />
+                <icons
+                  v-if="message.user?.id === store.userData?.id"
+                  style="cursor: pointer"
+                  size="20"
+                  icon="edit"
+                  @click="
+                    ;((editing = message.id),
+                      (editText = message.messageContents),
+                      scrollDown(true))
+                  "
+                />
+                <icons
+                  style="cursor: pointer"
+                  size="20"
+                  icon="reply"
+                  @click="replyToMessage(message.id)"
+                />
+                <icons
+                  v-show="
+                    store.userData?.admin ||
+                    message.user?.id === store.userData?.id
+                  "
+                  style="cursor: pointer"
+                  size="20"
+                  icon="delete"
+                  @click="deleteMessage(message.id)"
+                />
               </div>
+            </div>
+            <div
+              v-if="
+                currentChat.association.lastRead === message.id &&
+                index !== currentChat.messages.length - 1
+              "
+              class="red-chat-spacer"
+            >
+              <div />
+              <p>New messages</p>
+              <div />
             </div>
           </div>
         </div>
-        <div>
-          <transition>
-            <div
-              v-if="replyTo || scrolledUp"
-              style="position: relative; margin-right: 6px"
-            >
-              <transition>
-                <div
-                  v-if="scrolledUp"
-                  :style="{
-                    height: replyTo ? '36px' : ''
-                  }"
-                  style="
-                    position: absolute;
-                    z-index: 1;
-                    bottom: 0;
-                    cursor: pointer;
-                  "
-                  class="scroll-button"
-                  @click="scrollDown"
-                >
-                  <icons size="12" icon="down-arrow" />
-                  <p class="message-text-medium">Scroll to bottom</p>
-                </div>
-              </transition>
+      </div>
+      <div>
+        <transition>
+          <div
+            v-if="replyTo || scrolledUp"
+            style="position: relative; margin-right: 6px"
+          >
+            <transition>
               <div
-                v-if="replyTo"
-                class="scroll-button"
+                v-if="scrolledUp"
+                :style="{
+                  height: replyTo ? '36px' : ''
+                }"
                 style="
-                  display: flex;
-                  overflow-wrap: break-word;
-                  z-index: 2;
-                  position: relative;
+                  position: absolute;
+                  z-index: 1;
+                  bottom: 0;
+                  cursor: pointer;
                 "
+                class="scroll-button"
+                @click="scrollDown"
               >
-                <icons size="12" icon="reply" style="margin-right: 4px" />
-                <profile-picture
-                  size="12"
-                  :avatar="findMessage(replyTo).user?.avatar"
-                  :small="true"
-                  @click="openUser(findMessage(replyTo).user.id)"
-                />
-                <b
-                  class="message-text-medium"
-                  style="margin: 0 4px 0 4px"
-                  @click="openUser(findMessage(replyTo).user.id)"
-                >
-                  {{
-                    findMessage(replyTo).user?.username
-                      ? "@" + findMessage(replyTo).user?.username
-                      : "@Deleted user"
-                  }}
-                </b>
-                <p
-                  class="message-text-medium-gray"
-                  style="margin: 0"
-                  @click="goToMessage(replyTo)"
-                >
-                  {{ findMessage(replyTo).messageContents }}
-                </p>
+                <icons size="12" icon="down-arrow" />
+                <p class="message-text-medium">Scroll to bottom</p>
               </div>
-            </div>
-          </transition>
-          <div class="message-send">
+            </transition>
             <div
-              v-if="matchingEmoji.length && !emojiPickerVisible"
-              class="emoji-picker"
+              v-if="replyTo"
+              class="scroll-button"
+              style="
+                display: flex;
+                overflow-wrap: break-word;
+                z-index: 2;
+                position: relative;
+              "
             >
-              <div class="emoji-picker-inner scroll-bar">
-                <div
-                  v-for="(emoji, index) in matchingEmoji"
-                  :id="'picker-emoji-' + index"
-                  :key="emoji[0]"
-                  :class="{ selected: index == emojiPickerIndex }"
-                  @click="handleEmojiClick(emoji[0])"
-                >
-                  {{ emoji[0] }}
-                  {{ emoji[1][0] }}
-                </div>
+              <icons size="12" icon="reply" style="margin-right: 4px" />
+              <profile-picture
+                size="12"
+                :avatar="findMessage(replyTo).user?.avatar"
+                :small="true"
+                @click="openUser(findMessage(replyTo).user.id)"
+              />
+              <b
+                class="message-text-medium"
+                style="margin: 0 4px 0 4px"
+                @click="openUser(findMessage(replyTo).user.id)"
+              >
+                {{
+                  findMessage(replyTo).user?.username
+                    ? "@" + findMessage(replyTo).user?.username
+                    : "@Deleted user"
+                }}
+              </b>
+              <p
+                class="message-text-medium-gray"
+                style="margin: 0"
+                @click="goToMessage(replyTo)"
+              >
+                {{ findMessage(replyTo).messageContents }}
+              </p>
+            </div>
+          </div>
+        </transition>
+        <div class="message-send">
+          <div
+            v-if="matchingEmoji.length && !emojiPickerVisible"
+            class="emoji-picker"
+          >
+            <div class="emoji-picker-inner scroll-bar">
+              <div
+                v-for="(emoji, index) in matchingEmoji"
+                :id="'picker-emoji-' + index"
+                :key="emoji[0]"
+                :class="{ selected: index == emojiPickerIndex }"
+                @click="handleEmojiClick(emoji[0])"
+              >
+                {{ emoji[0] }}
+                {{ emoji[1][0] }}
               </div>
             </div>
-            <textarea
-              id="input"
-              v-model="inputText"
-              :disabled="inputDisabled"
-              :placeholder="
-                inputDisabled
-                  ? 'This chat requires email address verification'
-                  : 'Send a message'
-              "
-              autofocus
-              class="message-input"
-              autocomplete="off"
-              @keydown.enter.exact.prevent="
-                matchingEmoji.length > 0 ? selectCurrentEmoji() : sendMessage()
-              "
-              @keydown.up.prevent="handleUpKey"
-              @keydown.down.prevent="handleDownKey"
-              @keydown.tab.prevent="
-                matchingEmoji.length > 0 ? selectCurrentEmoji() : null
-              "
-              @keydown.escape.prevent="override = true"
-            />
-            <button
-              :disabled="inputDisabled"
-              style="cursor: pointer; width: 40px"
-              @click="showEmojiPicker"
-            >
-              <icons
-                icon="emoji"
-                size="24"
-                :colour="inputDisabled ? 'grey' : undefined"
-              />
-            </button>
-            <button
-              :disabled="inputDisabled"
-              style="cursor: pointer; width: 40px"
-              @click="sendMessage"
-            >
-              <icons
-                icon="send"
-                size="24"
-                :colour="inputDisabled ? 'grey' : undefined"
-              />
-            </button>
-            <emoji-picker
-              v-if="emojiPickerVisible"
-              @emoji-selected="handleEmojiSelected"
-            />
           </div>
+          <textarea
+            id="input"
+            v-model="inputText"
+            :disabled="inputDisabled"
+            :placeholder="
+              inputDisabled
+                ? 'This chat requires email address verification'
+                : 'Send a message'
+            "
+            autofocus
+            class="message-input"
+            autocomplete="off"
+            @keydown.enter.exact.prevent="
+              matchingEmoji.length > 0 ? selectCurrentEmoji() : sendMessage()
+            "
+            @keydown.up.prevent="handleUpKey"
+            @keydown.down.prevent="handleDownKey"
+            @keydown.tab.prevent="
+              matchingEmoji.length > 0 ? selectCurrentEmoji() : null
+            "
+            @keydown.escape.prevent="override = true"
+          />
+          <button
+            :disabled="inputDisabled"
+            style="cursor: pointer; width: 40px"
+            @click="showEmojiPicker"
+          >
+            <icons
+              icon="emoji"
+              size="24"
+              :colour="inputDisabled ? 'grey' : undefined"
+            />
+          </button>
+          <button
+            :disabled="inputDisabled"
+            style="cursor: pointer; width: 40px"
+            @click="sendMessage"
+          >
+            <icons
+              icon="send"
+              size="24"
+              :colour="inputDisabled ? 'grey' : undefined"
+            />
+          </button>
+          <emoji-picker
+            v-if="emojiPickerVisible"
+            @emoji-selected="handleEmojiSelected"
+          />
         </div>
       </div>
     </div>
     <sidebar
       v-if="
-        ((store.sidebarOpen === 'true' || store.search || store.pins) &&
+        ((store.sidebarOpen === true || store.search || store.pins) &&
           !store.showFriends) ||
         store.notifications
       "
