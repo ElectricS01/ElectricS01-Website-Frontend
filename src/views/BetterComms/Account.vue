@@ -419,33 +419,12 @@
               "Never"
             </div>
             <div class="settings-spacer" />
-            <div
-              :style="{
-                opacity: store.userData?.encryption === 'never' ? '0.5' : ''
-              }"
-            >
-              Save your Encryption Private Key
-              <div class="button-container">
-                <toggle
-                  :value="store.userData?.savePrivateKey"
-                  :disabled="store.userData?.encryption === 'never'"
-                  @switch="toggleProp('savePrivateKey')"
-                />
-                <div
-                  v-if="store.userData.privateKey"
-                  class="settings-button"
-                  @click="showExportKey"
-                >
-                  Export Key Pair
-                </div>
-                <div class="settings-button" @click="showGenerateKey">
-                  Generate New Key Pair
-                </div>
-                <div class="settings-button" @click="showImportKey">
-                  Import Key Pair
-                </div>
-              </div>
-            </div>
+            Save your Encryption Private Key
+            <toggle
+              :value="store.userData?.savePrivateKey"
+              :disabled="store.userData?.encryption === 'never'"
+              @switch="toggleProp('savePrivateKey')"
+            />
             <div class="message-text-small">
               If enabled, your private key will be encrypted using your password
               and saved to the server
@@ -454,6 +433,30 @@
               Disabling this option will delete your private key from the server
               so please back it up
             </div>
+
+            <div class="settings-spacer" />
+            Encryption Key Status:
+            {{
+              store.userData.publicKey && store.userData.privateKey
+                ? "Valid"
+                : "Invalid"
+            }}
+            <div class="button-container">
+              <div
+                v-if="store.userData.privateKey"
+                class="settings-button"
+                @click="showExportKey"
+              >
+                Export Key Pair
+              </div>
+              <div class="settings-button" @click="showGenerateKey">
+                Generate New Key Pair
+              </div>
+              <div class="settings-button" @click="showImportKey">
+                Import Key Pair
+              </div>
+            </div>
+
             <div class="settings-spacer" />
             2FA
             <div
@@ -745,16 +748,13 @@
               <router-link to="/">ElectricS01</router-link>
             </div>
             <div class="settings-spacer" />
-            <div>Version: 1.243.1</div>
+            <div>Version: 1.243.4</div>
             <div class="settings-spacer" />
             <div>Backend name: {{ serverName }}</div>
             <div class="settings-spacer" />
             <div>Build date: {{ dayjsLong(buildDate) }}</div>
           </div>
-          <changelog
-            v-else-if="page === 'changelog'"
-            class="settings-page-container"
-          />
+          <changelog v-else-if="page === 'changelog'" />
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
             Admin info

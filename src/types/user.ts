@@ -6,6 +6,13 @@ enum Dms {
   everyone = "everyone"
 }
 
+enum Encryption {
+  never = "never",
+  off = "off",
+  on = "on",
+  always = "always"
+}
+
 export type SwitcherPage = string | [string, string]
 
 export interface SwitcherHistoryItem {
@@ -66,11 +73,12 @@ export interface LoginData extends User {
 }
 
 export interface UserData extends User {
-  chatsList: Chat[]
   emailVerified: boolean
+  encryption: Encryption
   savePrivateKey: boolean
   publicKey?: CryptoKey
   privateKey: CryptoKey
-  switcherHistory: SwitcherHistoryItem[]
   saveSwitcher: boolean
+  chatsList: Chat[]
+  switcherHistory: SwitcherHistoryItem[]
 }

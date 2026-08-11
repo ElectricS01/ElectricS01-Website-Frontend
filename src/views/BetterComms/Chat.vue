@@ -100,7 +100,7 @@
               This chat requires email verification
             </b>
             <b v-if="currentChat.type === 1" class="message-text-medium-gray">
-              {{ encryptionRequirment }}
+              {{ encryptionRequirement }}
             </b>
           </div>
           <div
@@ -381,7 +381,9 @@
             :disabled="inputDisabled"
             :placeholder="
               inputDisabled
-                ? 'This chat requires email address verification'
+                ? requiresEncryption
+                  ? encryptionRequirement
+                  : 'This chat requires email address verification'
                 : 'Send a message'
             "
             autofocus
@@ -575,7 +577,7 @@ if (!localStorage.getItem("token")) {
         currentChat.value.messages[messageIndex].deleted = true
       }
     } else if (socketMessage.changeUser) {
-      if (socketMessage.changeUser.id === showUser.value.id) {
+      if (showUser.value && socketMessage.changeUser.id === showUser.value.id) {
         showUser.value = socketMessage.changeUser
       }
       const userToUpdate = currentChat.value.users.findIndex(
@@ -737,6 +739,9 @@ const removeReaction = async (messageId, emoji) => {
 
 const sendMessage = () => {
   emojiPickerVisible.value = false
+  if (sendEncrypted.value) {
+    store.handleError("Encryption is currently unavailable")
+  }
   if (inputText.value?.trim()) {
     axios
       .post("/api/message", {
@@ -1117,10 +1122,37 @@ const matchingEmoji = computed(() => {
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 30)
 })
-const inputDisabled = computed(() => {
-  return !store.userData.emailVerified && currentChat.value.requireVerification
+const otherEncrypt = computed(
+  () =>
+    currentChat.value.users?.find((u) => u.id !== store.userData.id).encryption
+)
+const sendEncrypted = computed(() => {
+  return (
+    currentChat.value.type === 1 &&
+    ((store.userData.encryption === "on" && otherEncrypt.value === "always") ||
+      (store.userData.encryption === "always" && otherEncrypt.value === "on") ||
+      (store.userData.encryption === "on" && otherEncrypt.value === "on") ||
+      (store.userData.encryption === "off" &&
+        otherEncrypt.value === "always") ||
+      (store.userData.encryption === "always" && otherEncrypt.value === "off"))
+  )
 })
-const encryptionRequirment = computed(() => {
+const requiresEncryption = computed(() => {
+  return (
+    currentChat.value.type === 1 &&
+    ((store.userData.encryption === "always" &&
+      otherEncrypt.value === "never") ||
+      (store.userData.encryption === "never" &&
+        otherEncrypt.value === "always"))
+  )
+})
+const inputDisabled = computed(() => {
+  return (
+    requiresEncryption.value ||
+    (!store.userData.emailVerified && currentChat.value.requireVerification)
+  )
+})
+const encryptionRequirement = computed(() => {
   if (currentChat.value.type !== 1) return
   const encryption = currentChat.value.users.find(
     (u) => u.id !== store.userData.id
