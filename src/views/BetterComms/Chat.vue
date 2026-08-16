@@ -739,14 +739,15 @@ const removeReaction = async (messageId, emoji) => {
 
 const sendMessage = () => {
   emojiPickerVisible.value = false
-  if (sendEncrypted.value) {
-    store.handleError("Encryption is currently unavailable")
-  }
-  if (inputText.value?.trim()) {
+  const messageContents = inputText.value.trim()
+  if (messageContents) {
+    if (sendEncrypted.value) {
+      store.handleError("Encryption is currently unavailable")
+    }
     axios
       .post("/api/message", {
         chatId: currentChat.value.id,
-        messageContents: inputText.value.trim(),
+        messageContents,
         reply: replyTo.value
       })
       .then((res) => {

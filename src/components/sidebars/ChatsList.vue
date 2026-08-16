@@ -103,12 +103,12 @@ import ProfilePicture from "../ProfilePicture.vue"
 import Icons from "../core/Icons.vue"
 import ContextMenu from "../core/ContextMenu.vue"
 
-import { Chat, ChatType } from "@/types/chat"
+import { ChatListItem, ChatType } from "@/types/chat"
 import { computed, ref } from "vue"
 import { Position } from "@/types/position"
 
 const props = defineProps<{
-  chats?: Chat[]
+  chats?: ChatListItem[]
   loading: boolean
   currentId?: number
   userId?: number
@@ -118,7 +118,7 @@ const emit = defineEmits<{
   showFriends: []
   openChat: [number]
   openCreateChat: []
-  showEditChat: [Chat]
+  showEditChat: [ChatListItem]
   removeUser: [number]
   readChat: [number]
 }>()

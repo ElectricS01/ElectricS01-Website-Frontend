@@ -1,4 +1,5 @@
-import { Chat } from "./chat"
+import { ChatListItem } from "./chat"
+import { Notification } from "./notification"
 
 enum Dms {
   noOne = "no one",
@@ -64,7 +65,7 @@ export interface ProfileUser extends User {
 }
 
 export interface LoginData extends User {
-  chatsList: Chat[]
+  chatsList: ChatListItem[]
   emailVerified: boolean
   savePrivateKey: boolean
   publicKey: string
@@ -79,6 +80,7 @@ export interface UserData extends User {
   publicKey?: CryptoKey
   privateKey: CryptoKey
   saveSwitcher: boolean
-  chatsList: Chat[]
+  chatsList: ChatListItem[]
+  notifications: Notification[]
   switcherHistory: SwitcherHistoryItem[]
 }

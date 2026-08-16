@@ -32,18 +32,18 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { ref } from "vue"
 import { getChatUsers } from "@/helpers/chatUsers"
-import { Chat } from "@/types/chat"
+import { ChatListItem } from "@/types/chat"
 import { ChatUser } from "@/types/user"
 
 const store = useDataStore()
 
 const props = defineProps<{
-  editingChat: Chat | null
+  editingChat: ChatListItem | null
 }>()
 
 const emits = defineEmits<{
   hideEditingChat: []
-  chatEdited: [Chat]
+  chatEdited: [ChatListItem]
 }>()
 
 const requireVerification = ref(true)
@@ -55,7 +55,7 @@ const chatUsers = ref<ChatUser[]>([])
 
 let creating = false
 
-const loadChat = async (chat: Chat) => {
+const loadChat = async (chat: ChatListItem) => {
   chatNameInput.value = chat.name
   chatDescriptionInput.value = chat.description
   chatIconInput.value = chat.icon
