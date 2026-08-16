@@ -514,6 +514,7 @@ import { useRoute, useRouter } from "vue-router"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
 import { normalizedEmojis } from "@/helpers/emoji"
+import { encryptMessage, importPublicKey } from "@/helpers/encryption"
 
 const store = useDataStore()
 const route = useRoute()
@@ -737,11 +738,21 @@ const removeReaction = async (messageId, emoji) => {
   }
 }
 
-const sendMessage = () => {
+const sendMessage = async () => {
   emojiPickerVisible.value = false
   const messageContents = inputText.value.trim()
   if (messageContents) {
     if (sendEncrypted.value) {
+      if (otherUser.value.publicKey.length !== 44) {
+        store.handleError("Receiving user has invalid public key")
+        return
+      }
+      const publicKey = await importPublicKey(otherUser.value.publicKey)
+      await encryptMessage(
+        messageContents,
+        store.userData.privateKey,
+        publicKey
+      )
       store.handleError("Encryption is currently unavailable")
     }
     axios
@@ -1123,28 +1134,31 @@ const matchingEmoji = computed(() => {
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 30)
 })
-const otherEncrypt = computed(
-  () =>
-    currentChat.value.users?.find((u) => u.id !== store.userData.id).encryption
+const otherUser = computed(() =>
+  currentChat.value.users?.find((u) => u.id !== store.userData.id)
 )
 const sendEncrypted = computed(() => {
   return (
     currentChat.value.type === 1 &&
-    ((store.userData.encryption === "on" && otherEncrypt.value === "always") ||
-      (store.userData.encryption === "always" && otherEncrypt.value === "on") ||
-      (store.userData.encryption === "on" && otherEncrypt.value === "on") ||
+    ((store.userData.encryption === "on" &&
+      otherUser.value.encryption === "always") ||
+      (store.userData.encryption === "always" &&
+        otherUser.value.encryption === "on") ||
+      (store.userData.encryption === "on" &&
+        otherUser.value.encryption === "on") ||
       (store.userData.encryption === "off" &&
-        otherEncrypt.value === "always") ||
-      (store.userData.encryption === "always" && otherEncrypt.value === "off"))
+        otherUser.value.encryption === "always") ||
+      (store.userData.encryption === "always" &&
+        otherUser.value.encryption === "off"))
   )
 })
 const requiresEncryption = computed(() => {
   return (
     currentChat.value.type === 1 &&
     ((store.userData.encryption === "always" &&
-      otherEncrypt.value === "never") ||
+      otherUser.value.encryption === "never") ||
       (store.userData.encryption === "never" &&
-        otherEncrypt.value === "always"))
+        otherUser.value.encryption === "always"))
   )
 })
 const inputDisabled = computed(() => {

@@ -149,3 +149,79 @@ export async function importPublicKey(publicKeyString: string) {
     return undefined
   }
 }
+
+export async function encryptMessage(
+  message: string,
+  privateKey: CryptoKey,
+  recipientPublicKey: CryptoKey
+) {
+  await sodium.ready
+
+  const messageKey = sodium.randombytes_buf(
+    sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
+  )
+
+  const nonce = sodium.randombytes_buf(
+    sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+  )
+
+  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+    sodium.from_string(message),
+    null,
+    null,
+    nonce,
+    messageKey
+  )
+
+  const sharedSecret = await crypto.subtle.deriveBits(
+    {
+      name: "X25519",
+      public: recipientPublicKey
+    },
+    privateKey,
+    256
+  )
+
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    sharedSecret,
+    "HKDF",
+    false,
+    ["deriveBits"]
+  )
+
+  const wrappingKeyBuffer = await crypto.subtle.deriveBits(
+    {
+      hash: "SHA-256",
+      info: new TextEncoder().encode("message-key-wrapping"),
+      name: "HKDF",
+      salt: new Uint8Array(32)
+    },
+    keyMaterial,
+    256
+  )
+
+  const wrappingKey = new Uint8Array(wrappingKeyBuffer)
+
+  const keyNonce = sodium.randombytes_buf(
+    sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+  )
+
+  const encryptedMessageKey = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+    messageKey,
+    null,
+    null,
+    keyNonce,
+    wrappingKey
+  )
+
+  sodium.memzero(messageKey)
+  sodium.memzero(wrappingKey)
+
+  return {
+    ciphertext,
+    encryptedMessageKey,
+    keyNonce,
+    nonce
+  }
+}

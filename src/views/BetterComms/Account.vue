@@ -736,24 +736,7 @@
               </div>
             </div>
           </div>
-          <div v-else-if="page === 'about'" class="settings-page-container">
-            <h2 class="settings-text">About BetterCommunications</h2>
-            <div>
-              BetterCommunications is free and open-source chatting platform
-              available to all
-            </div>
-            <div class="settings-spacer" />
-            <div>
-              Made by
-              <router-link to="/">ElectricS01</router-link>
-            </div>
-            <div class="settings-spacer" />
-            <div>Version: 1.243.5</div>
-            <div class="settings-spacer" />
-            <div>Backend name: {{ serverName }}</div>
-            <div class="settings-spacer" />
-            <div>Build date: {{ dayjsLong(buildDate) }}</div>
-          </div>
+          <about v-else-if="page === 'about'" />
           <changelog v-else-if="page === 'changelog'" />
           <div v-else-if="page === 'admin'" class="settings-page-container">
             <h2 class="settings-text">Admin panel</h2>
@@ -820,12 +803,13 @@
 </template>
 
 <script setup>
-import Changelog from "@/components/Changelog.vue"
+import Changelog from "@/components/account/Changelog.vue"
 import Modal from "@/components/core/Modal.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
 import Toggle from "@/components/Toggle.vue"
+import About from "@/components/account/About.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -872,8 +856,6 @@ const properties = [
 ]
 const dmOptions = ["no one", "friends", "everyone"]
 const encryptionOptions = ["never", "off", "on", "always"]
-const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
-const buildDate = __VITE_BUILD_DATE__ || "Unknown"
 
 const changeUsernameOpen = ref(false)
 const renamePasskeyOpen = ref(false)

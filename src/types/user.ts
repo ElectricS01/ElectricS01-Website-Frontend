@@ -52,6 +52,8 @@ export interface User extends BasicUser {
   friendRequests: boolean
   gameName: string
   friend?: UserFriend
+  encryption?: Encryption
+  publicKey?: string
 }
 
 export interface ProfileUser extends User {
