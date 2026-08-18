@@ -436,11 +436,10 @@
 
             <div class="settings-spacer" />
             Encryption Key Status:
-            {{
-              store.userData.publicKey && store.userData.privateKey
-                ? "Valid"
-                : "Invalid"
-            }}
+            <span v-if="store.userData.publicKey && store.userData.privateKey">
+              Valid
+            </span>
+            <span v-else style="color: var(--red)">Invalid</span>
             <div class="button-container">
               <div
                 v-if="store.userData.privateKey"
@@ -553,15 +552,7 @@
               </div>
             </div>
           </div>
-          <div
-            v-else-if="page === 'appearance'"
-            class="settings-page-container"
-          >
-            <h2 class="settings-text">Appearance</h2>
-            Change your appearance settings
-            <div class="settings-spacer" />
-            Coming soon™
-          </div>
+          <appearance v-else-if="page === 'appearance'" />
           <div v-else-if="page === 'profile'" class="settings-page-container">
             <h2 class="settings-text">Profile</h2>
             Change your profile settings
@@ -808,8 +799,9 @@ import Modal from "@/components/core/Modal.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
 import StatusIndicator from "@/components/StatusIndicator.vue"
-import Toggle from "@/components/Toggle.vue"
+import Toggle from "@/components/core/Toggle.vue"
 import About from "@/components/account/About.vue"
+import Appearance from "@/components/account/Appearance.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"

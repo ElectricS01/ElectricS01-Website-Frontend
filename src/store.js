@@ -33,6 +33,7 @@ export const useDataStore = defineStore("store", () => {
   const router = useRouter()
 
   const error = ref("")
+  const errorLink = ref("")
   const userData = ref({})
   const pageStatus = ref(null)
   const quickSwitcherShown = ref(false)
@@ -50,14 +51,16 @@ export const useDataStore = defineStore("store", () => {
 
   const errorFalse = () => {
     error.value = ""
+    errorLink.value = ""
     if (errorTimeout) {
       clearTimeout(errorTimeout)
       errorTimeout = null
     }
   }
 
-  const showError = (message, timeout = 5000) => {
+  const showError = (message, timeout = 5000, link = "") => {
     error.value = message
+    errorLink.value = link
     if (errorTimeout) {
       clearTimeout(errorTimeout)
     }
@@ -196,6 +199,13 @@ export const useDataStore = defineStore("store", () => {
         userData.value.privateKey = await loadPrivateKey(res.data.id)
         console.log(userData.value.publicKey)
         console.log(userData.value.privateKey)
+        if (!userData.value.publicKey || !userData.value.privateKey) {
+          showError(
+            "Failed to load key pair, please generate a new key pair in Security Settings",
+            10000,
+            "/account/security"
+          )
+        }
         if (
           userData.value.chatsList &&
           route.path.startsWith("/chat") &&
@@ -265,6 +275,7 @@ export const useDataStore = defineStore("store", () => {
     editFocus,
     error,
     errorFalse,
+    errorLink,
     getUser,
     handleAxiosError,
     handleError,

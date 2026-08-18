@@ -150,33 +150,17 @@ export async function importPublicKey(publicKeyString: string) {
   }
 }
 
-export async function encryptMessage(
-  message: string,
+export async function encryptMessageKey(
+  messageKey: Uint8Array,
   privateKey: CryptoKey,
-  recipientPublicKey: CryptoKey
+  publicKey: CryptoKey
 ) {
   await sodium.ready
-
-  const messageKey = sodium.randombytes_buf(
-    sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
-  )
-
-  const nonce = sodium.randombytes_buf(
-    sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
-  )
-
-  const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
-    sodium.from_string(message),
-    null,
-    null,
-    nonce,
-    messageKey
-  )
 
   const sharedSecret = await crypto.subtle.deriveBits(
     {
       name: "X25519",
-      public: recipientPublicKey
+      public: publicKey
     },
     privateKey,
     256
@@ -203,25 +187,97 @@ export async function encryptMessage(
 
   const wrappingKey = new Uint8Array(wrappingKeyBuffer)
 
-  const keyNonce = sodium.randombytes_buf(
+  const nonce = sodium.randombytes_buf(
     sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
   )
 
-  const encryptedMessageKey = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
-    messageKey,
-    null,
-    null,
-    keyNonce,
-    wrappingKey
+  try {
+    const encryptedMessageKey =
+      sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+        messageKey,
+        null,
+        null,
+        nonce,
+        wrappingKey
+      )
+
+    return {
+      encryptedMessageKey,
+      nonce
+    }
+  } finally {
+    sodium.memzero(wrappingKey)
+  }
+}
+
+export async function encryptMessage(
+  message: string,
+  privateKey: CryptoKey,
+  recipientPublicKey: CryptoKey,
+  myPublicKey: CryptoKey,
+  recipientId: string,
+  myUserId: string
+) {
+  await sodium.ready
+
+  const messageKey = sodium.randombytes_buf(
+    sodium.crypto_aead_xchacha20poly1305_ietf_KEYBYTES
   )
 
-  sodium.memzero(messageKey)
-  sodium.memzero(wrappingKey)
+  const nonce = sodium.randombytes_buf(
+    sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
+  )
 
-  return {
-    ciphertext,
-    encryptedMessageKey,
-    keyNonce,
-    nonce
+  try {
+    const ciphertext = sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+      sodium.from_string(message),
+      null,
+      null,
+      nonce,
+      messageKey
+    )
+
+    const recipientKey = await encryptMessageKey(
+      messageKey,
+      privateKey,
+      recipientPublicKey
+    )
+
+    const senderKey = await encryptMessageKey(
+      messageKey,
+      privateKey,
+      myPublicKey
+    )
+
+    return {
+      ciphertext,
+      keys: [
+        {
+          encryptedMessageKey: sodium.to_base64(
+            recipientKey.encryptedMessageKey,
+            sodium.base64_variants.ORIGINAL
+          ),
+          nonce: sodium.to_base64(
+            recipientKey.nonce,
+            sodium.base64_variants.ORIGINAL
+          ),
+          userId: recipientId
+        },
+        {
+          encryptedMessageKey: sodium.to_base64(
+            senderKey.encryptedMessageKey,
+            sodium.base64_variants.ORIGINAL
+          ),
+          nonce: sodium.to_base64(
+            senderKey.nonce,
+            sodium.base64_variants.ORIGINAL
+          ),
+          userId: myUserId
+        }
+      ],
+      nonce
+    }
+  } finally {
+    sodium.memzero(messageKey)
   }
 }

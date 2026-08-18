@@ -2,6 +2,23 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.244 Encryption Key Warning</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>A warning is now shown if your encryption keys are invalid</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Switched more components to use Typescript (1.243.6)</li>
+    <li>Switched more components to use Typescript (1.243.5)</li>
+    <li>
+      The message input is now disabled when a user's encryption settings are
+      incompatible (1.243.4)
+    </li>
+    <li>Fixed key pair loading during registration (1.243.3)</li>
+    <li>Switched more components to use Typescript (1.243.3)</li>
+    <li>Switched more components to use Typescript (1.243.2)</li>
+    <li>Switched more components to use Typescript (1.243.1)</li>
+  </ul>
   <h2 class="settings-text">1.243 Regenerating Encryption Keys</h2>
   <div class="settings-spacer" />
   <ul>

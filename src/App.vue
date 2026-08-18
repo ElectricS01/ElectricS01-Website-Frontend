@@ -142,7 +142,12 @@
       </icons>
     </div>
     <transition>
-      <p v-if="store.error" class="error-banner">
+      <p
+        v-if="store.error"
+        class="error-banner"
+        :style="{ cursor: store.errorLink ? 'pointer' : 'default' }"
+        @click="handleErrorClick"
+      >
         {{ store.error }}
       </p>
     </transition>
@@ -404,6 +409,12 @@ const keyPressed = ({ repeat, metaKey, ctrlKey, key }: KeyboardEvent) => {
     } else if (key == ".") {
       toggleMode()
     }
+  }
+}
+
+const handleErrorClick = () => {
+  if (store.errorLink) {
+    router.push(store.errorLink)
   }
 }
 

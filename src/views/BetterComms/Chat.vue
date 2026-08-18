@@ -742,40 +742,42 @@ const sendMessage = async () => {
   emojiPickerVisible.value = false
   const messageContents = inputText.value.trim()
   if (messageContents) {
-    if (sendEncrypted.value) {
-      if (otherUser.value.publicKey.length !== 44) {
-        store.handleError("Receiving user has invalid public key")
-        return
+    try {
+      let res
+      if (sendEncrypted.value) {
+        if (otherUser.value.publicKey.length !== 44) {
+          store.handleError("Receiving user has invalid public key")
+          return
+        }
+        const publicKey = await importPublicKey(otherUser.value.publicKey)
+        await encryptMessage(
+          messageContents,
+          store.userData.privateKey,
+          publicKey,
+          store.userData.publicKey,
+          otherUser.value.id,
+          store.userData.id
+        )
+        store.handleError("Encryption is currently unavailable")
       }
-      const publicKey = await importPublicKey(otherUser.value.publicKey)
-      await encryptMessage(
-        messageContents,
-        store.userData.privateKey,
-        publicKey
-      )
-      store.handleError("Encryption is currently unavailable")
-    }
-    axios
-      .post("/api/message", {
+      res = await axios.post("/api/message", {
         chatId: currentChat.value.id,
         messageContents,
         reply: replyTo.value
       })
-      .then((res) => {
-        store.userData.chatsList = res.data.chats
-        store.chatSort()
-        inputText.value = ""
-        replyTo.value = null
-        res.data.lastMessage.focus = false
-        currentChat.value.messages.push(res.data.lastMessage)
-        currentChat.value.association.lastRead =
-          currentChat.value.messages.at(-1).id
-        updatePageTitle()
-        scrollDown()
-      })
-      .catch((e) => {
-        store.handleAxiosError(e)
-      })
+      store.userData.chatsList = res.data.chats
+      store.chatSort()
+      inputText.value = ""
+      replyTo.value = null
+      res.data.lastMessage.focus = false
+      currentChat.value.messages.push(res.data.lastMessage)
+      currentChat.value.association.lastRead =
+        currentChat.value.messages.at(-1).id
+      updatePageTitle()
+      scrollDown()
+    } catch (e) {
+      store.handleAxiosError(e)
+    }
   }
 }
 const deleteMessage = (messageId) => {
