@@ -46,17 +46,20 @@ export interface BasicUser extends ChatUser {
   avatar: string
 }
 
-export interface User extends BasicUser {
+interface CoreUser extends BasicUser {
   status: string
   statusMessage: string
   friendRequests: boolean
   gameName: string
   friend?: UserFriend
+}
+
+export interface User extends CoreUser {
   encryption?: Encryption
   publicKey?: string
 }
 
-export interface ProfileUser extends User {
+export interface ProfileUser extends CoreUser {
   description?: string
   banner: string
   directMessages: Dms
@@ -66,7 +69,12 @@ export interface ProfileUser extends User {
   tetris: GameScore[]
 }
 
-export interface LoginData extends User {
+export interface AdminUser extends ProfileUser {
+  admin: boolean
+  createdAt: string
+}
+
+export interface LoginData extends CoreUser {
   chatsList: ChatListItem[]
   emailVerified: boolean
   savePrivateKey: boolean
@@ -75,7 +83,7 @@ export interface LoginData extends User {
   token: string
 }
 
-export interface UserData extends User {
+export interface UserData extends CoreUser {
   emailVerified: boolean
   encryption: Encryption
   savePrivateKey: boolean

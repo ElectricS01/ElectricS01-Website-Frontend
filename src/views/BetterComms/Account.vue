@@ -729,64 +729,7 @@
           </div>
           <about v-else-if="page === 'about'" />
           <changelog v-else-if="page === 'changelog'" />
-          <div v-else-if="page === 'admin'" class="settings-page-container">
-            <h2 class="settings-text">Admin panel</h2>
-            Admin info
-            <div class="settings-spacer" />
-            Feedback
-            <div class="settings-spacer" />
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>UserID</th>
-                  <th>Content</th>
-                  <th>Created Date</th>
-                </tr>
-              </thead>
-              <tr v-for="feedback in adminData.feedback" :key="feedback.id">
-                <td>{{ feedback.id }}</td>
-                <td>{{ feedback.userId }}</td>
-                <td>{{ feedback.feedback }}</td>
-                <td>{{ dayjsLong(feedback.createdAt) }}</td>
-                <td>
-                  <icons
-                    size="16"
-                    icon="delete"
-                    style="cursor: pointer"
-                    @click="deleteFeedback(feedback.id)"
-                  />
-                </td>
-              </tr>
-            </table>
-            <div class="settings-spacer" />
-            Users
-            <div class="settings-spacer" />
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Username</th>
-                  <th>Admin</th>
-                  <th>Created Date</th>
-                </tr>
-              </thead>
-              <tr v-for="user in adminData.users" :key="user.id">
-                <td>{{ user.id }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.admin }}</td>
-                <td>{{ dayjsLong(user.createdAt) }}</td>
-                <td>
-                  <icons
-                    size="16"
-                    icon="delete"
-                    style="cursor: pointer"
-                    @click="deleteFeedback(user.id)"
-                  />
-                </td>
-              </tr>
-            </table>
-          </div>
+          <admin v-else-if="page === 'admin'" />
         </div>
       </div>
     </div>
@@ -802,6 +745,7 @@ import StatusIndicator from "@/components/StatusIndicator.vue"
 import Toggle from "@/components/core/Toggle.vue"
 import About from "@/components/account/About.vue"
 import Appearance from "@/components/account/Appearance.vue"
+import Admin from "@/components/account/Admin.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -865,7 +809,6 @@ const dmOpen = ref(false)
 const encryptionOpen = ref(false)
 const sessions = ref([])
 const passkeys = ref([])
-const adminData = ref([])
 const editing = ref("")
 const qrCodeURL = ref("")
 const qrURI = ref("")
@@ -896,18 +839,6 @@ if (pages.includes(route.params.id)) {
   router.push("/account/account")
 }
 
-const getAdmin = () => {
-  if (localStorage.getItem("token")) {
-    axios
-      .get("/api/admin")
-      .then((res) => {
-        adminData.value = res.data
-      })
-      .catch((e) => {
-        store.handleAxiosError(e)
-      })
-  }
-}
 const getSessions = () => {
   if (!localStorage.getItem("token")) return
 
@@ -945,8 +876,6 @@ const changePage = (newPage) => {
   if (page === "security") {
     getSessions()
     getPasskeys()
-  } else if (page === "admin") {
-    getAdmin()
   }
 }
 const submitFeedback = () => {
@@ -960,16 +889,7 @@ const submitFeedback = () => {
   modalOpen.value = false
   feedbackText = ""
 }
-const deleteFeedback = (id) => {
-  axios
-    .delete(`/api/delete-feedback/${id}`)
-    .then(() => {
-      getAdmin()
-    })
-    .catch((e) => {
-      store.handleAxiosError(e)
-    })
-}
+
 const selectDm = async (option) => {
   await changeProperty("directMessages", option)
   dmOpen.value = false
@@ -1459,8 +1379,6 @@ const setProperty = (property, value) => {
 if (page === "security") {
   getSessions()
   getPasskeys()
-} else if (page === "admin") {
-  getAdmin()
 }
 watch(modalOpen, (newValue, oldValue) => {
   if (newValue && !oldValue) {

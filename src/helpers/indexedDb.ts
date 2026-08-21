@@ -16,6 +16,7 @@ async function openDatabase() {
 }
 
 export async function savePrivateKey(privateKey: CryptoKey, userId: number) {
+  const exportedKey = await crypto.subtle.exportKey("pkcs8", privateKey)
   const db = await openDatabase()
 
   return new Promise<void>((resolve, reject) => {
@@ -24,7 +25,7 @@ export async function savePrivateKey(privateKey: CryptoKey, userId: number) {
 
     const request = store.put({
       id: userId,
-      key: privateKey
+      key: exportedKey
     })
 
     request.onsuccess = () => {
@@ -50,7 +51,7 @@ export async function loadPrivateKey(userId: number) {
 
     const request = store.get(userId)
 
-    request.onsuccess = () => {
+    request.onsuccess = async () => {
       db.close()
 
       if (!request.result) {
@@ -59,14 +60,25 @@ export async function loadPrivateKey(userId: number) {
         return
       }
 
-      console.log("Private key was loaded")
+      try {
+        const privateKey = await crypto.subtle.importKey(
+          "pkcs8",
+          request.result.key,
+          { name: "X25519" },
+          true,
+          ["deriveBits"]
+        )
 
-      resolve(request.result.key)
+        console.log("Private key was loaded")
+        resolve(privateKey)
+      } catch (error) {
+        console.log("Private key could not be loaded")
+        console.error(error)
+        resolve(undefined)
+      }
     }
 
     request.onerror = () => {
-      console.log("Error: Private key could not be loaded")
-      console.error(request.error)
       db.close()
       reject(request.error)
     }

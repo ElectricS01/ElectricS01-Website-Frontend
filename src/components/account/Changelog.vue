@@ -2,6 +2,17 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.245 Encryption Support in Safari</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Saving encryption keys is now supported in Safari</li>
+    <li>
+      Changed the encryption key save format, keys will need to be regenerated
+      or re-imported
+    </li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+  </ul>
   <h2 class="settings-text">1.244 Encryption Key Warning</h2>
   <div class="settings-spacer" />
   <ul>

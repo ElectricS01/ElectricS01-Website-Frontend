@@ -1,5 +1,5 @@
 import { Message } from "./message"
-import { User } from "./user"
+import { BasicUser, User } from "./user"
 
 export enum ChatType {
   Group = 0,
@@ -20,7 +20,7 @@ export interface ChatListItem {
   owner: number
   latest: string
   requireVerification: boolean
-  ownerDetails: User
+  ownerDetails: BasicUser
   association: ChatAssociation
 }
 export interface Chat extends ChatListItem {
