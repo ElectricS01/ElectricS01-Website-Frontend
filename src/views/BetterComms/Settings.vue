@@ -256,51 +256,7 @@
         </div>
         <div class="settings-page scroll-bar-dark">
           <account v-if="page === 'account'"></account>
-          <div v-else-if="page === 'privacy'" class="settings-page-container">
-            <h2 class="settings-text">Privacy</h2>
-            Change your privacy settings
-            <div class="settings-spacer" />
-            Allow direct messages from
-            <div>
-              <div class="dropdown">
-                <div class="dropdown-toggle" @click="dmOpen = !dmOpen">
-                  {{ store.userData?.directMessages }}
-                </div>
-                <ul v-if="dmOpen" class="dropdown-menu">
-                  <li
-                    v-for="option in dmOptions"
-                    :key="option"
-                    @click="selectDm(option)"
-                  >
-                    {{ option }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="settings-spacer" />
-            Allow friend requests from new people
-            <toggle
-              :value="store.userData?.friendRequests"
-              @switch="toggleProp('friendRequests')"
-            />
-            <div class="settings-spacer" />
-            Show the date of your accounts creation on your profile
-            <toggle
-              :value="store.userData?.showCreated"
-              @switch="toggleProp('showCreated')"
-            />
-            <div class="settings-spacer" />
-            Save Quick Switcher history online
-            <toggle
-              :value="store.userData?.saveSwitcher"
-              @switch="toggleProp('saveSwitcher')"
-            />
-            <div class="settings-spacer" />
-            Clear your Quick Switcher history
-            <div class="settings-button" @click="clearHistory()">
-              Clear history
-            </div>
-          </div>
+          <privacy v-else-if="page === 'privacy'" />
           <div v-else-if="page === 'security'" class="settings-page-container">
             <h2 class="settings-text">Security</h2>
             Change your security settings
@@ -626,9 +582,7 @@
                         "
                         autocomplete="off"
                         @keydown.escape="editing = ''"
-                        @keydown.enter.exact.prevent="
-                          changeProperty('description', editDescription)
-                        "
+                        @keydown.enter.exact.prevent="saveDescription()"
                       />
                     </div>
                     <div v-if="store.userData.tetris?.length">
@@ -679,6 +633,7 @@ import About from "@/components/account/About.vue"
 import Appearance from "@/components/account/Appearance.vue"
 import Admin from "@/components/account/Admin.vue"
 import Account from "@/components/account/Account.vue"
+import Privacy from "@/components/account/Privacy.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -697,7 +652,7 @@ import {
   stringifyPrivateKey
 } from "@/helpers/encryption"
 import { savePrivateKey } from "@/helpers/indexedDb"
-import { onLogout } from "@/helpers/settings"
+import { changeProperty, onLogout, toggleProp } from "@/helpers/settings"
 
 const store = useDataStore()
 const route = useRoute()
@@ -713,18 +668,7 @@ const pages = [
   "changelog",
   "admin"
 ]
-const properties = [
-  "directMessages",
-  "friendRequests",
-  "showCreated",
-  "saveSwitcher",
-  "avatar",
-  "banner",
-  "description",
-  "encryption",
-  "savePrivateKey"
-]
-const dmOptions = ["no one", "friends", "everyone"]
+
 const encryptionOptions = ["never", "off", "on", "always"]
 
 const renamePasskeyOpen = ref(false)
@@ -738,7 +682,6 @@ const logoutAllOpen = ref(false)
 const confirmDeletePasskeyOpen = ref(false)
 const enableOtpOpen = ref(false)
 const disableOtpOpen = ref(false)
-const dmOpen = ref(false)
 const encryptionOpen = ref(false)
 const sessions = ref([])
 const passkeys = ref([])
@@ -822,10 +765,6 @@ const submitFeedback = () => {
   feedbackText = ""
 }
 
-const selectDm = async (option) => {
-  await changeProperty("directMessages", option)
-  dmOpen.value = false
-}
 const selectEncryption = async (option) => {
   await changeProperty("encryption", option)
   encryptionOpen.value = false
@@ -856,6 +795,11 @@ const editStatusMessage = () => {
     .catch((e) => {
       store.handleAxiosError(e)
     })
+}
+
+const saveDescription = async () => {
+  await changeProperty("description", editDescription)
+  editing.value = ""
 }
 
 const logoutAll = () => {
@@ -1011,13 +955,6 @@ const deleteSession = async () => {
   }
 }
 
-const clearHistory = () => {
-  localStorage.removeItem("switcherHistory")
-  axios.delete("/api/clear-history").catch((e) => {
-    store.handleAxiosError(e)
-  })
-}
-
 const enable2FA = () => {
   axios
     .post("/api/enable-2fa")
@@ -1165,70 +1102,6 @@ const platform = (userAgent) => {
     return total
   }
   return "Unknown OS Unknown Browser"
-}
-
-const checkImage = async (url) => {
-  return new Promise((resolve) => {
-    const img = new Image()
-
-    img.onload = () => resolve(true)
-    img.onerror = () => resolve(false)
-
-    img.src = url
-  })
-}
-
-async function toggleProp(property) {
-  if (!properties.includes(property)) {
-    return
-  }
-
-  if (!store.userData || typeof store.userData[property] === "undefined") {
-    return
-  }
-
-  const value = !store.userData[property]
-  setProperty(property, value)
-}
-
-const changeProperty = async (property, value) => {
-  if (!properties.includes(property)) {
-    return
-  }
-
-  if (property === "description") {
-    editing.value = ""
-  }
-
-  if (!value) {
-    return
-  }
-
-  if (
-    (property === "avatar" || property === "banner") &&
-    !(await checkImage(value))
-  ) {
-    store.handleError("Invalid URL", 2500)
-    return
-  }
-
-  setProperty(property, value)
-}
-
-const setProperty = (property, value) => {
-  axios
-    .post("/api/user-prop", {
-      property,
-      val: value
-    })
-    .then(() => {
-      if (localStorage.getItem("token")) {
-        store.getUser()
-      }
-    })
-    .catch((e) => {
-      store.handleAxiosError(e)
-    })
 }
 
 if (page === "security") {

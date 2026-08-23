@@ -97,7 +97,7 @@ export async function decryptPrivateKey(
       {
         name: "X25519"
       },
-      false,
+      true,
       ["deriveBits"]
     )
   } finally {
@@ -150,13 +150,7 @@ export async function importPublicKey(publicKeyString: string) {
   }
 }
 
-export async function encryptMessageKey(
-  messageKey: Uint8Array,
-  privateKey: CryptoKey,
-  publicKey: CryptoKey
-) {
-  await sodium.ready
-
+async function deriveWrappingKey(privateKey: CryptoKey, publicKey: CryptoKey) {
   const sharedSecret = await crypto.subtle.deriveBits(
     {
       name: "X25519",
@@ -174,7 +168,7 @@ export async function encryptMessageKey(
     ["deriveBits"]
   )
 
-  const wrappingKeyBuffer = await crypto.subtle.deriveBits(
+  const wrappingKey = await crypto.subtle.deriveBits(
     {
       hash: "SHA-256",
       info: new TextEncoder().encode("message-key-wrapping"),
@@ -185,7 +179,17 @@ export async function encryptMessageKey(
     256
   )
 
-  const wrappingKey = new Uint8Array(wrappingKeyBuffer)
+  return new Uint8Array(wrappingKey)
+}
+
+export async function encryptMessageKey(
+  messageKey: Uint8Array,
+  privateKey: CryptoKey,
+  publicKey: CryptoKey
+) {
+  await sodium.ready
+
+  const wrappingKey = await deriveWrappingKey(privateKey, publicKey)
 
   const nonce = sodium.randombytes_buf(
     sodium.crypto_aead_xchacha20poly1305_ietf_NPUBBYTES
@@ -279,5 +283,47 @@ export async function encryptMessage(
     }
   } finally {
     sodium.memzero(messageKey)
+  }
+}
+
+export async function decryptMessage(
+  ciphertextBase64: string,
+  nonceBase64: string,
+  encryptedMessageKeyBase64: string,
+  keyNonceBase64: string,
+  privateKey: CryptoKey,
+  senderPublicKey: CryptoKey
+) {
+  await sodium.ready
+
+  const wrappingKey = await deriveWrappingKey(privateKey, senderPublicKey)
+
+  try {
+    const messageKey = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+      null,
+      sodium.from_base64(
+        encryptedMessageKeyBase64,
+        sodium.base64_variants.ORIGINAL
+      ),
+      null,
+      sodium.from_base64(keyNonceBase64, sodium.base64_variants.ORIGINAL),
+      wrappingKey
+    )
+
+    try {
+      const plaintext = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+        null,
+        sodium.from_base64(ciphertextBase64, sodium.base64_variants.ORIGINAL),
+        null,
+        sodium.from_base64(nonceBase64, sodium.base64_variants.ORIGINAL),
+        messageKey
+      )
+
+      return sodium.to_string(plaintext)
+    } finally {
+      sodium.memzero(messageKey)
+    }
+  } finally {
+    sodium.memzero(wrappingKey)
   }
 }

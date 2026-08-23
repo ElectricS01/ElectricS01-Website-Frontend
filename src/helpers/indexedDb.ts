@@ -55,7 +55,7 @@ export async function loadPrivateKey(userId: number) {
       db.close()
 
       if (!request.result) {
-        console.log("Private key could not be loaded")
+        console.log("Private key could not be found")
         resolve(undefined)
         return
       }

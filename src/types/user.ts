@@ -1,11 +1,22 @@
 import { ChatListItem } from "./chat"
 import { Notification } from "./notification"
 
-enum Dms {
+export enum Dms {
   noOne = "no one",
   friends = "friends",
   everyone = "everyone"
 }
+
+export type ToggleableProperty =
+  "directMessages" | "friendRequests" | "showCreated" | "saveSwitcher"
+
+export type UserProperty =
+  | ToggleableProperty
+  | "avatar"
+  | "banner"
+  | "description"
+  | "encryption"
+  | "savePrivateKey"
 
 enum Encryption {
   never = "never",
@@ -50,6 +61,9 @@ interface CoreUser extends BasicUser {
   status: string
   statusMessage: string
   friendRequests: boolean
+  directMessages: Dms
+  description: string
+  banner: string
   gameName: string
   friend?: UserFriend
 }
@@ -60,9 +74,6 @@ export interface User extends CoreUser {
 }
 
 export interface ProfileUser extends CoreUser {
-  description?: string
-  banner: string
-  directMessages: Dms
   gameStatus: string
   playingSince: string
   createdAt?: string
@@ -87,8 +98,16 @@ export interface LoggedOutUser {
   id?: undefined
   username?: undefined
   email?: undefined
+  description?: undefined
+  avatar?: undefined
+  banner?: undefined
   emailVerified?: undefined
+  directMessages?: undefined
+  friendRequests?: undefined
+  showCreated?: undefined
   saveSwitcher?: undefined
+  encryption?: undefined
+  savePrivateKey?: undefined
   createdAt?: undefined
   switcherHistory: SwitcherHistoryItem[]
 }
@@ -101,6 +120,8 @@ export interface UserData extends Omit<CoreUser, "id"> {
   savePrivateKey: boolean
   publicKey?: CryptoKey
   privateKey: CryptoKey
+  friendRequests: boolean
+  showCreated: boolean
   saveSwitcher: boolean
   createdAt: string
   chatsList: ChatListItem[]
