@@ -55,7 +55,7 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { ref } from "vue"
 import { getUserByName, sendDm } from "@/helpers/chatUsers"
-import { ChatUser } from "@/types/user"
+import { ChatUser, UserData } from "@/types/user"
 
 const store = useDataStore()
 
@@ -114,7 +114,7 @@ const createChat = () => {
       users: chatUsers.value.map((user) => user.id)
     })
     .then((res) => {
-      store.userData.chatsList = res.data.chats
+      ;(store.userData as UserData).chatsList = res.data.chats
       store.chatSort()
       emits("chatCreated", res.data.chat)
     })

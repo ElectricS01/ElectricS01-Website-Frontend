@@ -107,7 +107,7 @@ const routes = [
     }
   },
   {
-    component: () => import("./views/BetterComms/Account.vue"),
+    component: () => import("./views/BetterComms/Settings.vue"),
     name: "account",
     path: "/account/:id",
     meta: {

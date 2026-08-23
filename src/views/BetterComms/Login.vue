@@ -79,15 +79,19 @@ let username = ""
 let password = ""
 let totp = ""
 
-const handleLoginSuccess = async (data: LoginData) => {
+const handleLoginSuccess = async (
+  data: LoginData,
+  privateKey: CryptoKey | undefined
+) => {
   localStorage.setItem("token", data.token)
   store.openWebSocket()
   Object.assign(axios.defaults, {
     headers: { Authorization: data.token }
   })
-  store.handleUser(data)
+  store.userData = store.handleUser(data)
 
   store.userData.publicKey = await importPublicKey(data.publicKey)
+  if (privateKey) store.userData.privateKey = privateKey
 
   const redirect = route.query.redirect
 
@@ -104,18 +108,15 @@ const submit = () => {
       username: username.toLowerCase().trim()
     })
     .then(async (res) => {
-      await handleLoginSuccess(res.data)
-      const privateKey = await loadPrivateKey(res.data.id)
-      if (privateKey) {
-        store.userData.privateKey = privateKey
-      } else if (store.userData.savePrivateKey && res.data.privateKey) {
-        const decryptedKey = await decryptPrivateKey(
+      let privateKey = await loadPrivateKey(res.data.id)
+      if (!privateKey && res.data.savePrivateKey && res.data.privateKey) {
+        privateKey = await decryptPrivateKey(
           res.data.privateKey,
           password.trim()
         )
-        store.userData.privateKey = decryptedKey
-        await savePrivateKey(decryptedKey, res.data.id)
+        await savePrivateKey(privateKey, res.data.id)
       }
+      await handleLoginSuccess(res.data, privateKey)
     })
     .catch((e) => {
       store.handleAxiosError(e)
@@ -135,11 +136,8 @@ axios.get("/api/passkey-challenge").then((challengeResponse) => {
       })
       .then(async (verificationResponse) => {
         if (verificationResponse.data.verified) {
-          await handleLoginSuccess(verificationResponse.data)
           const privateKey = await loadPrivateKey(verificationResponse.data.id)
-          if (privateKey) {
-            store.userData.privateKey = privateKey
-          }
+          await handleLoginSuccess(verificationResponse.data, privateKey)
         }
       })
   })

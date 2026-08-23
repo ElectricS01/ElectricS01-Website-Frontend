@@ -83,13 +83,26 @@ export interface LoginData extends CoreUser {
   token: string
 }
 
-export interface UserData extends CoreUser {
+export interface LoggedOutUser {
+  id?: undefined
+  username?: undefined
+  email?: undefined
+  emailVerified?: undefined
+  saveSwitcher?: undefined
+  createdAt?: undefined
+  switcherHistory: SwitcherHistoryItem[]
+}
+
+export interface UserData extends Omit<CoreUser, "id"> {
+  id?: number
+  email: string
   emailVerified: boolean
   encryption: Encryption
   savePrivateKey: boolean
   publicKey?: CryptoKey
   privateKey: CryptoKey
   saveSwitcher: boolean
+  createdAt: string
   chatsList: ChatListItem[]
   notifications: Notification[]
   switcherHistory: SwitcherHistoryItem[]

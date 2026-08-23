@@ -117,8 +117,8 @@ const submit = async () => {
     Object.assign(axios.defaults, {
       headers: { Authorization: res.data.token }
     })
-    store.handleUser(res.data)
-    await savePrivateKey(keyPair.privateKey, store.userData.id)
+    store.userData = store.handleUser(res.data)
+    await savePrivateKey(keyPair.privateKey, store.userData.id!)
 
     store.userData.publicKey = keyPair.publicKey
     store.userData.privateKey = keyPair.privateKey

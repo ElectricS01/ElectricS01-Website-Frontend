@@ -1,5 +1,5 @@
 import { useDataStore } from "@/store"
-import { ChatUser } from "@/types/user"
+import { ChatUser, UserData } from "@/types/user"
 import axios from "axios"
 
 const store = useDataStore()
@@ -28,7 +28,7 @@ export const getUserByName = async (username: string) => {
 
 export const sendDm = async (id: number) => {
   const response = await axios.post(`/api/direct-message/${id}`)
-  store.userData.chatsList = response.data.chats
+  ;(store.userData as UserData).chatsList = response.data.chats
   store.chatSort()
   return response.data
 }

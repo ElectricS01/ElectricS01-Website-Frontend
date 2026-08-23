@@ -95,38 +95,7 @@
       </div>
     </div>
   </modal>
-  <modal :is-active="changeUsernameOpen" @close="changeUsernameOpen = false">
-    <div class="settings-modal">
-      <p class="settings-text">Change Username</p>
-      <div class="text-small">
-        <label for="username">Username</label>
-      </div>
-      <input
-        id="username"
-        v-model="newUsername"
-        placeholder="Username"
-        class="modal-input"
-        autocomplete="off"
-        @keydown.enter="updateUsername"
-      />
-      <div class="text-small">
-        <label for="password">Password</label>
-      </div>
-      <input
-        id="password"
-        v-model="password"
-        placeholder="Password"
-        class="modal-input"
-        autocomplete="off"
-        type="password"
-        @keydown.enter="updateUsername"
-      />
-      <div class="settings-button-container">
-        <button @click="changeUsernameOpen = false">Cancel</button>
-        <button @click="updateUsername">Save</button>
-      </div>
-    </div>
-  </modal>
+
   <modal :is-active="renamePasskeyOpen" @close="renamePasskeyOpen = false">
     <div class="settings-modal">
       <p class="settings-text">
@@ -286,44 +255,7 @@
           <div @click="modalOpen = true">Any feedback?</div>
         </div>
         <div class="settings-page scroll-bar-dark">
-          <div v-if="page === 'account'" class="settings-page-container">
-            <h2 class="settings-text">Account</h2>
-            Change your account settings
-            <div class="settings-spacer" />
-            <div class="settings-button-red" @click="logout">Logout</div>
-            <div class="settings-spacer" />
-            Username: {{ store.userData?.username }}
-            <div class="settings-button" @click="showChangeUsername()">
-              Change Username
-            </div>
-            <div class="settings-spacer" />
-            Email address: {{ store.userData?.email }}
-            <div class="settings-button" @click="showChangeEmail()">
-              Change Email Address
-            </div>
-            <div class="settings-spacer" />
-            Email verified: {{ store.userData?.emailVerified }}
-            <div
-              v-if="!store.userData?.emailVerified"
-              class="settings-button"
-              @click="resendVerification()"
-            >
-              Resend Verification Email
-            </div>
-            <div class="settings-spacer" />
-            Password: {{ store.userData?.password }}
-            <div class="settings-button" @click="showChangePassword()">
-              Change Password
-            </div>
-            <div class="settings-spacer" />
-            Account creation date: {{ dayjsLong(store.userData?.createdAt) }}
-            <div class="settings-spacer" />
-            Account ID: {{ store.userData?.id }}
-            <div class="settings-spacer" />
-            <div class="settings-button-red" @click="showCloseAccount()">
-              Close account
-            </div>
-          </div>
+          <account v-if="page === 'account'"></account>
           <div v-else-if="page === 'privacy'" class="settings-page-container">
             <h2 class="settings-text">Privacy</h2>
             Change your privacy settings
@@ -699,27 +631,27 @@
                         "
                       />
                     </div>
-                    <div v-if="store.userData?.tetris.length">
+                    <div v-if="store.userData.tetris?.length">
                       <div class="profile-spacer">
                         <p>Tetris Scores</p>
                         <div />
                       </div>
                       <p style="margin-top: 0">
-                        Easy mode: {{ store.userData?.tetris[0]?.value }} lines
+                        Easy mode: {{ store.userData.tetris[0]?.value }} lines
                       </p>
                       <p>
                         Medium mode:
-                        {{ store.userData?.tetris[1]?.value }} lines
+                        {{ store.userData.tetris[1]?.value }} lines
                       </p>
                       <p>
-                        Hard mode: {{ store.userData?.tetris[2]?.value }} lines
+                        Hard mode: {{ store.userData.tetris[2]?.value }} lines
                       </p>
                       <p>
-                        God mode: {{ store.userData?.tetris[3]?.value }} lines
+                        God mode: {{ store.userData.tetris[3]?.value }} lines
                       </p>
                       <p style="margin-bottom: 0">
                         Ultra Nightmare mode:
-                        {{ store.userData?.tetris[4]?.value }} lines
+                        {{ store.userData.tetris[4]?.value }} lines
                       </p>
                     </div>
                   </div>
@@ -746,6 +678,7 @@ import Toggle from "@/components/core/Toggle.vue"
 import About from "@/components/account/About.vue"
 import Appearance from "@/components/account/Appearance.vue"
 import Admin from "@/components/account/Admin.vue"
+import Account from "@/components/account/Account.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -764,6 +697,7 @@ import {
   stringifyPrivateKey
 } from "@/helpers/encryption"
 import { savePrivateKey } from "@/helpers/indexedDb"
+import { onLogout } from "@/helpers/settings"
 
 const store = useDataStore()
 const route = useRoute()
@@ -793,7 +727,6 @@ const properties = [
 const dmOptions = ["no one", "friends", "everyone"]
 const encryptionOptions = ["never", "off", "on", "always"]
 
-const changeUsernameOpen = ref(false)
 const renamePasskeyOpen = ref(false)
 const deletePasskeyOpen = ref(false)
 const deleteSessionOpen = ref(false)
@@ -813,7 +746,6 @@ const editing = ref("")
 const qrCodeURL = ref("")
 const qrURI = ref("")
 const totp = ref("")
-const newUsername = ref("")
 const passkeyName = ref("")
 const selectedPasskey = ref()
 const passkeyToDelete = ref()
@@ -925,32 +857,7 @@ const editStatusMessage = () => {
       store.handleAxiosError(e)
     })
 }
-const onLogout = () => {
-  Object.assign(axios.defaults, {
-    headers: { Authorization: null }
-  })
-  store.ws?.close()
-  store.ws = null
-  console.log("Socket closed")
 
-  store.userData = {}
-  localStorage.removeItem("token")
-  router.push("/login")
-}
-const logout = () => {
-  axios
-    .post("/api/logout")
-    .then(() => {
-      onLogout()
-    })
-    .catch((e) => {
-      if (e?.response?.status === 401) {
-        onLogout()
-        return
-      }
-      store.handleAxiosError(e)
-    })
-}
 const logoutAll = () => {
   logoutAllOpen.value = true
 }
@@ -967,51 +874,6 @@ const logoutAllSubmit = () => {
         store.handleAxiosError(e)
       })
   }
-}
-const showChangeUsername = () => {
-  changeUsernameOpen.value = true
-  newUsername.value = store.userData?.username
-  password = ""
-}
-
-const updateUsername = () => {
-  if (!newUsername.value) {
-    store.handleError("Username cannot be empty", 2500)
-    return
-  }
-  if (!password) {
-    store.handleError("Password is required", 2500)
-    return
-  }
-  axios
-    .patch("/api/edit-username", {
-      password,
-      username: newUsername.value
-    })
-    .then((res) => {
-      store.userData.username = res.data.username
-      changeUsernameOpen.value = false
-      newUsername.value = ""
-      password = ""
-    })
-    .catch((e) => {
-      store.handleAxiosError(e)
-    })
-}
-
-const showChangeEmail = () => {
-  console.log("Unavailable")
-  store.handleError("Unavailable, please contact support")
-}
-
-const showChangePassword = () => {
-  console.log("Unavailable")
-  store.handleError("Unavailable, please contact support")
-}
-
-const showCloseAccount = () => {
-  console.log("Unavailable")
-  store.handleError("Unavailable, please contact support")
 }
 
 const showExportKey = () => {
@@ -1155,14 +1017,7 @@ const clearHistory = () => {
     store.handleAxiosError(e)
   })
 }
-const resendVerification = () => {
-  axios.post("/api/resend-verification").catch((e) => {
-    store.handleAxiosError(e)
-  })
-  if (localStorage.getItem("token")) {
-    store.getUser()
-  }
-}
+
 const enable2FA = () => {
   axios
     .post("/api/enable-2fa")

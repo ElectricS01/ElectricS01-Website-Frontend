@@ -6,10 +6,6 @@ import { useRoute, useRouter } from "vue-router"
 import { loadPrivateKey } from "./helpers/indexedDb"
 import { importPublicKey } from "./helpers/encryption"
 
-/**
- * @typedef {import("@/types/user").UserData} UserData
- */
-
 const switcherPages = [
   "Home",
   "TonkGame",
@@ -34,7 +30,8 @@ export const useDataStore = defineStore("store", () => {
 
   const error = ref("")
   const errorLink = ref("")
-  const userData = ref({})
+  /** @type {import("vue").Ref<import("@/types/user").UserData | import("@/types/user").LoggedOutUser>} */
+  const userData = ref({ switcherHistory: [] })
   const pageStatus = ref(null)
   const quickSwitcherShown = ref(false)
   const loadingChats = ref(true)
@@ -169,6 +166,10 @@ export const useDataStore = defineStore("store", () => {
     })
   }
 
+  /**
+   * @param {import("@/types/user").LoginData} data
+   * @returns {import("@/types/user").UserData}
+   */
   const handleUser = (data) => {
     if (typeof data === "object") userData.value = data
     if (!userData.value.saveSwitcher) {
@@ -188,6 +189,7 @@ export const useDataStore = defineStore("store", () => {
       loadingChats.value = false
       chatSort()
     }
+    return userData.value
   }
 
   const getUser = () => {
@@ -292,7 +294,7 @@ export const useDataStore = defineStore("store", () => {
     sidebarOpen,
     sortSwitcher,
     switcherItems,
-    /** @type {UserData} */
+    /** @type {import("@/types/user").UserData | import("@/types/user").LoggedOutUser} */
     userData,
     /** @type {WebSocket | null} */
     ws
