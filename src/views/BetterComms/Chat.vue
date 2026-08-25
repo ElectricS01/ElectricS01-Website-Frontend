@@ -243,8 +243,8 @@
                 />
                 <icons
                   v-show="
-                    store.userData?.admin ||
-                    message.user?.id === store.userData?.id
+                    store.userData.admin ||
+                    message.user?.id === store.userData.id
                   "
                   style="cursor: pointer"
                   size="20"
@@ -252,7 +252,7 @@
                   @click="pinMessage(message.id, message.pinned)"
                 />
                 <icons
-                  v-if="message.user?.id === store.userData?.id"
+                  v-if="message.user?.id === store.userData.id"
                   style="cursor: pointer"
                   size="20"
                   icon="edit"
@@ -270,8 +270,8 @@
                 />
                 <icons
                   v-show="
-                    store.userData?.admin ||
-                    message.user?.id === store.userData?.id
+                    store.userData.admin ||
+                    message.user?.id === store.userData.id
                   "
                   style="cursor: pointer"
                   size="20"
@@ -509,7 +509,15 @@ import UsersSidebar from "@/components/sidebars/UsersSidebar.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue"
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch
+} from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
@@ -524,8 +532,8 @@ const embed = ref(null)
 const currentChat = ref({})
 const replyTo = ref()
 const editing = ref("")
-const createChatRef = ref(null)
-const editChatRef = ref(null)
+const createChatRef = useTemplateRef("createChatRef")
+const editChatRef = useTemplateRef("editChatRef")
 const createChatShown = ref(false)
 const loadingMessages = ref(true)
 const scrolledUp = ref(false)

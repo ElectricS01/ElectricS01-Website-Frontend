@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type CSSProperties } from "vue"
+import { computed, onMounted, useTemplateRef, type CSSProperties } from "vue"
 import type { Position } from "@/types/position"
 
 const props = defineProps<{
@@ -18,7 +18,7 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const popover = ref<HTMLElement | null>(null)
+const popoverRef = useTemplateRef("popover")
 
 const menuStyle = computed<CSSProperties>(() => {
   const adjustedX = props.position.x + window.scrollX
@@ -32,8 +32,8 @@ const menuStyle = computed<CSSProperties>(() => {
 
 const toggle = (event: ToggleEvent) => {
   if (event.newState === "closed") {
-    if (popover.value) {
-      popover.value.removeEventListener("beforetoggle", toggle)
+    if (popoverRef.value) {
+      popoverRef.value.removeEventListener("beforetoggle", toggle)
     }
 
     emit("close")
@@ -41,9 +41,9 @@ const toggle = (event: ToggleEvent) => {
 }
 
 onMounted(() => {
-  if (popover.value) {
-    popover.value.showPopover()
-    popover.value.addEventListener("beforetoggle", toggle)
+  if (popoverRef.value) {
+    popoverRef.value.showPopover()
+    popoverRef.value.addEventListener("beforetoggle", toggle)
   }
 })
 </script>

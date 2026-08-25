@@ -32,6 +32,6 @@
 <script setup lang="ts">
 defineProps<{
   size: string
-  status: string
+  status?: string
 }>()
 </script>

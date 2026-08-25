@@ -100,7 +100,10 @@ export interface LoggedOutUser {
   description?: undefined
   avatar?: undefined
   banner?: undefined
+  status?: undefined
+  statusMessage?: undefined
   emailVerified?: undefined
+  admin?: undefined
   directMessages?: undefined
   friendRequests?: undefined
   showCreated?: undefined
@@ -111,7 +114,9 @@ export interface LoggedOutUser {
   privateKey?: undefined
   otpVerified?: undefined
   createdAt?: undefined
+  tetris?: undefined
   sessionId?: undefined
+  notifications?: undefined
   switcherHistory: SwitcherHistoryItem[]
 }
 
@@ -119,6 +124,7 @@ export interface UserData extends Omit<CoreUser, "id"> {
   id?: number
   email: string
   emailVerified: boolean
+  admin: boolean
   encryption: Encryption
   savePrivateKey: boolean
   publicKey?: CryptoKey
@@ -129,6 +135,7 @@ export interface UserData extends Omit<CoreUser, "id"> {
   otpVerified: boolean
   createdAt: string
   sessionId: number
+  tetris: GameScore[]
   chatsList: ChatListItem[]
   notifications: Notification[]
   switcherHistory: SwitcherHistoryItem[]

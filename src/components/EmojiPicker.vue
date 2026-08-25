@@ -3,7 +3,6 @@
     <div class="emoji-menu">
       <input
         id="emoji-input"
-        ref="searchInput"
         v-model="filterText"
         placeholder="Search for an emoji"
         type="text"
