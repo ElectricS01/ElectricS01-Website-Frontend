@@ -2,6 +2,17 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.246 Encryption Key Importing</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>You can now import encryption keys from PEM files</li>
+    <li>Optimised encryption performance</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Switched more components to use Typescript (1.245.2)</li>
+    <li>Refactoring (1.245.2)</li>
+    <li>Switched more components to use Typescript (1.245.1)</li>
+  </ul>
   <h2 class="settings-text">1.245 Encryption Support in Safari</h2>
   <div class="settings-spacer" />
   <ul>

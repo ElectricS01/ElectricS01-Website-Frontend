@@ -8,17 +8,16 @@ export enum Dms {
 }
 
 export type ToggleableProperty =
-  "directMessages" | "friendRequests" | "showCreated" | "saveSwitcher"
-
-export type UserProperty =
-  | ToggleableProperty
-  | "avatar"
-  | "banner"
-  | "description"
-  | "encryption"
+  | "directMessages"
+  | "friendRequests"
+  | "showCreated"
+  | "saveSwitcher"
   | "savePrivateKey"
 
-enum Encryption {
+export type UserProperty =
+  ToggleableProperty | "avatar" | "banner" | "description" | "encryption"
+
+export enum Encryption {
   never = "never",
   off = "off",
   on = "on",
@@ -108,7 +107,11 @@ export interface LoggedOutUser {
   saveSwitcher?: undefined
   encryption?: undefined
   savePrivateKey?: undefined
+  publicKey?: undefined
+  privateKey?: undefined
+  otpVerified?: undefined
   createdAt?: undefined
+  sessionId?: undefined
   switcherHistory: SwitcherHistoryItem[]
 }
 
@@ -123,7 +126,9 @@ export interface UserData extends Omit<CoreUser, "id"> {
   friendRequests: boolean
   showCreated: boolean
   saveSwitcher: boolean
+  otpVerified: boolean
   createdAt: string
+  sessionId: number
   chatsList: ChatListItem[]
   notifications: Notification[]
   switcherHistory: SwitcherHistoryItem[]

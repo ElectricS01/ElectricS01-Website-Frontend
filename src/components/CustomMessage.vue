@@ -89,7 +89,7 @@ const showEdited = () => {
 
 const messageParts = computed<MessagePart[]>(() => {
   return props.message.messageContents
-    .split(/(\n|<@\d+>)/g)
+    ?.split(/(\n|<@\d+>)/g)
     .filter(Boolean)
     .map((part, index) => {
       if (part.startsWith("<@")) {

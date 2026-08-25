@@ -131,6 +131,44 @@ export async function exportPrivateKey(privateKey: CryptoKey) {
   ].join("\n")
 }
 
+export async function importPublicKeyFromFile(pem: string) {
+  const base64 = pem
+    .replace("-----BEGIN PUBLIC KEY-----", "")
+    .replace("-----END PUBLIC KEY-----", "")
+    .replace(/\s/g, "")
+
+  const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0))
+
+  return crypto.subtle.importKey(
+    "spki",
+    bytes,
+    {
+      name: "X25519"
+    },
+    true,
+    []
+  )
+}
+
+export async function importPrivateKeyFromFile(pem: string) {
+  const base64 = pem
+    .replace("-----BEGIN PRIVATE KEY-----", "")
+    .replace("-----END PRIVATE KEY-----", "")
+    .replace(/\s/g, "")
+
+  const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0))
+
+  return crypto.subtle.importKey(
+    "pkcs8",
+    bytes,
+    {
+      name: "X25519"
+    },
+    true,
+    ["deriveBits"]
+  )
+}
+
 export async function importPublicKey(publicKeyString: string) {
   try {
     const bytes = Uint8Array.from(atob(publicKeyString), (c) => c.charCodeAt(0))
