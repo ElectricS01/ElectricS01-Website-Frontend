@@ -168,7 +168,7 @@
       >
         <div class="switcher-modal">
           <input
-            id="quick-switcher"
+            ref="quick-switcher"
             v-model="switcherInput"
             placeholder="Quick switcher"
             class="switcher-input"
@@ -198,13 +198,15 @@
 import Icons from "@/components/core/Icons.vue"
 import { useRoute, useRouter } from "vue-router"
 import { useDataStore } from "@/store"
-import { computed, nextTick, ref, watch } from "vue"
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue"
 import axios from "axios"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 
 const route = useRoute()
 const router = useRouter()
 const store = useDataStore()
+
+const quickSwitcherRef = useTemplateRef("quick-switcher")
 
 const highlightedIndex = ref(0)
 const switcherInput = ref()
@@ -391,7 +393,7 @@ const activateItem = (id: number) => {
     store.sortSwitcher()
   }
 }
-const keyPressed = ({ repeat, metaKey, ctrlKey, key }: KeyboardEvent) => {
+const keyPressed = async ({ repeat, metaKey, ctrlKey, key }: KeyboardEvent) => {
   if (key === "Escape") {
     store.quickSwitcherShown = false
   }
@@ -401,10 +403,8 @@ const keyPressed = ({ repeat, metaKey, ctrlKey, key }: KeyboardEvent) => {
       store.quickSwitcherShown = !store.quickSwitcherShown
       searchedItems = store.switcherItems
       if (store.quickSwitcherShown) {
-        nextTick(() => {
-          const quickSwitcher = document.getElementById("quick-switcher")
-          quickSwitcher?.focus()
-        })
+        await nextTick()
+        quickSwitcherRef.value?.focus()
       }
     } else if (key == ".") {
       toggleMode()

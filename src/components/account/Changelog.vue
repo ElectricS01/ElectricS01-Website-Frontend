@@ -2,6 +2,14 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.247 Saving Encryption Keys</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>You can now save unsynced encryption keys</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Refactoring</li>
+    <li>Switched more components to use Typescript (1.246.1)</li>
+  </ul>
   <h2 class="settings-text">1.246 Encryption Key Importing</h2>
   <div class="settings-spacer" />
   <ul>

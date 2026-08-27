@@ -43,7 +43,7 @@ const setProperty = async (property: UserProperty, value: string | boolean) => {
 
 export const toggleProp = async (property: ToggleableProperty) => {
   const value = !store.userData[property]
-  setProperty(property, value)
+  await setProperty(property, value)
 }
 
 export const changeProperty = async (property: UserProperty, value: string) => {
@@ -59,5 +59,5 @@ export const changeProperty = async (property: UserProperty, value: string) => {
     return
   }
 
-  setProperty(property, value)
+  await setProperty(property, value)
 }

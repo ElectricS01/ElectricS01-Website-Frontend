@@ -3,7 +3,7 @@
     <div class="settings-modal">
       <p class="settings-text">Submit feedback</p>
       <input
-        id="feedback"
+        ref="feedback"
         v-model="feedbackText"
         placeholder="Feedback"
         class="settings-input"
@@ -63,7 +63,7 @@ import Profile from "@/components/account/Profile.vue"
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
-import { nextTick, ref, watch } from "vue"
+import { nextTick, ref, useTemplateRef, watch } from "vue"
 
 const store = useDataStore()
 const route = useRoute()
@@ -79,6 +79,8 @@ const pages = [
   "changelog",
   "admin"
 ]
+
+const feedbackRef = useTemplateRef("feedback")
 
 const modalOpen = ref(false)
 
@@ -121,13 +123,9 @@ const submitFeedback = () => {
   feedbackText = ""
 }
 
-const editFocus = () => {
-  nextTick(() => {
-    const feedback = document.getElementById("feedback")
-    if (feedback) {
-      feedback?.focus()
-    }
-  })
+const editFocus = async () => {
+  await nextTick()
+  feedbackRef.value?.focus()
 }
 
 watch(

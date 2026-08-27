@@ -2,7 +2,7 @@
   <div class="emoji-container">
     <div class="emoji-menu">
       <input
-        id="emoji-input"
+        ref="emoji-input"
         v-model="filterText"
         placeholder="Search for an emoji"
         type="text"
@@ -30,11 +30,13 @@
 
 <script setup lang="ts">
 import { normalizedEmojis } from "@/helpers/emoji"
-import { computed, nextTick, onMounted, ref, watch } from "vue"
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue"
 
 const emit = defineEmits<{
   emojiSelected: [string]
 }>()
+
+const emojiInputRef = useTemplateRef("emoji-input")
 
 const filterText = ref("")
 const selectedIndex = ref(0)
@@ -52,8 +54,7 @@ watch(filterText, () => {
 
 onMounted(async () => {
   await nextTick()
-  const input = document.getElementById("emoji-input")
-  input?.focus()
+  emojiInputRef.value?.focus()
 })
 
 const onEnter = () => {

@@ -110,12 +110,14 @@ export interface LoggedOutUser {
   saveSwitcher?: undefined
   encryption?: undefined
   savePrivateKey?: undefined
+  privateKeySaved?: undefined
   publicKey?: undefined
   privateKey?: undefined
   otpVerified?: undefined
   createdAt?: undefined
-  tetris?: undefined
   sessionId?: undefined
+  tetris?: undefined
+  chatsList?: undefined
   notifications?: undefined
   switcherHistory: SwitcherHistoryItem[]
 }
@@ -127,6 +129,7 @@ export interface UserData extends Omit<CoreUser, "id"> {
   admin: boolean
   encryption: Encryption
   savePrivateKey: boolean
+  privateKeySaved: boolean
   publicKey?: CryptoKey
   privateKey: CryptoKey
   friendRequests: boolean

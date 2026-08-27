@@ -7,8 +7,12 @@ export enum ChatType {
   Global = 2
 }
 
-interface ChatAssociation {
+interface ChatListItemAssociation {
   notifications: number
+}
+
+interface ChatAssociation {
+  lastRead: number
 }
 
 export interface ChatListItem {
@@ -21,9 +25,11 @@ export interface ChatListItem {
   latest: string
   requireVerification: boolean
   ownerDetails: BasicUser
-  association: ChatAssociation
+  association: ChatListItemAssociation
 }
-export interface Chat extends ChatListItem {
+
+export interface Chat extends Omit<ChatListItem, "association"> {
+  association: ChatAssociation
   messages: Message[]
   pins: Message[]
   users: User[]

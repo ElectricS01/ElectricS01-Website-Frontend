@@ -22,6 +22,43 @@
       </div>
     </div>
   </modal>
+  <modal :is-active="saveKeyOpen" @close="saveKeyOpen = false">
+    <div class="settings-modal">
+      <p class="settings-text">Save your Private Key</p>
+      <div class="text-small">
+        <label for="password">Password</label>
+      </div>
+      <input
+        id="password"
+        v-model="password"
+        placeholder="Password"
+        class="modal-input"
+        autocomplete="off"
+        type="password"
+        @keydown.enter="saveKey"
+      />
+      <template v-if="store.userData.otpVerified">
+        <div class="text-small">
+          <label for="totp">2FA Code</label>
+        </div>
+        <input
+          id="totp"
+          v-model="totp"
+          placeholder="2FA Code"
+          class="modal-input"
+          type="token"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="one-time-code"
+          @keydown.enter="saveKey"
+        />
+      </template>
+      <div class="settings-button-container">
+        <button @click="saveKeyOpen = false">Cancel</button>
+        <button @click="saveKey">Save</button>
+      </div>
+    </div>
+  </modal>
   <modal :is-active="exportKeyOpen" @close="exportKeyOpen = false">
     <div class="settings-modal">
       <p class="settings-text">Export your Private Key</p>
@@ -46,6 +83,22 @@
         type="password"
         @keydown.enter="generateNewKeyPair"
       />
+      <template v-if="store.userData.otpVerified">
+        <div class="text-small">
+          <label for="totp">2FA Code</label>
+        </div>
+        <input
+          id="totp"
+          v-model="totp"
+          placeholder="2FA Code"
+          class="modal-input"
+          type="token"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="one-time-code"
+          @keydown.enter="generateNewKeyPair"
+        />
+      </template>
       <div class="settings-button-container">
         <button @click="generateKeyOpen = false">Cancel</button>
         <button @click="generateNewKeyPair">Generate</button>
@@ -89,6 +142,22 @@
         type="password"
         @keydown.enter="importKeyPair"
       />
+      <template v-if="store.userData.otpVerified">
+        <div class="text-small">
+          <label for="totp">2FA Code</label>
+        </div>
+        <input
+          id="totp"
+          v-model="totp"
+          placeholder="2FA Code"
+          class="modal-input"
+          type="token"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="one-time-code"
+          @keydown.enter="importKeyPair"
+        />
+      </template>
       <div class="settings-button-container">
         <button @click="importKeyOpen = false">Cancel</button>
         <button @click="importKeyPair">Import</button>
@@ -261,12 +330,24 @@
     - You won't be able to send messages to those who have selected "Never"
   </div>
   <div class="settings-spacer" />
-  Save your Encryption Private Key
-  <toggle
-    :value="store.userData.savePrivateKey"
-    :disabled="store.userData.encryption === 'never'"
-    @switch="toggleProp('savePrivateKey')"
-  />
+  Save your Encryption Private Key:
+  <span v-if="store.userData.privateKeySaved">Saved</span>
+  <span v-else-if="store.userData.privateKey">Saved locally</span>
+  <span v-else style="color: var(--red)">Not saved</span>
+  <div class="button-container">
+    <toggle
+      :value="store.userData.savePrivateKey"
+      :disabled="store.userData.encryption === 'never'"
+      @switch="togglePrivateKey"
+    />
+    <div
+      v-if="store.userData.savePrivateKey && !store.userData.privateKeySaved"
+      class="settings-button"
+      @click="showSaveKey"
+    >
+      Save Key
+    </div>
+  </div>
   <div class="message-text-small">
     If enabled, your private key will be encrypted using your password and saved
     to the server
@@ -408,6 +489,7 @@ const encryptionOptions = Object.values(Encryption)
 const sessions = ref<Session[]>([])
 const passkeys = ref<Passkey[]>([])
 
+const saveKeyOpen = ref(false)
 const renamePasskeyOpen = ref(false)
 const deletePasskeyOpen = ref(false)
 const deleteSessionOpen = ref(false)
@@ -456,6 +538,17 @@ const logoutAllSubmit = () => {
   }
 }
 
+const togglePrivateKey = async () => {
+  await toggleProp("savePrivateKey")
+  store.userData.privateKeySaved = false
+}
+
+const showSaveKey = () => {
+  saveKeyOpen.value = true
+  password.value = ""
+  totp.value = ""
+}
+
 const showExportKey = () => {
   exportKeyOpen.value = true
 }
@@ -463,11 +556,56 @@ const showExportKey = () => {
 const showGenerateKey = () => {
   generateKeyOpen.value = true
   password.value = ""
+  totp.value = ""
 }
 
 const showImportKey = () => {
   importKeyOpen.value = true
   password.value = ""
+  totp.value = ""
+}
+
+const saveKey = async () => {
+  if (!store.userData.privateKey || !store.userData.publicKey) {
+    store.handleError("No key pair available on this device")
+    return
+  }
+
+  if (!password.value || !password.value.trim()) {
+    store.handleError("Password is required")
+    return
+  }
+
+  if (store.userData.otpVerified && (!totp.value || !totp.value.trim())) {
+    store.handleError("2FA Code is required")
+    return
+  }
+
+  try {
+    const publicKeyString = await stringifyPublicKey(store.userData.publicKey)
+    const privateKeyString = await stringifyPrivateKey(
+      store.userData.privateKey
+    )
+
+    const encryptedPrivateKey = await encryptPrivateKey(
+      privateKeyString,
+      password.value.trim()
+    )
+
+    await axios.patch("/api/edit-key-pair", {
+      password: password.value.trim(),
+      privateKey: encryptedPrivateKey,
+      publicKey: publicKeyString,
+      token: totp.value.trim()
+    })
+
+    store.userData.privateKeySaved = true
+    saveKeyOpen.value = false
+    password.value = ""
+    totp.value = ""
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
 
 const exportKeyPair = async () => {
@@ -489,7 +627,8 @@ const handleNewKeys = async (privateKey: CryptoKey, publicKey: CryptoKey) => {
   if (!store.userData.savePrivateKey) {
     await axios.patch("/api/edit-key-pair", {
       password: password.value,
-      publicKey: publicKeyString
+      publicKey: publicKeyString,
+      token: totp.value.trim()
     })
   } else {
     const privateKeyString = await stringifyPrivateKey(privateKey)
@@ -500,9 +639,10 @@ const handleNewKeys = async (privateKey: CryptoKey, publicKey: CryptoKey) => {
     )
 
     await axios.patch("/api/edit-key-pair", {
-      password: password.value,
+      password: password.value.trim(),
       privateKey: encryptedPrivateKey,
-      publicKey: publicKeyString
+      publicKey: publicKeyString,
+      token: totp.value.trim()
     })
   }
 
@@ -512,12 +652,18 @@ const handleNewKeys = async (privateKey: CryptoKey, publicKey: CryptoKey) => {
   await savePrivateKey(privateKey, store.userData.id)
 
   password.value = ""
+  totp.value = ""
 }
 
 const generateNewKeyPair = async () => {
   if (!store.userData.id) return
   if (!password.value || !password.value.trim()) {
     store.handleError("Password is required")
+    return
+  }
+
+  if (store.userData.otpVerified && (!totp.value || !totp.value.trim())) {
+    store.handleError("2FA Code is required")
     return
   }
 
@@ -533,22 +679,29 @@ const generateNewKeyPair = async () => {
 }
 
 const importKeyPair = async () => {
-  if (!newPublicKey.value) {
+  if (!newPublicKey.value || !newPublicKey.value.trim()) {
     store.handleError("Public key is required")
     return
   }
-  if (!newPrivateKey.value) {
+  if (!newPrivateKey.value || !newPrivateKey.value.trim()) {
     store.handleError("Private key is required")
     return
   }
-  if (!password.value) {
+  if (!password.value || !password.value.trim()) {
     store.handleError("Password is required")
     return
   }
 
+  if (store.userData.otpVerified && (!totp.value || !totp.value.trim())) {
+    store.handleError("2FA Code is required")
+    return
+  }
+
   try {
-    const publicKey = await importPublicKeyFromFile(newPublicKey.value)
-    const privateKey = await importPrivateKeyFromFile(newPrivateKey.value)
+    const publicKey = await importPublicKeyFromFile(newPublicKey.value.trim())
+    const privateKey = await importPrivateKeyFromFile(
+      newPrivateKey.value.trim()
+    )
 
     await handleNewKeys(privateKey, publicKey)
 
@@ -556,7 +709,11 @@ const importKeyPair = async () => {
     newPublicKey.value = ""
     newPrivateKey.value = ""
   } catch (e) {
-    store.handleAxiosError(e)
+    if (axios.isAxiosError(e)) {
+      store.handleAxiosError(e)
+    } else {
+      store.handleError("Failed to import key pair")
+    }
   }
 }
 

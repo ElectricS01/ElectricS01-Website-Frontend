@@ -428,63 +428,20 @@
         </div>
       </div>
     </div>
-    <sidebar
-      v-if="
-        ((store.sidebarOpen === true || store.search || store.pins) &&
-          !store.showFriends) ||
-        store.notifications
-      "
-      :style="{
-        width: store.search || store.pins || store.notifications ? '342px' : ''
-      }"
-    >
-      <users-sidebar
-        v-if="
-          !loadingMessages &&
-          !store.search &&
-          !store.pins &&
-          !store.notifications
-        "
-        v-model:context-menu="usersSidebarContext"
-        :sort-users="sortUsers"
-        :users="currentChat.users"
-        :can-remove="
-          currentChat.owner === store.userData.id && currentChat.type === 0
-        "
-        :open-user="openUser"
-        :add-friend="addFriend"
-        @remove-user="removeUser(currentChat.id, $event)"
-        @dm-created="onDmCreated($event)"
-        @user-sort-pressed="userSortPress"
-      />
-      <search-sidebar
-        v-else-if="store.search"
-        :chat-messages="currentChat.messages"
-        :find-message="findMessage"
-        :find-user="findUser"
-        :go-to-message="goToMessage"
-        :open-user="openUser"
-        :scroll="scrollDown"
-      />
-      <pins-sidebar
-        v-else-if="store.pins"
-        :pins="currentChat.pins"
-        :find-message="findMessage"
-        :find-user="findUser"
-        :go-to-message="goToMessage"
-        :open-user="openUser"
-        :scroll="scrollDown"
-      />
-      <notifications-sidebar
-        v-else-if="store.notifications"
-        :notifications="store.userData.notifications"
-        :open-user="openUser"
-        :open-chat="getChat"
-      />
-      <div v-else class="center">
-        <div style="text-align: center" class="loader" />
-      </div>
-    </sidebar>
+    <chat-sidebar
+      v-model:users-sidebar-context="usersSidebarContext"
+      :loading-messages="loadingMessages"
+      :current-chat="currentChat"
+      :add-friend="addFriend"
+      :find-message="findMessage"
+      :find-user="findUser"
+      :go-to-message="goToMessage"
+      :open-user="openUser"
+      :open-chat="getChat"
+      :scroll="scrollDown"
+      @remove-user="removeUser(currentChat.id, $event)"
+      @dm-created="onDmCreated($event)"
+    />
   </div>
 </template>
 
@@ -492,20 +449,16 @@
 import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
-import Sidebar from "@/components/core/Sidebar.vue"
 import UserPreview from "@/components/modals/UserPreview.vue"
 import CreateChat from "@/components/modals/CreateChat.vue"
 import EditChat from "@/components/modals/EditChat.vue"
 import ModalSimple from "@/components/core/ModalSimple.vue"
 import Friends from "@/components/Friends.vue"
-import PinsSidebar from "@/components/sidebars/PinsSidebar.vue"
 import ChatSpacer from "@/components/ChatSpacer.vue"
-import SearchSidebar from "@/components/sidebars/SearchSidebar.vue"
-import NotificationsSidebar from "@/components/sidebars/NotificationsSidebar.vue"
 import EmojiPicker from "@/components/EmojiPicker.vue"
 import MessageEmoji from "@/components/MessageEmoji.vue"
 import ChatsList from "@/components/sidebars/ChatsList.vue"
-import UsersSidebar from "@/components/sidebars/UsersSidebar.vue"
+import ChatSidebar from "@/components/sidebars/ChatSidebar.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -544,7 +497,6 @@ const emojiPickerIndex = ref(0)
 const emojiPickerVisible = ref(false)
 const inputText = ref("")
 const override = ref(false)
-const sortUsers = ref("id")
 
 const usersSidebarContext = ref(false)
 const chatsSidebarContext = ref(false)
@@ -621,60 +573,6 @@ if (!localStorage.getItem("token")) {
     }
     console.log("Data received from websocket")
   }
-}
-
-if (localStorage.getItem("sortUsers")) {
-  sortUsers.value = localStorage.getItem("sortUsers")
-} else {
-  sortUsers.value = "id"
-}
-
-const userSort = () => {
-  if (sortUsers.value !== "id") {
-    currentChat.value.users
-      .sort((a, b) => {
-        if (a && b) {
-          if (a.username === null && b.username === null) {
-            return 0
-          } else if (a.username === null) {
-            return 1
-          } else if (b.username === null) {
-            return -1
-          }
-          return a.username.localeCompare(b.username)
-        }
-      })
-      .sort((a, b) => {
-        if (a && b) {
-          if (a[sortUsers.value] === null && b[sortUsers.value] === null) {
-            return 0
-          } else if (a[sortUsers.value] === null) {
-            return 1
-          } else if (b[sortUsers.value] === null) {
-            return -1
-          }
-          return a[sortUsers.value].localeCompare(b[sortUsers.value])
-        }
-      })
-  } else {
-    currentChat.value.users.sort((a, b) => a?.id - b?.id)
-  }
-}
-
-const userSortPress = () => {
-  if (sortUsers.value === "id") {
-    localStorage.setItem("sortUsers", "username")
-  } else if (sortUsers.value === "username") {
-    localStorage.setItem("sortUsers", "status")
-  } else if (sortUsers.value === "status") {
-    localStorage.setItem("sortUsers", "statusMessage")
-  } else {
-    localStorage.setItem("sortUsers", "id")
-  }
-  if (localStorage.getItem("sortUsers")) {
-    sortUsers.value = localStorage.getItem("sortUsers")
-  }
-  userSort(sortUsers.value)
 }
 
 const focusInput = () => {
@@ -879,7 +777,6 @@ const handleChatChange = (chat) => {
   const association = currentChat.value.association
   currentChat.value = chat
   currentChat.value.association = association
-  userSort()
   router.push(`/chat/${currentChat.value.id}`)
   updatePageTitle()
   replyTo.value = null
@@ -1308,7 +1205,6 @@ async function getChat(id) {
       currentChat.value = res.data
       currentChat.value.messages.focus = false
       router.push(`/chat/${currentChat.value.id}`)
-      userSort()
       replyTo.value = null
       loadingMessages.value = false
       scrollDown(true)

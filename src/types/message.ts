@@ -17,6 +17,7 @@ export interface Message {
   embeds: Embed[]
   reply: number
   edited: boolean
+  pinned: boolean
   user: BasicUser
   reactions: Reaction[]
   createdAt: string

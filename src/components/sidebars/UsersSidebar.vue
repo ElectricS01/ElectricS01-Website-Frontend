@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="filter-button" @click="emit('userSortPressed')">
+    <div class="filter-button" @click="userSortPress()">
       <p v-if="sortUsers === 'id'">Sort: Id</p>
       <p v-else-if="sortUsers === 'username'">Sort: Username</p>
       <p v-else-if="sortUsers === 'status'">Sort: Status</p>
@@ -108,31 +108,85 @@ import { useDataStore } from "@/store"
 const store = useDataStore()
 
 const props = defineProps<{
-  sortUsers: string
   users: User[]
   canRemove: boolean
   openUser: (userId: number) => void
   addFriend: (userId: number, notOpen: boolean) => void
 }>()
 
-const emit = defineEmits(["dmCreated", "userSortPressed", "removeUser"])
+const emit = defineEmits(["dmCreated", "removeUser"])
 
 const contextMenuVisible = defineModel<boolean>("contextMenu", {
   required: true
 })
 
+type UserSort = "id" | "username" | "status" | "statusMessage"
+const validSorts: UserSort[] = ["id", "username", "status", "statusMessage"]
+
 const contextMenuItemUserId = ref<number | null>(null)
 const contextMenuPosition = ref<Position>({ x: 0, y: 0 })
+const sortUsers = ref<UserSort>("id")
+
+const stored = localStorage.getItem("sortUsers")
+if (stored && validSorts.includes(stored as UserSort)) {
+  sortUsers.value = stored as UserSort
+}
 
 const contextMenuItemUser = computed(() =>
   props.users.find((u) => u.id === contextMenuItemUserId.value)
 )
+const allUsers = computed(() => {
+  return [...props.users].sort((a, b) => {
+    if (sortUsers.value === "id") {
+      return a.id - b.id
+    }
+
+    const aValue = a[sortUsers.value]
+    const bValue = b[sortUsers.value]
+
+    if (aValue == null && bValue == null) {
+      return a.username?.localeCompare(b.username ?? "") ?? 0
+    }
+
+    if (aValue == null) return 1
+    if (bValue == null) return -1
+
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      const result = aValue.localeCompare(bValue)
+
+      if (result !== 0) return result
+    } else if (typeof aValue === "number" && typeof bValue === "number") {
+      const result = aValue - bValue
+
+      if (result !== 0) return result
+    }
+
+    return a.username?.localeCompare(b.username ?? "") ?? 0
+  })
+})
+
 const onlineUsers = computed(() =>
-  props.users.filter((user) => user?.status === "online")
+  allUsers.value.filter((user) => user?.status === "online")
 )
 const offlineUsers = computed(() =>
-  props.users.filter((user) => user?.status === "offline")
+  allUsers.value.filter((user) => user?.status === "offline")
 )
+
+const userSortPress = () => {
+  if (sortUsers.value === "id") {
+    localStorage.setItem("sortUsers", "username")
+    sortUsers.value = "username"
+  } else if (sortUsers.value === "username") {
+    localStorage.setItem("sortUsers", "status")
+    sortUsers.value = "status"
+  } else if (sortUsers.value === "status") {
+    localStorage.setItem("sortUsers", "statusMessage")
+    sortUsers.value = "statusMessage"
+  } else {
+    localStorage.setItem("sortUsers", "id")
+    sortUsers.value = "id"
+  }
+}
 
 const copyText = (text: number | null) => {
   contextMenuVisible.value = false
