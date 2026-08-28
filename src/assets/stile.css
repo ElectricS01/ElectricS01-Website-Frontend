@@ -857,7 +857,25 @@ input {
 .reply-preview {
   display: flex;
   overflow-wrap: break-word;
-  margin: 0 0 8px 28px;
+  margin: 0 0 6px 25px;
+
+  svg,
+  img {
+    margin: 2px 6px 0 0;
+  }
+
+  svg:first-child {
+    margin: 2px 12px 0 0;
+  }
+
+  b {
+    margin: 4px 6px 0 0;
+  }
+
+  p {
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
 }
 
 .message-input {

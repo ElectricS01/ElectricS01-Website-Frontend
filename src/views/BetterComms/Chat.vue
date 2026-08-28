@@ -112,51 +112,15 @@
               :message="message"
               :previous-message="currentChat.messages[index - 1]"
             />
-            <div
-              v-if="message.reply && findMessage(message.reply)"
-              class="reply-preview"
-            >
-              <icons size="16" icon="reply" style="margin-right: 4px" />
-              <profile-picture
-                size="16"
-                :avatar="findMessage(message.reply)?.user?.avatar"
-                :small="true"
-                @click="openUser(findMessage(message.reply)?.user?.id)"
-              />
-              <b
-                class="message-text-medium"
-                style="margin: 4px 4px 0 4px"
-                @click="openUser(findMessage(message.reply)?.user?.id)"
-              >
-                {{
-                  findMessage(message.reply)?.user?.username
-                    ? "@" + findMessage(message.reply)?.user?.username
-                    : "@Deleted user"
-                }}
-              </b>
-              <p
-                class="message-text-medium-gray-hover"
-                style="margin-top: 4px; margin-bottom: 0"
-                @click="goToMessage(message.reply)"
-              >
-                {{ findMessage(message.reply)?.messageContents }}
-              </p>
-            </div>
-            <div v-else-if="message.reply" class="reply-preview">
-              <icons
-                colour="darkgrey"
-                size="16"
-                icon="reply"
-                style="margin-right: 4px"
-              />
-              <icons colour="darkgrey" size="16" icon="user" />
-              <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
-                Message has been deleted
-              </b>
-            </div>
+            <reply
+              v-if="message.reply"
+              :message="findMessage(message.reply)"
+              :open-user="openUser"
+              :go-to-message="goToMessage"
+            />
             <div
               class="message-grid"
-              style="position: relative; width: 100%; margin: 8px 4px 4px"
+              style="position: relative; width: 100%; margin: 6px 4px 4px"
               :style="{
                 backgroundColor: editing === message.id ? '#212425' : ''
               }"
@@ -322,28 +286,23 @@
             <div
               v-if="replyTo"
               class="scroll-button"
-              style="
-                display: flex;
-                overflow-wrap: break-word;
-                z-index: 2;
-                position: relative;
-              "
+              style="overflow-wrap: break-word; z-index: 2; position: relative"
             >
-              <icons size="12" icon="reply" style="margin-right: 4px" />
+              <icons size="12" icon="right" style="margin-right: 4px" />
               <profile-picture
                 size="12"
-                :avatar="findMessage(replyTo).user?.avatar"
+                :avatar="replyMessage.user?.avatar"
                 :small="true"
-                @click="openUser(findMessage(replyTo).user.id)"
+                @click="openUser(replyMessage.user.id)"
               />
               <b
                 class="message-text-medium"
                 style="margin: 0 4px 0 4px"
-                @click="openUser(findMessage(replyTo).user.id)"
+                @click="openUser(replyMessage.user.id)"
               >
                 {{
-                  findMessage(replyTo).user?.username
-                    ? "@" + findMessage(replyTo).user?.username
+                  replyMessage.user?.username
+                    ? "@" + replyMessage.user?.username
                     : "@Deleted user"
                 }}
               </b>
@@ -352,7 +311,7 @@
                 style="margin: 0"
                 @click="goToMessage(replyTo)"
               >
-                {{ findMessage(replyTo).messageContents }}
+                {{ replyMessage.messageContents }}
               </p>
             </div>
           </div>
@@ -459,6 +418,7 @@ import EmojiPicker from "@/components/EmojiPicker.vue"
 import MessageEmoji from "@/components/MessageEmoji.vue"
 import ChatsList from "@/components/sidebars/ChatsList.vue"
 import ChatSidebar from "@/components/sidebars/ChatSidebar.vue"
+import Reply from "@/components/Reply.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -1033,6 +993,11 @@ const scrollEvent = () => {
     scrollTop + clientHeight <=
     scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
 }
+
+const replyMessage = computed(() =>
+  replyTo.value ? findMessage(replyTo.value) : null
+)
+
 const matchingEmoji = computed(() => {
   const text = getEmojiText()
   if (text == null || override.value) return []
@@ -1041,9 +1006,11 @@ const matchingEmoji = computed(() => {
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 30)
 })
+
 const otherUser = computed(() =>
   currentChat.value.users?.find((u) => u.id !== store.userData.id)
 )
+
 const sendEncrypted = computed(() => {
   return (
     currentChat.value.type === 1 &&

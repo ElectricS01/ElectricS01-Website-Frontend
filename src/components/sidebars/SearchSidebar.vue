@@ -19,48 +19,12 @@
       :message="message"
       :previous-message="searchMessages[index - 1]"
     />
-    <div
-      v-if="message.reply && findMessage(message.reply)"
-      class="reply-preview"
-    >
-      <icons size="16" icon="reply" style="margin-right: 4px" />
-      <profile-picture
-        size="16"
-        :avatar="findMessage(message.reply)?.user?.avatar"
-        :small="true"
-        @click="openUser(findMessage(message.reply)?.user?.id)"
-      />
-      <b
-        class="message-text-medium"
-        style="margin: 4px 4px 0 4px"
-        @click="openUser(findMessage(message.reply)?.user?.id)"
-      >
-        {{
-          findMessage(message.reply)?.user?.username
-            ? "@" + findMessage(message.reply)?.user?.username
-            : "@Deleted user"
-        }}
-      </b>
-      <p
-        class="message-text-medium-gray-hover"
-        style="margin-top: 4px; margin-bottom: 0"
-        @click="goToMessage(message.reply)"
-      >
-        {{ findMessage(message.reply)?.messageContents }}
-      </p>
-    </div>
-    <div v-else-if="message.reply" class="reply-preview">
-      <icons
-        colour="darkgrey"
-        size="16"
-        icon="reply"
-        style="margin-right: 4px"
-      />
-      <icons colour="darkgrey" size="16" icon="user" />
-      <b class="message-text-medium-gray" style="margin: 4px 4px 0 4px">
-        Message has been deleted
-      </b>
-    </div>
+    <reply
+      v-if="message.reply"
+      :message="findMessage(message.reply)"
+      :open-user="openUser"
+      :go-to-message="goToMessage"
+    />
     <div
       class="message-grid"
       style="position: relative; width: 100%"
@@ -107,9 +71,9 @@
 
 <script setup lang="ts">
 import ChatSpacer from "../ChatSpacer.vue"
-import Icons from "../core/Icons.vue"
 import ProfilePicture from "../ProfilePicture.vue"
 import CustomMessage from "../CustomMessage.vue"
+import Reply from "../Reply.vue"
 
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
