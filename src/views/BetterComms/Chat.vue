@@ -216,7 +216,12 @@
                   @click="pinMessage(message.id, message.pinned)"
                 />
                 <icons
-                  v-if="message.user?.id === store.userData.id"
+                  v-if="
+                    message.user?.id === store.userData.id &&
+                    !message.encrypted &&
+                    !message.deleted &&
+                    !message.ciphertext
+                  "
                   style="cursor: pointer"
                   size="20"
                   icon="edit"
@@ -435,7 +440,12 @@ import { useRoute, useRouter } from "vue-router"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
 import { normalizedEmojis } from "@/helpers/emoji"
-import { encryptMessage, importPublicKey } from "@/helpers/encryption"
+import {
+  encryptMessage,
+  decryptMessage,
+  importPublicKey
+} from "@/helpers/encryption"
+import sodium from "libsodium-wrappers-sumo"
 
 const store = useDataStore()
 const route = useRoute()
@@ -466,7 +476,7 @@ let editText
 if (!localStorage.getItem("token")) {
   router.push("/login?redirect=" + route.path)
 } else {
-  store.ws.onmessage = (event) => {
+  store.ws.onmessage = async (event) => {
     console.log(event)
     const socketMessage = JSON.parse(event.data)
     if (socketMessage.authFail) {
@@ -487,8 +497,11 @@ if (!localStorage.getItem("token")) {
       if (socketMessage.newMessage.chatId === currentChat.value.id) {
         socketMessage.newMessage.focus = false
         socketMessage.newMessage.reactions = []
-        currentChat.value.messages.push(socketMessage.newMessage)
-        scrollDown()
+        await decrypt(socketMessage.newMessage)
+        if (socketMessage.newMessage.chatId === currentChat.value.id) {
+          currentChat.value.messages.push(socketMessage.newMessage)
+          scrollDown()
+        }
       }
     } else if (socketMessage.deleteMessage) {
       const messageIndex = currentChat.value.messages.findIndex(
@@ -607,43 +620,59 @@ const removeReaction = async (messageId, emoji) => {
 const sendMessage = async () => {
   emojiPickerVisible.value = false
   const messageContents = inputText.value.trim()
-  if (messageContents) {
-    try {
-      let res
-      if (sendEncrypted.value) {
-        if (otherUser.value.publicKey.length !== 44) {
-          store.handleError("Receiving user has invalid public key")
-          return
-        }
-        const publicKey = await importPublicKey(otherUser.value.publicKey)
-        await encryptMessage(
-          messageContents,
-          store.userData.privateKey,
-          publicKey,
-          store.userData.publicKey,
-          otherUser.value.id,
-          store.userData.id
-        )
-        store.handleError("Encryption is currently unavailable")
+  const chatId = currentChat.value.id
+  if (!messageContents) return
+  try {
+    let res
+    if (sendEncrypted.value) {
+      if (otherUser.value.publicKey.length !== 44) {
+        store.handleError("Receiving user has invalid public key")
+        return
       }
+      const publicKey = await importPublicKey(otherUser.value.publicKey)
+      const encrypted = await encryptMessage(
+        messageContents,
+        store.userData.privateKey,
+        publicKey,
+        store.userData.publicKey,
+        otherUser.value.id,
+        store.userData.id
+      )
+      res = await axios.post("/api/message-encrypted", {
+        chatId,
+        ciphertext: sodium.to_base64(
+          encrypted.ciphertext,
+          sodium.base64_variants.ORIGINAL
+        ),
+        keys: encrypted.keys,
+        nonce: sodium.to_base64(
+          encrypted.nonce,
+          sodium.base64_variants.ORIGINAL
+        ),
+        reply: replyTo.value
+      })
+    } else {
       res = await axios.post("/api/message", {
-        chatId: currentChat.value.id,
+        chatId,
         messageContents,
         reply: replyTo.value
       })
-      store.userData.chatsList = res.data.chats
-      store.chatSort()
-      inputText.value = ""
-      replyTo.value = null
-      res.data.lastMessage.focus = false
+    }
+    store.userData.chatsList = res.data.chats
+    store.chatSort()
+    inputText.value = ""
+    replyTo.value = null
+    res.data.lastMessage.focus = false
+    await decrypt(res.data.lastMessage)
+    if (chatId === currentChat.value.id) {
       currentChat.value.messages.push(res.data.lastMessage)
       currentChat.value.association.lastRead =
         currentChat.value.messages.at(-1).id
       updatePageTitle()
       scrollDown()
-    } catch (e) {
-      store.handleAxiosError(e)
     }
+  } catch (e) {
+    store.handleAxiosError(e)
   }
 }
 const deleteMessage = (messageId) => {
@@ -733,7 +762,27 @@ const replyToMessage = (messageId) => {
   focusInput()
 }
 
-const handleChatChange = (chat) => {
+const decrypt = async (message) => {
+  try {
+    if (message.messageContents) return message
+    const publicKey =
+      message.userId === store.userData.id
+        ? store.userData.publicKey
+        : await importPublicKey(otherUser.value.publicKey)
+
+    message.messageContents = await decryptMessage(
+      message,
+      store.userData.privateKey,
+      publicKey
+    )
+  } catch (e) {
+    console.log(e)
+    message.encrypted = true
+    message.messageContents = "Could not decrypt message"
+  }
+}
+
+const handleChatChange = async (chat) => {
   const association = currentChat.value.association
   currentChat.value = chat
   currentChat.value.association = association
@@ -742,18 +791,22 @@ const handleChatChange = (chat) => {
   replyTo.value = null
   if (currentChat.value.messages) {
     currentChat.value.messages.focus = false
+    await Promise.all([
+      ...currentChat.value.messages.map((message) => decrypt(message)),
+      ...currentChat.value.pins.map((pin) => decrypt(pin))
+    ])
     scrollDown()
   }
 }
 
-const handleChatCreated = (chat) => {
+const handleChatCreated = async (chat) => {
   createChatShown.value = false
-  handleChatChange(chat)
+  await handleChatChange(chat)
 }
 
-const handleChatEdited = (chat) => {
+const handleChatEdited = async (chat) => {
   chatEdit.value = null
-  handleChatChange(chat)
+  await handleChatChange(chat)
 }
 
 const openUser = (userId) => {
@@ -803,18 +856,16 @@ const findUser = (userId) => {
   }
   return { username: userId }
 }
-const removeUser = (chatId, userId) => {
+const removeUser = async (chatId, userId) => {
   usersSidebarContext.value = false
-  axios
-    .post(`/api/remove/${chatId}/${userId}`)
-    .then((res) => {
-      store.userData.chatsList = res.data.chats
-      store.chatSort()
-      handleChatChange(res.data.chat)
-    })
-    .catch((e) => {
-      store.handleAxiosError(e)
-    })
+  try {
+    const res = await axios.post(`/api/remove/${chatId}/${userId}`)
+    store.userData.chatsList = res.data.chats
+    store.chatSort()
+    await handleChatChange(res.data.chat)
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
 const scrollDown = (override) => {
   nextTick(() => {
@@ -895,7 +946,7 @@ async function addFriend(userId, notOpen) {
     })
 }
 
-const onDmCreated = (data) => {
+const onDmCreated = async (data) => {
   showUser.value = null
   createChatShown.value = false
   store.showFriends = false
@@ -903,7 +954,7 @@ const onDmCreated = (data) => {
   store.userData.chatsList = data.chats
   store.chatSort()
   inputText.value = ""
-  handleChatChange(data.chat)
+  await handleChatChange(data.chat)
 }
 
 const readChat = async (chatId) => {
@@ -1023,7 +1074,9 @@ const sendEncrypted = computed(() => {
       (store.userData.encryption === "off" &&
         otherUser.value.encryption === "always") ||
       (store.userData.encryption === "always" &&
-        otherUser.value.encryption === "off"))
+        otherUser.value.encryption === "off") ||
+      (store.userData.encryption === "always" &&
+        otherUser.value.encryption === "always"))
   )
 })
 const requiresEncryption = computed(() => {
@@ -1168,9 +1221,13 @@ async function getChat(id) {
   store.showFriends = false
   await axios
     .get(`/api/chat/${id}`)
-    .then((res) => {
+    .then(async (res) => {
       currentChat.value = res.data
       currentChat.value.messages.focus = false
+      await Promise.all([
+        ...currentChat.value.messages.map((message) => decrypt(message)),
+        ...currentChat.value.pins.map((pin) => decrypt(pin))
+      ])
       router.push(`/chat/${currentChat.value.id}`)
       replyTo.value = null
       loadingMessages.value = false

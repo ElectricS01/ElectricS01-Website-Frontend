@@ -10,7 +10,7 @@
     <router-link to="/">ElectricS01</router-link>
   </div>
   <div class="settings-spacer" />
-  <div>Version: 1.247.1</div>
+  <div>Version: 1.248.0</div>
   <div class="settings-spacer" />
   <div>Backend name: {{ serverName }}</div>
   <div class="settings-spacer" />

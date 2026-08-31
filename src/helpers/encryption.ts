@@ -1,3 +1,4 @@
+import { Message } from "@/types/message"
 import sodium from "libsodium-wrappers-sumo"
 
 export async function generateKeyPair() {
@@ -325,13 +326,11 @@ export async function encryptMessage(
 }
 
 export async function decryptMessage(
-  ciphertextBase64: string,
-  nonceBase64: string,
-  encryptedMessageKeyBase64: string,
-  keyNonceBase64: string,
+  message: Message,
   privateKey: CryptoKey,
   senderPublicKey: CryptoKey
-) {
+): Promise<string> {
+  if (!message.messageKey) return ""
   await sodium.ready
 
   const wrappingKey = await deriveWrappingKey(privateKey, senderPublicKey)
@@ -340,20 +339,23 @@ export async function decryptMessage(
     const messageKey = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
       null,
       sodium.from_base64(
-        encryptedMessageKeyBase64,
+        message.messageKey.encryptedMessageKey,
         sodium.base64_variants.ORIGINAL
       ),
       null,
-      sodium.from_base64(keyNonceBase64, sodium.base64_variants.ORIGINAL),
+      sodium.from_base64(
+        message.messageKey.nonce,
+        sodium.base64_variants.ORIGINAL
+      ),
       wrappingKey
     )
 
     try {
       const plaintext = sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
         null,
-        sodium.from_base64(ciphertextBase64, sodium.base64_variants.ORIGINAL),
+        sodium.from_base64(message.ciphertext, sodium.base64_variants.ORIGINAL),
         null,
-        sodium.from_base64(nonceBase64, sodium.base64_variants.ORIGINAL),
+        sodium.from_base64(message.nonce, sodium.base64_variants.ORIGINAL),
         messageKey
       )
 

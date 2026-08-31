@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ deleted: props.message.deleted }">
+  <div :class="{ deleted: props.message.deleted || props.message.encrypted }">
     <template v-for="part in messageParts" :key="part.key">
       <span
         v-if="part.type === 'mention'"

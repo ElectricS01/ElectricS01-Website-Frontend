@@ -2,12 +2,26 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.248 Encrypted Messaging</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Encrypted direct messages are now available</li>
+    <li>
+      Encrypted direct messages require both users to have valid encryption keys
+      and enable encryption in
+      <router-link to="/account/security">Security Settings</router-link>
+    </li>
+    <li>Refactoring</li>
+    <li>Update to work with backend 1.122.0</li>
+    <li>Switched more components to use Typescript (1.247.1)</li>
+  </ul>
   <h2 class="settings-text">1.247 Saving Encryption Keys</h2>
   <div class="settings-spacer" />
   <ul>
     <li>You can now save unsynced encryption keys</li>
     <li>Switched more components to use Typescript</li>
     <li>Refactoring</li>
+    <li>Update to work with backend 1.121.0</li>
     <li>Switched more components to use Typescript (1.246.1)</li>
   </ul>
   <h2 class="settings-text">1.246 Encryption Key Importing</h2>
@@ -552,7 +566,7 @@
     </li>
     <li>
       Added descriptions to Allow Encrypted direct messages and Save your
-      Encryption Private Key in
+      Encrypted Private Key in
       <router-link to="/account/security">Security Settings</router-link>
       (1.198.1)
     </li>
@@ -573,7 +587,7 @@
       <router-link to="/account/security">Security Settings</router-link>
     </li>
     <li>
-      Added Save your Encryption Private Key in
+      Added Save your Encrypted Private Key in
       <router-link to="/account/security">Security Settings</router-link>
     </li>
     <li>Update to work with backend 1.98.0</li>

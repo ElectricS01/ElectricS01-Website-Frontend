@@ -83,7 +83,7 @@ import { User } from "@/types/user"
 
 const props = defineProps<{
   chatMessages: Message[]
-  findMessage: (messageId: number) => Message
+  findMessage: (messageId: number) => Message | undefined
   findUser: (userId: number) => User
   goToMessage: (messageId: number) => void
   openUser: (userId: number) => void

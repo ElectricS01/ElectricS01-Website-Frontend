@@ -30,7 +30,7 @@ import Icons from "./core/Icons.vue"
 import { Message } from "@/types/message"
 
 defineProps<{
-  message: Message
+  message?: Message
   openUser: (userId: number) => void
   goToMessage: (messageId: number) => void
 }>()

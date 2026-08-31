@@ -330,7 +330,7 @@
     - You won't be able to send messages to those who have selected "Never"
   </div>
   <div class="settings-spacer" />
-  Save your Encryption Private Key:
+  Save your Encrypted Private Key:
   <span v-if="store.userData.privateKeySaved">Saved</span>
   <span v-else-if="store.userData.privateKey">Saved locally</span>
   <span v-else style="color: var(--red)">Not saved</span>
