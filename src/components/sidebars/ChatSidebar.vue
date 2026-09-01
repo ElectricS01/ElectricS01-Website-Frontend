@@ -27,7 +27,7 @@
       v-else-if="store.search"
       :chat-messages="currentChat.messages"
       :find-message="findMessage"
-      :find-user="findUser"
+      :find-username="findUsername"
       :go-to-message="goToMessage"
       :open-user="openUser"
       :scroll="scroll"
@@ -36,7 +36,7 @@
       v-else-if="store.pins"
       :pins="currentChat.pins"
       :find-message="findMessage"
-      :find-user="findUser"
+      :find-username="findUsername"
       :go-to-message="goToMessage"
       :open-user="openUser"
       :scroll="scroll"
@@ -70,7 +70,7 @@ defineProps<{
   currentChat: Chat
   loadingMessages: boolean
   findMessage: (messageId: number) => Message | undefined
-  findUser: (userId: number) => User
+  findUsername: (userId: number) => string
   goToMessage: (messageId: number) => void
   openUser: (userId: number) => void
   openChat: (chatId: number) => void

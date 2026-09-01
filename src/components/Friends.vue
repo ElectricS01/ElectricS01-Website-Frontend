@@ -35,7 +35,7 @@
         >
           <icons
             style="padding-right: 4px"
-            colour="#47bf4c"
+            colour="var(--green)"
             size="16"
             icon="add-user"
           />
@@ -49,7 +49,7 @@
         >
           <icons
             style="padding-right: 4px"
-            colour="#FF2F2F"
+            colour="var(--red)"
             size="16"
             icon="remove-user"
           />
@@ -63,7 +63,7 @@
         >
           <icons
             style="padding-right: 4px"
-            colour="#808080"
+            colour="var(--lightest)"
             size="16"
             icon="remove-user"
           />
@@ -77,7 +77,7 @@
         >
           <icons
             style="padding-right: 4px"
-            colour="#47bf4c"
+            colour="var(--green)"
             size="16"
             icon="add-user"
           />

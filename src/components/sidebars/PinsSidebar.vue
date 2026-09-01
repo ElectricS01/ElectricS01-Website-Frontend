@@ -46,7 +46,7 @@
         <custom-message
           :message="message"
           :open-user="openUser"
-          :find-user="findUser"
+          :find-username="findUsername"
           :scroll="scroll"
         />
       </div>
@@ -67,7 +67,7 @@ import { Message } from "@/types/message"
 
 defineProps<{
   findMessage: (messageId: number) => Message | undefined
-  findUser: (userId: number) => User
+  findUsername: (userId: number) => string
   goToMessage: (messageId: number) => void
   openUser: (userId: number) => void
   pins: Message[]

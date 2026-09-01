@@ -176,7 +176,7 @@
                 <custom-message
                   v-show="editing !== message.id"
                   :message="message"
-                  :find-user="findUser"
+                  :find-username="findUsername"
                   :open-user="openUser"
                   :scroll="scrollDown"
                   @embed="embed = $event"
@@ -289,7 +289,7 @@
               </div>
             </transition>
             <div
-              v-if="replyTo"
+              v-if="replyMessage"
               class="scroll-button"
               style="overflow-wrap: break-word; z-index: 2; position: relative"
             >
@@ -398,7 +398,7 @@
       :current-chat="currentChat"
       :add-friend="addFriend"
       :find-message="findMessage"
-      :find-user="findUser"
+      :find-username="findUsername"
       :go-to-message="goToMessage"
       :open-user="openUser"
       :open-chat="getChat"
@@ -847,14 +847,11 @@ const selectCurrentEmoji = () => {
     handleEmojiClick(matchingEmoji.value[emojiPickerIndex.value][0])
   }
 }
-const findUser = (userId) => {
+const findUsername = (userId) => {
   const user = currentChat.value.users.find(
     (user) => user.id === parseInt(userId)
   )
-  if (user) {
-    return user
-  }
-  return { username: userId }
+  return user?.username ?? userId
 }
 const removeUser = async (chatId, userId) => {
   usersSidebarContext.value = false
@@ -1193,7 +1190,13 @@ const updatePageTitle = () => {
       return sum + (chat.association?.notifications || 0)
     }, 0) ?? 0
 
-  document.title = `${notificationCount !== 0 ? "(" + notificationCount + ") " : ""}BetterComms | ${currentChat.value.name}`
+  const chatName =
+    currentChat.value.type === 1 &&
+    currentChat.value.owner !== store.userData.id
+      ? currentChat.value.ownerDetails.username
+      : currentChat.value.name
+
+  document.title = `${notificationCount !== 0 ? "(" + notificationCount + ") " : ""}BetterComms | ${chatName}`
   updateFavicon(notificationCount)
 }
 

@@ -4,7 +4,7 @@
     :cx="size"
     :cy="size"
     :r="size"
-    fill="#47bf4c"
+    fill="var(--green)"
   />
   <circle
     v-else-if="status === 'idle'"
@@ -18,7 +18,7 @@
     :cx="size"
     :cy="size"
     :r="size"
-    fill="#ff2f2f"
+    fill="var(--red)"
   />
   <circle
     v-else-if="status === 'offline'"

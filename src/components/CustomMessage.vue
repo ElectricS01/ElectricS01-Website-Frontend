@@ -45,11 +45,10 @@ import { computed, ref } from "vue"
 import TextContext from "@/components/core/TextContext.vue"
 import { dayjsLong } from "@/helpers/dates"
 import { Message } from "@/types/message"
-import { User } from "@/types/user"
 import { Position } from "@/types/position"
 
 const props = defineProps<{
-  findUser: (userId: number) => User
+  findUsername: (userId: number) => string
   openUser: (userId: number) => void
   message: Message
   scroll: () => void
@@ -101,13 +100,13 @@ const messageParts = computed<MessagePart[]>(() => {
         ) {
           return { key: `text-${index}-${part}`, type: "text", value: part }
         }
-        const user = props.findUser(Number(matches[0]))
+        const username = props.findUsername(Number(matches[0]))
 
         return {
-          key: `mention-${index}-${matches[0]}-${user?.username ?? "unknown"}`,
+          key: `mention-${index}-${matches[0]}-${username}`,
           type: "mention",
           userId: Number(matches[0]),
-          username: user?.username ?? "unknown"
+          username: username
         }
       }
 

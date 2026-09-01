@@ -15,6 +15,8 @@ body {
   --red: #ff2f2f;
   --green: #47bf4c;
   --blue: #1e90ff;
+  --blue-transparent: #1e90ff80;
+  --blue-hover: #1e90ffbf;
 }
 
 .scroll-bar-dark::-webkit-scrollbar,
@@ -713,12 +715,12 @@ button:hover,
 
 .mention {
   padding: 2px;
-  background-color: #1e90ff80;
+  background-color: var(--blue-transparent);
   border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    background-color: #1e90ffbf;
+    background-color: var(--blue-hover);
   }
 }
 

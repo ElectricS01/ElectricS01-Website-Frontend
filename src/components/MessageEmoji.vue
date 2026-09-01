@@ -50,9 +50,14 @@ const handleReact = (emoji: string) => {
 }
 
 .reaction {
-  background-color: #1e90ff80;
+  cursor: pointer;
+  background-color: var(--blue-transparent);
   padding: 0 2px;
   border-radius: 4px;
   margin: 0 2px 0 0;
+
+  &:hover {
+    background-color: var(--blue-hover);
+  }
 }
 </style>
