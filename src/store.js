@@ -10,6 +10,7 @@ const switcherPages = [
   "Home",
   "TonkGame",
   "Calculator",
+  ["String Processor", "string-processor"],
   "Tetris",
   "Collider",
   "Mapit",

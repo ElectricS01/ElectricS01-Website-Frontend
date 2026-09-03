@@ -66,6 +66,14 @@ const routes = [
     }
   },
   {
+    component: () => import("./views/StringProcessor.vue"),
+    name: "string-processor",
+    path: "/string-processor",
+    meta: {
+      title: "ElectricS01's String Processor"
+    }
+  },
+  {
     component: () => import("./views/Tetris.vue"),
     name: "tetris",
     path: "/tetris",

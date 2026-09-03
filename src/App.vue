@@ -19,6 +19,13 @@
         Calculator
       </router-link>
       <router-link
+        to="/string-processor"
+        :class="{ active: active('/string-processor') }"
+        @click="mobileNav"
+      >
+        String Processor
+      </router-link>
+      <router-link
         to="/tetris"
         :class="{ active: active('/tetris') }"
         @click="mobileNav"

@@ -682,7 +682,7 @@ button:hover,
   display: none;
 }
 
-@media screen and (max-width: 838px) {
+@media screen and (max-width: 902px) {
   .navbar:not(.responsive) a:not(:first-child):not(.chat-button) {
     display: none;
   }

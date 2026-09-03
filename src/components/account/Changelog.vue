@@ -2,6 +2,14 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.249 String Processor</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Added
+      <router-link to="/string-processor">String Processor</router-link>
+    </li>
+  </ul>
   <h2 class="settings-text">1.248 Encrypted Messaging</h2>
   <div class="settings-spacer" />
   <ul>
