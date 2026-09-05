@@ -100,13 +100,16 @@ import axios from "axios"
 import { sendDm } from "@/helpers/chatUsers"
 import { dayjsSince } from "@/helpers/dates"
 import { Friend } from "@/types/user"
+import { ChatData } from "@/types/chat"
 
 const store = useDataStore()
 const props = defineProps<{
   addFriend: (userId: number) => Promise<void>
 }>()
 
-const emits = defineEmits(["dmCreated"])
+const emit = defineEmits<{
+  dmCreated: [ChatData]
+}>()
 
 const friends = ref<Friend[]>([])
 
@@ -134,7 +137,7 @@ const sendUserDm = async (id: number) => {
 
   try {
     const data = await sendDm(id)
-    emits("dmCreated", data)
+    emit("dmCreated", data)
 
     creating = false
   } catch (e) {

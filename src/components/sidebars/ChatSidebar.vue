@@ -30,7 +30,7 @@
       :find-username="findUsername"
       :go-to-message="goToMessage"
       :open-user="openUser"
-      :scroll="scroll"
+      @scroll="emit('scroll')"
     />
     <pins-sidebar
       v-else-if="store.pins"
@@ -39,7 +39,7 @@
       :find-username="findUsername"
       :go-to-message="goToMessage"
       :open-user="openUser"
-      :scroll="scroll"
+      @scroll="emit('scroll')"
     />
     <notifications-sidebar
       v-else-if="store.notifications"
@@ -59,9 +59,8 @@ import SearchSidebar from "./SearchSidebar.vue"
 import PinsSidebar from "./PinsSidebar.vue"
 import NotificationsSidebar from "./NotificationsSidebar.vue"
 import { useDataStore } from "@/store"
-import { Chat } from "@/types/chat"
+import { Chat, ChatData } from "@/types/chat"
 import { Message } from "@/types/message"
-import { User } from "@/types/user"
 import Sidebar from "../core/Sidebar.vue"
 
 const store = useDataStore()
@@ -75,10 +74,13 @@ defineProps<{
   openUser: (userId: number) => void
   openChat: (chatId: number) => void
   addFriend: (userId: number, notOpen: boolean) => void
-  scroll: () => void
 }>()
 
-const emit = defineEmits(["dmCreated", "removeUser"])
+const emit = defineEmits<{
+  dmCreated: [ChatData]
+  removeUser: [number]
+  scroll: []
+}>()
 
 const usersSidebarContext = defineModel<boolean>("usersSidebarContext", {
   required: true

@@ -34,3 +34,8 @@ export interface Chat extends Omit<ChatListItem, "association"> {
   pins: Message[]
   users: User[]
 }
+
+export interface ChatData {
+  chat: Chat
+  chats: ChatListItem[]
+}

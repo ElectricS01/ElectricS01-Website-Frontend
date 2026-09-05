@@ -47,7 +47,7 @@
           :message="message"
           :open-user="openUser"
           :find-username="findUsername"
-          :scroll="scroll"
+          @scroll="emit('scroll')"
         />
       </div>
     </div>
@@ -62,7 +62,6 @@ import Reply from "../Reply.vue"
 
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
-import { User } from "@/types/user"
 import { Message } from "@/types/message"
 
 defineProps<{
@@ -71,6 +70,9 @@ defineProps<{
   goToMessage: (messageId: number) => void
   openUser: (userId: number) => void
   pins: Message[]
-  scroll: () => void
+}>()
+
+const emit = defineEmits<{
+  scroll: []
 }>()
 </script>

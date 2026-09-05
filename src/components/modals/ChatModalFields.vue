@@ -76,7 +76,7 @@ import { ChatUser } from "@/types/user"
 
 const store = useDataStore()
 
-defineEmits(["submit"])
+defineEmits<{ submit: [] }>()
 
 const chatName = defineModel<string>("chatName", { required: true })
 const chatDescription = defineModel<string>("chatDescription", {

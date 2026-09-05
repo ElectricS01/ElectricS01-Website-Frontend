@@ -2,6 +2,14 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.250 Reactions WebSockets</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Reactions are now updated in real time</li>
+    <li>Refactoring</li>
+    <li>Switched more components to use Typescript</li>
+    <li>Update to work with backend 1.123.0</li>
+  </ul>
   <h2 class="settings-text">1.249 String Processor</h2>
   <div class="settings-spacer" />
   <ul>

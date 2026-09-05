@@ -1,7 +1,7 @@
 <template>
   <modal
     :is-active="editingChat !== null && !store.quickSwitcherShown"
-    @close="emits('hideEditingChat')"
+    @close="emit('hideEditingChat')"
   >
     <div class="channel-menu">
       <p class="message-text-large">Edit Chat</p>
@@ -41,7 +41,7 @@ const props = defineProps<{
   editingChat: ChatListItem | null
 }>()
 
-const emits = defineEmits<{
+const emit = defineEmits<{
   hideEditingChat: []
   chatEdited: [ChatListItem]
 }>()
@@ -62,7 +62,7 @@ const loadChat = async (chat: ChatListItem) => {
   requireVerification.value = chat.requireVerification
   chatUsernameInput.value = ""
   chatUsers.value = await getChatUsers(chat.id)
-  if (chatUsers.value.length === 0) emits("hideEditingChat")
+  if (chatUsers.value.length === 0) emit("hideEditingChat")
   creating = false
 }
 
@@ -91,7 +91,7 @@ const saveChat = () => {
     .then((res) => {
       ;(store.userData as UserData).chatsList = res.data.chats
       store.chatSort()
-      emits("chatEdited", res.data.chat)
+      emit("chatEdited", res.data.chat)
     })
     .catch((e) => {
       creating = false
@@ -106,7 +106,7 @@ const deleteChat = (chatId: number | undefined) => {
     .then((res) => {
       ;(store.userData as UserData).chatsList = res.data.chats
       store.chatSort()
-      emits("chatEdited", res.data.chat)
+      emit("chatEdited", res.data.chat)
     })
     .catch((e) => {
       store.handleAxiosError(e)

@@ -104,6 +104,7 @@ import { Position } from "@/types/position"
 import { User } from "@/types/user"
 import { computed, ref } from "vue"
 import { useDataStore } from "@/store"
+import { ChatData } from "@/types/chat"
 
 const store = useDataStore()
 
@@ -114,7 +115,10 @@ const props = defineProps<{
   addFriend: (userId: number, notOpen: boolean) => void
 }>()
 
-const emit = defineEmits(["dmCreated", "removeUser"])
+const emit = defineEmits<{
+  dmCreated: [ChatData]
+  removeUser: [number]
+}>()
 
 const contextMenuVisible = defineModel<boolean>("contextMenu", {
   required: true

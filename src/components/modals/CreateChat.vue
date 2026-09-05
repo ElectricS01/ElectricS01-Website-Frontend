@@ -1,7 +1,7 @@
 <template>
   <modal
     :is-active="createChatShown && !store.quickSwitcherShown"
-    @close="emits('hideCreateChat')"
+    @close="emit('hideCreateChat')"
   >
     <div class="channel-menu">
       <div class="selector">
@@ -56,6 +56,7 @@ import axios from "axios"
 import { ref } from "vue"
 import { getUserByName, sendDm } from "@/helpers/chatUsers"
 import { ChatUser, UserData } from "@/types/user"
+import { ChatData } from "@/types/chat"
 
 const store = useDataStore()
 
@@ -63,7 +64,11 @@ defineProps({
   createChatShown: Boolean
 })
 
-const emits = defineEmits(["hideCreateChat", "chatCreated", "dmCreated"])
+const emit = defineEmits<{
+  hideCreateChat: []
+  chatCreated: [ChatData]
+  dmCreated: [ChatData]
+}>()
 
 const createChatType = ref(true)
 const chatNameInput = ref("")
@@ -116,7 +121,7 @@ const createChat = () => {
     .then((res) => {
       ;(store.userData as UserData).chatsList = res.data.chats
       store.chatSort()
-      emits("chatCreated", res.data.chat)
+      emit("chatCreated", res.data.chat)
     })
     .catch((e) => {
       creating = false
@@ -140,7 +145,7 @@ const createDirectMessage = async () => {
 
   try {
     const data = await sendDm(userId)
-    emits("dmCreated", data)
+    emit("dmCreated", data)
   } catch (e) {
     creating = false
     store.handleAxiosError(e)

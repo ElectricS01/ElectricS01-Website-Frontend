@@ -4,7 +4,7 @@
       :src="embed.mediaProxyLink"
       class="embed"
       alt="Embedded image"
-      @load="scroll()"
+      @load="emit('scroll')"
       @click="emit('embed')"
     />
   </div>
@@ -15,11 +15,11 @@ import { Embed } from "@/types/message"
 
 defineProps<{
   embed: Embed
-  scroll: () => void
 }>()
 
 const emit = defineEmits<{
   embed: []
+  scroll: []
 }>()
 </script>
 

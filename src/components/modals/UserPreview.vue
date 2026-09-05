@@ -1,7 +1,7 @@
 <template>
   <modal
     :is-active="showUser !== null && !store.quickSwitcherShown"
-    @close="(emits('showUser'), emits('editing', ''))"
+    @close="(emit('showUser'), emit('editing', ''))"
   >
     <template v-if="showUser">
       <img
@@ -211,16 +211,24 @@ import { ref, onMounted, onUnmounted } from "vue"
 import { sendDm } from "@/helpers/chatUsers"
 import { dayjsDate } from "@/helpers/dates"
 import { ProfileUser } from "@/types/user"
+import { ChatData } from "@/types/chat"
 
 dayjs.extend(duration)
 
 const store = useDataStore()
+
 const props = defineProps<{
   addFriend: (userId: number, notOpen: boolean) => Promise<void>
-  editing: string
+  editing: string | number
   showUser: ProfileUser | null
 }>()
-const emits = defineEmits(["showUser", "editing", "statusMessage", "dmCreated"])
+
+const emit = defineEmits<{
+  showUser: []
+  editing: [string]
+  statusMessage: [string]
+  dmCreated: [ChatData]
+}>()
 
 let editStatus = ""
 let creating = false
@@ -248,7 +256,7 @@ onUnmounted(() => {
 })
 
 const editStatusShow = () => {
-  emits("editing", "status")
+  emit("editing", "status")
   editStatus = props.showUser!.statusMessage
   store.editFocus()
 }
@@ -258,15 +266,15 @@ const editStatusMessage = () => {
     editStatus.trim() === props.showUser!.statusMessage ||
     editStatus.trim().length > 50
   ) {
-    return emits("editing", "")
+    return emit("editing", "")
   }
   axios
     .patch("/api/edit-status-message", {
       statusMessage: editStatus.trim()
     })
     .then((res) => {
-      emits("statusMessage", res.data.statusMessage)
-      emits("editing", "")
+      emit("statusMessage", res.data.statusMessage)
+      emit("editing", "")
     })
     .catch((e) => {
       store.handleAxiosError(e)
@@ -279,7 +287,7 @@ const sendUserDm = async (id: number) => {
 
   try {
     const data = await sendDm(id)
-    emits("dmCreated", data)
+    emit("dmCreated", data)
 
     creating = false
   } catch (e) {

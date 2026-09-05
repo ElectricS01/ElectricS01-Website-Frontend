@@ -33,7 +33,7 @@
       v-for="(embed, index) in message.embeds"
       :key="index"
       :embed="embed"
-      :scroll="scroll"
+      @scroll="emit('scroll')"
       @embed="emit('embed', embed.mediaProxyLink)"
     />
   </div>
@@ -51,11 +51,11 @@ const props = defineProps<{
   findUsername: (userId: number) => string
   openUser: (userId: number) => void
   message: Message
-  scroll: () => void
 }>()
 
 const emit = defineEmits<{
   embed: [string]
+  scroll: []
 }>()
 
 const editShown = ref(false)

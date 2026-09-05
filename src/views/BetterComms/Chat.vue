@@ -178,8 +178,8 @@
                   :message="message"
                   :find-username="findUsername"
                   :open-user="openUser"
-                  :scroll="scrollDown"
                   @embed="embed = $event"
+                  @scroll="scrollDown()"
                 />
                 <message-emoji
                   :reactions="message.reactions"
@@ -321,75 +321,23 @@
             </div>
           </div>
         </transition>
-        <div class="message-send">
-          <div
-            v-if="matchingEmoji.length && !emojiPickerVisible"
-            class="emoji-picker"
-          >
-            <div class="emoji-picker-inner scroll-bar">
-              <div
-                v-for="(emoji, index) in matchingEmoji"
-                :id="'picker-emoji-' + index"
-                :key="emoji[0]"
-                :class="{ selected: index == emojiPickerIndex }"
-                @click="handleEmojiClick(emoji[0])"
-              >
-                {{ emoji[0] }}
-                {{ emoji[1][0] }}
-              </div>
-            </div>
-          </div>
-          <textarea
-            id="input"
-            v-model="inputText"
-            :disabled="inputDisabled"
-            :placeholder="
-              inputDisabled
-                ? requiresEncryption
-                  ? encryptionRequirement
-                  : 'This chat requires email address verification'
-                : 'Send a message'
-            "
-            autofocus
-            class="message-input"
-            autocomplete="off"
-            @keydown.enter.exact.prevent="
-              matchingEmoji.length > 0 ? selectCurrentEmoji() : sendMessage()
-            "
-            @keydown.up.prevent="handleUpKey"
-            @keydown.down.prevent="handleDownKey"
-            @keydown.tab.prevent="
-              matchingEmoji.length > 0 ? selectCurrentEmoji() : null
-            "
-            @keydown.escape.prevent="override = true"
-          />
-          <button
-            :disabled="inputDisabled"
-            style="cursor: pointer; width: 40px"
-            @click="showEmojiPicker"
-          >
-            <icons
-              icon="emoji"
-              size="24"
-              :colour="inputDisabled ? 'grey' : undefined"
-            />
-          </button>
-          <button
-            :disabled="inputDisabled"
-            style="cursor: pointer; width: 40px"
-            @click="sendMessage"
-          >
-            <icons
-              icon="send"
-              size="24"
-              :colour="inputDisabled ? 'grey' : undefined"
-            />
-          </button>
-          <emoji-picker
-            v-if="emojiPickerVisible"
-            @emoji-selected="handleEmojiSelected"
-          />
-        </div>
+        <chat-input
+          v-model="inputText"
+          :input-disabled="inputDisabled"
+          :requires-encryption="requiresEncryption"
+          :encryption-requirement="encryptionRequirement"
+          :emoji-picker-visible="emojiPickerVisible"
+          :emoji-picker-index="emojiPickerIndex"
+          :matching-emoji="matchingEmoji"
+          :select-current-emoji="selectCurrentEmoji"
+          :send-message="sendMessage"
+          :handle-up-key="handleUpKey"
+          :handle-down-key="handleDownKey"
+          :show-emoji-picker="showEmojiPicker"
+          :handle-emoji-selected="handleEmojiSelected"
+          :handle-emoji-click="handleEmojiClick"
+          @override="override = true"
+        />
       </div>
     </div>
     <chat-sidebar
@@ -402,9 +350,9 @@
       :go-to-message="goToMessage"
       :open-user="openUser"
       :open-chat="getChat"
-      :scroll="scrollDown"
       @remove-user="removeUser(currentChat.id, $event)"
       @dm-created="onDmCreated($event)"
+      @scroll="scrollDown()"
     />
   </div>
 </template>
@@ -424,6 +372,7 @@ import MessageEmoji from "@/components/MessageEmoji.vue"
 import ChatsList from "@/components/sidebars/ChatsList.vue"
 import ChatSidebar from "@/components/sidebars/ChatSidebar.vue"
 import Reply from "@/components/Reply.vue"
+import ChatInput from "@/components/ChatInput.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -466,12 +415,11 @@ const reactingTo = ref(-1)
 const emojiPickerIndex = ref(0)
 const emojiPickerVisible = ref(false)
 const inputText = ref("")
+const editText = ref("")
 const override = ref(false)
 
 const usersSidebarContext = ref(false)
 const chatsSidebarContext = ref(false)
-
-let editText
 
 if (!localStorage.getItem("token")) {
   router.push("/login?redirect=" + route.path)
@@ -542,6 +490,22 @@ if (!localStorage.getItem("token")) {
 
       if (chatIndex !== -1) {
         store.userData.chatsList[chatIndex] = socketMessage.editChat
+      }
+    } else if (socketMessage.newReaction) {
+      const message = currentChat.value.messages.find(
+        (msg) => msg.id === socketMessage.newReaction.messageId
+      )
+      if (message) {
+        message.reactions.push(socketMessage.newReaction.reaction)
+      }
+    } else if (socketMessage.deleteReaction) {
+      const message = currentChat.value.messages.find(
+        (msg) => msg.id === socketMessage.deleteReaction.messageId
+      )
+      if (message) {
+        message.reactions = message.reactions.filter(
+          (reaction) => reaction.id !== socketMessage.deleteReaction.reactionId
+        )
       }
     }
     console.log("Data received from websocket")
@@ -739,12 +703,12 @@ const openCreateChat = () => {
 }
 
 const editMessage = (messageId) => {
-  if (editText.trim() === findMessage(messageId).messageContents) {
+  if (editText.value.trim() === findMessage(messageId).messageContents) {
     editing.value = ""
   }
   axios
     .patch(`/api/edit/${messageId}`, {
-      messageContents: editText.trim()
+      messageContents: editText.value.trim()
     })
     .then((res) => {
       editing.value = ""
@@ -864,7 +828,7 @@ const removeUser = async (chatId, userId) => {
     store.handleAxiosError(e)
   }
 }
-const scrollDown = (override) => {
+const scrollDown = (override = false) => {
   nextTick(() => {
     try {
       if ((!scrolledUp.value || override) && currentChat.value.messages) {
@@ -916,12 +880,12 @@ const goToMessage = (messageId) => {
   }, 1500)
 }
 const editLast = () => {
-  const messageEdit = currentChat.value.messages.filter(
-    (message) => message.userId === store.userData.id
-  )
-  if (messageEdit.length > 0) {
-    editText = messageEdit.slice(-1)[0].messageContents
-    editing.value = messageEdit.slice(-1)[0].id
+  const messageEdit = currentChat.value.messages
+    .filter((message) => message.userId === store.userData.id)
+    ?.slice(-1)[0]
+  if (messageEdit) {
+    editText.value = messageEdit.messageContents
+    editing.value = messageEdit.id
   }
 }
 async function addFriend(userId, notOpen) {
@@ -1088,11 +1052,12 @@ const requiresEncryption = computed(() => {
 const inputDisabled = computed(() => {
   return (
     requiresEncryption.value ||
-    (!store.userData.emailVerified && currentChat.value.requireVerification)
+    (!store.userData.emailVerified && currentChat.value.requireVerification) ||
+    false
   )
 })
 const encryptionRequirement = computed(() => {
-  if (currentChat.value.type !== 1) return
+  if (currentChat.value.type !== 1) return ""
   const encryption = currentChat.value.users.find(
     (u) => u.id !== store.userData.id
   ).encryption

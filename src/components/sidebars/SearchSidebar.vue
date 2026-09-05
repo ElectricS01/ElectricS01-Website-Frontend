@@ -62,7 +62,7 @@
           :message="message"
           :open-user="openUser"
           :find-username="findUsername"
-          :scroll="scroll"
+          @scroll="emit('scroll')"
         />
       </div>
     </div>
@@ -79,7 +79,6 @@ import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
 import { ref } from "vue"
 import { Message } from "@/types/message"
-import { User } from "@/types/user"
 
 const props = defineProps<{
   chatMessages: Message[]
@@ -87,7 +86,10 @@ const props = defineProps<{
   findUsername: (userId: number) => string
   goToMessage: (messageId: number) => void
   openUser: (userId: number) => void
-  scroll: () => void
+}>()
+
+const emit = defineEmits<{
+  scroll: []
 }>()
 
 const searchText = ref("")
