@@ -414,6 +414,10 @@ button {
   text-overflow: ellipsis;
 }
 
+.wrap {
+  overflow-wrap: break-word;
+}
+
 .emoji-picker {
   position: absolute;
   text-align: left;

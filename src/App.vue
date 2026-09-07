@@ -99,6 +99,14 @@
       >
         <icons size="28" icon="home" />
       </router-link>
+      <router-link
+        v-else
+        class="right chat-button"
+        to="/"
+        title="Go to ElectricS01.com home"
+      >
+        Home
+      </router-link>
       <icons
         v-if="active('/chat')"
         class="right chat-icon"

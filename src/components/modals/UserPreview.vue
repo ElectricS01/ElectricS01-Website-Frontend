@@ -273,6 +273,7 @@ const editStatusMessage = () => {
       statusMessage: editStatus.trim()
     })
     .then((res) => {
+      props.showUser!.statusMessage = res.data.statusMessage
       emit("statusMessage", res.data.statusMessage)
       emit("editing", "")
     })

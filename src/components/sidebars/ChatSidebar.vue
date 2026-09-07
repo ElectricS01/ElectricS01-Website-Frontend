@@ -9,47 +9,47 @@
       width: store.search || store.pins || store.notifications ? '342px' : ''
     }"
   >
-    <users-sidebar
-      v-if="
-        !loadingMessages && !store.search && !store.pins && !store.notifications
-      "
-      v-model:context-menu="usersSidebarContext"
-      :users="currentChat.users"
-      :can-remove="
-        currentChat.owner === store.userData.id && currentChat.type === 0
-      "
-      :open-user="openUser"
-      :add-friend="addFriend"
-      @remove-user="emit('removeUser', $event)"
-      @dm-created="emit('dmCreated', $event)"
-    />
-    <search-sidebar
-      v-else-if="store.search"
-      :chat-messages="currentChat.messages"
-      :find-message="findMessage"
-      :find-username="findUsername"
-      :go-to-message="goToMessage"
-      :open-user="openUser"
-      @scroll="emit('scroll')"
-    />
-    <pins-sidebar
-      v-else-if="store.pins"
-      :pins="currentChat.pins"
-      :find-message="findMessage"
-      :find-username="findUsername"
-      :go-to-message="goToMessage"
-      :open-user="openUser"
-      @scroll="emit('scroll')"
-    />
-    <notifications-sidebar
-      v-else-if="store.notifications"
-      :notifications="store.userData.notifications ?? []"
-      :open-user="openUser"
-      :open-chat="openChat"
-    />
-    <div v-else class="center">
+    <div v-if="loadingMessages || !currentChat" class="center">
       <div style="text-align: center" class="loader" />
     </div>
+    <template v-else>
+      <search-sidebar
+        v-if="store.search"
+        :chat-messages="currentChat.messages"
+        :find-message="findMessage"
+        :find-username="findUsername"
+        :go-to-message="goToMessage"
+        :open-user="openUser"
+        @scroll="emit('scroll')"
+      />
+      <pins-sidebar
+        v-else-if="store.pins"
+        :pins="currentChat.pins"
+        :find-message="findMessage"
+        :find-username="findUsername"
+        :go-to-message="goToMessage"
+        :open-user="openUser"
+        @scroll="emit('scroll')"
+      />
+      <notifications-sidebar
+        v-else-if="store.notifications"
+        :notifications="store.userData.notifications ?? []"
+        :open-user="openUser"
+        :open-chat="openChat"
+      />
+      <users-sidebar
+        v-else
+        v-model:context-menu="usersSidebarContext"
+        :users="currentChat.users"
+        :can-remove="
+          currentChat.owner === store.userData.id && currentChat.type === 0
+        "
+        :open-user="openUser"
+        :add-friend="addFriend"
+        @remove-user="emit('removeUser', $event)"
+        @dm-created="emit('dmCreated', $event)"
+      />
+    </template>
   </sidebar>
 </template>
 
@@ -66,7 +66,7 @@ import Sidebar from "../core/Sidebar.vue"
 const store = useDataStore()
 
 defineProps<{
-  currentChat: Chat
+  currentChat: Chat | null
   loadingMessages: boolean
   findMessage: (messageId: number) => Message | undefined
   findUsername: (userId: number) => string

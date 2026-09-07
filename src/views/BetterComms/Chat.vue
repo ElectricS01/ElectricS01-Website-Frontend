@@ -6,10 +6,9 @@
     @show-user="showUser = null"
     @editing="editing = $event"
     @status-message="
-      ((showUser.statusMessage = $event),
-      (currentChat.users.find(
+      currentChat.users.find(
         (user) => user.id === store.userData.id
-      ).statusMessage = $event))
+      ).statusMessage = $event
     "
     @dm-created="onDmCreated($event)"
   />
@@ -38,7 +37,7 @@
       v-model:context-menu="chatsSidebarContext"
       :chats="store.userData.chatsList"
       :loading="store.loadingChats"
-      :current-id="store.showFriends ? undefined : currentChat.id"
+      :current-id="store.showFriends ? undefined : currentChat?.id"
       :user-id="store.userData.id"
       @open-chat="getChat($event)"
       @open-create-chat="openCreateChat"
@@ -66,22 +65,22 @@
         style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
         class="scroll-bar"
       >
-        <div v-if="loadingMessages" class="center">
+        <div v-if="loadingMessages || !currentChat" class="center">
           <div class="loader" />
         </div>
         <div v-else>
           <div style="padding: 12px 16px">
-            <h1 v-if="currentChat.type !== 1" class="chat-title">
+            <h1 v-if="currentChat.type !== 1" class="chat-title wrap">
               Welcome to {{ currentChat.name }}
             </h1>
             <h1
               v-else-if="currentChat.owner !== store.userData.id"
-              class="chat-title"
+              class="chat-title wrap"
             >
               Welcome to your Direct Message with
               {{ currentChat?.ownerDetails.username }}
             </h1>
-            <h1 v-else class="chat-title">
+            <h1 v-else class="chat-title wrap">
               Welcome to your Direct Message with {{ currentChat.name }}
             </h1>
             <b style="display: block; overflow-wrap: break-word">
@@ -282,7 +281,7 @@
                   cursor: pointer;
                 "
                 class="scroll-button"
-                @click="scrollDown"
+                @click="scrollDown()"
               >
                 <icons size="12" icon="down-arrow" />
                 <p class="message-text-medium">Scroll to bottom</p>
@@ -350,7 +349,7 @@
       :go-to-message="goToMessage"
       :open-user="openUser"
       :open-chat="getChat"
-      @remove-user="removeUser(currentChat.id, $event)"
+      @remove-user="removeUser(currentChat?.id, $event)"
       @dm-created="onDmCreated($event)"
       @scroll="scrollDown()"
     />
@@ -888,7 +887,7 @@ const editLast = () => {
     editing.value = messageEdit.id
   }
 }
-async function addFriend(userId, notOpen) {
+async function addFriend(userId, notOpen = false) {
   await axios
     .post(`/api/friend/${userId}`)
     .then(async (res) => {
@@ -1025,7 +1024,7 @@ const otherUser = computed(() =>
 
 const sendEncrypted = computed(() => {
   return (
-    currentChat.value.type === 1 &&
+    currentChat.value?.type === 1 &&
     ((store.userData.encryption === "on" &&
       otherUser.value.encryption === "always") ||
       (store.userData.encryption === "always" &&
@@ -1042,7 +1041,7 @@ const sendEncrypted = computed(() => {
 })
 const requiresEncryption = computed(() => {
   return (
-    currentChat.value.type === 1 &&
+    currentChat.value?.type === 1 &&
     ((store.userData.encryption === "always" &&
       otherUser.value.encryption === "never") ||
       (store.userData.encryption === "never" &&
@@ -1052,12 +1051,12 @@ const requiresEncryption = computed(() => {
 const inputDisabled = computed(() => {
   return (
     requiresEncryption.value ||
-    (!store.userData.emailVerified && currentChat.value.requireVerification) ||
+    (!store.userData.emailVerified && currentChat.value?.requireVerification) ||
     false
   )
 })
 const encryptionRequirement = computed(() => {
-  if (currentChat.value.type !== 1) return ""
+  if (currentChat.value?.type !== 1) return ""
   const encryption = currentChat.value.users.find(
     (u) => u.id !== store.userData.id
   ).encryption
@@ -1183,7 +1182,7 @@ async function getChat(id) {
     }
     id = store.userData.chatsList[0].id
   }
-  if (id !== currentChat.value.id) {
+  if (id !== currentChat.value?.id) {
     loadingMessages.value = true
   }
   store.showFriends = false
