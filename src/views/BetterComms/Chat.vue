@@ -61,7 +61,7 @@
       "
     >
       <div
-        id="messages-div"
+        ref="messages-div"
         style="overflow-y: auto; flex-grow: 1; padding: 8px 4px 8px 4px"
         class="scroll-bar"
       >
@@ -262,82 +262,28 @@
           </div>
         </div>
       </div>
-      <div>
-        <transition>
-          <div
-            v-if="replyTo || scrolledUp"
-            style="position: relative; margin-right: 6px"
-          >
-            <transition>
-              <div
-                v-if="scrolledUp"
-                :style="{
-                  height: replyTo ? '36px' : ''
-                }"
-                style="
-                  position: absolute;
-                  z-index: 1;
-                  bottom: 0;
-                  cursor: pointer;
-                "
-                class="scroll-button"
-                @click="scrollDown()"
-              >
-                <icons size="12" icon="down-arrow" />
-                <p class="message-text-medium">Scroll to bottom</p>
-              </div>
-            </transition>
-            <div
-              v-if="replyMessage"
-              class="scroll-button"
-              style="overflow-wrap: break-word; z-index: 2; position: relative"
-            >
-              <icons size="12" icon="right" style="margin-right: 4px" />
-              <profile-picture
-                size="12"
-                :avatar="replyMessage.user?.avatar"
-                :small="true"
-                @click="openUser(replyMessage.user.id)"
-              />
-              <b
-                class="message-text-medium"
-                style="margin: 0 4px 0 4px"
-                @click="openUser(replyMessage.user.id)"
-              >
-                {{
-                  replyMessage.user?.username
-                    ? "@" + replyMessage.user?.username
-                    : "@Deleted user"
-                }}
-              </b>
-              <p
-                class="message-text-medium-gray"
-                style="margin: 0"
-                @click="goToMessage(replyTo)"
-              >
-                {{ replyMessage.messageContents }}
-              </p>
-            </div>
-          </div>
-        </transition>
-        <chat-input
-          v-model="inputText"
-          :input-disabled="inputDisabled"
-          :requires-encryption="requiresEncryption"
-          :encryption-requirement="encryptionRequirement"
-          :emoji-picker-visible="emojiPickerVisible"
-          :emoji-picker-index="emojiPickerIndex"
-          :matching-emoji="matchingEmoji"
-          :select-current-emoji="selectCurrentEmoji"
-          :send-message="sendMessage"
-          :handle-up-key="handleUpKey"
-          :handle-down-key="handleDownKey"
-          :show-emoji-picker="showEmojiPicker"
-          :handle-emoji-selected="handleEmojiSelected"
-          :handle-emoji-click="handleEmojiClick"
-          @override="override = true"
-        />
-      </div>
+      <chat-input
+        v-model="inputText"
+        :input-disabled="inputDisabled"
+        :requires-encryption="requiresEncryption"
+        :encryption-requirement="encryptionRequirement"
+        :emoji-picker-visible="emojiPickerVisible"
+        :emoji-picker-index="emojiPickerIndex"
+        :scrolled-up="scrolledUp"
+        :reply-message="replyMessage"
+        :matching-emoji="matchingEmoji"
+        :select-current-emoji="selectCurrentEmoji"
+        :send-message="sendMessage"
+        :handle-up-key="handleUpKey"
+        :handle-down-key="handleDownKey"
+        :show-emoji-picker="showEmojiPicker"
+        :handle-emoji-selected="handleEmojiSelected"
+        :handle-emoji-click="handleEmojiClick"
+        :open-user="openUser"
+        :go-to-message="goToMessage"
+        :scroll-down="scrollDown"
+        @override="override = true"
+      />
     </div>
     <chat-sidebar
       v-model:users-sidebar-context="usersSidebarContext"
@@ -399,6 +345,8 @@ const store = useDataStore()
 const route = useRoute()
 const router = useRouter()
 
+const messageDivRef = useTemplateRef("messages-div")
+
 const embed = ref(null)
 const currentChat = ref({})
 const replyTo = ref()
@@ -423,92 +371,107 @@ const chatsSidebarContext = ref(false)
 if (!localStorage.getItem("token")) {
   router.push("/login?redirect=" + route.path)
 } else {
-  store.ws.onmessage = async (event) => {
-    console.log(event)
-    const socketMessage = JSON.parse(event.data)
-    if (socketMessage.authFail) {
-      store.handleError(`Error 401, ${socketMessage.authFail}`)
-      router.push("/login?redirect=" + route.path)
-    } else if (socketMessage.newMessage) {
-      const chatIndex = store.userData.chatsList.findIndex(
-        (chat) => chat.id === socketMessage.newMessage.chatId
-      )
-
-      if (chatIndex !== -1) {
-        store.userData.chatsList[chatIndex].latest =
-          socketMessage.newMessage.createdAt
-        store.userData.chatsList[chatIndex].association.notifications += 1
-        updatePageTitle()
-      }
-      store.chatSort()
-      if (socketMessage.newMessage.chatId === currentChat.value.id) {
-        socketMessage.newMessage.focus = false
-        socketMessage.newMessage.reactions = []
-        await decrypt(socketMessage.newMessage)
-        if (socketMessage.newMessage.chatId === currentChat.value.id) {
-          currentChat.value.messages.push(socketMessage.newMessage)
-          scrollDown()
+  if (store.ws) {
+    store.ws.onmessage = async (event) => {
+      await handleSocketMessage(event)
+    }
+  }
+  watch(
+    () => store.ws,
+    async () => {
+      if (store.ws) {
+        store.ws.onmessage = async (event) => {
+          await handleSocketMessage(event)
         }
       }
-    } else if (socketMessage.deleteMessage) {
-      const messageIndex = currentChat.value.messages.findIndex(
-        (message) => message.id === socketMessage.deleteMessage.id
-      )
-      if (messageIndex !== -1) {
-        currentChat.value.messages[messageIndex].deleted = true
-      }
-    } else if (socketMessage.changeUser) {
-      if (showUser.value && socketMessage.changeUser.id === showUser.value.id) {
-        showUser.value = socketMessage.changeUser
-      }
-      const userToUpdate = currentChat.value.users.findIndex(
-        (user) => user.id === socketMessage.changeUser.id
-      )
-      if (userToUpdate != -1) {
-        currentChat.value.users[userToUpdate] = socketMessage.changeUser
-        // } else {
-        // currentChat.value.users.push(socketMessage.changeUser)
-      }
-    } else if (socketMessage.newUser) {
-      if (parseInt(socketMessage.newUser.chatId) === currentChat.value.id) {
-        currentChat.value.users.push(socketMessage.newUser)
-      }
-    } else if (socketMessage.newChat) {
-      socketMessage.newChat.association = { notifications: 0 }
-      store.userData.chatsList.push(socketMessage.newChat)
-      store.chatSort()
-    } else if (socketMessage.editChat) {
-      const chatIndex = store.userData.chatsList.findIndex(
-        (chat) => chat.id === socketMessage.editChat.id
-      )
+    }
+  )
+}
 
-      socketMessage.editChat.association = {
-        notifications:
-          store.userData.chatsList[chatIndex].association.notifications
-      }
+const handleSocketMessage = async (event) => {
+  console.log(event)
+  const socketMessage = JSON.parse(event.data)
+  if (socketMessage.authFail) {
+    store.handleError(`Error 401, ${socketMessage.authFail}`)
+    router.push("/login?redirect=" + route.path)
+  } else if (socketMessage.newMessage) {
+    const chatIndex = store.userData.chatsList.findIndex(
+      (chat) => chat.id === socketMessage.newMessage.chatId
+    )
 
-      if (chatIndex !== -1) {
-        store.userData.chatsList[chatIndex] = socketMessage.editChat
-      }
-    } else if (socketMessage.newReaction) {
-      const message = currentChat.value.messages.find(
-        (msg) => msg.id === socketMessage.newReaction.messageId
-      )
-      if (message) {
-        message.reactions.push(socketMessage.newReaction.reaction)
-      }
-    } else if (socketMessage.deleteReaction) {
-      const message = currentChat.value.messages.find(
-        (msg) => msg.id === socketMessage.deleteReaction.messageId
-      )
-      if (message) {
-        message.reactions = message.reactions.filter(
-          (reaction) => reaction.id !== socketMessage.deleteReaction.reactionId
-        )
+    if (chatIndex !== -1) {
+      store.userData.chatsList[chatIndex].latest =
+        socketMessage.newMessage.createdAt
+      store.userData.chatsList[chatIndex].association.notifications += 1
+      updatePageTitle()
+    }
+    store.chatSort()
+    if (socketMessage.newMessage.chatId === currentChat.value.id) {
+      socketMessage.newMessage.reactions = []
+      await decrypt(socketMessage.newMessage)
+      if (socketMessage.newMessage.chatId === currentChat.value.id) {
+        currentChat.value.messages.push(socketMessage.newMessage)
+        scrollDown()
       }
     }
-    console.log("Data received from websocket")
+  } else if (socketMessage.deleteMessage) {
+    const messageIndex = currentChat.value.messages.findIndex(
+      (message) => message.id === socketMessage.deleteMessage.id
+    )
+    if (messageIndex !== -1) {
+      currentChat.value.messages[messageIndex].deleted = true
+    }
+  } else if (socketMessage.changeUser) {
+    if (showUser.value && socketMessage.changeUser.id === showUser.value.id) {
+      showUser.value = socketMessage.changeUser
+    }
+    const userToUpdate = currentChat.value.users.findIndex(
+      (user) => user.id === socketMessage.changeUser.id
+    )
+    if (userToUpdate != -1) {
+      currentChat.value.users[userToUpdate] = socketMessage.changeUser
+      // } else {
+      // currentChat.value.users.push(socketMessage.changeUser)
+    }
+  } else if (socketMessage.newUser) {
+    if (parseInt(socketMessage.newUser.chatId) === currentChat.value.id) {
+      currentChat.value.users.push(socketMessage.newUser)
+    }
+  } else if (socketMessage.newChat) {
+    socketMessage.newChat.association = { notifications: 0 }
+    store.userData.chatsList.push(socketMessage.newChat)
+    store.chatSort()
+  } else if (socketMessage.editChat) {
+    const chatIndex = store.userData.chatsList.findIndex(
+      (chat) => chat.id === socketMessage.editChat.id
+    )
+
+    socketMessage.editChat.association = {
+      notifications:
+        store.userData.chatsList[chatIndex].association.notifications
+    }
+
+    if (chatIndex !== -1) {
+      store.userData.chatsList[chatIndex] = socketMessage.editChat
+    }
+  } else if (socketMessage.newReaction) {
+    const message = currentChat.value.messages.find(
+      (msg) => msg.id === socketMessage.newReaction.messageId
+    )
+    if (message) {
+      message.reactions.push(socketMessage.newReaction.reaction)
+    }
+  } else if (socketMessage.deleteReaction) {
+    const message = currentChat.value.messages.find(
+      (msg) => msg.id === socketMessage.deleteReaction.messageId
+    )
+    if (message) {
+      message.reactions = message.reactions.filter(
+        (reaction) => reaction.id !== socketMessage.deleteReaction.reactionId
+      )
+    }
   }
+  console.log("Data received from websocket")
 }
 
 const focusInput = () => {
@@ -625,7 +588,6 @@ const sendMessage = async () => {
     store.chatSort()
     inputText.value = ""
     replyTo.value = null
-    res.data.lastMessage.focus = false
     await decrypt(res.data.lastMessage)
     if (chatId === currentChat.value.id) {
       currentChat.value.messages.push(res.data.lastMessage)
@@ -702,7 +664,7 @@ const openCreateChat = () => {
 }
 
 const editMessage = (messageId) => {
-  if (editText.value.trim() === findMessage(messageId).messageContents) {
+  if (editText.value.trim() === findMessage(messageId)?.messageContents) {
     editing.value = ""
   }
   axios
@@ -753,7 +715,6 @@ const handleChatChange = async (chat) => {
   updatePageTitle()
   replyTo.value = null
   if (currentChat.value.messages) {
-    currentChat.value.messages.focus = false
     await Promise.all([
       ...currentChat.value.messages.map((message) => decrypt(message)),
       ...currentChat.value.pins.map((pin) => decrypt(pin))
@@ -856,20 +817,18 @@ const goToMessage = (messageId) => {
   const index = currentChat.value.messages.findIndex(
     (message) => message.id === messageId
   )
-
-  const div = document.getElementById("messages-div")
   const element = document.getElementById(`message-${index}`)
 
-  if (!div || !element) {
+  if (!messageDivRef.value || !element) {
     return
   }
 
   const elementRect = element.getBoundingClientRect()
-  const absoluteElementTop = elementRect.top + div.scrollTop
-  const middleOfScreen = div.clientHeight / 2
+  const absoluteElementTop = elementRect.top + messageDivRef.value.scrollTop
+  const middleOfScreen = messageDivRef.value.clientHeight / 2
   const scrollTo = absoluteElementTop - middleOfScreen
 
-  div.scrollTo({
+  messageDivRef.value.scrollTo({
     behavior: "smooth",
     top: scrollTo
   })
@@ -996,10 +955,8 @@ const keyPressed = ({ key, altKey }) => {
   }
 }
 const scrollEvent = () => {
-  const div = document.getElementById("messages-div")
-  const { scrollHeight } = div
-  const { scrollTop } = div
-  const { clientHeight } = div
+  if (!messageDivRef.value) return
+  const { scrollHeight, scrollTop, clientHeight } = messageDivRef.value
   scrolledUp.value =
     scrollTop + clientHeight <=
     scrollHeight - (clientHeight / 2 > 200 ? 200 : clientHeight / 2)
@@ -1111,17 +1068,20 @@ const handleDownKey = () => {
 }
 
 const updateFavicon = (notificationCount) => {
+  const favicon = document.getElementById("favicon")
+  if (!favicon) return
+
   if (notificationCount < 1) {
-    document.getElementById("favicon").href = "/icons/favicon.ico"
+    favicon.href = "/icons/favicon.ico"
     return
   }
 
-  const favicon = document.getElementById("favicon")
   const size = 64
   const canvas = document.createElement("canvas")
   canvas.width = size
   canvas.height = size
   const ctx = canvas.getContext("2d")
+  if (!ctx) return
 
   const img = new Image()
   img.src = favicon.href
@@ -1190,7 +1150,6 @@ async function getChat(id) {
     .get(`/api/chat/${id}`)
     .then(async (res) => {
       currentChat.value = res.data
-      currentChat.value.messages.focus = false
       await Promise.all([
         ...currentChat.value.messages.map((message) => decrypt(message)),
         ...currentChat.value.pins.map((pin) => decrypt(pin))
@@ -1226,8 +1185,7 @@ async function getChat(id) {
 
 onMounted(async () => {
   document.addEventListener("keydown", keyPressed)
-  const messagesDiv = document.getElementById("messages-div")
-  if (messagesDiv) messagesDiv.addEventListener("scroll", scrollEvent)
+  messageDivRef.value?.addEventListener("scroll", scrollEvent)
   if (route.path.startsWith("/user")) {
     openUser(route.params.id)
   }
@@ -1235,8 +1193,7 @@ onMounted(async () => {
 })
 onUnmounted(() => {
   document.removeEventListener("keydown", keyPressed)
-  const messagesDiv = document.getElementById("messages-div")
-  if (messagesDiv) messagesDiv.removeEventListener("scroll", scrollEvent)
+  messageDivRef.value?.removeEventListener("scroll", scrollEvent)
 })
 watch(editing, () => {
   store.editFocus()
