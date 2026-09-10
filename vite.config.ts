@@ -10,6 +10,10 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
+      registerType: "autoUpdate",
+      workbox: {
+        navigateFallbackDenylist: [/^\/api\//]
+      },
       manifest: {
         name: "BetterCommunications",
         short_name: "BetterComms",

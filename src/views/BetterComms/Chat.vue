@@ -207,7 +207,8 @@
                 <icons
                   v-show="
                     store.userData.admin ||
-                    message.user?.id === store.userData.id
+                    message.user?.id === store.userData.id ||
+                    currentChat.type === 1
                   "
                   style="cursor: pointer"
                   size="20"
@@ -282,7 +283,6 @@
         :open-user="openUser"
         :go-to-message="goToMessage"
         :scroll-down="scrollDown"
-        @override="override = true"
       />
     </div>
     <chat-sidebar
@@ -340,6 +340,8 @@ import {
   importPublicKey
 } from "@/helpers/encryption"
 import sodium from "libsodium-wrappers-sumo"
+
+const regex = /https:\/\/electrics01\.com\/api\/i\/[^\s<>"']+/g
 
 const store = useDataStore()
 const route = useRoute()
@@ -687,6 +689,26 @@ const replyToMessage = (messageId) => {
   focusInput()
 }
 
+const trimTrailingPunctuation = (url) => {
+  const opens = [...url].filter((c) => c === "(").length
+  let closes = [...url].filter((c) => c === ")").length
+
+  while (url.length > 0) {
+    const last = url.at(-1)
+
+    if (".,!?;:]".includes(last)) {
+      url = url.slice(0, -1)
+    } else if (last === ")" && closes > opens) {
+      url = url.slice(0, -1)
+      closes -= 1
+    } else {
+      return new URL(url)
+    }
+  }
+
+  return new URL(url)
+}
+
 const decrypt = async (message) => {
   try {
     if (message.messageContents) return message
@@ -700,6 +722,19 @@ const decrypt = async (message) => {
       store.userData.privateKey,
       publicKey
     )
+
+    let links = message.messageContents.match(regex)
+    if (!links) return
+    if (links.length > 3) links = links.slice(0, 3)
+    message.embeds = []
+    for (const embedLink of links) {
+      const linkURL = trimTrailingPunctuation(embedLink).toString()
+      message.embeds.push({
+        embedLink: linkURL,
+        mediaProxyLink: linkURL,
+        type: "image"
+      })
+    }
   } catch (e) {
     console.log(e)
     message.encrypted = true
@@ -846,6 +881,14 @@ const editLast = () => {
     editing.value = messageEdit.id
   }
 }
+const replyLast = () => {
+  const messageReply = currentChat.value.messages
+    .filter((message) => message.userId !== store.userData.id)
+    ?.slice(-1)[0]
+  if (messageReply) {
+    replyTo.value = messageReply.id
+  }
+}
 async function addFriend(userId, notOpen = false) {
   await axios
     .post(`/api/friend/${userId}`)
@@ -909,6 +952,8 @@ const keyPressed = ({ key, altKey }) => {
       createChatShown.value = false
     } else if (chatEdit.value !== null) {
       chatEdit.value = null
+    } else if (matchingEmoji.value.length !== 0) {
+      override.value = true
     } else if (reactingTo.value !== -1) {
       reactingTo.value = -1
       focusInput()
@@ -963,7 +1008,7 @@ const scrollEvent = () => {
 }
 
 const replyMessage = computed(() =>
-  replyTo.value ? findMessage(replyTo.value) : null
+  replyTo.value ? findMessage(replyTo.value) : undefined
 )
 
 const matchingEmoji = computed(() => {
@@ -1047,14 +1092,35 @@ const scrollToSelected = () => {
   })
 }
 
-const handleUpKey = () => {
+const handleUpKey = (event) => {
+  if (
+    event.ctrlKey ||
+    event.metaKey ||
+    (sendEncrypted.value && matchingEmoji.value.length === 0)
+  ) {
+    override.value = true
+    replyLast()
+    scrollDown(true)
+    return
+  }
+
   if (matchingEmoji.value.length > 0) {
     emojiPickerIndex.value = Math.max(0, emojiPickerIndex.value - 1)
     scrollToSelected()
-  } else {
-    editLast()
-    scrollDown(true)
+    return
   }
+
+  if (
+    inputText.value &&
+    !(
+      navigator.userAgentData?.platform === "macOS" ||
+      navigator.platform === "MacIntel"
+    )
+  )
+    return
+
+  editLast()
+  scrollDown(true)
 }
 
 const handleDownKey = () => {

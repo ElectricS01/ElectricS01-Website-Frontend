@@ -2,6 +2,7 @@ import { BasicUser } from "./user"
 
 export interface Embed {
   type: string
+  embedLink: string
   mediaProxyLink: string
 }
 

@@ -92,7 +92,6 @@
         @keydown.tab.prevent="
           matchingEmoji.length > 0 ? selectCurrentEmoji() : null
         "
-        @keydown.escape.prevent="emit('override')"
       />
       <button
         :disabled="inputDisabled"
@@ -151,11 +150,11 @@ const {
   emojiPickerVisible: boolean
   emojiPickerIndex: number
   scrolledUp: boolean
-  replyMessage: Message | null
+  replyMessage: Message | undefined
   matchingEmoji: [string, string[]][]
   selectCurrentEmoji: () => void
   sendMessage: () => void
-  handleUpKey: () => void
+  handleUpKey: (event: KeyboardEvent) => void
   handleDownKey: () => void
   showEmojiPicker: () => void
   handleEmojiSelected: (emoji: string) => void
@@ -163,10 +162,6 @@ const {
   scrollDown: (override?: boolean) => void
   openUser: (userId: number) => void
   goToMessage: (messageId: number) => void
-}>()
-
-const emit = defineEmits<{
-  override: []
 }>()
 
 const inputText = defineModel<string>()

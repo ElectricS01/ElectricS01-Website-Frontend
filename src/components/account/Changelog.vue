@@ -2,6 +2,32 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.251 Smoother Updates</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      BetterCommunications will now automatically update without requiring a
+      hard reload
+    </li>
+    <li>Command or Control + Up arrow will reply to the user's last message</li>
+    <li>
+      Up arrow no longer edits the previous message on Windows and Linux if the
+      message input contains text
+    </li>
+    <li>Settings is more usable on small screens and mobile</li>
+    <li>
+      Images stored on ElectricS01.com are now embedded in Encrypted direct
+      messages
+    </li>
+    <li>
+      Direct links to images stored on ElectricS01.com are now loaded correctly
+    </li>
+    <li>Refactoring</li>
+    <li>
+      The WebSocket now reconnects to BetterCommunications when disconnected
+      (1.250.2)
+    </li>
+  </ul>
   <h2 class="settings-text">1.250 Reactions WebSockets</h2>
   <div class="settings-spacer" />
   <ul>

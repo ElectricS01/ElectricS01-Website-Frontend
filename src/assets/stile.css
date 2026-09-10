@@ -686,7 +686,7 @@ button:hover,
   display: none;
 }
 
-@media screen and (max-width: 902px) {
+@media screen and (max-width: 995px) {
   .navbar:not(.responsive) a:not(:first-child):not(.chat-button) {
     display: none;
   }
@@ -1157,7 +1157,7 @@ code {
   height: min(calc(100% - 32px), max(40%, 600px));
 
   @media (max-width: 932px) {
-    width: max(min(100% - 16px, 800px), 400px);
+    width: max(min(100% - 16px, 800px), 500px);
   }
 }
 
@@ -1299,7 +1299,7 @@ input:checked + .slider:before {
 }
 
 .settings-sidebar {
-  width: 199px;
+  width: clamp(165px, 35vw, 199px);
   border-right: 1px solid #212425;
   background-color: #212425;
   border-radius: 16px 0 0 16px;
