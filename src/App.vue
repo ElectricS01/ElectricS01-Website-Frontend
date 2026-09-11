@@ -254,10 +254,10 @@ if (localStorage.getItem("token")) {
 }
 
 const chatBarOpen = localStorage.getItem("chatBarOpen")
-store.chatBarOpen = chatBarOpen === "true" ? true : false
+store.chatBarOpen = chatBarOpen === "true"
 
 const sidebarOpen = localStorage.getItem("sidebarOpen")
-store.sidebarOpen = sidebarOpen === "true" ? true : false
+store.sidebarOpen = sidebarOpen === "true"
 
 const active = (routePattern: string) => route.path.startsWith(routePattern)
 const mobileNav = () => {
@@ -421,7 +421,7 @@ const keyPressed = async ({ repeat, metaKey, ctrlKey, key }: KeyboardEvent) => {
         await nextTick()
         quickSwitcherRef.value?.focus()
       }
-    } else if (key == ".") {
+    } else if (key === ".") {
       toggleMode()
     }
   }

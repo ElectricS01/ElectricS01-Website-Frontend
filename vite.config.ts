@@ -10,7 +10,8 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      registerType: "autoUpdate",
+      injectRegister: false,
+      registerType: "prompt",
       workbox: {
         navigateFallbackDenylist: [/^\/api\//]
       },

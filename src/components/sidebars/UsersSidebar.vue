@@ -139,8 +139,8 @@ if (stored && validSorts.includes(stored as UserSort)) {
 const contextMenuItemUser = computed(() =>
   props.users.find((u) => u.id === contextMenuItemUserId.value)
 )
-const allUsers = computed(() => {
-  return [...props.users].sort((a, b) => {
+const allUsers = computed(() =>
+  [...props.users].sort((a, b) => {
     if (sortUsers.value === "id") {
       return a.id - b.id
     }
@@ -148,12 +148,12 @@ const allUsers = computed(() => {
     const aValue = a[sortUsers.value]
     const bValue = b[sortUsers.value]
 
-    if (aValue == null && bValue == null) {
+    if (aValue === null && bValue === null) {
       return a.username?.localeCompare(b.username ?? "") ?? 0
     }
 
-    if (aValue == null) return 1
-    if (bValue == null) return -1
+    if (aValue === null) return 1
+    if (bValue === null) return -1
 
     if (typeof aValue === "string" && typeof bValue === "string") {
       const result = aValue.localeCompare(bValue)
@@ -167,7 +167,7 @@ const allUsers = computed(() => {
 
     return a.username?.localeCompare(b.username ?? "") ?? 0
   })
-})
+)
 
 const onlineUsers = computed(() =>
   allUsers.value.filter((user) => user?.status === "online")

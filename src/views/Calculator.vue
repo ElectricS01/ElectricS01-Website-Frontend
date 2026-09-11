@@ -121,10 +121,10 @@ const calculateResult = () => {
       resultant = "0"
       return
     }
-    let result = []
+    const result = []
     for (let i = 0; i < tokens.length; i++) {
       if (tokens[i] === "-" && i > 0 && tokens[i - 1] === "^") {
-        let merged = tokens[i] + tokens[i + 1]
+        const merged = tokens[i] + tokens[i + 1]
         result.pop()
         result.push("^", merged)
         i++

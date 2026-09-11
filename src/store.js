@@ -77,9 +77,8 @@ export const useDataStore = defineStore("store", () => {
     return ""
   }
 
-  const handleError = (message, timeout = 5000) => {
-    return showError(message || "Something went wrong", timeout)
-  }
+  const handleError = (message, timeout = 5000) =>
+    showError(message || "Something went wrong", timeout)
 
   const handleAxiosError = (input, timeout = 5000) => {
     if (input?.code === "ERR_CANCELED" || input?.response?.status === 304) {
@@ -89,7 +88,7 @@ export const useDataStore = defineStore("store", () => {
     const message =
       (input?.response?.status >= 500
         ? "500 Internal Server Error"
-        : input?.response?.status == 404
+        : input?.response?.status === 404
           ? "404 Not Found"
           : getErrorMessage(input?.response?.data)) ||
       (input?.response?.status
@@ -126,7 +125,7 @@ export const useDataStore = defineStore("store", () => {
         console.log("Socket closed")
         console.log(`${event.code}: "${event.reason ?? "no message"}"`)
         if (event.code === 3000) {
-          router.push("/login?redirect=" + route.path)
+          router.push(`/login?redirect=${route.path}`)
           localStorage.removeItem("token")
         } else if (retry <= 3) {
           setTimeout(openWebSocket, 1000 * retry)
@@ -221,7 +220,7 @@ export const useDataStore = defineStore("store", () => {
         if (userData.value.id === 1)
           document.addEventListener("paste", (e) => {
             if (e.clipboardData && e.clipboardData.files.length) {
-              const files = e.clipboardData.files
+              const { files } = e.clipboardData
               const formData = new FormData()
               for (const file of files) {
                 formData.append("attachment", file)
@@ -234,7 +233,7 @@ export const useDataStore = defineStore("store", () => {
                 })
                 .then((res) => {
                   navigator.clipboard.writeText(
-                    window.location.origin + "/api/i/" + res.data.message
+                    `${window.location.origin}/api/i/${res.data.message}`
                   )
                 })
             }

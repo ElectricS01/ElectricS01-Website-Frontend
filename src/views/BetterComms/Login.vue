@@ -93,7 +93,7 @@ const handleLoginSuccess = async (
   store.userData.publicKey = await importPublicKey(data.publicKey)
   if (privateKey) store.userData.privateKey = privateKey
 
-  const redirect = route.query.redirect
+  const { redirect } = route.query
 
   router.push(typeof redirect === "string" ? redirect : "/chat")
 }

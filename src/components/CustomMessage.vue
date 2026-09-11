@@ -86,8 +86,8 @@ const showEdited = () => {
   }, 500)
 }
 
-const messageParts = computed<MessagePart[]>(() => {
-  return props.message.messageContents
+const messageParts = computed<MessagePart[]>(() =>
+  props.message.messageContents
     ?.split(/(\n|<@\d+>)/g)
     .filter(Boolean)
     .map((part, index) => {
@@ -106,7 +106,7 @@ const messageParts = computed<MessagePart[]>(() => {
           key: `mention-${index}-${matches[0]}-${username}`,
           type: "mention",
           userId: Number(matches[0]),
-          username: username
+          username
         }
       }
 
@@ -116,7 +116,7 @@ const messageParts = computed<MessagePart[]>(() => {
 
       return { key: `text-${index}-${part}`, type: "text", value: part }
     })
-})
+)
 </script>
 
 <style>

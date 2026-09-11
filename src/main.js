@@ -3,6 +3,21 @@ import { createPinia } from "pinia"
 import App from "./App.vue"
 import router from "./router.js"
 import MarkdownIt from "markdown-it"
+import { registerSW } from "virtual:pwa-register"
+
+const navigationEntry = performance.getEntriesByType("navigation")[0]
+const isReload = navigationEntry?.type === "reload"
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    if (isReload) {
+      updateSW(true)
+    }
+  },
+  onRegisterError(error) {
+    console.error("Service worker registration failed", error)
+  }
+})
 
 const md = new MarkdownIt({
   linkify: true

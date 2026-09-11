@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { normalizedEmojis } from "@/helpers/emoji"
+import { normalizedEmoji } from "@/helpers/emoji"
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from "vue"
 
 const emit = defineEmits<{
@@ -43,7 +43,7 @@ const selectedIndex = ref(0)
 
 const filteredKeys = computed(() => {
   const text = filterText.value.toLowerCase()
-  return normalizedEmojis
+  return normalizedEmoji
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .map(([key]) => key)
 })

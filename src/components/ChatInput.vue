@@ -62,7 +62,7 @@
             v-for="(emoji, index) in matchingEmoji"
             :id="'picker-emoji-' + index"
             :key="emoji[0]"
-            :class="{ selected: index == emojiPickerIndex }"
+            :class="{ selected: index === emojiPickerIndex }"
             @click="handleEmojiClick(emoji[0])"
           >
             {{ emoji[0] }}

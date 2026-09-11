@@ -30,9 +30,9 @@ const props = defineProps<{ user: User }>()
 
 const isOnline = computed(() => props.user.status === "online")
 
-const statusText = computed(() => {
-  return props.user.gameName
-    ? "Playing " + props.user.gameName
+const statusText = computed(() =>
+  props.user.gameName
+    ? `Playing ${props.user.gameName}`
     : props.user.statusMessage
-})
+)
 </script>

@@ -163,14 +163,13 @@
                     {{ " " + dayjsLong(message.createdAt) }}
                   </b>
                 </div>
-                <textarea
+                <emoji-input
                   v-if="editing === message.id"
                   id="edit"
                   v-model="editText"
-                  style="resize: none"
+                  v-model:show-emoji="showEditEmoji"
                   placeholder="Edit your message"
-                  autocomplete="off"
-                  @keydown.enter.exact.prevent="editMessage(message.id)"
+                  @save="editMessage(message.id)"
                 />
                 <custom-message
                   v-show="editing !== message.id"
@@ -318,6 +317,7 @@ import ChatsList from "@/components/sidebars/ChatsList.vue"
 import ChatSidebar from "@/components/sidebars/ChatSidebar.vue"
 import Reply from "@/components/Reply.vue"
 import ChatInput from "@/components/ChatInput.vue"
+import EmojiInput from "@/components/EmojiInput.vue"
 
 import { useDataStore } from "@/store"
 import axios from "axios"
@@ -333,7 +333,7 @@ import {
 import { useRoute, useRouter } from "vue-router"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
-import { normalizedEmojis } from "@/helpers/emoji"
+import { normalizedEmoji } from "@/helpers/emoji"
 import {
   encryptMessage,
   decryptMessage,
@@ -369,9 +369,10 @@ const override = ref(false)
 
 const usersSidebarContext = ref(false)
 const chatsSidebarContext = ref(false)
+const showEditEmoji = ref(false)
 
 if (!localStorage.getItem("token")) {
-  router.push("/login?redirect=" + route.path)
+  router.push(`/login?redirect=${route.path}`)
 } else {
   if (store.ws) {
     store.ws.onmessage = async (event) => {
@@ -395,7 +396,7 @@ const handleSocketMessage = async (event) => {
   const socketMessage = JSON.parse(event.data)
   if (socketMessage.authFail) {
     store.handleError(`Error 401, ${socketMessage.authFail}`)
-    router.push("/login?redirect=" + route.path)
+    router.push(`/login?redirect=${route.path}`)
   } else if (socketMessage.newMessage) {
     const chatIndex = store.userData.chatsList.findIndex(
       (chat) => chat.id === socketMessage.newMessage.chatId
@@ -430,10 +431,8 @@ const handleSocketMessage = async (event) => {
     const userToUpdate = currentChat.value.users.findIndex(
       (user) => user.id === socketMessage.changeUser.id
     )
-    if (userToUpdate != -1) {
+    if (userToUpdate !== -1) {
       currentChat.value.users[userToUpdate] = socketMessage.changeUser
-      // } else {
-      // currentChat.value.users.push(socketMessage.changeUser)
     }
   } else if (socketMessage.newUser) {
     if (parseInt(socketMessage.newUser.chatId) === currentChat.value.id) {
@@ -487,7 +486,7 @@ const showEmojiPicker = () => {
 }
 
 const handleEmojiSelected = (emoji) => {
-  inputText.value = inputText.value + emoji
+  inputText.value += emoji
   emojiPickerVisible.value = false
   focusInput()
 }
@@ -743,7 +742,7 @@ const decrypt = async (message) => {
 }
 
 const handleChatChange = async (chat) => {
-  const association = currentChat.value.association
+  const { association } = currentChat.value
   currentChat.value = chat
   currentChat.value.association = association
   router.push(`/chat/${currentChat.value.id}`)
@@ -785,10 +784,10 @@ const openUser = (userId) => {
 }
 
 const getEmojiText = () => {
-  const lastColon = inputText.value.indexOf(":")
+  const lastColon = inputText.value.lastIndexOf(":")
   if (
     lastColon === -1 ||
-    (lastColon != 0 && inputText.value[lastColon - 1] !== " ")
+    (lastColon !== 0 && inputText.value[lastColon - 1] !== " ")
   )
     return null
 
@@ -797,7 +796,7 @@ const getEmojiText = () => {
 const handleEmojiClick = (emoji) => {
   const lastColon = inputText.value.lastIndexOf(":")
   if (lastColon !== -1) {
-    inputText.value = inputText.value.substring(0, lastColon) + emoji + " "
+    inputText.value = `${inputText.value.substring(0, lastColon) + emoji} `
   }
   emojiPickerIndex.value = 0
 }
@@ -950,6 +949,8 @@ const keyPressed = ({ key, altKey }) => {
       embed.value = null
     } else if (createChatShown.value) {
       createChatShown.value = false
+    } else if (showEditEmoji.value) {
+      showEditEmoji.value = false
     } else if (chatEdit.value !== null) {
       chatEdit.value = null
     } else if (matchingEmoji.value.length !== 0) {
@@ -977,7 +978,7 @@ const keyPressed = ({ key, altKey }) => {
       readChat(currentChat.value.id)
     }
   } else if (altKey) {
-    if (key == "ArrowDown") {
+    if (key === "ArrowDown") {
       const chatIndex = store.userData.chatsList.findIndex(
         (chat) => chat.id === currentChat.value.id
       )
@@ -986,7 +987,7 @@ const keyPressed = ({ key, altKey }) => {
           (chatIndex + 1) % store.userData.chatsList.length
         ].id
       )
-    } else if (key == "ArrowUp") {
+    } else if (key === "ArrowUp") {
       const chatIndex = store.userData.chatsList.findIndex(
         (chat) => chat.id === currentChat.value.id
       )
@@ -1013,9 +1014,9 @@ const replyMessage = computed(() =>
 
 const matchingEmoji = computed(() => {
   const text = getEmojiText()
-  if (text == null || override.value) return []
+  if (text === null || override.value) return []
 
-  return normalizedEmojis
+  return normalizedEmoji
     .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
     .slice(0, 30)
 })
@@ -1024,8 +1025,8 @@ const otherUser = computed(() =>
   currentChat.value.users?.find((u) => u.id !== store.userData.id)
 )
 
-const sendEncrypted = computed(() => {
-  return (
+const sendEncrypted = computed(
+  () =>
     currentChat.value?.type === 1 &&
     ((store.userData.encryption === "on" &&
       otherUser.value.encryption === "always") ||
@@ -1039,29 +1040,26 @@ const sendEncrypted = computed(() => {
         otherUser.value.encryption === "off") ||
       (store.userData.encryption === "always" &&
         otherUser.value.encryption === "always"))
-  )
-})
-const requiresEncryption = computed(() => {
-  return (
+)
+const requiresEncryption = computed(
+  () =>
     currentChat.value?.type === 1 &&
     ((store.userData.encryption === "always" &&
       otherUser.value.encryption === "never") ||
       (store.userData.encryption === "never" &&
         otherUser.value.encryption === "always"))
-  )
-})
-const inputDisabled = computed(() => {
-  return (
+)
+const inputDisabled = computed(
+  () =>
     requiresEncryption.value ||
     (!store.userData.emailVerified && currentChat.value?.requireVerification) ||
     false
-  )
-})
+)
 const encryptionRequirement = computed(() => {
   if (currentChat.value?.type !== 1) return ""
-  const encryption = currentChat.value.users.find(
+  const { encryption } = currentChat.value.users.find(
     (u) => u.id !== store.userData.id
-  ).encryption
+  )
   switch (encryption) {
     case "never":
       return "This user does not allow encrypted direct messages"
@@ -1120,6 +1118,7 @@ const handleUpKey = (event) => {
     return
 
   editLast()
+  store.editFocus()
   scrollDown(true)
 }
 
@@ -1175,10 +1174,11 @@ const updateFavicon = (notificationCount) => {
 }
 
 const updatePageTitle = () => {
-  let notificationCount =
-    store.userData.chatsList?.reduce((sum, chat) => {
-      return sum + (chat.association?.notifications || 0)
-    }, 0) ?? 0
+  const notificationCount =
+    store.userData.chatsList?.reduce(
+      (sum, chat) => sum + (chat.association?.notifications || 0),
+      0
+    ) ?? 0
 
   const chatName =
     currentChat.value.type === 1 &&
@@ -1186,7 +1186,7 @@ const updatePageTitle = () => {
       ? currentChat.value.ownerDetails.username
       : currentChat.value.name
 
-  document.title = `${notificationCount !== 0 ? "(" + notificationCount + ") " : ""}BetterComms | ${chatName}`
+  document.title = `${notificationCount !== 0 ? `(${notificationCount}) ` : ""}BetterComms | ${chatName}`
   updateFavicon(notificationCount)
 }
 

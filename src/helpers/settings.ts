@@ -18,8 +18,8 @@ export const onLogout = () => {
   router.push("/login")
 }
 
-const checkImage = async (url: string) => {
-  return new Promise((resolve) => {
+const checkImage = async (url: string) =>
+  new Promise((resolve) => {
     const img = new Image()
 
     img.onload = () => resolve(true)
@@ -27,7 +27,6 @@ const checkImage = async (url: string) => {
 
     img.src = url
   })
-}
 
 const setProperty = async (property: UserProperty, value: string | boolean) => {
   try {
