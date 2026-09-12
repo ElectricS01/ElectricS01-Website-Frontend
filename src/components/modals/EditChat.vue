@@ -32,7 +32,7 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { ref } from "vue"
 import { getChatUsers } from "@/helpers/chatUsers"
-import { ChatListItem } from "@/types/chat"
+import { Chat, ChatData, ChatListItem } from "@/types/chat"
 import { ChatUser, UserData } from "@/types/user"
 
 const store = useDataStore()
@@ -43,7 +43,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   hideEditingChat: []
-  chatEdited: [ChatListItem]
+  chatEdited: [Chat]
 }>()
 
 const requireVerification = ref(true)
@@ -81,7 +81,7 @@ const saveChat = () => {
 
   creating = true
   axios
-    .patch(`/api/edit-chat/${props.editingChat?.id}`, {
+    .patch<ChatData>(`/api/edit-chat/${props.editingChat?.id}`, {
       description: chatDescriptionInput.value,
       icon: chatIconInput.value,
       name: chatNameInput.value,

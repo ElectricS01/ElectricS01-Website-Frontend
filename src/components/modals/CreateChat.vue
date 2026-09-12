@@ -56,7 +56,7 @@ import axios from "axios"
 import { ref } from "vue"
 import { getUserByName, sendDm } from "@/helpers/chatUsers"
 import { ChatUser, UserData } from "@/types/user"
-import { ChatData } from "@/types/chat"
+import { Chat, ChatData } from "@/types/chat"
 
 const store = useDataStore()
 
@@ -66,7 +66,7 @@ defineProps({
 
 const emit = defineEmits<{
   hideCreateChat: []
-  chatCreated: [ChatData]
+  chatCreated: [Chat]
   dmCreated: [ChatData]
 }>()
 
@@ -111,7 +111,7 @@ const createChat = () => {
 
   creating = true
   axios
-    .post("/api/create-chat", {
+    .post<ChatData>("/api/create-chat", {
       description: chatDescriptionInput.value,
       icon: chatIconInput.value,
       name: chatNameInput.value,

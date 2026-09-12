@@ -17,7 +17,9 @@
     :id="id"
     v-model="inputText"
     autocomplete="off"
-    style="resize: none"
+    autofocus
+    class="message-input"
+    :disabled="disabled"
     :placeholder="placeholder"
     @keydown.enter.exact.prevent="
       matchingEmoji.length > 0 && showEmoji
@@ -39,9 +41,12 @@ const inputText = defineModel<string>({
 })
 const showEmoji = defineModel<boolean>("showEmoji")
 
-defineProps<{
+const props = defineProps<{
   id: string
   placeholder: string
+  disabled?: boolean
+  onUpBefore?: (event: KeyboardEvent) => boolean
+  onUpAfter?: (event: KeyboardEvent) => void
 }>()
 
 const emit = defineEmits<{
@@ -106,11 +111,16 @@ const scrollToSelected = () => {
 }
 
 const handleUpKey = (event: KeyboardEvent) => {
+  if (props.onUpBefore?.(event)) return
+
   if (showEmoji.value && matchingEmoji.value.length > 0) {
     event.preventDefault()
     emojiPickerIndex.value = Math.max(0, emojiPickerIndex.value - 1)
     scrollToSelected()
+    return
   }
+
+  props.onUpAfter?.(event)
 }
 
 const handleDownKey = (event: KeyboardEvent) => {

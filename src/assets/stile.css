@@ -374,6 +374,17 @@ button {
   height: 48px;
   background-color: var(--grey);
   text-align: center;
+
+  textarea {
+    width: calc(100% - 120px);
+    margin: 8px;
+    padding: 6px;
+    height: 32px;
+  }
+}
+
+.message-input {
+  resize: none;
 }
 
 .chat-row {
@@ -882,14 +893,6 @@ input {
     margin-top: 4px;
     margin-bottom: 0;
   }
-}
-
-.message-input {
-  height: 32px;
-  width: calc(100% - 120px);
-  margin: 8px;
-  padding: 6px;
-  resize: none;
 }
 
 .highlight {

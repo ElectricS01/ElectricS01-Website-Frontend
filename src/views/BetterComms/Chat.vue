@@ -5,12 +5,8 @@
     :add-friend="addFriend"
     @show-user="showUser = null"
     @editing="editing = $event"
-    @status-message="
-      currentChat.users.find(
-        (user) => user.id === store.userData.id
-      ).statusMessage = $event
-    "
-    @dm-created="onDmCreated($event)"
+    @status-message="onUpdateStatus"
+    @dm-created="onDmCreated"
   />
   <modal-simple
     :is-active="embed !== null && !store.quickSwitcherShown"
@@ -22,8 +18,8 @@
     ref="createChatRef"
     :create-chat-shown="createChatShown"
     @hide-create-chat="createChatShown = false"
-    @chat-created="handleChatCreated($event)"
-    @dm-created="onDmCreated($event)"
+    @chat-created="handleChatCreated"
+    @dm-created="onDmCreated"
   />
   <edit-chat
     ref="editChatRef"
@@ -39,17 +35,17 @@
       :loading="store.loadingChats"
       :current-id="store.showFriends ? undefined : currentChat?.id"
       :user-id="store.userData.id"
-      @open-chat="getChat($event)"
+      @open-chat="getChat"
       @open-create-chat="openCreateChat"
-      @show-edit-chat="showEditChat($event)"
+      @show-edit-chat="showEditChat"
       @show-friends="store.showFriends = true"
       @remove-user="removeUser($event, store.userData.id)"
-      @read-chat="readChat($event)"
+      @read-chat="readChat"
     />
     <friends
       v-if="store.showFriends"
       :add-friend="addFriend"
-      @dm-created="onDmCreated($event)"
+      @dm-created="onDmCreated"
     />
     <div
       v-else
@@ -264,21 +260,18 @@
       </div>
       <chat-input
         v-model="inputText"
+        v-model:show-emoji-selector="showEmojiSelector"
         :input-disabled="inputDisabled"
         :requires-encryption="requiresEncryption"
         :encryption-requirement="encryptionRequirement"
         :emoji-picker-visible="emojiPickerVisible"
-        :emoji-picker-index="emojiPickerIndex"
         :scrolled-up="scrolledUp"
         :reply-message="replyMessage"
-        :matching-emoji="matchingEmoji"
-        :select-current-emoji="selectCurrentEmoji"
         :send-message="sendMessage"
-        :handle-up-key="handleUpKey"
-        :handle-down-key="handleDownKey"
+        :on-up-before="onUpBefore"
+        :on-up-after="onUpAfter"
         :show-emoji-picker="showEmojiPicker"
         :handle-emoji-selected="handleEmojiSelected"
-        :handle-emoji-click="handleEmojiClick"
         :open-user="openUser"
         :go-to-message="goToMessage"
         :scroll-down="scrollDown"
@@ -295,7 +288,7 @@
       :open-user="openUser"
       :open-chat="getChat"
       @remove-user="removeUser(currentChat?.id, $event)"
-      @dm-created="onDmCreated($event)"
+      @dm-created="onDmCreated"
       @scroll="scrollDown()"
     />
   </div>
@@ -333,7 +326,6 @@ import {
 import { useRoute, useRouter } from "vue-router"
 import { dayjsLong, dayjsShort } from "@/helpers/dates"
 import { merge } from "@/helpers/messages"
-import { normalizedEmoji } from "@/helpers/emoji"
 import {
   encryptMessage,
   decryptMessage,
@@ -361,15 +353,14 @@ const scrolledUp = ref(false)
 const showUser = ref(null)
 const chatEdit = ref(null)
 const reactingTo = ref(-1)
-const emojiPickerIndex = ref(0)
-const emojiPickerVisible = ref(false)
 const inputText = ref("")
 const editText = ref("")
-const override = ref(false)
 
 const usersSidebarContext = ref(false)
 const chatsSidebarContext = ref(false)
 const showEditEmoji = ref(false)
+const emojiPickerVisible = ref(false)
+const showEmojiSelector = ref(false)
 
 if (!localStorage.getItem("token")) {
   router.push(`/login?redirect=${route.path}`)
@@ -509,13 +500,15 @@ const addReaction = async (messageId, emoji) => {
           (r) => r.emoji === emoji && r.userId === store.userData.id
         )
     ) {
-      await axios.post("/api/react", {
+      const res = await axios.post("/api/react", {
         emoji,
         messageId
       })
-      currentChat.value.messages
-        .find((m) => m.id === messageId)
-        .reactions.push({ emoji, userId: store.userData.id })
+      findMessage(messageId)?.reactions.push({
+        emoji,
+        id: res.data.id,
+        userId: store.userData.id ?? -1
+      })
       scrollDown()
     }
     reactingTo.value = -1
@@ -783,28 +776,6 @@ const openUser = (userId) => {
     })
 }
 
-const getEmojiText = () => {
-  const lastColon = inputText.value.lastIndexOf(":")
-  if (
-    lastColon === -1 ||
-    (lastColon !== 0 && inputText.value[lastColon - 1] !== " ")
-  )
-    return null
-
-  return inputText.value.substring(lastColon + 1).toLowerCase()
-}
-const handleEmojiClick = (emoji) => {
-  const lastColon = inputText.value.lastIndexOf(":")
-  if (lastColon !== -1) {
-    inputText.value = `${inputText.value.substring(0, lastColon) + emoji} `
-  }
-  emojiPickerIndex.value = 0
-}
-const selectCurrentEmoji = () => {
-  if (matchingEmoji.value.length > emojiPickerIndex.value) {
-    handleEmojiClick(matchingEmoji.value[emojiPickerIndex.value][0])
-  }
-}
 const findUsername = (userId) => {
   const user = currentChat.value.users.find(
     (user) => user.id === parseInt(userId)
@@ -907,6 +878,16 @@ async function addFriend(userId, notOpen = false) {
     })
 }
 
+const onUpdateStatus = (statusMessage) => {
+  const user = currentChat.value?.users?.find(
+    (user) => user.id === store.userData.id
+  )
+
+  if (user) {
+    user.statusMessage = statusMessage
+  }
+}
+
 const onDmCreated = async (data) => {
   showUser.value = null
   createChatShown.value = false
@@ -953,8 +934,8 @@ const keyPressed = ({ key, altKey }) => {
       showEditEmoji.value = false
     } else if (chatEdit.value !== null) {
       chatEdit.value = null
-    } else if (matchingEmoji.value.length !== 0) {
-      override.value = true
+    } else if (showEmojiSelector.value) {
+      showEmojiSelector.value = false
     } else if (reactingTo.value !== -1) {
       reactingTo.value = -1
       focusInput()
@@ -1012,15 +993,6 @@ const replyMessage = computed(() =>
   replyTo.value ? findMessage(replyTo.value) : undefined
 )
 
-const matchingEmoji = computed(() => {
-  const text = getEmojiText()
-  if (text === null || override.value) return []
-
-  return normalizedEmoji
-    .filter(([, descriptions]) => descriptions.some((e) => e.includes(text)))
-    .slice(0, 30)
-})
-
 const otherUser = computed(() =>
   currentChat.value.users?.find((u) => u.id !== store.userData.id)
 )
@@ -1074,40 +1046,23 @@ const encryptionRequirement = computed(() => {
   }
 })
 
-watch(inputText, () => {
-  override.value = false
-  emojiPickerIndex.value = 0
-  scrollToSelected()
-})
-
-const scrollToSelected = () => {
-  const selected = document.getElementById(
-    `picker-emoji-${emojiPickerIndex.value}`
-  )
-  selected?.scrollIntoView({
-    block: "nearest",
-    inline: "nearest"
-  })
-}
-
-const handleUpKey = (event) => {
+const onUpBefore = (event) => {
   if (
     event.ctrlKey ||
     event.metaKey ||
-    (sendEncrypted.value && matchingEmoji.value.length === 0)
+    (sendEncrypted.value && showEmojiSelector.value)
   ) {
-    override.value = true
+    event.preventDefault()
+    showEmojiSelector.value = false
     replyLast()
     scrollDown(true)
-    return
+    return true
   }
 
-  if (matchingEmoji.value.length > 0) {
-    emojiPickerIndex.value = Math.max(0, emojiPickerIndex.value - 1)
-    scrollToSelected()
-    return
-  }
+  return false
+}
 
+const onUpAfter = (event) => {
   if (
     inputText.value &&
     !(
@@ -1117,19 +1072,10 @@ const handleUpKey = (event) => {
   )
     return
 
+  event.preventDefault()
   editLast()
   store.editFocus()
   scrollDown(true)
-}
-
-const handleDownKey = () => {
-  if (matchingEmoji.value.length > 0) {
-    emojiPickerIndex.value = Math.min(
-      matchingEmoji.value.length - 1,
-      emojiPickerIndex.value + 1
-    )
-    scrollToSelected()
-  }
 }
 
 const updateFavicon = (notificationCount) => {

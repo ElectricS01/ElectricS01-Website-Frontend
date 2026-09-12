@@ -258,8 +258,8 @@ export async function encryptMessage(
   privateKey: CryptoKey,
   recipientPublicKey: CryptoKey,
   myPublicKey: CryptoKey,
-  recipientId: string,
-  myUserId: string
+  recipientId: number,
+  myUserId: number
 ) {
   await sodium.ready
 
