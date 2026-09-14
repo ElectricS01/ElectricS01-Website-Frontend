@@ -13,8 +13,6 @@ export default defineConfig({
       injectRegister: false,
       registerType: "prompt",
       workbox: {
-        skipWaiting: false,
-        clientsClaim: false,
         navigateFallbackDenylist: [/^\/api\//]
       },
       manifest: {
