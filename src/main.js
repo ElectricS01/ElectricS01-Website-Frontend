@@ -3,18 +3,6 @@ import { createPinia } from "pinia"
 import App from "./App.vue"
 import router from "./router.js"
 import MarkdownIt from "markdown-it"
-import { registerSW } from "virtual:pwa-register"
-
-registerSW({
-  immediate: true,
-  onRegisterError(error) {
-    console.error("Service worker registration failed", error)
-  }
-})
-
-navigator.serviceWorker.ready.then((registration) => {
-  registration.update()
-})
 
 const md = new MarkdownIt({
   linkify: true
