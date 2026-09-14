@@ -10,7 +10,7 @@
     <router-link to="/">ElectricS01</router-link>
   </div>
   <div class="settings-spacer" />
-  <div>Version: 1.251.11</div>
+  <div>Version: 1.251.12</div>
   <div class="settings-spacer" />
   <div>Build date: {{ dayjsLong(buildDate) }}</div>
   <div class="settings-spacer" />
