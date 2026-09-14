@@ -12,14 +12,8 @@ registerSW({
   }
 })
 
-navigator.serviceWorker.ready.then(async (registration) => {
-  await registration.update()
-
-  if (registration.waiting) {
-    registration.waiting.postMessage({
-      type: "SKIP_WAITING"
-    })
-  }
+navigator.serviceWorker.ready.then((registration) => {
+  registration.update()
 })
 
 const md = new MarkdownIt({
