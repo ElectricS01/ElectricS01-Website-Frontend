@@ -449,6 +449,23 @@ button {
     background-color: var(--grey-hover);
     border-radius: 4px;
   }
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  img,
+  svg {
+    margin: 4px;
+    flex-shrink: 0;
+  }
 }
 
 .scroll-button {

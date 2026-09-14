@@ -116,6 +116,7 @@ export interface LoggedOutUser {
   otpVerified?: undefined
   createdAt?: undefined
   sessionId?: undefined
+  version?: undefined
   tetris?: undefined
   chatsList?: undefined
   notifications?: undefined
@@ -138,6 +139,7 @@ export interface UserData extends Omit<CoreUser, "id"> {
   otpVerified: boolean
   createdAt: string
   sessionId: number
+  version: string
   tetris: GameScore[]
   chatsList: ChatListItem[]
   notifications: Notification[]

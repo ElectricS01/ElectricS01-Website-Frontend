@@ -165,6 +165,7 @@
                   v-model="editText"
                   v-model:show-emoji="showEditEmoji"
                   placeholder="Edit your message"
+                  :users="currentChat.users ?? []"
                   @save="editMessage(message.id)"
                 />
                 <custom-message
@@ -262,11 +263,13 @@
         v-model="inputText"
         v-model:show-emoji-selector="showEmojiSelector"
         :input-disabled="inputDisabled"
+        :send-encrypted="sendEncrypted"
         :requires-encryption="requiresEncryption"
         :encryption-requirement="encryptionRequirement"
         :emoji-picker-visible="emojiPickerVisible"
         :scrolled-up="scrolledUp"
         :reply-message="replyMessage"
+        :users="currentChat.users ?? []"
         :send-message="sendMessage"
         :on-up-before="onUpBefore"
         :on-up-after="onUpAfter"

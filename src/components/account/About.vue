@@ -10,15 +10,20 @@
     <router-link to="/">ElectricS01</router-link>
   </div>
   <div class="settings-spacer" />
-  <div>Version: 1.251.2</div>
-  <div class="settings-spacer" />
-  <div>Backend name: {{ serverName }}</div>
+  <div>Version: 1.251.3</div>
   <div class="settings-spacer" />
   <div>Build date: {{ dayjsLong(buildDate) }}</div>
+  <div class="settings-spacer" />
+  <div>Backend version: {{ store.userData.version }}</div>
+  <div class="settings-spacer" />
+  <div>Backend name: {{ serverName }}</div>
 </template>
 
 <script setup lang="ts">
 import { dayjsLong } from "@/helpers/dates"
+import { useDataStore } from "@/store"
+
+const store = useDataStore()
 
 const serverName = import.meta.env.VITE_SERVER_NAME || "Unknown"
 const buildDate = __VITE_BUILD_DATE__ || "Unknown"

@@ -2,7 +2,7 @@
   <div>
     <transition>
       <div
-        v-if="replyMessage || scrolledUp"
+        v-if="(replyMessage || scrolledUp) && !showEmojiSelector"
         style="position: relative; margin-right: 6px"
       >
         <transition>
@@ -65,6 +65,7 @@
               : 'This chat requires email address verification'
             : 'Send a message'
         "
+        :users="users"
         :on-up-before="onUpBefore"
         :on-up-after="onUpAfter"
         @save="sendMessage()"
@@ -86,7 +87,7 @@
         @click="sendMessage"
       >
         <icons
-          icon="send"
+          :icon="sendEncrypted ? 'lock' : 'send'"
           size="24"
           :colour="inputDisabled ? 'grey' : undefined"
         />
@@ -106,14 +107,17 @@ import ProfilePicture from "./ProfilePicture.vue"
 import EmojiInput from "./EmojiInput.vue"
 
 import { Message } from "@/types/message"
+import { User } from "@/types/user"
 
 defineProps<{
   inputDisabled: boolean
+  sendEncrypted: boolean
   requiresEncryption: boolean
   encryptionRequirement: string
   emojiPickerVisible: boolean
   scrolledUp: boolean
   replyMessage: Message | undefined
+  users: User[]
   sendMessage: () => void
   onUpBefore?: (event: KeyboardEvent) => boolean
   onUpAfter?: (event: KeyboardEvent) => void
