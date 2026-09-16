@@ -1050,11 +1050,7 @@ const encryptionRequirement = computed(() => {
 })
 
 const onUpBefore = (event) => {
-  if (
-    event.ctrlKey ||
-    event.metaKey ||
-    (sendEncrypted.value && showEmojiSelector.value)
-  ) {
+  if (event.ctrlKey || event.metaKey) {
     event.preventDefault()
     showEmojiSelector.value = false
     replyLast()

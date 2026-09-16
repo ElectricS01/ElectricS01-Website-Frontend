@@ -16,10 +16,19 @@
       <span>Total rows: {{ rows.length }}</span>
       <span>Unique rows: {{ uniqueRowCount }}</span>
       <span>Duplicate rows: {{ duplicateRowCount }}</span>
+      <span>Sorted: {{ sortStatus }}</span>
     </div>
-    <button v-if="duplicateRowCount !== 0" @click="removeDuplicateRows">
-      Remove duplicate rows
-    </button>
+    <div class="row-actions">
+      <button :disabled="rows.length < 2" @click="sortRows('ascending')">
+        Sort ascending
+      </button>
+      <button :disabled="rows.length < 2" @click="sortRows('descending')">
+        Sort descending
+      </button>
+      <button v-if="duplicateRowCount !== 0" @click="removeDuplicateRows">
+        Remove duplicate rows
+      </button>
+    </div>
   </div>
 </template>
 
@@ -37,6 +46,33 @@ const duplicateRowCount = computed(
   () => rows.value.length - uniqueRowCount.value
 )
 
+const compareRows = (a: string, b: string) =>
+  a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
+
+const sortStatus = computed(() => {
+  if (rows.value.length < 2) return "N/A"
+
+  const ascending = rows.value.every(
+    (row, index) => index === 0 || compareRows(rows.value[index - 1], row) <= 0
+  )
+  if (ascending) return "Ascending"
+
+  const descending = rows.value.every(
+    (row, index) => index === 0 || compareRows(rows.value[index - 1], row) >= 0
+  )
+  return descending ? "Descending" : "No"
+})
+
+const sortRows = (direction: "ascending" | "descending") => {
+  const sortedRows = [...rows.value].sort(compareRows)
+
+  if (direction === "descending") {
+    sortedRows.reverse()
+  }
+
+  text.value = sortedRows.join("\n")
+}
+
 const removeDuplicateRows = () => {
   text.value = [...new Set(rows.value)].join("\n")
 }
@@ -47,6 +83,7 @@ const removeDuplicateRows = () => {
   box-sizing: border-box;
   display: block;
   min-height: 240px;
+  height: 45vh;
   padding: 8px;
   resize: vertical;
   width: 100%;
@@ -57,5 +94,11 @@ const removeDuplicateRows = () => {
   flex-wrap: wrap;
   gap: 8px 24px;
   margin: 16px 0;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>

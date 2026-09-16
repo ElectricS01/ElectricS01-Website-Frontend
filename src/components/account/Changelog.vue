@@ -2,6 +2,27 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.252 String Processor Sorting</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>You can now sort rows in the String Processor</li>
+    <li>Refactoring (1.251.3)</li>
+    <li v-markdown>
+      Added a Mention Quick Picker to comms activated by typing `@` (1.251.3)
+    </li>
+    <li>
+      A lock icon is shown on the send button when sending Encrypted direct
+      messages (1.251.3)
+    </li>
+    <li>
+      The backend version number is now displayed in the
+      <router-link to="/account/about">About Page</router-link>
+      (1.251.3)
+    </li>
+    <li>Switched more components to use Typescript (1.251.2)</li>
+    <li>Emoji Quick Picker now works when editing a message (1.251.1)</li>
+    <li>Switched more components to use Typescript (1.251.1)</li>
+  </ul>
   <h2 class="settings-text">1.251 Smoother Updates</h2>
   <div class="settings-spacer" />
   <ul>
