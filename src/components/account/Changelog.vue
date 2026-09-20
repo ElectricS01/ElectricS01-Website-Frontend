@@ -2,6 +2,12 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterCommunications changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.253 Editing Encrypted Messages</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>You can now edit encrypted messages</li>
+    <li>Added WebSockets for edited messages</li>
+  </ul>
   <h2 class="settings-text">1.252 String Processor Sorting</h2>
   <div class="settings-spacer" />
   <ul>
@@ -1157,20 +1163,20 @@
       <router-link to="/account/account">Account Settings</router-link>
     </li>
     <li>Update to work with backend 1.66.0</li>
-    <h2 class="settings-text">1.139 Profile Settings</h2>
-    <div class="settings-spacer" />
-    <ul>
-      <li>
-        Added a new
-        <router-link to="/account/profile">Profile Settings</router-link>
-        page
-      </li>
-    </ul>
-    <h2 class="settings-text">1.138 Responsive Chat UI</h2>
-    <div class="settings-spacer" />
-    <ul>
-      <li>The chat UI is now responsive and works on mobile devices</li>
-      <li>Refactoring</li>
-    </ul>
+  </ul>
+  <h2 class="settings-text">1.139 Profile Settings</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>
+      Added a new
+      <router-link to="/account/profile">Profile Settings</router-link>
+      page
+    </li>
+  </ul>
+  <h2 class="settings-text">1.138 Responsive Chat UI</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>The chat UI is now responsive and works on mobile devices</li>
+    <li>Refactoring</li>
   </ul>
 </template>

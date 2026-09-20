@@ -166,7 +166,7 @@
                   v-model:show-emoji="showEditEmoji"
                   placeholder="Edit your message"
                   :users="currentChat.users ?? []"
-                  @save="editMessage(message.id)"
+                  @save="editMessage(message)"
                 />
                 <custom-message
                   v-show="editing !== message.id"
@@ -215,8 +215,7 @@
                   v-if="
                     message.user?.id === store.userData.id &&
                     !message.encrypted &&
-                    !message.deleted &&
-                    !message.ciphertext
+                    !message.deleted
                   "
                   style="cursor: pointer"
                   size="20"
@@ -411,6 +410,26 @@ const handleSocketMessage = async (event) => {
         scrollDown()
       }
     }
+  } else if (socketMessage.editMessage) {
+    if (socketMessage.editMessage.chatId === currentChat.value.id) {
+      const messageIndex = currentChat.value.messages.findIndex(
+        (message) => message.id === socketMessage.editMessage.id
+      )
+      const pinIndex = currentChat.value.pins.findIndex(
+        (message) => message.id === socketMessage.editMessage.id
+      )
+      if (messageIndex !== -1 || pinIndex !== -1) {
+        socketMessage.editMessage.reactions =
+          currentChat.value.messages[messageIndex].reactions
+        await decrypt(socketMessage.editMessage)
+      }
+      if (messageIndex !== -1) {
+        currentChat.value.messages[messageIndex] = socketMessage.editMessage
+      }
+      if (pinIndex !== -1) {
+        currentChat.value.pins[pinIndex] = socketMessage.editMessage
+      }
+    }
   } else if (socketMessage.deleteMessage) {
     const messageIndex = currentChat.value.messages.findIndex(
       (message) => message.id === socketMessage.deleteMessage.id
@@ -450,16 +469,12 @@ const handleSocketMessage = async (event) => {
       store.userData.chatsList[chatIndex] = socketMessage.editChat
     }
   } else if (socketMessage.newReaction) {
-    const message = currentChat.value.messages.find(
-      (msg) => msg.id === socketMessage.newReaction.messageId
-    )
+    const message = findMessage(socketMessage.newReaction.messageId)
     if (message) {
       message.reactions.push(socketMessage.newReaction.reaction)
     }
   } else if (socketMessage.deleteReaction) {
-    const message = currentChat.value.messages.find(
-      (msg) => msg.id === socketMessage.deleteReaction.messageId
-    )
+    const message = findMessage(socketMessage.deleteReaction.messageId)
     if (message) {
       message.reactions = message.reactions.filter(
         (reaction) => reaction.id !== socketMessage.deleteReaction.reactionId
@@ -497,11 +512,9 @@ const reactPressed = (messageId) => {
 const addReaction = async (messageId, emoji) => {
   try {
     if (
-      !currentChat.value.messages
-        .find((m) => m.id === messageId)
-        .reactions.some(
-          (r) => r.emoji === emoji && r.userId === store.userData.id
-        )
+      !findMessage(messageId).reactions.some(
+        (r) => r.emoji === emoji && r.userId === store.userData.id
+      )
     ) {
       const res = await axios.post("/api/react", {
         emoji,
@@ -517,7 +530,6 @@ const addReaction = async (messageId, emoji) => {
     reactingTo.value = -1
   } catch (error) {
     store.handleAxiosError(error)
-    return -1
   }
 }
 
@@ -528,23 +540,20 @@ const removeReaction = async (messageId, emoji) => {
       messageId
     })
     reactingTo.value = -1
-    currentChat.value.messages.find((m) => m.id === messageId).reactions =
-      currentChat.value.messages
-        .find((m) => m.id === messageId)
-        .reactions.filter(
-          (r) => r.emoji !== emoji || r.userId !== store.userData.id
-        )
+    const message = findMessage(messageId)
+    message.reactions = message.reactions.filter(
+      (r) => r.emoji !== emoji || r.userId !== store.userData.id
+    )
   } catch (error) {
     store.handleAxiosError(error)
-    return -1
   }
 }
 
 const sendMessage = async () => {
   emojiPickerVisible.value = false
   const messageContents = inputText.value.trim()
+  if (!messageContents || !currentChat.value) return
   const chatId = currentChat.value.id
-  if (!messageContents) return
   try {
     let res
     if (sendEncrypted.value) {
@@ -588,8 +597,7 @@ const sendMessage = async () => {
     await decrypt(res.data.lastMessage)
     if (chatId === currentChat.value.id) {
       currentChat.value.messages.push(res.data.lastMessage)
-      currentChat.value.association.lastRead =
-        currentChat.value.messages.at(-1).id
+      currentChat.value.association.lastRead = res.data.lastMessage.id
       updatePageTitle()
       scrollDown()
     }
@@ -624,13 +632,9 @@ const pinMessage = (messageId, pinned) => {
         return message
       })
       if (!pinned) {
-        currentChat.value.pins.push(
-          currentChat.value.messages.findLast(
-            (message) => message.id === messageId
-          )
-        )
+        currentChat.value.pins.push(findMessage(messageId))
         currentChat.value.pins.sort(
-          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)
         )
       } else {
         currentChat.value.pins.splice(
@@ -660,23 +664,57 @@ const openCreateChat = () => {
   createChatShown.value = true
 }
 
-const editMessage = (messageId) => {
-  if (editText.value.trim() === findMessage(messageId)?.messageContents) {
+const editMessage = async (message) => {
+  emojiPickerVisible.value = false
+  const messageContents = editText.value.trim()
+  if (messageContents === message.messageContents) {
     editing.value = ""
+    return
   }
-  axios
-    .patch(`/api/edit/${messageId}`, {
-      messageContents: editText.value.trim()
-    })
-    .then((res) => {
-      editing.value = ""
-      currentChat.value.messages[
-        currentChat.value.messages.findIndex((e) => e.id === messageId)
-      ] = res.data
-    })
-    .catch((e) => {
-      store.handleAxiosError(e)
-    })
+  try {
+    let res
+    if (message.ciphertext) {
+      if (otherUser.value.publicKey.length !== 44) {
+        store.handleError("Receiving user has invalid public key")
+        return
+      }
+      const publicKey = await importPublicKey(otherUser.value.publicKey)
+      const encrypted = await encryptMessage(
+        messageContents,
+        store.userData.privateKey,
+        publicKey,
+        store.userData.publicKey,
+        otherUser.value.id,
+        store.userData.id
+      )
+      res = await axios.patch(`/api/edit-encrypted/${message.id}`, {
+        ciphertext: sodium.to_base64(
+          encrypted.ciphertext,
+          sodium.base64_variants.ORIGINAL
+        ),
+        keys: encrypted.keys,
+        nonce: sodium.to_base64(
+          encrypted.nonce,
+          sodium.base64_variants.ORIGINAL
+        )
+      })
+    } else {
+      res = await axios.patch(`/api/edit/${message.id}`, {
+        messageContents: editText.value.trim()
+      })
+    }
+
+    await decrypt(res.data.editedMessage)
+    editing.value = ""
+    const messageIndex = currentChat.value.messages.findIndex(
+      (e) => e.id === message.id
+    )
+    res.data.editedMessage.reactions =
+      currentChat.value.messages[messageIndex].reactions
+    currentChat.value.messages[messageIndex] = res.data.editedMessage
+  } catch (e) {
+    store.handleAxiosError(e)
+  }
 }
 
 const replyToMessage = (messageId) => {
