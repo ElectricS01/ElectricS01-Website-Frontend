@@ -95,7 +95,7 @@ watch(inputText, () => {
 
     matchingUsers.value =
       props.users
-        ?.filter(({ username }) => username.includes(mentionText))
+        ?.filter(({ username }) => username.toLowerCase().includes(mentionText))
         ?.slice(0, 30) ?? []
 
     return
