@@ -166,6 +166,7 @@ const scrollToSelected = () => {
 }
 
 const handleUpKey = (event: KeyboardEvent) => {
+  if (event.altKey) return
   if (props.onUpBefore?.(event)) return
 
   if (
