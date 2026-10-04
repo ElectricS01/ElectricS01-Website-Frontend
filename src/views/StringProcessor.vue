@@ -28,6 +28,9 @@
       <button v-if="duplicateRowCount !== 0" @click="removeDuplicateRows">
         Remove duplicate rows
       </button>
+      <button v-if="duplicateRowCount !== 0" @click="keepDuplicateRows">
+        Keep only duplicate rows
+      </button>
     </div>
   </div>
 </template>
@@ -75,6 +78,18 @@ const sortRows = (direction: "ascending" | "descending") => {
 
 const removeDuplicateRows = () => {
   text.value = [...new Set(rows.value)].join("\n")
+}
+
+const keepDuplicateRows = () => {
+  const rowCounts = new Map<string, number>()
+
+  rows.value.forEach((row) => {
+    rowCounts.set(row, (rowCounts.get(row) ?? 0) + 1)
+  })
+
+  text.value = rows.value
+    .filter((row) => (rowCounts.get(row) ?? 0) > 1)
+    .join("\n")
 }
 </script>
 
