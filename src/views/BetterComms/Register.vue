@@ -2,7 +2,7 @@
   <div class="container">
     <div class="grid-menu">
       <div class="chat-menu">
-        <p class="message-text-large">Register</p>
+        <p class="message-text-large">Register for BetterComms</p>
         <div class="text-small">
           <label for="username">Username</label>
         </div>

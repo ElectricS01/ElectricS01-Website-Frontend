@@ -55,7 +55,7 @@
             title="Go to My Youtube"
           >
             <icons size="32" style="padding-right: 6px" icon="message"></icons>
-            BetterCommunications
+            BetterComms
           </router-link>
           <a
             class="message-text-large"

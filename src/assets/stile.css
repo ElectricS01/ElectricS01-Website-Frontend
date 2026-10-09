@@ -714,7 +714,13 @@ button:hover,
   display: none;
 }
 
-@media screen and (max-width: 995px) {
+@media screen and (max-width: 1132px) {
+  .navbar .hidden {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 950px) {
   .navbar:not(.responsive) a:not(:first-child):not(.chat-button) {
     display: none;
   }
@@ -761,12 +767,7 @@ button:hover,
   border-radius: 15px;
   overflow: hidden;
   width: 372px;
-}
-
-.box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
 }
 
 .message-icons {
@@ -928,10 +929,6 @@ a {
 
 p {
   color: #fff;
-}
-
-h1 {
-  margin: 0;
 }
 
 h2 {
@@ -1202,7 +1199,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 
 .grid-menu {
@@ -1221,6 +1218,9 @@ code {
   flex: 0 0 25%;
   padding: 16px;
   transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     transform: scale(1.1);

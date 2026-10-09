@@ -8,7 +8,7 @@
     I develop projects with Vue, TypeScript, JavaScript, C#/.NET, Python,
     SwiftUI, Rust, and GameMaker Studio.
     <div class="grid-home">
-      <div class="box grid-item">
+      <div class="grid-item">
         <router-link class="border" to="/tonkgame">
           <img
             src="../assets/tonkgame.webp"
@@ -25,24 +25,24 @@
           </div>
         </router-link>
       </div>
-      <div class="box grid-item">
-        <router-link class="border" to="/chat">
+      <div class="grid-item">
+        <router-link class="border" to="/comms">
           <img
             src="../assets/comms.webp"
-            alt="BetterCommunications"
+            alt="BetterComms"
             class="grid-image"
           />
           <div class="small-container">
-            <p class="text-medium">BetterCommunications</p>
+            <p class="text-medium">BetterComms</p>
             <div class="spacer" />
             <p class="message-text-medium-gray">
-              BetterCommunications is free and open-source chatting platform
-              available to all
+              BetterComms is free and open-source chatting platform available to
+              all
             </p>
           </div>
         </router-link>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://github.com/ElectricS01/TPU-Mac">
           <img src="../assets/tpumac.webp" alt="TPU Mac" class="grid-image" />
           <div class="small-container">
@@ -54,7 +54,7 @@
           </div>
         </a>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <router-link class="border" to="/tetris">
           <img
             style="object-fit: contain; background-color: #000"
@@ -72,7 +72,7 @@
           </div>
         </router-link>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://mapit.electrics01.com">
           <img
             src="../assets/mapit.webp"
@@ -89,7 +89,7 @@
           </div>
         </a>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://planit.electrics01.com">
           <img
             src="../assets/planit.png"
@@ -106,7 +106,7 @@
           </div>
         </a>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://scheduler.electrics01.com">
           <img
             src="../assets/scheduler.webp"
@@ -123,7 +123,7 @@
           </div>
         </a>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://flowinity.com">
           <img
             src="https://troplo.com/images/proj01.png"
@@ -140,7 +140,7 @@
           </div>
         </a>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://bettercompassclub.netlify.app">
           <img
             src="../assets/bettercompassclub.webp"
@@ -157,7 +157,7 @@
           </div>
         </a>
       </div>
-      <div class="box grid-item">
+      <div class="grid-item">
         <a class="border" href="https://compass.electrics01.com">
           <img
             src="../assets/bettercompass.webp"
@@ -184,7 +184,7 @@
             title="Go to My Youtube"
           >
             <icons size="32" style="padding-right: 6px" icon="message"></icons>
-            BetterCommunications
+            BetterComms
           </router-link>
           <a
             class="message-text-large"

@@ -15,7 +15,7 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/api\//]
       },
       manifest: {
-        name: "BetterCommunications",
+        name: "BetterComms",
         short_name: "BetterComms",
         description: "A Better Communications platform",
         icons: [

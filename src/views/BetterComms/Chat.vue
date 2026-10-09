@@ -39,7 +39,7 @@
       @open-create-chat="openCreateChat"
       @show-edit-chat="showEditChat"
       @show-friends="store.showFriends = true"
-      @remove-user="removeUser($event, store.userData.id)"
+      @remove-user="removeUser($event, store.userData.id ?? -1)"
       @read-chat="readChat"
     />
     <friends
@@ -66,19 +66,19 @@
         </div>
         <div v-else>
           <div style="padding: 12px 16px">
-            <h1 v-if="currentChat.type !== 1" class="chat-title wrap">
+            <h2 v-if="currentChat.type !== 1" class="chat-title wrap">
               Welcome to {{ currentChat.name }}
-            </h1>
-            <h1
+            </h2>
+            <h2
               v-else-if="currentChat.owner !== store.userData.id"
               class="chat-title wrap"
             >
               Welcome to your Direct Message with
               {{ currentChat?.ownerDetails.username }}
-            </h1>
-            <h1 v-else class="chat-title wrap">
+            </h2>
+            <h2 v-else class="chat-title wrap">
               Welcome to your Direct Message with {{ currentChat.name }}
-            </h1>
+            </h2>
             <b style="display: block; overflow-wrap: break-word">
               {{ currentChat.description }}
             </b>
@@ -268,7 +268,7 @@
         :emoji-picker-visible="emojiPickerVisible"
         :scrolled-up="scrolledUp"
         :reply-message="replyMessage"
-        :users="currentChat.users ?? []"
+        :users="currentChat?.users ?? []"
         :send-message="sendMessage"
         :on-up-before="onUpBefore"
         :on-up-after="onUpAfter"
@@ -289,7 +289,7 @@
       :go-to-message="goToMessage"
       :open-user="openUser"
       :open-chat="getChat"
-      @remove-user="removeUser(currentChat?.id, $event)"
+      @remove-user="removeUser(currentChat?.id ?? -1, $event)"
       @dm-created="onDmCreated"
       @scroll="scrollDown()"
     />
@@ -390,6 +390,8 @@ const handleSocketMessage = async (event) => {
   if (socketMessage.authFail) {
     store.handleError(`Error 401, ${socketMessage.authFail}`)
     router.push(`/login?redirect=${route.path}`)
+  } else if (!store.userData.chatsList || !currentChat.value) {
+    return
   } else if (socketMessage.newMessage) {
     const chatIndex = store.userData.chatsList.findIndex(
       (chat) => chat.id === socketMessage.newMessage.chatId
@@ -512,7 +514,7 @@ const reactPressed = (messageId) => {
 const addReaction = async (messageId, emoji) => {
   try {
     if (
-      !findMessage(messageId).reactions.some(
+      !findMessage(messageId)?.reactions.some(
         (r) => r.emoji === emoji && r.userId === store.userData.id
       )
     ) {
@@ -541,9 +543,11 @@ const removeReaction = async (messageId, emoji) => {
     })
     reactingTo.value = -1
     const message = findMessage(messageId)
-    message.reactions = message.reactions.filter(
-      (r) => r.emoji !== emoji || r.userId !== store.userData.id
-    )
+    if (message) {
+      message.reactions = message.reactions.filter(
+        (r) => r.emoji !== emoji || r.userId !== store.userData.id
+      )
+    }
   } catch (error) {
     store.handleAxiosError(error)
   }
@@ -557,11 +561,20 @@ const sendMessage = async () => {
   try {
     let res
     if (sendEncrypted.value) {
-      if (otherUser.value.publicKey.length !== 44) {
+      if (otherUser.value?.publicKey?.length !== 44) {
         store.handleError("Receiving user has invalid public key")
         return
       }
+
+      if (
+        !store.userData.privateKey ||
+        !store.userData.publicKey ||
+        !store.userData.id
+      )
+        return
+
       const publicKey = await importPublicKey(otherUser.value.publicKey)
+      if (!publicKey) return
       const encrypted = await encryptMessage(
         messageContents,
         store.userData.privateKey,
@@ -609,6 +622,7 @@ const deleteMessage = (messageId) => {
   axios
     .delete(`/api/delete/${messageId}`)
     .then(() => {
+      if (!currentChat.value) return
       currentChat.value.messages = currentChat.value.messages.filter(
         (message) => message.id !== messageId
       )
@@ -622,6 +636,7 @@ const pinMessage = (messageId, pinned) => {
   axios
     .patch(`/api/pin/${messageId}`)
     .then(() => {
+      if (currentChat.value === null) return
       currentChat.value.messages = currentChat.value.messages.map((message) => {
         if (message.id === messageId) {
           return {
@@ -632,16 +647,16 @@ const pinMessage = (messageId, pinned) => {
         return message
       })
       if (!pinned) {
-        currentChat.value.pins.push(findMessage(messageId))
+        const message = findMessage(messageId)
+        if (!message) return
+        currentChat.value.pins.push(message)
         currentChat.value.pins.sort(
           (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)
         )
       } else {
         currentChat.value.pins.splice(
-          currentChat.value.pins.indexOf(
-            currentChat.value.pins.findLast(
-              (message) => message.id === messageId
-            )
+          currentChat.value.pins.findIndex(
+            (message) => message.id === messageId
           ),
           1
         )
@@ -674,11 +689,19 @@ const editMessage = async (message) => {
   try {
     let res
     if (message.ciphertext) {
-      if (otherUser.value.publicKey.length !== 44) {
+      if (otherUser.value?.publicKey?.length !== 44) {
         store.handleError("Receiving user has invalid public key")
         return
       }
       const publicKey = await importPublicKey(otherUser.value.publicKey)
+      if (
+        !store.userData.privateKey ||
+        !publicKey ||
+        !store.userData.publicKey ||
+        !store.userData.id
+      ) {
+        return
+      }
       const encrypted = await encryptMessage(
         messageContents,
         store.userData.privateKey,
@@ -706,7 +729,7 @@ const editMessage = async (message) => {
 
     await decrypt(res.data.editedMessage)
     editing.value = ""
-    const messageIndex = currentChat.value.messages.findIndex(
+    const messageIndex = currentChat.value?.messages.findIndex(
       (e) => e.id === message.id
     )
     res.data.editedMessage.reactions =
@@ -749,6 +772,8 @@ const decrypt = async (message) => {
       message.userId === store.userData.id
         ? store.userData.publicKey
         : await importPublicKey(otherUser.value.publicKey)
+
+    if (!publicKey) return
 
     message.messageContents = await decryptMessage(
       message,
@@ -837,13 +862,13 @@ const removeUser = async (chatId, userId) => {
 const scrollDown = (override = false) => {
   nextTick(() => {
     try {
-      if ((!scrolledUp.value || override) && currentChat.value.messages) {
+      if ((!scrolledUp.value || override) && currentChat.value?.messages) {
         const lastMessage = document.querySelector(
           `#message-${currentChat.value.messages.length - 1}`
         )
         if (editing.value) {
           scrolledUp.value = false
-          lastMessage.scrollIntoView()
+          lastMessage?.scrollIntoView()
         } else if (lastMessage) {
           lastMessage.scrollIntoView()
           scrolledUp.value = false
@@ -884,7 +909,7 @@ const goToMessage = (messageId) => {
   }, 1500)
 }
 const editLast = () => {
-  const messageEdit = currentChat.value.messages
+  const messageEdit = currentChat.value?.messages
     .filter((message) => message.userId === store.userData.id)
     ?.slice(-1)[0]
   if (messageEdit) {
@@ -893,7 +918,7 @@ const editLast = () => {
   }
 }
 const replyLast = () => {
-  const messageReply = currentChat.value.messages
+  const messageReply = currentChat.value?.messages
     .filter((message) => message.userId !== store.userData.id)
     ?.slice(-1)[0]
   if (messageReply) {
@@ -904,14 +929,15 @@ async function addFriend(userId, notOpen = false) {
   await axios
     .post(`/api/friend/${userId}`)
     .then(async (res) => {
-      if (notOpen === false) {
+      if (notOpen === false && showUser.value) {
         showUser.value.friend = {
           status: res.data.status
         }
       } else if (notOpen) {
-        currentChat.value.users.find((user) => user.id === userId).friend = {
-          status: res.data.status
-        }
+        const friend = currentChat.value?.users.find(
+          (user) => user.id === userId
+        )
+        if (friend) friend.friend = { status: res.data.status }
       }
     })
     .catch((e) => {

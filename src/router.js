@@ -12,6 +12,14 @@ const routes = [
     redirect: "/"
   },
   {
+    component: () => import("./views/Comms.vue"),
+    name: "comms",
+    path: "/comms",
+    meta: {
+      title: "BetterComms by ElectricS01"
+    }
+  },
+  {
     path: "/blog",
     children: [
       {

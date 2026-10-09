@@ -1,6 +1,6 @@
 <template>
   <h2 class="settings-text">Changelog</h2>
-  <div>BetterCommunications changelog</div>
+  <div>BetterComms changelog</div>
   <div class="settings-spacer" />
   <h2 class="settings-text">1.253 Editing Encrypted Messages</h2>
   <div class="settings-spacer" />
@@ -33,8 +33,7 @@
   <div class="settings-spacer" />
   <ul>
     <li>
-      BetterCommunications will now automatically update without requiring a
-      hard reload
+      BetterComms will now automatically update without requiring a hard reload
     </li>
     <li>Command or Control + Up arrow will reply to the user's last message</li>
     <li>
@@ -51,8 +50,7 @@
     </li>
     <li>Refactoring</li>
     <li>
-      The WebSocket now reconnects to BetterCommunications when disconnected
-      (1.250.2)
+      The WebSocket now reconnects to BetterComms when disconnected (1.250.2)
     </li>
   </ul>
   <h2 class="settings-text">1.250 Reactions WebSockets</h2>
@@ -431,8 +429,7 @@
       page after logging in
     </li>
     <li>
-      Fix chat not loading when accessing BetterCommunications through a user's
-      link
+      Fix chat not loading when accessing BetterComms through a user's link
     </li>
     <li>
       Support multi-line message editing and displaying correctly (1.220.2 and
@@ -499,8 +496,8 @@
   <div class="settings-spacer" />
   <ul>
     <li>
-      Your status in BetterCommunications will now change when playing all games
-      on ElectricS01.com
+      Your status in BetterComms will now change when playing all games on
+      ElectricS01.com
     </li>
     <li>Update to work with backend 1.104.0</li>
   </ul>
@@ -508,7 +505,7 @@
   <div class="settings-spacer" />
   <ul>
     <li>
-      Your status in BetterCommunications will now change when playing Tetris on
+      Your status in BetterComms will now change when playing Tetris on
       ElectricS01.com
     </li>
     <li>Update to work with backend 1.103.0</li>
@@ -517,12 +514,12 @@
   <div class="settings-spacer" />
   <ul>
     <li>Added TPU and TPU Mac to the Home Page</li>
-    <li>Fixed error messages with BetterCommunications</li>
+    <li>Fixed error messages with BetterComms</li>
   </ul>
   <h2 class="settings-text">1.210 UI Updates</h2>
   <div class="settings-spacer" />
   <ul>
-    <li>Added BetterCommunications to the Home Page</li>
+    <li>Added BetterComms to the Home Page</li>
     <li>Update to animations on all pages</li>
   </ul>
   <h2 class="settings-text">1.209 UI Updates</h2>
@@ -712,10 +709,10 @@
   <h2 class="settings-text">1.193 Offline users</h2>
   <div class="settings-spacer" />
   <ul>
-    <li>Users are now sent offline when they close BetterCommunications</li>
-    <li>Offline users now become online when they open BetterCommunications</li>
+    <li>Users are now sent offline when they close BetterComms</li>
+    <li>Offline users now become online when they open BetterComms</li>
     <li>Online and offline users now update on the users sidebar</li>
-    <li>BetterCommunications should load faster now</li>
+    <li>BetterComms should load faster now</li>
     <li>Update to work with backend 1.90.0</li>
     <li>Refactoring</li>
     <li>Updated dependencies</li>
@@ -1120,10 +1117,10 @@
     <li>Refactoring</li>
     <li>Update to work with backend 1.72.0</li>
   </ul>
-  <h2 class="settings-text">1.144 Rename to BetterCommunications</h2>
+  <h2 class="settings-text">1.144 Rename to BetterComms</h2>
   <div class="settings-spacer" />
   <ul>
-    <li>Renamed the site to BetterCommunications</li>
+    <li>Renamed the site to BetterComms</li>
     <li>You can now edit chat settings after creation</li>
     <li>Chat deletion has been moved to inside the chat settings menu</li>
     <li>Refactoring</li>

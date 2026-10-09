@@ -1,8 +1,7 @@
 <template>
-  <h2 class="settings-text">About BetterCommunications</h2>
+  <h2 class="settings-text">About BetterComms</h2>
   <div>
-    BetterCommunications is free and open-source chatting platform available to
-    all
+    BetterComms is free and open-source chatting platform available to all
   </div>
   <div class="settings-spacer" />
   <div>
@@ -10,7 +9,7 @@
     <router-link to="/">ElectricS01</router-link>
   </div>
   <div class="settings-spacer" />
-  <div>Version: 1.253.3</div>
+  <div>Version: 1.253.4</div>
   <div class="settings-spacer" />
   <div>Build date: {{ dayjsLong(buildDate) }}</div>
   <div class="settings-spacer" />

@@ -50,7 +50,7 @@
       <p class="text-main">
         So there's been 17 minor versions released to my website since the last
         blog post, these releases included loads of bug fixes to
-        <router-link to="/chat">BetterCommunications,</router-link>
+        <router-link to="/chat">BetterComms,</router-link>
         more new features like WebSockets on the users list, multi-line inputs,
         the new Friends List, and Game Status which lets other users know when
         you're playing games on ElectricS01.com. I also implemented my New UI

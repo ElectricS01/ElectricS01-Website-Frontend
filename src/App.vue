@@ -5,6 +5,13 @@
         ElectricS01.com
       </router-link>
       <router-link
+        to="/comms"
+        :class="{ active: active('/comms') }"
+        @click="mobileNav"
+      >
+        BetterComms
+      </router-link>
+      <router-link
         to="/tonkgame"
         :class="{ active: active('/tonkgame') }"
         @click="mobileNav"
@@ -12,18 +19,19 @@
         TonkGame
       </router-link>
       <router-link
-        to="/calculator"
-        :class="{ active: active('/calculator') }"
-        @click="mobileNav"
-      >
-        Calculator
-      </router-link>
-      <router-link
         to="/string-processor"
         :class="{ active: active('/string-processor') }"
         @click="mobileNav"
       >
         String Processor
+      </router-link>
+      <router-link
+        to="/calculator"
+        class="hidden"
+        :class="{ active: active('/calculator') }"
+        @click="mobileNav"
+      >
+        Calculator
       </router-link>
       <router-link
         to="/tetris"
@@ -34,6 +42,7 @@
       </router-link>
       <router-link
         to="/collider"
+        class="hidden"
         :class="{ active: active('/collider') }"
         @click="mobileNav"
       >
@@ -61,10 +70,10 @@
       <router-link
         class="chat-button"
         :class="{ 'responsive-chat': route.path.startsWith('/chat') }"
-        to="/chat"
-        title="Go to BetterCommunications home"
+        to="/comms"
+        title="Go to BetterComms home"
       >
-        BetterCommunications
+        BetterComms
       </router-link>
       <icons
         v-if="active('/chat')"
@@ -87,7 +96,7 @@
         v-else
         class="right chat-button"
         to="/login"
-        title="Login to BetterCommunications"
+        title="Login to BetterComms"
       >
         Login
       </router-link>
