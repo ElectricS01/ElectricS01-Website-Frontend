@@ -116,6 +116,14 @@
       >
         Home
       </router-link>
+      <router-link
+        v-if="store.userData.id === 1"
+        class="right chat-icon"
+        to="/uploads"
+        title="Settings"
+      >
+        <icons size="28" icon="image" />
+      </router-link>
       <icons
         v-if="active('/chat')"
         class="right chat-icon"
@@ -448,6 +456,7 @@ const navbarShown = computed(
   () =>
     !route.path.startsWith("/chat") &&
     !route.path.startsWith("/user") &&
+    !route.path.startsWith("/uploads") &&
     !route.path.startsWith("/login") &&
     !route.path.startsWith("/register") &&
     !route.path.startsWith("/account") &&
@@ -459,6 +468,7 @@ const backgroundShown = computed(
   () =>
     !route.path.startsWith("/chat") &&
     !route.path.startsWith("/user") &&
+    !route.path.startsWith("/uploads") &&
     !route.path.startsWith("/account")
 )
 

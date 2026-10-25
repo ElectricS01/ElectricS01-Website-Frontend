@@ -123,6 +123,14 @@ const routes = [
     }
   },
   {
+    component: () => import("./views/BetterComms/Uploads.vue"),
+    name: "uploads",
+    path: "/uploads",
+    meta: {
+      title: "Uploads"
+    }
+  },
+  {
     component: () => import("./views/BetterComms/Settings.vue"),
     name: "account",
     path: "/account/:id",

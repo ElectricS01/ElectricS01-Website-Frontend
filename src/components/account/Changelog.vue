@@ -2,6 +2,12 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterComms changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.254 Image Uploads Page</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added a new Image Uploads page</li>
+    <li>You can now delete images from the Image Uploads page</li>
+  </ul>
   <h2 class="settings-text">1.253 Editing Encrypted Messages</h2>
   <div class="settings-spacer" />
   <ul>

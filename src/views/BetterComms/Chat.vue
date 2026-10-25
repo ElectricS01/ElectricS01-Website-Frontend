@@ -1015,20 +1015,22 @@ const keyPressed = ({ key, altKey }) => {
       replyTo.value = null
     } else if (
       !showUser.value &&
+      currentChat.value &&
       currentChat.value.association.lastRead ===
-        currentChat.value.messages.at(-1).id
+        currentChat.value.messages.at(-1)?.id
     ) {
       scrollDown(true)
     } else if (
+      currentChat.value &&
       currentChat.value.association.lastRead !==
-      currentChat.value.messages.at(-1).id
+        currentChat.value.messages.at(-1)?.id
     ) {
       readChat(currentChat.value.id)
     }
-  } else if (altKey) {
+  } else if (altKey && store.userData.chatsList && currentChat.value) {
     if (key === "ArrowDown") {
       const chatIndex = store.userData.chatsList.findIndex(
-        (chat) => chat.id === currentChat.value.id
+        (chat) => chat.id === currentChat.value?.id
       )
       getChat(
         store.userData.chatsList[
@@ -1037,7 +1039,7 @@ const keyPressed = ({ key, altKey }) => {
       )
     } else if (key === "ArrowUp") {
       const chatIndex = store.userData.chatsList.findIndex(
-        (chat) => chat.id === currentChat.value.id
+        (chat) => chat.id === currentChat.value?.id
       )
       getChat(
         store.userData.chatsList[
@@ -1061,28 +1063,31 @@ const replyMessage = computed(() =>
 )
 
 const otherUser = computed(() =>
-  currentChat.value.users?.find((u) => u.id !== store.userData.id)
+  currentChat.value?.users?.find((u) => u.id !== store.userData.id)
 )
 
 const sendEncrypted = computed(
   () =>
-    currentChat.value?.type === 1 &&
-    ((store.userData.encryption === "on" &&
-      otherUser.value.encryption === "always") ||
-      (store.userData.encryption === "always" &&
-        otherUser.value.encryption === "on") ||
-      (store.userData.encryption === "on" &&
-        otherUser.value.encryption === "on") ||
-      (store.userData.encryption === "off" &&
+    (currentChat.value?.type === 1 &&
+      otherUser.value &&
+      ((store.userData.encryption === "on" &&
         otherUser.value.encryption === "always") ||
-      (store.userData.encryption === "always" &&
-        otherUser.value.encryption === "off") ||
-      (store.userData.encryption === "always" &&
-        otherUser.value.encryption === "always"))
+        (store.userData.encryption === "always" &&
+          otherUser.value.encryption === "on") ||
+        (store.userData.encryption === "on" &&
+          otherUser.value.encryption === "on") ||
+        (store.userData.encryption === "off" &&
+          otherUser.value.encryption === "always") ||
+        (store.userData.encryption === "always" &&
+          otherUser.value.encryption === "off") ||
+        (store.userData.encryption === "always" &&
+          otherUser.value.encryption === "always"))) ??
+    false
 )
 const requiresEncryption = computed(
   () =>
     currentChat.value?.type === 1 &&
+    otherUser.value !== undefined &&
     ((store.userData.encryption === "always" &&
       otherUser.value.encryption === "never") ||
       (store.userData.encryption === "never" &&
@@ -1096,10 +1101,8 @@ const inputDisabled = computed(
 )
 const encryptionRequirement = computed(() => {
   if (currentChat.value?.type !== 1) return ""
-  const { encryption } = currentChat.value.users.find(
-    (u) => u.id !== store.userData.id
-  )
-  switch (encryption) {
+  const user = currentChat.value.users.find((u) => u.id !== store.userData.id)
+  switch (user?.encryption) {
     case "never":
       return "This user does not allow encrypted direct messages"
     case "off":
@@ -1190,10 +1193,10 @@ const updatePageTitle = () => {
     ) ?? 0
 
   const chatName =
-    currentChat.value.type === 1 &&
+    currentChat.value?.type === 1 &&
     currentChat.value.owner !== store.userData.id
       ? currentChat.value.ownerDetails.username
-      : currentChat.value.name
+      : currentChat.value?.name
 
   document.title = `${notificationCount !== 0 ? `(${notificationCount}) ` : ""}BetterComms | ${chatName}`
   updateFavicon(notificationCount)
@@ -1261,10 +1264,15 @@ async function getChat(id) {
 onMounted(async () => {
   document.addEventListener("keydown", keyPressed)
   messageDivRef.value?.addEventListener("scroll", scrollEvent)
-  if (route.path.startsWith("/user")) {
-    openUser(route.params.id)
+  if (route.path.startsWith("/user") && typeof route.params.id === "string") {
+    openUser(parseInt(route.params.id))
   }
-  getChat(route.params.chatId)
+  if (
+    typeof route.params.chatId === "string" ||
+    typeof route.params.chatId === "undefined"
+  ) {
+    getChat(parseInt(route.params.chatId))
+  }
 })
 onUnmounted(() => {
   document.removeEventListener("keydown", keyPressed)

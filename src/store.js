@@ -226,7 +226,7 @@ export const useDataStore = defineStore("store", () => {
                 formData.append("attachment", file)
               }
               axios
-                .post("/api/upload", formData, {
+                .post("/api/uploads/upload", formData, {
                   headers: {
                     "Content-Type": "multipart/form-data"
                   }
