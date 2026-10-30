@@ -4124,6 +4124,11 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+user-agent-data-types@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/user-agent-data-types/-/user-agent-data-types-0.4.3.tgz"
+  integrity sha512-Dn3fjwVgeM363mx1sEgOpOp9NNqHBj6Gn68dFbV1WoTr3s05CijKdxfH6A3Q5uzXnYNB6vdAfs/1HWFpObc7EQ==
+
 util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"

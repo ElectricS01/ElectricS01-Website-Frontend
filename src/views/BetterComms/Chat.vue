@@ -12,7 +12,7 @@
     :is-active="embed !== null && !store.quickSwitcherShown"
     @close="embed = null"
   >
-    <img :src="embed" class="message-embed" alt="Embedded image" />
+    <img :src="embed!" class="message-embed" alt="Embedded image" />
   </modal-simple>
   <create-chat
     ref="createChatRef"
@@ -296,7 +296,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CustomMessage from "@/components/CustomMessage.vue"
 import Icons from "@/components/core/Icons.vue"
 import ProfilePicture from "@/components/ProfilePicture.vue"
@@ -334,6 +334,9 @@ import {
   importPublicKey
 } from "@/helpers/encryption"
 import sodium from "libsodium-wrappers-sumo"
+import { Chat, ChatData, ChatListItem } from "@/types/chat"
+import { ProfileUser } from "@/types/user"
+import { Message } from "@/types/message"
 
 const regex = /https:\/\/electrics01\.com\/api\/i\/[^\s<>"']+/g
 
@@ -343,17 +346,17 @@ const router = useRouter()
 
 const messageDivRef = useTemplateRef("messages-div")
 
-const embed = ref(null)
-const currentChat = ref({})
+const embed = ref<string | null>(null)
+const currentChat = ref<Chat | null>(null)
 const replyTo = ref()
-const editing = ref("")
+const editing = ref<string | number>("")
 const createChatRef = useTemplateRef("createChatRef")
 const editChatRef = useTemplateRef("editChatRef")
 const createChatShown = ref(false)
 const loadingMessages = ref(true)
 const scrolledUp = ref(false)
-const showUser = ref(null)
-const chatEdit = ref(null)
+const showUser = ref<ProfileUser | null>(null)
+const chatEdit = ref<ChatListItem | null>(null)
 const reactingTo = ref(-1)
 const inputText = ref("")
 const editText = ref("")
@@ -384,7 +387,7 @@ if (!localStorage.getItem("token")) {
   )
 }
 
-const handleSocketMessage = async (event) => {
+const handleSocketMessage = async (event: MessageEvent) => {
   console.log(event)
   const socketMessage = JSON.parse(event.data)
   if (socketMessage.authFail) {
@@ -496,13 +499,13 @@ const showEmojiPicker = () => {
   emojiPickerVisible.value = !emojiPickerVisible.value
 }
 
-const handleEmojiSelected = (emoji) => {
+const handleEmojiSelected = (emoji: string) => {
   inputText.value += emoji
   emojiPickerVisible.value = false
   focusInput()
 }
 
-const reactPressed = (messageId) => {
+const reactPressed = (messageId: number) => {
   if (reactingTo.value === messageId) {
     reactingTo.value = -1
   } else {
@@ -511,7 +514,7 @@ const reactPressed = (messageId) => {
   }
 }
 
-const addReaction = async (messageId, emoji) => {
+const addReaction = async (messageId: number, emoji: string) => {
   try {
     if (
       !findMessage(messageId)?.reactions.some(
@@ -535,7 +538,7 @@ const addReaction = async (messageId, emoji) => {
   }
 }
 
-const removeReaction = async (messageId, emoji) => {
+const removeReaction = async (messageId: number, emoji: string) => {
   try {
     await axios.post("/api/unreact", {
       emoji,
@@ -618,7 +621,7 @@ const sendMessage = async () => {
     store.handleAxiosError(e)
   }
 }
-const deleteMessage = (messageId) => {
+const deleteMessage = (messageId: number) => {
   axios
     .delete(`/api/delete/${messageId}`)
     .then(() => {
@@ -632,7 +635,7 @@ const deleteMessage = (messageId) => {
       store.handleAxiosError(e)
     })
 }
-const pinMessage = (messageId, pinned) => {
+const pinMessage = (messageId: number, pinned: boolean) => {
   axios
     .patch(`/api/pin/${messageId}`)
     .then(() => {
@@ -668,7 +671,7 @@ const pinMessage = (messageId, pinned) => {
     })
 }
 
-const showEditChat = (chat) => {
+const showEditChat = (chat: ChatListItem) => {
   chatsSidebarContext.value = false
   editChatRef.value?.loadChat?.(chat)
   chatEdit.value = chat
@@ -679,7 +682,7 @@ const openCreateChat = () => {
   createChatShown.value = true
 }
 
-const editMessage = async (message) => {
+const editMessage = async (message: Message) => {
   emojiPickerVisible.value = false
   const messageContents = editText.value.trim()
   if (messageContents === message.messageContents) {
@@ -732,25 +735,27 @@ const editMessage = async (message) => {
     const messageIndex = currentChat.value?.messages.findIndex(
       (e) => e.id === message.id
     )
-    res.data.editedMessage.reactions =
-      currentChat.value.messages[messageIndex].reactions
-    currentChat.value.messages[messageIndex] = res.data.editedMessage
+    if (currentChat.value && messageIndex && messageIndex !== -1) {
+      res.data.editedMessage.reactions =
+        currentChat.value.messages[messageIndex].reactions
+      currentChat.value.messages[messageIndex] = res.data.editedMessage
+    }
   } catch (e) {
     store.handleAxiosError(e)
   }
 }
 
-const replyToMessage = (messageId) => {
+const replyToMessage = (messageId: number) => {
   replyTo.value = messageId
   focusInput()
 }
 
-const trimTrailingPunctuation = (url) => {
+const trimTrailingPunctuation = (url: string) => {
   const opens = [...url].filter((c) => c === "(").length
   let closes = [...url].filter((c) => c === ")").length
 
   while (url.length > 0) {
-    const last = url.at(-1)
+    const last = url.at(-1)!
 
     if (".,!?;:]".includes(last)) {
       url = url.slice(0, -1)
@@ -765,9 +770,15 @@ const trimTrailingPunctuation = (url) => {
   return new URL(url)
 }
 
-const decrypt = async (message) => {
+const decrypt = async (message: Message) => {
   try {
-    if (message.messageContents) return message
+    if (
+      message.messageContents ||
+      !store.userData.privateKey ||
+      !otherUser.value?.publicKey
+    )
+      return
+
     const publicKey =
       message.userId === store.userData.id
         ? store.userData.publicKey
@@ -781,9 +792,10 @@ const decrypt = async (message) => {
       publicKey
     )
 
-    let links = message.messageContents.match(regex)
-    if (!links) return
-    if (links.length > 3) links = links.slice(0, 3)
+    let links = message.messageContents.match(regex)?.slice(0, 3) ?? []
+
+    if (links.length === 0) return
+
     message.embeds = []
     for (const embedLink of links) {
       const linkURL = trimTrailingPunctuation(embedLink).toString()
@@ -800,10 +812,9 @@ const decrypt = async (message) => {
   }
 }
 
-const handleChatChange = async (chat) => {
-  const { association } = currentChat.value
+const handleChatChange = async (chat: Chat) => {
   currentChat.value = chat
-  currentChat.value.association = association
+  currentChat.value.association = { lastRead: -1 }
   router.push(`/chat/${currentChat.value.id}`)
   updatePageTitle()
   replyTo.value = null
@@ -816,17 +827,17 @@ const handleChatChange = async (chat) => {
   }
 }
 
-const handleChatCreated = async (chat) => {
+const handleChatCreated = async (chat: Chat) => {
   createChatShown.value = false
   await handleChatChange(chat)
 }
 
-const handleChatEdited = async (chat) => {
+const handleChatEdited = async (chat: Chat) => {
   chatEdit.value = null
   await handleChatChange(chat)
 }
 
-const openUser = (userId) => {
+const openUser = (userId: number) => {
   usersSidebarContext.value = false
   chatsSidebarContext.value = false
 
@@ -842,13 +853,11 @@ const openUser = (userId) => {
     })
 }
 
-const findUsername = (userId) => {
-  const user = currentChat.value.users.find(
-    (user) => user.id === parseInt(userId)
-  )
-  return user?.username ?? userId
+const findUsername = (userId: number) => {
+  const user = currentChat.value?.users.find((user) => user.id === userId)
+  return user?.username ?? String(userId)
 }
-const removeUser = async (chatId, userId) => {
+const removeUser = async (chatId: number, userId: number) => {
   usersSidebarContext.value = false
   try {
     const res = await axios.post(`/api/remove/${chatId}/${userId}`)
@@ -881,11 +890,11 @@ const scrollDown = (override = false) => {
   })
 }
 
-const findMessage = (messageId) =>
-  currentChat.value.messages.findLast((message) => message.id === messageId)
+const findMessage = (messageId: number) =>
+  currentChat.value?.messages.findLast((message) => message.id === messageId)
 
-const goToMessage = (messageId) => {
-  const index = currentChat.value.messages.findIndex(
+const goToMessage = (messageId: number) => {
+  const index = currentChat.value?.messages.findIndex(
     (message) => message.id === messageId
   )
   const element = document.getElementById(`message-${index}`)
@@ -925,7 +934,7 @@ const replyLast = () => {
     replyTo.value = messageReply.id
   }
 }
-async function addFriend(userId, notOpen = false) {
+async function addFriend(userId: number, notOpen = false) {
   await axios
     .post(`/api/friend/${userId}`)
     .then(async (res) => {
@@ -945,7 +954,7 @@ async function addFriend(userId, notOpen = false) {
     })
 }
 
-const onUpdateStatus = (statusMessage) => {
+const onUpdateStatus = (statusMessage: string) => {
   const user = currentChat.value?.users?.find(
     (user) => user.id === store.userData.id
   )
@@ -955,7 +964,7 @@ const onUpdateStatus = (statusMessage) => {
   }
 }
 
-const onDmCreated = async (data) => {
+const onDmCreated = async (data: ChatData) => {
   showUser.value = null
   createChatShown.value = false
   store.showFriends = false
@@ -966,24 +975,23 @@ const onDmCreated = async (data) => {
   await handleChatChange(data.chat)
 }
 
-const readChat = async (chatId) => {
+const readChat = async (chatId: number) => {
   try {
     chatsSidebarContext.value = false
     await axios.post(`/api/read-new/${chatId}`)
-    if (currentChat.value.id === chatId) {
-      currentChat.value.association.lastRead =
-        currentChat.value.messages.at(-1).id
+    if (currentChat.value && currentChat.value.id === chatId) {
+      const latestId = currentChat.value.messages.at(-1)?.id
+      if (latestId) currentChat.value.association.lastRead = latestId
     }
-    store.userData.chatsList[
-      store.userData.chatsList.findIndex((chat) => chat.id === chatId)
-    ].association.notifications = 0
+    const chat = store.userData.chatsList?.find((chat) => chat.id === chatId)
+    if (chat) chat.association.notifications = 0
     updatePageTitle()
   } catch (e) {
     store.handleAxiosError(e)
   }
 }
 
-const keyPressed = ({ key, altKey }) => {
+const keyPressed = ({ key, altKey }: KeyboardEvent) => {
   if (key === "Escape") {
     if (usersSidebarContext.value) {
       usersSidebarContext.value = false
@@ -1116,7 +1124,7 @@ const encryptionRequirement = computed(() => {
   }
 })
 
-const onUpBefore = (event) => {
+const onUpBefore = (event: KeyboardEvent) => {
   if (event.ctrlKey || event.metaKey) {
     event.preventDefault()
     showEmojiSelector.value = false
@@ -1128,7 +1136,7 @@ const onUpBefore = (event) => {
   return false
 }
 
-const onUpAfter = (event) => {
+const onUpAfter = (event: KeyboardEvent) => {
   if (
     inputText.value &&
     !(
@@ -1144,8 +1152,8 @@ const onUpAfter = (event) => {
   scrollDown(true)
 }
 
-const updateFavicon = (notificationCount) => {
-  const favicon = document.getElementById("favicon")
+const updateFavicon = (notificationCount: number) => {
+  const favicon = document.getElementById("favicon") as HTMLLinkElement | null
   if (!favicon) return
 
   if (notificationCount < 1) {
@@ -1176,7 +1184,7 @@ const updateFavicon = (notificationCount) => {
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
     ctx.fillText(
-      notificationCount > 9 ? "9+" : notificationCount,
+      notificationCount > 9 ? "9+" : String(notificationCount),
       size - radius,
       size - radius
     )
@@ -1202,7 +1210,7 @@ const updatePageTitle = () => {
   updateFavicon(notificationCount)
 }
 
-async function getChat(id) {
+async function getChat(id?: number) {
   if (!id) {
     if (!store.userData.chatsList) {
       watch(
@@ -1224,41 +1232,44 @@ async function getChat(id) {
     loadingMessages.value = true
   }
   store.showFriends = false
-  await axios
-    .get(`/api/chat/${id}`)
-    .then(async (res) => {
-      currentChat.value = res.data
-      await Promise.all([
-        ...currentChat.value.messages.map((message) => decrypt(message)),
-        ...currentChat.value.pins.map((pin) => decrypt(pin))
-      ])
-      router.push(`/chat/${currentChat.value.id}`)
-      replyTo.value = null
-      loadingMessages.value = false
-      scrollDown(true)
-      updatePageTitle()
-      if (!store.userData.chatsList) {
-        watch(
-          () => store.userData.chatsList,
-          (newValue) => {
-            if (newValue) {
-              updatePageTitle()
-            }
-          },
-          {
-            once: true
+  try {
+    const res = await axios.get<Chat>(`/api/chat/${id}`)
+    currentChat.value = res.data
+    await Promise.all([
+      ...currentChat.value.messages.map((message) => decrypt(message)),
+      ...currentChat.value.pins.map((pin) => decrypt(pin))
+    ])
+    router.push(`/chat/${currentChat.value.id}`)
+    replyTo.value = null
+    loadingMessages.value = false
+    scrollDown(true)
+    updatePageTitle()
+    if (!store.userData.chatsList) {
+      watch(
+        () => store.userData.chatsList,
+        (newValue) => {
+          if (newValue) {
+            updatePageTitle()
           }
-        )
-        return
-      }
-    })
-    .catch((e) => {
-      if (e.response?.status === 403 && store.userData.chatsList[0].id !== id) {
-        getChat(store.userData.chatsList[0].id)
-      } else if (e.response?.status !== 403) {
-        store.handleAxiosError(e)
-      }
-    })
+        },
+        {
+          once: true
+        }
+      )
+      return
+    }
+  } catch (e) {
+    if (
+      axios.isAxiosError(e) &&
+      e.response?.status === 403 &&
+      store.userData.chatsList?.[0].id &&
+      store.userData.chatsList[0].id !== id
+    ) {
+      getChat(store.userData.chatsList[0].id)
+    } else if (axios.isAxiosError(e) && e.response?.status !== 403) {
+      store.handleAxiosError(e)
+    }
+  }
 }
 
 onMounted(async () => {

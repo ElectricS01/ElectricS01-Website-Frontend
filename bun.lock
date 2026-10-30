@@ -17,6 +17,7 @@
         "pinia": "^3.0.4",
         "typescript": "^6.0.3",
         "vite": "^8.3.5",
+        "user-agent-data-types": "^0.4.3",
         "vite-plugin-pwa": "^1.3.0",
         "vue": "^3.5.44",
         "vue-router": "^5.4.0",
@@ -1085,6 +1086,8 @@
     "update-browserslist-db": ["update-browserslist-db@1.3.4", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-t8wonIOdQyOjtPd2VktlBu6QjTVTks6v8bSi7kd0r2Vll8TK1JYDZtRRdbmCHOAMphkZgrzK+L+vXK4pyZ8t4A=="],
 
     "uri-js": ["uri-js@4.4.1", "", { "dependencies": { "punycode": "^2.1.0" } }, "sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg=="],
+
+    "user-agent-data-types": ["user-agent-data-types@0.4.3", "", {}, "sha512-Dn3fjwVgeM363mx1sEgOpOp9NNqHBj6Gn68dFbV1WoTr3s05CijKdxfH6A3Q5uzXnYNB6vdAfs/1HWFpObc7EQ=="],
 
     "util-deprecate": ["util-deprecate@1.0.2", "", {}, "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="],
 

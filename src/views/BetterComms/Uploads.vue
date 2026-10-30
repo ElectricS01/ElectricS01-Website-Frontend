@@ -22,13 +22,36 @@
           Created: {{ dayjsLong(upload.createdAt) }}
         </div>
         <div style="padding: 4px">{{ dayjsSince(upload.createdAt) }}</div>
-        <button
-          class="profile-button-remove"
-          style="width: fit-content"
-          @click="deleteUpload(upload.id)"
-        >
-          Remove
-        </button>
+        <div class="button-container">
+          <button
+            class="profile-button-remove"
+            style="width: fit-content"
+            @click="deleteUpload(upload.id)"
+          >
+            Delete
+          </button>
+          <button
+            class="profile-button-message"
+            style="width: fit-content"
+            @click="copyUpload(upload.fileName)"
+          >
+            Copy
+          </button>
+          <button
+            class="profile-button-message"
+            style="width: fit-content"
+            @click="openUpload(upload.fileName)"
+          >
+            Open
+          </button>
+          <button
+            class="profile-button-message"
+            style="width: fit-content"
+            @click="downloadUpload(upload.fileName, upload.name)"
+          >
+            Download
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -42,6 +65,7 @@ import { useDataStore } from "@/store"
 import axios from "axios"
 import { dayjsLong, dayjsSince } from "@/helpers/dates"
 import { Upload } from "@/types/upload"
+import { downloadUrl } from "@/helpers/downloads"
 
 const store = useDataStore()
 
@@ -64,6 +88,18 @@ const deleteUpload = async (id: number) => {
   } catch (e) {
     store.handleAxiosError(e)
   }
+}
+
+const copyUpload = (fileName: string) => {
+  navigator.clipboard.writeText(`${window.location.origin}/api/i/${fileName}`)
+}
+
+const openUpload = (fileName: string) => {
+  window.open(`${window.location.origin}/api/i/${fileName}`, "_blank")
+}
+
+const downloadUpload = (fileName: string, name: string) => {
+  downloadUrl(`${window.location.origin}/api/i/${fileName}`, name)
 }
 
 const keyPressed = (e: KeyboardEvent) => {
