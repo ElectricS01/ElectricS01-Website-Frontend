@@ -2,17 +2,26 @@
   <h2 class="settings-text">Changelog</h2>
   <div>BetterComms changelog</div>
   <div class="settings-spacer" />
+  <h2 class="settings-text">1.255 Enhanced Image Uploads Page</h2>
+  <div class="settings-spacer" />
+  <ul>
+    <li>Added an upload button to the Uploads page</li>
+    <li>File size is now formatted in the Uploads page</li>
+    <li>Update to work with backend 1.126.0</li>
+  </ul>
   <h2 class="settings-text">1.254 Image Uploads Page</h2>
   <div class="settings-spacer" />
   <ul>
     <li>Added a new Image Uploads page</li>
     <li>You can now delete images from the Image Uploads page</li>
+    <li>Update to work with backend 1.125.0</li>
   </ul>
   <h2 class="settings-text">1.253 Editing Encrypted Messages</h2>
   <div class="settings-spacer" />
   <ul>
     <li>You can now edit encrypted messages</li>
     <li>Added WebSockets for edited messages</li>
+    <li>Update to work with backend 1.124.0</li>
   </ul>
   <h2 class="settings-text">1.252 String Processor Sorting</h2>
   <div class="settings-spacer" />

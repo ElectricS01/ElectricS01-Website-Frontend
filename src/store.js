@@ -5,6 +5,7 @@ import axios from "axios"
 import { useRoute, useRouter } from "vue-router"
 import { loadPrivateKey } from "./helpers/indexedDb"
 import { importPublicKey } from "./helpers/encryption"
+import { uploadFiles } from "./helpers/upload"
 
 const switcherPages = [
   "Home",
@@ -218,24 +219,9 @@ export const useDataStore = defineStore("store", () => {
           await router.push("/chat/1")
         }
         if (userData.value.id === 1)
-          document.addEventListener("paste", (e) => {
+          document.addEventListener("paste", async (e) => {
             if (e.clipboardData && e.clipboardData.files.length) {
-              const { files } = e.clipboardData
-              const formData = new FormData()
-              for (const file of files) {
-                formData.append("attachment", file)
-              }
-              axios
-                .post("/api/uploads/upload", formData, {
-                  headers: {
-                    "Content-Type": "multipart/form-data"
-                  }
-                })
-                .then((res) => {
-                  navigator.clipboard.writeText(
-                    `${window.location.origin}/api/i/${res.data.message}`
-                  )
-                })
+              await uploadFiles(e.clipboardData.files)
             }
           })
       })

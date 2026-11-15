@@ -7,6 +7,20 @@
   </modal-simple>
   <div class="container">
     <h1>Uploads</h1>
+    <input
+      ref="fileInput"
+      type="file"
+      multiple
+      hidden
+      @change="handleFileUpload"
+    />
+    <button
+      style="width: fit-content"
+      :disabled="isUploading"
+      @click="triggerFilePicker"
+    >
+      <icons size="28" icon="upload" />
+    </button>
     <p v-if="uploads.length === 0">No uploads yet</p>
     <div class="grid-home">
       <div v-for="upload in uploads" :key="upload.id" class="upload">
@@ -16,8 +30,12 @@
         >
           <img :src="`/api/i/${upload.fileName}`" />
         </div>
-        <div style="padding: 4px">Filename: {{ upload.name }}</div>
-        <div style="padding: 4px">Size: {{ upload.size }}</div>
+        <div style="padding: 4px" class="ellipse" :title="upload.name">
+          Filename: {{ upload.name }}
+        </div>
+        <div style="padding: 4px" :title="`${upload.size} B`">
+          Size: {{ formatFileSize(upload.size) }}
+        </div>
         <div style="padding: 4px">
           Created: {{ dayjsLong(upload.createdAt) }}
         </div>
@@ -59,18 +77,24 @@
 
 <script setup lang="ts">
 import ModalSimple from "@/components/core/ModalSimple.vue"
+import icons from "@/components/core/Icons.vue"
 
-import { onMounted, onUnmounted, ref } from "vue"
+import { onMounted, onUnmounted, ref, useTemplateRef } from "vue"
 import { useDataStore } from "@/store"
 import axios from "axios"
 import { dayjsLong, dayjsSince } from "@/helpers/dates"
 import { Upload } from "@/types/upload"
 import { downloadUrl } from "@/helpers/downloads"
+import { uploadFiles } from "@/helpers/upload"
+import { formatFileSize } from "@/helpers/fileSize"
 
 const store = useDataStore()
 
+const inputRef = useTemplateRef("fileInput")
+
 const uploads = ref<Upload[]>([])
 const selected = ref<string | undefined>(undefined)
+const isUploading = ref(false)
 
 axios
   .get<Upload[]>("/api/uploads")
@@ -80,6 +104,23 @@ axios
   .catch((e) => {
     store.handleAxiosError(e)
   })
+
+const triggerFilePicker = () => {
+  inputRef.value?.click()
+}
+
+const handleFileUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (!target.files) return
+  const files: File[] = Array.from(target.files)
+  if (!files.length) return
+
+  isUploading.value = true
+  const upload = await uploadFiles(target.files)
+
+  isUploading.value = false
+  uploads.value.push(upload)
+}
 
 const deleteUpload = async (id: number) => {
   try {

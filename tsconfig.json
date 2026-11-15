@@ -22,7 +22,7 @@
 
     "plugins": [{ "name": "@vue/typescript-plugin" }],
 
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "skipLibCheck": true,
     "types": ["vite/client", "user-agent-data-types"]
   },
